@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 interface ServiceSectionProps {
   id: string;
   title: string;
@@ -23,21 +25,29 @@ const ServiceSection = ({
   secondaryHref,
   dark = true,
 }: ServiceSectionProps) => {
+  const isExternal = (href: string) => href.startsWith("http");
+
+  const LinkOrA = ({ href, className, children }: { href: string; className: string; children: React.ReactNode }) =>
+    isExternal(href) ? (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+        {children}
+      </a>
+    ) : (
+      <Link to={href} className={className}>
+        {children}
+      </Link>
+    );
+
   return (
     <section id={id} className="tesla-section">
-      {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: `url(${backgroundImage})` }}
       />
-
-      {/* Overlay */}
       {dark && <div className="video-overlay" />}
       {!dark && (
         <div className="absolute inset-0" style={{ background: "hsl(0 0% 100% / 0.7)" }} />
       )}
-
-      {/* Content */}
       <div className="tesla-section-content">
         <p
           className="text-sm font-medium tracking-[0.2em] uppercase mb-3 opacity-80"
@@ -57,20 +67,17 @@ const ServiceSection = ({
         >
           {description}
         </p>
-
         <div className="tesla-cta-group">
-          <a href={ctaHref} target="_blank" rel="noopener noreferrer" className="tesla-btn-primary">
+          <LinkOrA href={ctaHref} className="tesla-btn-primary">
             {ctaLabel}
-          </a>
+          </LinkOrA>
           {secondaryLabel && secondaryHref && (
-            <a
+            <LinkOrA
               href={secondaryHref}
-              target="_blank"
-              rel="noopener noreferrer"
               className={dark ? "tesla-btn-outline" : "tesla-btn-secondary"}
             >
               {secondaryLabel}
-            </a>
+            </LinkOrA>
           )}
         </div>
       </div>
