@@ -62,7 +62,7 @@ const ServiceSection = ({
           {title}
         </h2>
         <p
-          className="mt-4 text-base md:text-lg max-w-xl mx-auto opacity-80 text-center font-normal text-accent bg-white/0"
+          className="mt-4 text-base md:text-lg max-w-xl mx-auto opacity-80 text-center font-normal bg-white/0 text-white"
           style={{ color: dark ? "white" : "hsl(var(--muted-foreground))" }}>
 
           {description}
