@@ -34,9 +34,9 @@ const Index = () => {
         description="Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English."
         backgroundImage={translationsBg}
         ctaLabel="Request Translation"
-        ctaHref="https://ifcsevals.com/translations"
+        ctaHref="/translations"
         secondaryLabel="View Languages"
-        secondaryHref="https://ifcsevals.com/translations"
+        secondaryHref="/translations"
         dark={false}
       />
 
