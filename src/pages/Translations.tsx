@@ -11,6 +11,12 @@ const languages = [
   "Italian", "Hindi", "Urdu", "Turkish", "Farsi",
   "Hebrew", "Polish", "Vietnamese", "Thai", "Tagalog",
   "Greek", "Romanian", "Dutch", "Swedish", "Bengali",
+  "Swahili", "Malay", "Indonesian", "Czech", "Danish",
+  "Finnish", "Norwegian", "Hungarian", "Slovak", "Bulgarian",
+  "Croatian", "Serbian", "Slovenian", "Lithuanian", "Latvian",
+  "Estonian", "Ukrainian", "Georgian", "Armenian", "Azerbaijani",
+  "Kazakh", "Uzbek", "Pashto", "Nepali", "Sinhala",
+  "Burmese", "Khmer", "Lao", "Amharic", "Somali",
 ];
 
 const documents = [
@@ -61,7 +67,7 @@ const faqs = [
   },
   {
     q: "What languages do you translate?",
-    a: "We translate documents from and into 50+ languages. If you don't see your language listed, contact us — we likely support it.",
+    a: "We translate documents from and into 150+ languages. If you don't see your language listed, contact us — we likely support it.",
   },
   {
     q: "Will my translation be accepted by USCIS?",
@@ -108,7 +114,7 @@ const Translations = () => {
             <span className="opacity-60">Services</span>
           </h1>
           <p className="mt-6 text-base md:text-lg max-w-xl font-light opacity-80" style={{ color: "white" }}>
-            Get your documents translated and certified by professional translators in 50+ languages.
+            Get your documents translated and certified by professional translators in 150+ languages.
             Fast, accurate, and accepted by USCIS, universities, and government agencies.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
@@ -164,7 +170,7 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            50+ Languages
+            150+ Languages
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground">
             Translated by native-speaking professionals
@@ -262,7 +268,7 @@ const Translations = () => {
             <div className="p-8 rounded-sm border-2 border-accent bg-card">
               <p className="text-sm font-medium tracking-[0.15em] uppercase text-accent mb-2">Certified Translation</p>
               <div className="flex items-baseline gap-1 mb-6">
-                <span className="text-5xl font-semibold text-foreground">$24.95</span>
+                <span className="text-5xl font-semibold text-foreground">$50</span>
                 <span className="text-muted-foreground text-sm">per page</span>
               </div>
               <div className="space-y-3">
