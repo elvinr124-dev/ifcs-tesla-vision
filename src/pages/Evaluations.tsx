@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ChevronDown, FileText, Clock, Award, ArrowLeft } from "lucide-react";
+import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const evaluationServices = [
   {
@@ -68,32 +69,62 @@ const evaluationServices = [
 
 const Evaluations = () => {
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen" style={{ background: "hsl(220 30% 8%)" }}>
       <Navbar />
 
-      {/* Hero */}
-      <section className="tesla-section bg-primary">
-        <div className="absolute inset-0 bg-gradient-to-b from-primary via-primary/95 to-primary" />
-        <div className="tesla-section-content text-primary-foreground animate-fade-in-up">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 opacity-80">
+      {/* Hero with Brooklyn Bridge */}
+      <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${brooklynBridge})` }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to bottom, hsla(220 60% 15% / 0.5) 0%, hsla(220 60% 10% / 0.7) 60%, hsla(220 30% 8% / 1) 100%)",
+          }}
+        />
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity"
+            style={{ color: "hsl(45 90% 65%)" }}
+          >
+            <ArrowLeft size={16} />
+            Back to Home
+          </Link>
+          <p
+            className="text-sm font-medium tracking-[0.2em] uppercase mb-3"
+            style={{ color: "hsl(45 90% 65%)" }}
+          >
             Credentials Recognized
           </p>
-          <h1 className="tesla-hero-title">Academic Evaluations</h1>
-          <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 opacity-80">
+          <h1
+            className="tesla-hero-title"
+            style={{ color: "hsl(0 0% 100%)" }}
+          >
+            Academic Evaluations
+          </h1>
+          <p
+            className="tesla-hero-subtitle max-w-2xl mt-4"
+            style={{ color: "hsl(210 20% 80%)" }}
+          >
             Get your well-earned academic credentials recognized by U.S.
             universities, employers, and state governmental institutions.
           </p>
-          <div className="tesla-cta-group">
+          <div className="flex flex-col sm:flex-row gap-3 mt-8">
             <a
               href="#services"
-              className="tesla-btn-outline !border-primary-foreground/60 !text-primary-foreground"
+              className="px-12 py-3 text-sm font-medium tracking-wide rounded-sm transition-all duration-200 min-w-[260px] text-center"
+              style={{
+                background: "hsl(45 90% 55%)",
+                color: "hsl(220 30% 8%)",
+              }}
             >
               View Services
             </a>
           </div>
-        </div>
-        <div className="absolute bottom-8 z-10 animate-scroll-indicator">
-          <ChevronDown size={28} className="text-primary-foreground" />
         </div>
       </section>
 
@@ -101,10 +132,16 @@ const Evaluations = () => {
       <section id="services" className="py-24 px-6 md:px-12">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <p className="text-sm font-medium tracking-[0.2em] uppercase text-muted-foreground mb-3">
+            <p
+              className="text-sm font-medium tracking-[0.2em] uppercase mb-3"
+              style={{ color: "hsl(45 90% 65%)" }}
+            >
               Choose Your Evaluation
             </p>
-            <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
+            <h2
+              className="text-3xl md:text-5xl font-semibold tracking-tight"
+              style={{ color: "hsl(0 0% 95%)" }}
+            >
               Service Tiers
             </h2>
           </div>
@@ -113,18 +150,37 @@ const Evaluations = () => {
             {evaluationServices.map((service, idx) => (
               <div
                 key={idx}
-                className="border border-border rounded-sm overflow-hidden transition-all duration-300 hover:shadow-lg"
+                className="rounded-sm overflow-hidden transition-all duration-300 hover:shadow-xl"
+                style={{
+                  border: "1px solid hsl(220 30% 20%)",
+                  background: "hsl(220 25% 12%)",
+                }}
               >
                 {/* Card Header */}
-                <div className="bg-primary px-8 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-                  <h3 className="text-xl md:text-2xl font-semibold text-primary-foreground tracking-tight">
+                <div
+                  className="px-8 py-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, hsl(217 80% 40%), hsl(217 70% 30%))",
+                  }}
+                >
+                  <h3
+                    className="text-xl md:text-2xl font-semibold tracking-tight"
+                    style={{ color: "hsl(0 0% 100%)" }}
+                  >
                     {service.title}
                   </h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-3xl md:text-4xl font-bold text-primary-foreground">
+                    <span
+                      className="text-3xl md:text-4xl font-bold"
+                      style={{ color: "hsl(45 90% 65%)" }}
+                    >
                       ${service.price}
                     </span>
-                    <span className="text-sm text-primary-foreground/60 ml-1">
+                    <span
+                      className="text-sm ml-1"
+                      style={{ color: "hsl(210 20% 70%)" }}
+                    >
                       standard
                     </span>
                   </div>
@@ -135,30 +191,51 @@ const Evaluations = () => {
                   {/* Description */}
                   <div className="lg:col-span-2 space-y-6">
                     <div>
-                      <h4 className="text-xs font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-2">
+                      <h4
+                        className="text-xs font-semibold tracking-[0.15em] uppercase mb-2"
+                        style={{ color: "hsl(210 20% 55%)" }}
+                      >
                         Description
                       </h4>
-                      <p className="text-sm text-foreground/80 leading-relaxed">
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "hsl(210 15% 75%)" }}
+                      >
                         {service.description}
                       </p>
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-2 flex items-center gap-2">
-                        <Award size={14} className="text-accent" />
+                      <h4
+                        className="text-xs font-semibold tracking-[0.15em] uppercase mb-2 flex items-center gap-2"
+                        style={{ color: "hsl(210 20% 55%)" }}
+                      >
+                        <Award size={14} style={{ color: "hsl(45 90% 65%)" }} />
                         Recommended For
                       </h4>
-                      <p className="text-sm text-foreground/80 leading-relaxed">
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "hsl(210 15% 75%)" }}
+                      >
                         {service.recommendedFor}
                       </p>
                     </div>
 
                     <div>
-                      <h4 className="text-xs font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-2 flex items-center gap-2">
-                        <FileText size={14} className="text-accent" />
+                      <h4
+                        className="text-xs font-semibold tracking-[0.15em] uppercase mb-2 flex items-center gap-2"
+                        style={{ color: "hsl(210 20% 55%)" }}
+                      >
+                        <FileText
+                          size={14}
+                          style={{ color: "hsl(45 90% 65%)" }}
+                        />
                         Required Documents
                       </h4>
-                      <p className="text-sm text-foreground/80 leading-relaxed">
+                      <p
+                        className="text-sm leading-relaxed"
+                        style={{ color: "hsl(210 15% 75%)" }}
+                      >
                         {service.documents}
                       </p>
                     </div>
@@ -166,37 +243,76 @@ const Evaluations = () => {
 
                   {/* Processing Times */}
                   <div className="space-y-3">
-                    <h4 className="text-xs font-semibold tracking-[0.15em] uppercase text-muted-foreground mb-3 flex items-center gap-2">
-                      <Clock size={14} className="text-accent" />
+                    <h4
+                      className="text-xs font-semibold tracking-[0.15em] uppercase mb-3 flex items-center gap-2"
+                      style={{ color: "hsl(210 20% 55%)" }}
+                    >
+                      <Clock size={14} style={{ color: "hsl(45 90% 65%)" }} />
                       Processing Options
                     </h4>
 
-                    <div className="border border-border rounded-sm p-4 text-center">
-                      <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                    <div
+                      className="rounded-sm p-4 text-center"
+                      style={{ border: "1px solid hsl(220 30% 20%)" }}
+                    >
+                      <p
+                        className="text-xs uppercase tracking-wide mb-1"
+                        style={{ color: "hsl(210 20% 55%)" }}
+                      >
                         Standard
                       </p>
-                      <p className="text-2xl font-bold text-foreground">
+                      <p
+                        className="text-2xl font-bold"
+                        style={{ color: "hsl(0 0% 95%)" }}
+                      >
                         ${service.price}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p
+                        className="text-xs mt-1"
+                        style={{ color: "hsl(210 20% 55%)" }}
+                      >
                         {service.processing}
                       </p>
                     </div>
 
-                    <div className="border border-accent/30 bg-accent/5 rounded-sm p-4 text-center">
-                      <p className="text-xs text-accent uppercase tracking-wide mb-1 font-semibold">
+                    <div
+                      className="rounded-sm p-4 text-center"
+                      style={{
+                        border: "1px solid hsl(45 80% 45% / 0.3)",
+                        background: "hsl(45 80% 45% / 0.08)",
+                      }}
+                    >
+                      <p
+                        className="text-xs uppercase tracking-wide mb-1 font-semibold"
+                        style={{ color: "hsl(45 90% 65%)" }}
+                      >
                         Rush – 3 Business Days
                       </p>
-                      <p className="text-2xl font-bold text-foreground">
+                      <p
+                        className="text-2xl font-bold"
+                        style={{ color: "hsl(0 0% 95%)" }}
+                      >
                         ${service.rush3Day}
                       </p>
                     </div>
 
-                    <div className="border border-accent/50 bg-accent/10 rounded-sm p-4 text-center">
-                      <p className="text-xs text-accent uppercase tracking-wide mb-1 font-semibold">
+                    <div
+                      className="rounded-sm p-4 text-center"
+                      style={{
+                        border: "1px solid hsl(45 80% 45% / 0.5)",
+                        background: "hsl(45 80% 45% / 0.12)",
+                      }}
+                    >
+                      <p
+                        className="text-xs uppercase tracking-wide mb-1 font-semibold"
+                        style={{ color: "hsl(45 90% 65%)" }}
+                      >
                         Rush – 24 Hours
                       </p>
-                      <p className="text-2xl font-bold text-foreground">
+                      <p
+                        className="text-2xl font-bold"
+                        style={{ color: "hsl(0 0% 95%)" }}
+                      >
                         ${service.rush24Hr}
                       </p>
                     </div>
@@ -209,7 +325,11 @@ const Evaluations = () => {
                     href="https://ifcsevals.com/application"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="tesla-btn-primary inline-block text-center"
+                    className="inline-block text-center px-12 py-3 text-sm font-medium tracking-wide rounded-sm transition-all duration-200 min-w-[260px]"
+                    style={{
+                      background: "hsl(45 90% 55%)",
+                      color: "hsl(220 30% 8%)",
+                    }}
                   >
                     Start Application
                   </a>
@@ -224,7 +344,8 @@ const Evaluations = () => {
       <div className="text-center pb-16">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="inline-flex items-center gap-2 text-sm transition-colors"
+          style={{ color: "hsl(210 20% 55%)" }}
         >
           <ArrowLeft size={16} />
           Back to Home
