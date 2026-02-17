@@ -21,9 +21,9 @@ const Index = () => {
         description="Get your well-earned academic credentials recognized by U.S. universities, employers and state governmental institutions."
         backgroundImage={evaluationsBg}
         ctaLabel="Start Evaluation"
-        ctaHref="https://ifcsevals.com/evaluations"
+        ctaHref="/evaluations"
         secondaryLabel="Learn More"
-        secondaryHref="https://ifcsevals.com/evaluations"
+        secondaryHref="/evaluations"
         dark
       />
 
