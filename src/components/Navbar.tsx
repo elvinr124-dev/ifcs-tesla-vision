@@ -39,12 +39,12 @@ const Navbar = () => {
             <Link
               key={link.label}
               to={link.href}
-              className="group flex flex-col items-center gap-1 px-3 py-1"
+              className="group"
             >
               <div
                 className={`
-                  w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-200
-                  shadow-md hover:shadow-lg hover:scale-110
+                  flex items-center gap-2 px-4 py-2.5 rounded-xl transition-all duration-200
+                  shadow-md hover:shadow-lg hover:scale-105
                   ${isActive
                     ? "bg-accent shadow-accent/30"
                     : scrolled
@@ -54,16 +54,16 @@ const Navbar = () => {
                 `}
               >
                 <Icon
-                  size={18}
+                  size={16}
                   style={{ color: isActive ? "white" : textColor }}
                 />
+                <span
+                  className="text-[11px] font-semibold tracking-wide"
+                  style={{ color: isActive ? "white" : textColor }}
+                >
+                  {link.label}
+                </span>
               </div>
-              <span
-                className="text-[10px] font-medium tracking-wide transition-opacity"
-                style={{ color: textColor }}
-              >
-                {link.label}
-              </span>
             </Link>
           );
         })}

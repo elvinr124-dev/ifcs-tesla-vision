@@ -47,9 +47,9 @@ const Index = () => {
         description="Work side by side with a senior consultant to ensure you choose the right evaluation and streamline your admission."
         backgroundImage={consultingBg}
         ctaLabel="Book Consultation"
-        ctaHref="https://ifcsevals.com/contact-us"
+        ctaHref="/consulting"
         secondaryLabel="About Our Team"
-        secondaryHref="https://ifcsevals.com/about-us"
+        secondaryHref="/about"
         dark
       />
 
