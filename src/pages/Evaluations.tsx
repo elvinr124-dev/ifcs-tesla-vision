@@ -1,7 +1,8 @@
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FileText, Clock, Award, ArrowLeft } from "lucide-react";
+import { FileText, Clock, Award, ArrowLeft, CheckCircle2 } from "lucide-react";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 import serviceMilitary from "@/assets/service-military.jpg";
 import serviceEducation from "@/assets/service-education.jpg";
@@ -76,7 +77,18 @@ const evaluationServices = [
   },
 ];
 
+type ProcessingKey = "standard" | "rush3" | "rush24";
+
 const Evaluations = () => {
+  const [selectedProcessing, setSelectedProcessing] = useState<Record<number, ProcessingKey>>({});
+
+  const getSelectedPrice = (service: typeof evaluationServices[0], idx: number) => {
+    const key = selectedProcessing[idx] ?? "standard";
+    if (key === "rush3") return service.rush3Day;
+    if (key === "rush24") return service.rush24Hr;
+    return service.price;
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -124,92 +136,131 @@ const Evaluations = () => {
             </h2>
           </div>
 
-          <div className="space-y-8">
-            {evaluationServices.map((service, idx) => (
-              <div
-                key={idx}
-                className="rounded-sm overflow-hidden transition-all duration-300 hover:shadow-xl border border-border bg-card"
-              >
-                {/* Card Header with Background Image */}
-                <div className="relative px-8 py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4 overflow-hidden">
+          <div className="grid grid-cols-1 gap-6">
+            {evaluationServices.map((service, idx) => {
+              const activeKey = selectedProcessing[idx] ?? "standard";
+              return (
+                <div
+                  key={idx}
+                  className="relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:shadow-accent/20"
+                  style={{ minHeight: 480 }}
+                >
+                  {/* Full-bleed background image */}
                   <div
-                    className="absolute inset-0 bg-cover bg-center"
+                    className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
                     style={{ backgroundImage: `url(${service.bgImage})` }}
                   />
-                  <div className="absolute inset-0 bg-black/60" />
-                  <h3 className="relative z-10 text-xl md:text-2xl font-semibold tracking-tight text-white">
-                    {service.title}
-                  </h3>
-                  <div className="relative z-10 flex items-baseline gap-1">
-                    <span className="text-3xl md:text-4xl font-bold text-white">
-                      ${service.price}
-                    </span>
-                    <span className="text-sm ml-1 text-white/70">standard</span>
+                  {/* Dark gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/60 to-black/40" />
+
+                  {/* Content */}
+                  <div className="relative z-10 p-8 md:p-10 h-full flex flex-col gap-6">
+
+                    {/* Top row: title + badge */}
+                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                      <div>
+                        <p className="text-xs font-semibold tracking-[0.25em] uppercase text-accent mb-1">
+                          Academic Evaluation
+                        </p>
+                        <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+                          {service.title}
+                        </h3>
+                      </div>
+                      <div className="flex-shrink-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-3 text-center">
+                        <p className="text-xs text-white/60 uppercase tracking-widest mb-1">From</p>
+                        <p className="text-3xl font-bold text-white">${service.price}</p>
+                      </div>
+                    </div>
+
+                    {/* Info grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
+                        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                          <FileText size={11} /> Description
+                        </p>
+                        <p className="text-sm leading-relaxed text-white/85">
+                          {service.description}
+                        </p>
+                      </div>
+                      <div className="space-y-4">
+                        <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
+                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                            <Award size={11} className="text-accent" /> Recommended For
+                          </p>
+                          <p className="text-sm leading-relaxed text-white/85">{service.recommendedFor}</p>
+                        </div>
+                        <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
+                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                            <FileText size={11} /> Required Documents
+                          </p>
+                          <p className="text-sm leading-relaxed text-white/85">{service.documents}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Processing option selector */}
+                    <div>
+                      <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5 mb-3">
+                        <Clock size={11} /> Select Processing Speed
+                      </p>
+                      <div className="grid grid-cols-3 gap-3">
+                        {(
+                          [
+                            { key: "standard" as ProcessingKey, label: "Standard", price: service.price, sub: service.processing },
+                            { key: "rush3" as ProcessingKey, label: "Rush 3-Day", price: service.rush3Day, sub: "3 Business Days" },
+                            { key: "rush24" as ProcessingKey, label: "Rush 24hr", price: service.rush24Hr, sub: "24 Hours" },
+                          ] as const
+                        ).map((opt) => {
+                          const isActive = activeKey === opt.key;
+                          return (
+                            <button
+                              key={opt.key}
+                              onClick={() =>
+                                setSelectedProcessing((prev) => ({ ...prev, [idx]: opt.key }))
+                              }
+                              className={`relative rounded-2xl p-4 text-center transition-all duration-300 border ${
+                                isActive
+                                  ? "bg-accent border-accent shadow-lg shadow-accent/30 scale-[1.03]"
+                                  : "bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"
+                              }`}
+                            >
+                              {isActive && (
+                                <CheckCircle2
+                                  size={14}
+                                  className="absolute top-2 right-2 text-white"
+                                />
+                              )}
+                              <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isActive ? "text-white" : "text-white/60"}`}>
+                                {opt.label}
+                              </p>
+                              <p className={`text-xl font-bold ${isActive ? "text-white" : "text-white/90"}`}>
+                                ${opt.price}
+                              </p>
+                              <p className={`text-[10px] mt-0.5 ${isActive ? "text-white/80" : "text-white/50"}`}>
+                                {opt.sub}
+                              </p>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
+                    {/* CTA */}
+                    <div className="flex items-center justify-between mt-auto pt-2">
+                      <p className="text-sm text-white/60">
+                        Selected: <span className="text-white font-semibold">${getSelectedPrice(service, idx)}</span>
+                      </p>
+                      <Link
+                        to="/application"
+                        className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                      >
+                        Start Application →
+                      </Link>
+                    </div>
                   </div>
                 </div>
-
-                {/* Card Body */}
-                <div className="p-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-                  <div className="lg:col-span-2 space-y-6">
-                    <div>
-                      <h4 className="text-xs font-semibold tracking-[0.15em] uppercase mb-2 text-muted-foreground">
-                        Description
-                      </h4>
-                      <p className="text-sm leading-relaxed text-foreground/80">
-                        {service.description}
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-semibold tracking-[0.15em] uppercase mb-2 flex items-center gap-2 text-muted-foreground">
-                        <Award size={14} className="text-accent" />
-                        Recommended For
-                      </h4>
-                      <p className="text-sm leading-relaxed text-foreground/80">
-                        {service.recommendedFor}
-                      </p>
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-semibold tracking-[0.15em] uppercase mb-2 flex items-center gap-2 text-muted-foreground">
-                        <FileText size={14} className="text-accent" />
-                        Required Documents
-                      </h4>
-                      <p className="text-sm leading-relaxed text-foreground/80">
-                        {service.documents}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h4 className="text-xs font-semibold tracking-[0.15em] uppercase mb-3 flex items-center gap-2 text-muted-foreground">
-                      <Clock size={14} className="text-accent" />
-                      Processing Options
-                    </h4>
-                    <div className="rounded-sm p-4 text-center border border-border">
-                      <p className="text-xs uppercase tracking-wide mb-1 text-muted-foreground">Standard</p>
-                      <p className="text-2xl font-bold text-foreground">${service.price}</p>
-                      <p className="text-xs mt-1 text-muted-foreground">{service.processing}</p>
-                    </div>
-                    <div className="rounded-sm p-4 text-center border border-accent/30 bg-accent/5">
-                      <p className="text-xs uppercase tracking-wide mb-1 font-semibold text-accent">Rush – 3 Business Days</p>
-                      <p className="text-2xl font-bold text-foreground">${service.rush3Day}</p>
-                    </div>
-                    <div className="rounded-sm p-4 text-center border border-accent/50 bg-accent/10">
-                      <p className="text-xs uppercase tracking-wide mb-1 font-semibold text-accent">Rush – 24 Hours</p>
-                      <p className="text-2xl font-bold text-foreground">${service.rush24Hr}</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="px-8 pb-8">
-                  <Link
-                    to="/application"
-                    className="tesla-btn-primary inline-block text-center !min-w-[260px]"
-                  >
-                    Start Application
-                  </Link>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
