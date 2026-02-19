@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FileText, Clock, Award, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { useCart } from "@/context/CartContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 import serviceMilitary from "@/assets/service-military.jpg";
 import serviceEducation from "@/assets/service-education.jpg";
@@ -81,6 +82,7 @@ type ProcessingKey = "standard" | "rush3" | "rush24";
 
 const Evaluations = () => {
   const [selectedProcessing, setSelectedProcessing] = useState<Record<number, ProcessingKey>>({});
+  const { addItem: addToCart } = useCart();
 
   const getSelectedPrice = (service: typeof evaluationServices[0], idx: number) => {
     const key = selectedProcessing[idx] ?? "standard";
@@ -246,16 +248,58 @@ const Evaluations = () => {
                     </div>
 
                     {/* CTA */}
-                    <div className="flex items-center justify-between mt-auto pt-2">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-auto pt-2">
                       <p className="text-sm text-white/60">
                         Selected: <span className="text-white font-semibold">${getSelectedPrice(service, idx)}</span>
                       </p>
-                      <Link
-                        to="/application"
-                        className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                      >
-                        Start Application →
-                      </Link>
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => {
+                            const processingLabels: Record<ProcessingKey, string> = {
+                              standard: "Standard",
+                              rush3: "Rush 3-Day",
+                              rush24: "Rush 24hr",
+                            };
+                            const processingTimes: Record<ProcessingKey, string> = {
+                              standard: service.processing,
+                              rush3: "3 Business Days",
+                              rush24: "24 Hours",
+                            };
+                            const key = selectedProcessing[idx] ?? "standard";
+                            addToCart({
+                              serviceTitle: service.title,
+                              processingKey: key,
+                              processingLabel: processingLabels[key],
+                              processingTime: processingTimes[key],
+                              price: getSelectedPrice(service, idx),
+                              clientUsername: "Guest",
+                            });
+                            alert(`"${service.title}" added to cart!`);
+                          }}
+                          className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/30 text-white font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-white/25 transition-all duration-200 shadow-lg hover:scale-105"
+                        >
+                          🛒 Add to Cart
+                        </button>
+                        <Link
+                          to="/application"
+                          state={{
+                            serviceTitle: service.title,
+                            processingKey: selectedProcessing[idx] ?? "standard",
+                            processingLabel: (() => {
+                              const k = selectedProcessing[idx] ?? "standard";
+                              return k === "rush3" ? "Rush 3-Day" : k === "rush24" ? "Rush 24hr" : "Standard";
+                            })(),
+                            processingTime: (() => {
+                              const k = selectedProcessing[idx] ?? "standard";
+                              return k === "rush3" ? "3 Business Days" : k === "rush24" ? "24 Hours" : service.processing;
+                            })(),
+                            price: getSelectedPrice(service, idx),
+                          }}
+                          className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                        >
+                          Start Application →
+                        </Link>
+                      </div>
                     </div>
                   </div>
                 </div>

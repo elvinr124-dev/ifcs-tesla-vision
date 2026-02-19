@@ -1,11 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -110,6 +109,20 @@ const RadioCard = ({
 );
 
 const Application = () => {
+  const location = useLocation();
+  const routeState = location.state as {
+    serviceTitle?: string;
+    processingKey?: string;
+    processingLabel?: string;
+    processingTime?: string;
+    price?: number;
+  } | null;
+
+  const selectedServiceTitle = routeState?.serviceTitle ?? "General Analysis";
+  const selectedProcessingLabel = routeState?.processingLabel ?? "Standard";
+  const selectedProcessingTime = routeState?.processingTime ?? "8–10 Business Days";
+  const selectedPrice = routeState?.price ?? 100;
+
   const [step, setStep] = useState(1);
 
   // Step 1
@@ -471,7 +484,8 @@ const Application = () => {
                     <SectionHeading>Your Order Summary</SectionHeading>
                     <div className="space-y-2">
                       {[
-                        { label: "Order", value: "General Analysis No GPA — 10 Business Days" },
+                        { label: "Order", value: `${selectedServiceTitle} — ${selectedProcessingLabel} (${selectedProcessingTime})` },
+                        { label: "Price", value: `$${selectedPrice}` },
                         { label: "Authentication", value: authOption === "authenticate" ? "Perform Document Authentication (+$140)" : "Self-arranged" },
                         { label: "Delivery", value: deliveryOptions.includes("email-self") ? "E-Mail To Address Provided (Free)" : deliveryOptions.join(", ") },
                         { label: "Application ID", value: "EE0039", highlight: true },
