@@ -39,7 +39,7 @@ const HeroSection = () => {
             For Individuals
           </Link>
           <Link
-            to="/for-individuals"
+            to="/for-institutions"
             className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl border-2 transition-all duration-200 hover:scale-105"
             style={{ borderColor: "rgba(255,255,255,0.6)", color: "white", background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}
           >

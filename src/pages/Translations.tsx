@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Globe, FileText, ShieldCheck, Clock, CheckCircle, ChevronDown, ChevronUp, Star, Languages, Award, Lock } from "lucide-react";
+import { ArrowLeft, Globe, FileText, ShieldCheck, Clock, CheckCircle, ChevronDown, ChevronUp, Star, Award, Lock } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import translationsBg from "@/assets/translations-bg.jpg";
@@ -118,14 +118,12 @@ const Translations = () => {
             Fast, accurate, and accepted by USCIS, universities, and government agencies.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
-            <a
-              href="https://ifcsevals.com/translations"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/translations/order"
               className="tesla-btn-primary"
             >
               Start Your Order
-            </a>
+            </Link>
             <a
               href="https://ifcsevals.com/contact-us"
               target="_blank"
@@ -280,14 +278,12 @@ const Translations = () => {
                 ))}
               </div>
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
-                <a
-                  href="https://ifcsevals.com/translations"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Link
+                  to="/translations/order"
                   className="tesla-btn-primary text-center"
                 >
                   Start Your Order
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -354,14 +350,12 @@ const Translations = () => {
             Upload your document and receive a certified translation in as little as 24 hours.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8 justify-center">
-            <a
-              href="https://ifcsevals.com/translations"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link
+              to="/translations/order"
               className="tesla-btn-primary"
             >
               Start Your Order
-            </a>
+            </Link>
             <a
               href="https://ifcsevals.com/contact-us"
               target="_blank"

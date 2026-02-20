@@ -27,13 +27,13 @@ const ServiceSection = ({
 }: ServiceSectionProps) => {
   const isExternal = (href: string) => href.startsWith("http");
 
-  const LinkOrA = ({ href, className, children }: {href: string;className: string;children: React.ReactNode;}) =>
+  const LinkOrA = ({ href, className, style, children }: {href: string;className: string;style?: React.CSSProperties;children: React.ReactNode;}) =>
   isExternal(href) ?
-  <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+  <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={style}>
         {children}
       </a> :
 
-  <Link to={href} className={className}>
+  <Link to={href} className={className} style={style}>
         {children}
       </Link>;
 
@@ -50,32 +50,33 @@ const ServiceSection = ({
       }
       <div className="tesla-section-content">
         <p
-          className="text-sm font-medium tracking-[0.2em] uppercase mb-3 opacity-80"
+          className="text-base font-semibold tracking-[0.25em] uppercase mb-4 opacity-80"
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>
 
           {subtitle}
         </p>
         <h2
-          className="text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight"
+          className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight"
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>
 
           {title}
         </h2>
         <p
-          className="mt-4 text-base md:text-lg max-w-xl mx-auto opacity-80 text-center font-normal bg-white/0 text-white"
-          style={{ color: dark ? "white" : "hsl(var(--muted-foreground))" }}>
+          className="mt-6 text-xl md:text-2xl max-w-2xl mx-auto opacity-90 text-center font-light"
+          style={{ color: dark ? "rgba(255,255,255,0.9)" : "hsl(var(--muted-foreground))", textShadow: dark ? "0 2px 8px rgba(0,0,0,0.6)" : "none" }}>
 
           {description}
         </p>
-        <div className="tesla-cta-group">
-          <LinkOrA href={ctaHref} className="tesla-btn-primary">
+        <div className="tesla-cta-group mt-12">
+          <LinkOrA href={ctaHref} className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl transition-all duration-200 shadow-2xl hover:scale-105" style={{ background: "hsl(217 91% 50%)", color: "white", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.5)" }}>
             {ctaLabel}
           </LinkOrA>
           {secondaryLabel && secondaryHref &&
-          <LinkOrA
-            href={secondaryHref}
-            className={dark ? "tesla-btn-outline" : "tesla-btn-secondary"}>
-
+            <LinkOrA
+              href={secondaryHref}
+              className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl border-2 transition-all duration-200 hover:scale-105"
+              style={{ borderColor: "rgba(255,255,255,0.6)", color: "white", background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}
+            >
               {secondaryLabel}
             </LinkOrA>
           }
