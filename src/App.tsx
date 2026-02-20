@@ -20,6 +20,7 @@ import StaffLogin from "./pages/StaffLogin";
 import Signup from "./pages/Signup";
 import Cart from "./pages/Cart";
 import StaffCartView from "./pages/StaffCartView";
+import ForIndividuals from "./pages/ForIndividuals";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +47,7 @@ const App = () => (
               <Route path="/signup" element={<Signup />} />
               <Route path="/cart" element={<Cart />} />
               <Route path="/staff/cart" element={<StaffCartView />} />
+              <Route path="/for-individuals" element={<ForIndividuals />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

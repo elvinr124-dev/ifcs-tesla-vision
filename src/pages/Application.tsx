@@ -166,6 +166,33 @@ const Application = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
 
+  const [stepError, setStepError] = useState("");
+
+  const validateStep = (s: number): string => {
+    if (s === 1) {
+      if (!lastName.trim()) return "Last name is required.";
+      if (!firstName.trim()) return "First name is required.";
+      if (!dobMonth) return "Date of birth month is required.";
+      if (!dobDay) return "Date of birth day is required.";
+      if (!dobYear) return "Date of birth year is required.";
+      if (!gender) return "Please select a gender.";
+      if (!email.trim()) return "E-mail address is required.";
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Please enter a valid e-mail address.";
+    }
+    if (s === 2) {
+      if (!institutionName.trim()) return "Institution name is required.";
+      if (!country.trim()) return "Country is required.";
+      if (!attendance.trim()) return "Dates of attendance are required.";
+    }
+    if (s === 3) {
+      if (!purpose) return "Please select a purpose of evaluation.";
+    }
+    if (s === 4) {
+      if (deliveryOptions.length === 0) return "Please select at least one delivery option.";
+    }
+    return "";
+  };
+
   const toggleDelivery = (val: string) => {
     setDeliveryOptions((prev) =>
       prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
@@ -180,8 +207,13 @@ const Application = () => {
     alert("Application submitted! Your application ID: EE0039. We will contact you shortly.");
   };
 
-  const next = () => setStep((s) => Math.min(s + 1, 5));
-  const prev = () => setStep((s) => Math.max(s - 1, 1));
+  const next = () => {
+    const err = validateStep(step);
+    if (err) { setStepError(err); return; }
+    setStepError("");
+    setStep((s) => Math.min(s + 1, 5));
+  };
+  const prev = () => { setStepError(""); setStep((s) => Math.max(s - 1, 1)); };
 
   return (
     <div className="min-h-screen bg-background">
@@ -559,8 +591,16 @@ const Application = () => {
                 </div>
               )}
 
+              {/* Validation error */}
+              {stepError && (
+                <div className="rounded-2xl border border-destructive/40 bg-destructive/10 px-5 py-3 flex items-center gap-3">
+                  <span className="text-destructive text-lg">⚠</span>
+                  <p className="text-sm font-medium text-destructive">{stepError}</p>
+                </div>
+              )}
+
               {/* Navigation */}
-              <div className="flex items-center justify-between pt-8 border-t border-border">
+              <div className="flex items-center justify-between pt-6 border-t border-border">
                 {step > 1 ? (
                   <button
                     onClick={prev}
