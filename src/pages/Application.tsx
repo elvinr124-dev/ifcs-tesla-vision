@@ -280,7 +280,7 @@ const Application = () => {
       </div>
 
       {/* Form */}
-      <section className="py-10 px-6 md:px-12">
+      <section className="py-10 px-6 md:px-12 content-bg">
         <div className="max-w-4xl mx-auto">
 
           {/* Card shell */}

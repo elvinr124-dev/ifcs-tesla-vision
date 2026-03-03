@@ -52,7 +52,7 @@ const ForIndividuals = () => {
       </section>
 
       {/* Steps */}
-      <section className="py-24 px-6 md:px-12">
+      <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-5xl mx-auto space-y-8">
           {steps.map((step, i) => {
             const Icon = step.icon;

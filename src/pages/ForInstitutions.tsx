@@ -74,7 +74,7 @@ const ForInstitutions = () => {
       </section>
 
       {/* About IFCS for Institutions */}
-      <section className="py-24 px-6 md:px-12">
+      <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-5xl mx-auto">
           <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">Information</p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">Resources &amp; Evaluation Descriptions</h2>
@@ -113,7 +113,7 @@ const ForInstitutions = () => {
       </section>
 
       {/* Professional Training */}
-      <section className="py-20 px-6 md:px-12 bg-muted/30">
+      <section className="py-20 px-6 md:px-12 content-bg-alt">
         <div className="max-w-5xl mx-auto">
           <div className="rounded-3xl border border-border bg-card shadow-lg p-8 md:p-12">
             <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">Professional Training</p>
@@ -131,7 +131,7 @@ const ForInstitutions = () => {
       </section>
 
       {/* Contact Form */}
-      <section className="py-24 px-6 md:px-12">
+      <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-3xl mx-auto">
           <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">Get In Touch</p>
           <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">Contact Us</h2>
@@ -202,7 +202,7 @@ const ForInstitutions = () => {
       </section>
 
       {/* CTA — Online Application */}
-      <section className="py-20 px-6 md:px-12 bg-muted/30">
+      <section className="py-20 px-6 md:px-12 content-bg-alt">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-foreground">Ready to get started?</h3>
           <p className="text-base md:text-lg text-muted-foreground font-light">

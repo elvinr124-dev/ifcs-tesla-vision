@@ -127,7 +127,7 @@ const Evaluations = () => {
       </section>
 
       {/* Services */}
-      <section id="services" className="py-24 px-6 md:px-12">
+      <section id="services" className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
@@ -309,7 +309,7 @@ const Evaluations = () => {
         </div>
       </section>
 
-      <div className="text-center pb-16">
+      <div className="text-center pb-16 content-bg">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-sm transition-colors text-muted-foreground hover:text-foreground"

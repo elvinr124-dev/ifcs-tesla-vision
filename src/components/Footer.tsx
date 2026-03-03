@@ -1,6 +1,22 @@
+import { Link } from "react-router-dom";
+
 const Footer = () => {
+  const serviceLinks = [
+    { label: "Academic Evaluations", to: "/evaluations" },
+    { label: "Translations", to: "/translations" },
+    { label: "Consulting", to: "/consulting" },
+    { label: "Apply Now", to: "/application" },
+  ];
+
+  const companyLinks = [
+    { label: "About Us", to: "/about" },
+    { label: "For Individuals", to: "/for-individuals" },
+    { label: "FAQ", to: "/faq" },
+    { label: "Contact Us", to: "/contact" },
+  ];
+
   return (
-    <footer id="contact" className="bg-primary py-16 px-6 md:px-12">
+    <footer className="bg-primary py-16 px-6 md:px-12">
       <div className="max-w-6xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
@@ -15,11 +31,11 @@ const Footer = () => {
           <div>
             <h4 className="text-xs font-semibold tracking-[0.15em] uppercase text-primary-foreground/40 mb-4">Services</h4>
             <ul className="space-y-2">
-              {["Academic Evaluations", "Translations", "Consulting", "Evaluation Status"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
-                    {item}
-                  </a>
+              {serviceLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -29,11 +45,11 @@ const Footer = () => {
           <div>
             <h4 className="text-xs font-semibold tracking-[0.15em] uppercase text-primary-foreground/40 mb-4">Company</h4>
             <ul className="space-y-2">
-              {["About Us", "Blog", "FAQ", "Contact Us"].map((item) => (
-                <li key={item}>
-                  <a href="#" className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
-                    {item}
-                  </a>
+              {companyLinks.map((item) => (
+                <li key={item.label}>
+                  <Link to={item.to} className="text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
+                    {item.label}
+                  </Link>
                 </li>
               ))}
             </ul>

@@ -130,7 +130,7 @@ const TranslationOrder = () => {
   };
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="min-h-screen content-bg">
       <Navbar />
 
       {/* Hero */}

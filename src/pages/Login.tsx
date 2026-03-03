@@ -23,7 +23,7 @@ const Login = () => {
       </section>
 
       {/* Login type cards */}
-      <section className="py-20 px-6 md:px-12">
+      <section className="py-20 px-6 md:px-12 content-bg">
         <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
 
           {/* Client Login */}
