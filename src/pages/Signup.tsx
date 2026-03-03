@@ -99,7 +99,7 @@ const Signup = () => {
         </div>
       </section>
 
-      <section className="py-16 px-6">
+      <section className="py-16 px-6 content-bg">
         <div className="max-w-lg mx-auto">
           <div className="rounded-3xl border border-border bg-card shadow-xl overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-accent via-accent/60 to-transparent" />

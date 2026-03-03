@@ -148,7 +148,7 @@ const Translations = () => {
       </section>
 
       {/* Trust Badges */}
-      <section className="border-b border-border bg-muted/50">
+      <section className="border-b border-border content-bg-alt">
         <div className="max-w-6xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-4 gap-6">
           {[
             { icon: ShieldCheck, text: "USCIS Acceptance Guaranteed" },
@@ -165,7 +165,7 @@ const Translations = () => {
       </section>
 
       {/* Languages */}
-      <section className="py-24 px-6 md:px-12">
+      <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
             150+ Languages
@@ -200,7 +200,7 @@ const Translations = () => {
       </section>
 
       {/* Documents */}
-      <section className="py-24 px-6 md:px-12 bg-muted/30">
+      <section className="py-24 px-6 md:px-12 content-bg-alt">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
             Any Document
@@ -226,7 +226,7 @@ const Translations = () => {
       </section>
 
       {/* Use Cases */}
-      <section className="py-24 px-6 md:px-12">
+      <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
             Solutions
@@ -249,7 +249,7 @@ const Translations = () => {
       </section>
 
       {/* Pricing */}
-      <section className="py-24 px-6 md:px-12 bg-muted/30">
+      <section className="py-24 px-6 md:px-12 content-bg-alt">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
             Details & Pricing
@@ -307,7 +307,7 @@ const Translations = () => {
       </section>
 
       {/* FAQ */}
-      <section className="py-24 px-6 md:px-12">
+      <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-3xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
             FAQ
