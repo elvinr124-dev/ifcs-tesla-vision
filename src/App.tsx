@@ -23,6 +23,8 @@ import StaffCartView from "./pages/StaffCartView";
 import ForIndividuals from "./pages/ForIndividuals";
 import ForInstitutions from "./pages/ForInstitutions";
 import TranslationOrder from "./pages/TranslationOrder";
+import ClientDashboard from "./pages/ClientDashboard";
+import StaffDashboard from "./pages/StaffDashboard";
 
 const queryClient = new QueryClient();
 
@@ -52,6 +54,8 @@ const App = () => (
               <Route path="/for-individuals" element={<ForIndividuals />} />
               <Route path="/for-institutions" element={<ForInstitutions />} />
               <Route path="/translations/order" element={<TranslationOrder />} />
+              <Route path="/dashboard/client" element={<ClientDashboard />} />
+              <Route path="/dashboard/staff" element={<StaffDashboard />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
