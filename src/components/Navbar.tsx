@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, GraduationCap, Languages, Briefcase, Users, HelpCircle, Mail, LogIn, ShoppingCart, LogOut, Shield } from "lucide-react";
+import { Menu, X, GraduationCap, Languages, Briefcase, Users, HelpCircle, Mail, LogIn, ShoppingCart, LogOut, Shield, LayoutDashboard } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 
@@ -75,6 +75,15 @@ const Navbar = () => {
         {/* Login / User bubble */}
         {user ? (
           <div className="flex items-center gap-2">
+            {/* My Dashboard — visible to both roles */}
+            <Link to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"} className="group">
+              <div className={`${bubbleBase} ${location.pathname.startsWith("/dashboard") ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
+                <LayoutDashboard size={18} style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }} />
+                <span className="text-xs font-semibold tracking-wide" style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }}>
+                  My Dashboard
+                </span>
+              </div>
+            </Link>
             {user.role === "staff" && (
               <Link to="/staff/cart" className="group">
                 <div className={`${bubbleBase} ${scrolled ? bubbleScrolled : bubbleFloat}`}>
@@ -152,15 +161,23 @@ const Navbar = () => {
 
             {/* Login mobile */}
             {user ? (
-              <button
-                className="flex flex-col items-center gap-2"
-                onClick={() => { logout(); navigate("/"); setMobileOpen(false); }}
-              >
-                <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-md bg-muted hover:bg-accent/20">
-                  <LogOut size={24} className="text-foreground" />
-                </div>
-                <span className="text-xs font-semibold text-foreground">Sign Out</span>
-              </button>
+              <>
+                <Link to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"} className="flex flex-col items-center gap-2" onClick={() => setMobileOpen(false)}>
+                  <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-md ${location.pathname.startsWith("/dashboard") ? "bg-accent" : "bg-muted hover:bg-accent/20"}`}>
+                    <LayoutDashboard size={24} className={location.pathname.startsWith("/dashboard") ? "text-accent-foreground" : "text-foreground"} />
+                  </div>
+                  <span className="text-xs font-semibold text-foreground">Dashboard</span>
+                </Link>
+                <button
+                  className="flex flex-col items-center gap-2"
+                  onClick={() => { logout(); navigate("/"); setMobileOpen(false); }}
+                >
+                  <div className="w-16 h-16 rounded-2xl flex items-center justify-center shadow-md bg-muted hover:bg-accent/20">
+                    <LogOut size={24} className="text-foreground" />
+                  </div>
+                  <span className="text-xs font-semibold text-foreground">Sign Out</span>
+                </button>
+              </>
             ) : (
               <Link to="/login" className="flex flex-col items-center gap-2" onClick={() => setMobileOpen(false)}>
                 <div className={`w-16 h-16 rounded-2xl flex items-center justify-center shadow-md ${location.pathname.startsWith("/login") ? "bg-accent" : "bg-muted hover:bg-accent/20"}`}>
