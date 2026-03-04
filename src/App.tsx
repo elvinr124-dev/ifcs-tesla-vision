@@ -25,6 +25,7 @@ import ForInstitutions from "./pages/ForInstitutions";
 import TranslationOrder from "./pages/TranslationOrder";
 import ClientDashboard from "./pages/ClientDashboard";
 import StaffDashboard from "./pages/StaffDashboard";
+import DuplicateReports from "./pages/DuplicateReports";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +57,7 @@ const App = () => (
               <Route path="/translations/order" element={<TranslationOrder />} />
               <Route path="/dashboard/client" element={<ClientDashboard />} />
               <Route path="/dashboard/staff" element={<StaffDashboard />} />
+              <Route path="/duplicate-reports" element={<DuplicateReports />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
