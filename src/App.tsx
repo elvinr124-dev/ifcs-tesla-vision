@@ -26,6 +26,11 @@ import TranslationOrder from "./pages/TranslationOrder";
 import ClientDashboard from "./pages/ClientDashboard";
 import StaffDashboard from "./pages/StaffDashboard";
 import DuplicateReports from "./pages/DuplicateReports";
+import AddonElectronicSharing from "./pages/AddonElectronicSharing";
+import AddonHardCopy from "./pages/AddonHardCopy";
+import AddonDomesticShipping from "./pages/AddonDomesticShipping";
+import AddonInternationalShipping from "./pages/AddonInternationalShipping";
+import AddonRenewal from "./pages/AddonRenewal";
 
 const queryClient = new QueryClient();
 
@@ -58,6 +63,11 @@ const App = () => (
               <Route path="/dashboard/client" element={<ClientDashboard />} />
               <Route path="/dashboard/staff" element={<StaffDashboard />} />
               <Route path="/duplicate-reports" element={<DuplicateReports />} />
+              <Route path="/addon/electronic-sharing" element={<AddonElectronicSharing />} />
+              <Route path="/addon/hard-copy" element={<AddonHardCopy />} />
+              <Route path="/addon/domestic-shipping" element={<AddonDomesticShipping />} />
+              <Route path="/addon/international-shipping" element={<AddonInternationalShipping />} />
+              <Route path="/addon/renewal" element={<AddonRenewal />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
