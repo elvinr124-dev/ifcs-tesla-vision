@@ -60,11 +60,11 @@ const mockReports = [
 ];
 
 const addOns = [
-  { id: "addon-electronic", label: "Electronic Sharing", price: 25, link: "/duplicate-reports" },
-  { id: "addon-hardcopy", label: "Hard Copy Report", price: 25, link: "/duplicate-reports" },
-  { id: "addon-domestic", label: "Domestic Shipping", price: 25, link: "/duplicate-reports" },
-  { id: "addon-international", label: "International Shipping", price: 70, link: "/duplicate-reports" },
-  { id: "addon-renewal", label: "Renewal (5 Years)", price: 100, link: "/duplicate-reports" },
+  { id: "addon-electronic", label: "Electronic Sharing", price: 25, link: "/addon/electronic-sharing" },
+  { id: "addon-hardcopy", label: "Hard Copy Report", price: 25, link: "/addon/hard-copy" },
+  { id: "addon-domestic", label: "Domestic Shipping", price: 25, link: "/addon/domestic-shipping" },
+  { id: "addon-international", label: "International Shipping", price: 70, link: "/addon/international-shipping" },
+  { id: "addon-renewal", label: "Renewal (5 Years)", price: 100, link: "/addon/renewal" },
 ];
 
 const statusMeta: Record<string, { label: string; color: string; icon: React.ReactNode }> = {

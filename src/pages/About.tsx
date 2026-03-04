@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { ArrowLeft, Award, Globe, ShieldCheck, Users } from "lucide-react";
-import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
+import aboutBg from "@/assets/about-bg.jpg";
 
 const values = [
   { icon: Award, title: "Excellence", desc: "We uphold the highest standards in credential evaluation and translation." },
@@ -16,7 +16,7 @@ const About = () => (
     <Navbar />
 
     <section className="relative h-[55vh] min-h-[380px] w-full flex items-center overflow-hidden">
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brooklynBridge})` }} />
+      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${aboutBg})` }} />
       <div className="video-overlay" />
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up">
         <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Our Story</p>
