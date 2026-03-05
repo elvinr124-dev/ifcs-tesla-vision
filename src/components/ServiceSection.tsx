@@ -48,7 +48,7 @@ const ServiceSection = ({
       {!dark &&
       <div className="absolute inset-0" style={{ background: "hsl(0 0% 100% / 0.7)" }} />
       }
-      <div className="tesla-section-content">
+      <div className="tesla-section-content hero-text-shadow">
         <p
           className="text-base font-semibold tracking-[0.25em] uppercase mb-4 opacity-80"
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>

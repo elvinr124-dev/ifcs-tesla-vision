@@ -22,7 +22,7 @@ const HeroSection = () => {
       <div className="video-overlay" />
 
       {/* Content */}
-      <div className="tesla-section-content animate-fade-in-up" style={{ color: "white" }}>
+      <div className="tesla-section-content animate-fade-in-up hero-text-shadow" style={{ color: "white" }}>
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-tight">
           Institute of Foreign<br />Credential Services
         </h1>

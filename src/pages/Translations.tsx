@@ -96,7 +96,7 @@ const Translations = () => {
           style={{ backgroundImage: `url(${translationsBg})` }}
         />
         <div className="video-overlay" />
-        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12">
+        <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
           <Link
             to="/"
             className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity"

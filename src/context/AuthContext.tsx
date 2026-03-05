@@ -73,9 +73,16 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const loginStaff = (username: string, password: string): boolean => {
+    // Check dedicated staff credentials
     const pass = STAFF_CREDENTIALS[username];
     if (pass && pass === password) {
       setUser({ username, role: "staff" });
+      return true;
+    }
+    // Also allow client credentials to login as staff
+    const cred = CLIENT_CREDENTIALS[username];
+    if (cred && cred.password === password) {
+      setUser({ username, role: "staff", firstName: cred.displayName });
       return true;
     }
     return false;

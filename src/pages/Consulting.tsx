@@ -18,10 +18,10 @@ const Consulting = () => (
     <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${consultingBg})` }} />
       <div className="video-overlay" />
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up hero-text-shadow">
         <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Expert Guidance</p>
         <h1 className="tesla-hero-title text-white">Consulting</h1>
-        <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/80">
+        <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/90">
           Work side by side with a senior consultant to ensure you choose the right evaluation and streamline your admission.
         </p>
       </div>
@@ -44,14 +44,12 @@ const Consulting = () => (
         </div>
 
         <div className="text-center mt-16">
-          <a
-            href="https://ifcsevals.com/contact-us"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to="/consulting/book"
             className="tesla-btn-primary inline-block"
           >
             Book a Consultation
-          </a>
+          </Link>
         </div>
       </div>
     </section>

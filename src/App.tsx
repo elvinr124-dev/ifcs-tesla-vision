@@ -5,11 +5,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
+import AIChatWidget from "@/components/AIChatWidget";
 import Index from "./pages/Index";
 import Translations from "./pages/Translations";
 import Evaluations from "./pages/Evaluations";
 import Application from "./pages/Application";
 import Consulting from "./pages/Consulting";
+import BookConsultation from "./pages/BookConsultation";
 import About from "./pages/About";
 import FAQ from "./pages/FAQ";
 import Contact from "./pages/Contact";
@@ -48,6 +50,7 @@ const App = () => (
               <Route path="/evaluations" element={<Evaluations />} />
               <Route path="/application" element={<Application />} />
               <Route path="/consulting" element={<Consulting />} />
+              <Route path="/consulting/book" element={<BookConsultation />} />
               <Route path="/about" element={<About />} />
               <Route path="/faq" element={<FAQ />} />
               <Route path="/contact" element={<Contact />} />
@@ -70,6 +73,7 @@ const App = () => (
               <Route path="/addon/renewal" element={<AddonRenewal />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <AIChatWidget />
           </BrowserRouter>
         </CartProvider>
       </AuthProvider>

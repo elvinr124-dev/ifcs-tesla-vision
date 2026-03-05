@@ -18,10 +18,10 @@ const About = () => (
     <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${aboutBg})` }} />
       <div className="video-overlay" />
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up">
+      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up hero-text-shadow">
         <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Our Story</p>
         <h1 className="tesla-hero-title text-white">About IFCS</h1>
-        <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/80">
+        <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/90">
           The Institute of Foreign Credential Services has been helping international students and professionals get their credentials recognized since its founding.
         </p>
       </div>

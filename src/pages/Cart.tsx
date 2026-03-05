@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { ShoppingCart, Trash2, ArrowLeft, ArrowRight, Clock } from "lucide-react";
-import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
+import cartBg from "@/assets/cart-bg.jpg";
 
 const Cart = () => {
   const { items, removeItem, clearCart } = useCart();
@@ -14,12 +14,12 @@ const Cart = () => {
       <Navbar />
 
       <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
-        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brooklynBridge})` }} />
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${cartBg})` }} />
         <div className="video-overlay" />
-        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 hero-text-shadow">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Your Selection</p>
           <h1 className="tesla-hero-title text-white">Your Cart</h1>
-          <p className="tesla-hero-subtitle text-white/80 max-w-lg">
+          <p className="tesla-hero-subtitle text-white/90 max-w-lg">
             Review your evaluation services before proceeding to payment.
           </p>
         </div>
