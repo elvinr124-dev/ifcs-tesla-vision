@@ -168,10 +168,14 @@
     @apply absolute inset-0;
     background: linear-gradient(
       to bottom,
-      hsl(var(--hero-overlay) / 0.3) 0%,
-      hsl(var(--hero-overlay) / 0.15) 40%,
-      hsl(var(--hero-overlay) / 0.5) 100%
+      hsl(var(--hero-overlay) / 0.55) 0%,
+      hsl(var(--hero-overlay) / 0.4) 40%,
+      hsl(var(--hero-overlay) / 0.7) 100%
     );
+  }
+
+  .hero-text-shadow {
+    text-shadow: 0 2px 16px rgba(0,0,0,0.7), 0 4px 32px rgba(0,0,0,0.5);
   }
 
   .content-bg {
