@@ -15,7 +15,7 @@ const About = () => (
   <div className="min-h-screen">
     <Navbar />
 
-    <section className="relative h-[55vh] min-h-[380px] w-full flex items-center overflow-hidden">
+    <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${aboutBg})` }} />
       <div className="video-overlay" />
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up">
