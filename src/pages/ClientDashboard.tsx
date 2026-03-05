@@ -10,9 +10,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
   FileText, Download, Share2, RefreshCw, Send, Clock, CheckCircle2, AlertCircle, Package,
-  MessageSquare, ShieldCheck, Info, Plus, Languages, Upload, ChevronDown, ChevronUp,
+  MessageSquare, ShieldCheck, Plus, Languages, Upload, ChevronDown, ChevronUp, Eye, ThumbsUp, ThumbsDown,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
 
 /* ---------- types ---------- */
 interface StaffRequirement {
@@ -30,13 +33,15 @@ interface MockOrder {
   submitted: string;
   staffNote: string;
   requirements: StaffRequirement[];
+  deliveryApproved?: boolean;
+  reportFileUrl?: string;
 }
 
 /* ---------- mock data ---------- */
-const mockOrders: MockOrder[] = [
+const initialOrders: MockOrder[] = [
   {
     id: "ORD-1001", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "03/01/2026", staffNote: "",
-    requirements: [],
+    requirements: [], reportFileUrl: "/sample-report.pdf",
   },
   {
     id: "ORD-1002", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "02/28/2026",
@@ -49,7 +54,7 @@ const mockOrders: MockOrder[] = [
   },
   {
     id: "ORD-1003", service: "Document Translation", status: "delivered", submitted: "02/20/2026", staffNote: "",
-    requirements: [],
+    requirements: [], deliveryApproved: false, reportFileUrl: "/sample-report.pdf",
   },
 ];
 
@@ -87,11 +92,30 @@ const ClientDashboard = () => {
   const { toast } = useToast();
   const [message, setMessage] = useState("");
   const [expandedOrder, setExpandedOrder] = useState<string | null>("ORD-1002");
+  const [orders, setOrders] = useState<MockOrder[]>(initialOrders);
+
+  // Delivery approval state
+  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
+  const [rejectOrderId, setRejectOrderId] = useState<string | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
 
   const handleSend = () => {
     if (!message.trim()) return;
     toast({ title: "Message Sent", description: "We have received your message and will respond within 24–48 hours." });
     setMessage("");
+  };
+
+  const handleApproveDelivery = (orderId: string) => {
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, deliveryApproved: true } : o));
+    toast({ title: "Delivery Approved", description: "You have approved the delivery. You can now view your report." });
+  };
+
+  const handleRejectDelivery = () => {
+    if (!rejectReason.trim()) return;
+    toast({ title: "Feedback Sent", description: "Your feedback has been sent to IFCS staff. They will review and follow up." });
+    setRejectDialogOpen(false);
+    setRejectReason("");
+    setRejectOrderId(null);
   };
 
   return (
@@ -108,7 +132,7 @@ const ClientDashboard = () => {
       <div className="content-bg">
         <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-10">
 
-          {/* ── Order Tracking (Fiverr-style) ── */}
+          {/* ── Order Tracking ── */}
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
@@ -116,14 +140,13 @@ const ClientDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              {mockOrders.map((order) => {
+              {orders.map((order) => {
                 const meta = statusMeta[order.status] ?? statusMeta.requested;
                 const isExpanded = expandedOrder === order.id;
                 const currentIdx = statusSteps.indexOf(order.status);
 
                 return (
                   <div key={order.id} className="rounded-xl border border-border overflow-hidden">
-                    {/* Order header */}
                     <button
                       onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
                       className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left"
@@ -160,7 +183,58 @@ const ClientDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Staff requirements (Fiverr-style) */}
+                        {/* Delivery Approval (Fiverr-style) — shown when delivered */}
+                        {order.status === "delivered" && (
+                          <div className="rounded-xl border-2 border-accent/30 bg-accent/5 p-6">
+                            {order.deliveryApproved ? (
+                              <div className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                  <CheckCircle2 size={24} className="text-emerald-500" />
+                                  <div>
+                                    <p className="font-semibold text-foreground">Delivery Approved</p>
+                                    <p className="text-sm text-muted-foreground">You approved this delivery. Your report is now available.</p>
+                                  </div>
+                                </div>
+                                <Button variant="outline" className="gap-2" onClick={() => window.open(order.reportFileUrl, '_blank')}>
+                                  <Eye size={16} /> View Report
+                                </Button>
+                              </div>
+                            ) : (
+                              <div className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                  <Package size={24} className="text-accent" />
+                                  <div>
+                                    <p className="font-semibold text-foreground text-lg">Your report is ready!</p>
+                                    <p className="text-sm text-muted-foreground">
+                                      Are you pleased with the delivery and ready to approve it?
+                                    </p>
+                                  </div>
+                                </div>
+                                <p className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
+                                  ⚠️ Once you approve this delivery, the order will be marked as complete. Any revisions after this step may be subject to extra costs.
+                                  You can view the report only after approving the delivery.
+                                </p>
+                                <div className="flex items-center gap-3">
+                                  <Button
+                                    onClick={() => handleApproveDelivery(order.id)}
+                                    className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
+                                  >
+                                    <ThumbsUp size={16} /> Yes, I approve delivery
+                                  </Button>
+                                  <Button
+                                    variant="outline"
+                                    onClick={() => { setRejectOrderId(order.id); setRejectDialogOpen(true); }}
+                                    className="gap-2"
+                                  >
+                                    <ThumbsDown size={16} /> I'm not ready yet
+                                  </Button>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+
+                        {/* Staff requirements */}
                         {order.requirements.length > 0 && (
                           <div>
                             <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
@@ -258,7 +332,7 @@ const ClientDashboard = () => {
                     )}
                     {r.status === "pending" && <Button size="sm" variant="outline" className="gap-1"><Share2 size={14} /> Share</Button>}
                     {r.status === "expired" && (
-                      <Link to="/duplicate-reports">
+                      <Link to="/addon/renewal">
                         <Button size="sm" variant="destructive" className="gap-1"><RefreshCw size={14} /> Renew ($100)</Button>
                       </Link>
                     )}
@@ -283,6 +357,30 @@ const ClientDashboard = () => {
           </Card>
         </div>
       </div>
+
+      {/* Reject / Not Ready Dialog */}
+      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Tell us what's wrong</DialogTitle>
+            <DialogDescription>
+              Please explain why you're not ready to approve this delivery. Our staff will review your feedback and follow up.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Describe the issue or what needs to be revised..."
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            className="min-h-[120px]"
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleRejectDelivery} disabled={!rejectReason.trim()} className="gap-2">
+              <Send size={16} /> Send Feedback
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
