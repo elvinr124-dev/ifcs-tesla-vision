@@ -12,12 +12,11 @@ export interface AuthUser {
   appCode?: string;
 }
 
-// Hardcoded client credentials
-const CLIENT_CREDENTIALS: Record<string, { password: string; displayName: string }> = {
-  Ifcs111: { password: "matoshi777", displayName: "Client One" },
-  ifcs222: { password: "matoshi888", displayName: "Client Two" },
-  ifcs333: { password: "matoshi999", displayName: "Client Three" },
-};
+// Hardcoded client credentials (Ifcs111-999 with Matoshi111-999)
+const CLIENT_CREDENTIALS: Record<string, { password: string; displayName: string }> = {};
+for (let i = 1; i <= 9; i++) {
+  CLIENT_CREDENTIALS[`Ifcs${i}${i}${i}`] = { password: `Matoshi${i}${i}${i}`, displayName: `Client ${i}` };
+}
 
 // Hardcoded staff credentials
 const STAFF_CREDENTIALS: Record<string, string> = {
