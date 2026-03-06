@@ -17,7 +17,7 @@ const Cart = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${cartBg})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 hero-text-shadow">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Your Selection</p>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Your Selection</p>
           <h1 className="tesla-hero-title text-white">Your Cart</h1>
           <p className="tesla-hero-subtitle text-white/90 max-w-lg">
             Review your evaluation services before proceeding to payment.
@@ -27,8 +27,8 @@ const Cart = () => {
 
       <section className="py-16 px-6 md:px-12">
         <div className="max-w-4xl mx-auto">
-          {items.length === 0 ? (
-            <div className="rounded-3xl border border-border bg-card p-16 flex flex-col items-center gap-5 text-center shadow-xl">
+          {items.length === 0 ?
+          <div className="rounded-3xl border border-border bg-card p-16 flex flex-col items-center gap-5 text-center shadow-xl">
               <div className="w-16 h-16 rounded-3xl bg-muted flex items-center justify-center">
                 <ShoppingCart size={28} className="text-muted-foreground" />
               </div>
@@ -37,16 +37,16 @@ const Cart = () => {
                 Browse our evaluation services and add them to your cart to get started.
               </p>
               <Link
-                to="/evaluations"
-                className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105"
-              >
+              to="/evaluations"
+              className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105">
+              
                 Browse Evaluations <ArrowRight size={16} />
               </Link>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {items.map((item) => (
-                <div key={item.id} className="rounded-2xl border border-border bg-card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
+            </div> :
+
+          <div className="space-y-4">
+              {items.map((item) =>
+            <div key={item.id} className="rounded-2xl border border-border bg-card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
                   <div className="space-y-1 flex-1">
                     <span className="text-xs font-bold uppercase tracking-widest text-accent">Academic Evaluation</span>
                     <h3 className="text-lg font-bold text-foreground">{item.serviceTitle}</h3>
@@ -61,15 +61,15 @@ const Cart = () => {
                       <p className="text-2xl font-bold text-foreground">${item.price}</p>
                     </div>
                     <button
-                      onClick={() => removeItem(item.id)}
-                      className="w-10 h-10 rounded-xl border border-destructive/30 bg-destructive/5 hover:bg-destructive/15 flex items-center justify-center text-destructive transition-colors"
-                      title="Remove"
-                    >
+                  onClick={() => removeItem(item.id)}
+                  className="w-10 h-10 rounded-xl border border-destructive/30 bg-destructive/5 hover:bg-destructive/15 flex items-center justify-center text-destructive transition-colors"
+                  title="Remove">
+                  
                       <Trash2 size={16} />
                     </button>
                   </div>
                 </div>
-              ))}
+            )}
 
               {/* Summary */}
               <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6">
@@ -82,15 +82,15 @@ const Cart = () => {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link
-                    to="/application"
-                    className="flex-1 inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105"
-                  >
+                  to="/application"
+                  className="flex-1 inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105">
+                  
                     Proceed to Application <ArrowRight size={16} />
                   </Link>
                   <button
-                    onClick={clearCart}
-                    className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border border-destructive/30 bg-destructive/5 text-destructive text-sm font-semibold hover:bg-destructive/15 transition-all duration-200"
-                  >
+                  onClick={clearCart}
+                  className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border border-destructive/30 bg-destructive/5 text-destructive text-sm font-semibold hover:bg-destructive/15 transition-all duration-200">
+                  
                     <Trash2 size={16} /> Clear Cart
                   </button>
                 </div>
@@ -102,13 +102,13 @@ const Cart = () => {
                 </Link>
               </div>
             </div>
-          )}
+          }
         </div>
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>);
+
 };
 
 export default Cart;
