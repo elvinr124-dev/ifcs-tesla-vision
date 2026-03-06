@@ -1,80 +1,94 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, X, Send } from "lucide-react";
+import { MessageCircle, X, Send, Paperclip } from "lucide-react";
 
-const IFCS_KNOWLEDGE = `You are the IFCS AI Assistant for the Institute of Foreign Credential Services (IFCS), located at 6 Cedar Street, Dobbs Ferry, NY 10522.
+const EVALUATION_DETAILED_RESPONSE = `Greetings,
 
-Key services and information:
+We appreciate your interest in our evaluation services.
 
-EVALUATIONS:
-- General Analysis: $100 (Rush 3-Day: $150, Rush 24hr: $195) — 8-10 business days
-- General Analysis plus GPA: $150 (Rush 3-Day: $205, Rush 24hr: $295)
-- Course-by-Course: $190 (Rush 3-Day: $290, Rush 24hr: $425)
-- Comprehensive Course-by-Course: $290 (Rush 3-Day: $390, Rush 24hr: $490)
-- Health Professions Course-by-Course: $230 (Rush 3-Day: $355, Rush 24hr: $490)
+To initiate the process, kindly follow the steps outlined below:
 
-ADD-ONS:
-- Electronic sharing fee: $25
-- Hard copy: $25 + shipping
-- Domestic shipping: $25
-- International shipping: $70
-- Reports are valid for 5 years
-- Renewal after expiration: $100 (5 years)
-- Duplicate Reports available
+**1. Apply Online:** Please visit our website at [Institute of Foreign Credential Services (IFCS)](https://ifcsevals.com) and complete the online application form. Along with the application, you will be able to upload copies of your transcripts and degree certificate/diploma.
 
-TRANSLATIONS:
-- Certified translations in 150+ languages
-- $50 per page
-- Accepted by USCIS, universities, and government agencies
-- Add-ons: Expedited ($14.95/page), Notarization ($19.95/order), Hard Copy (from $14.95)
+**2. Required Documents, Fees, and Processing Time:** On the application page, you will find a list of the required documents for evaluation, as well as information regarding the applicable fees and the estimated processing time: https://ifcsevals.com/evaluations/
 
-CONSULTING:
-- Evaluation consultations: FREE
-- Admission & advisory consultations: $60/hour at Dobbs Ferry office
+**3. Submitting Official Transcripts:** After submitting your application, it is important to arrange for your issuing institutions to send your official transcripts directly to our office either by mail or email. Only documents received directly from the issuing institutions will be considered official. Our mailing address is:
 
-CONTACT:
-- Phone: (914) 693-2840
-- Email: info@ifcsevals.com
-- Hours: Monday-Friday, 9:00 AM - 5:00 PM EST
-- Website: ifcsevals.com
+**IFCS**
+**6 Cedar Street**
+**Dobbs Ferry, NY 10522**
 
-Always be helpful and professional. If you cannot answer a question, direct them to contact IFCS directly at (914) 693-2840 or info@ifcsevals.com.`;
+For electronic official documents, the email's subject line should include your "IFCS ID" which will be sent to you after you submit your application online.
 
-type Message = { role: "user" | "assistant"; content: string };
+Alternatively, you can pay $140 for document authentication, and we will reach out to the issuing institution to verify your documents.
+
+**4. Translation Services:** If your transcripts are in a foreign language, please note that we can provide you with a translation quote after we have received your application.
+
+**5. Report Delivery Services:** We can mail or email your credential evaluation report to the desired addresses.
+
+Please follow the instructions on our website and let us know if you have any additional questions.`;
+
+type Message = { role: "user" | "assistant"; content: string; attachments?: string[] };
 
 const AIChatWidget = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [attachments, setAttachments] = useState<File[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setAttachments((prev) => [...prev, ...Array.from(e.target.files!)]);
+    }
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
-    const userMsg: Message = { role: "user", content: input.trim() };
+    if ((!input.trim() && attachments.length === 0) || isLoading) return;
+    const attachmentNames = attachments.map((f) => f.name);
+    const userMsg: Message = { role: "user", content: input.trim(), attachments: attachmentNames.length > 0 ? attachmentNames : undefined };
     setMessages((prev) => [...prev, userMsg]);
     setInput("");
+    setAttachments([]);
     setIsLoading(true);
 
-    // Simple local response based on keywords since we don't have Cloud yet
     const q = userMsg.content.toLowerCase();
     let response = "";
 
-    if (q.includes("price") || q.includes("cost") || q.includes("how much") || q.includes("fee")) {
+    // Check if it's specifically a price-only question
+    const isPriceOnly = (q.includes("price") || q.includes("cost") || q.includes("how much") || q.includes("fee")) && !q.includes("how") && !q.includes("process") && !q.includes("start") && !q.includes("apply") && !q.includes("need");
+
+    if (isPriceOnly) {
       response = "Here are our main pricing tiers:\n\n**Evaluations:**\n- General Analysis: $100\n- General Analysis + GPA: $150\n- Course-by-Course: $190\n- Comprehensive Course-by-Course: $290\n- Health Professions: $230\n\n**Rush options** are available for 3-day and 24-hour processing.\n\n**Translations:** $50 per page\n\n**Consulting:** Evaluation consultations are FREE. Admission advising is $60/hour.\n\nWould you like more details on any specific service?";
+    } else if (q.includes("evaluation") || q.includes("credential") || q.includes("transcript") || q.includes("degree") || q.includes("how do i") || q.includes("get started") || q.includes("apply") || q.includes("process") || q.includes("how does") || q.includes("what do i need")) {
+      response = EVALUATION_DETAILED_RESPONSE;
+    } else if (q.includes("certified translation") || q.includes("what is a certified")) {
+      response = "A **certified translation** includes a signed statement by the translator or translation company attesting that the translation is accurate and complete. It is required by USCIS, universities, and government agencies.";
+    } else if (q.includes("how long") && q.includes("translation")) {
+      response = "Standard turnaround is **3–5 business days** per document. Expedited options are available for same-day or next-day delivery.";
+    } else if (q.includes("what language") || q.includes("which language")) {
+      response = "We translate documents from and into **150+ languages**. If you don't see your language listed, contact us — we likely support it.\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**";
+    } else if (q.includes("uscis") || q.includes("accepted")) {
+      response = "Yes. All our certified translations meet **USCIS requirements** and are guaranteed to be accepted. If not, we will re-translate at no charge.";
+    } else if (q.includes("notari")) {
+      response = "Yes. We offer **notarization** as an add-on service for **$19.95 per order**. The notarized document is valid in all 50 U.S. states.";
     } else if (q.includes("translation") || q.includes("translate")) {
-      response = "We offer certified translations in **150+ languages** at **$50 per page**. Our translations are accepted by USCIS, universities, and government agencies.\n\n**Add-ons available:**\n- Expedited turnaround: $14.95/page\n- Notarization: $19.95/order\n- Hard copy: from $14.95\n\nYou can start your order on our Translations page!";
-    } else if (q.includes("evaluation") || q.includes("credential")) {
-      response = "We offer several evaluation types:\n\n1. **General Analysis** ($100) — U.S. equivalency of your credential\n2. **General Analysis + GPA** ($150) — includes overall GPA\n3. **Course-by-Course** ($190) — detailed course listing with credits & GPA\n4. **Comprehensive Course-by-Course** ($290) — multi-degree, upper/lower division\n5. **Health Professions** ($230) — includes clinical experience\n\nAll evaluations have standard processing of 8-10 business days, with rush options available.";
+      response = "We offer certified translations in **150+ languages** at **$50 per page**. Our translations are accepted by USCIS, universities, and government agencies.\n\nStandard turnaround is **3–5 business days**.\n\n**Add-ons available:**\n- Expedited turnaround: $14.95/page\n- Notarization: $19.95/order\n- Hard copy: from $14.95\n\nYou can start your order on our Translations page!";
     } else if (q.includes("contact") || q.includes("phone") || q.includes("email") || q.includes("reach")) {
       response = "You can reach us at:\n\n📞 **Phone:** (914) 693-2840\n📧 **Email:** info@ifcsevals.com\n📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522\n🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST";
     } else if (q.includes("rush") || q.includes("fast") || q.includes("expedite") || q.includes("urgent")) {
       response = "We offer rush processing for all evaluations:\n\n- **3-Day Rush:** Results in 3 business days\n- **24-Hour Rush:** Results within 24 hours\n\nRush fees vary by evaluation type. For example, General Analysis rush is $150 (3-day) or $195 (24hr).";
-    } else if (q.includes("document") || q.includes("what do i need") || q.includes("required")) {
-      response = "Typically you'll need:\n\n📄 **Transcripts/Mark Sheets** — official academic records\n📄 **Diploma Certificate** — proof of degree completion\n\nSome evaluations may require additional documentation. Our team will let you know if anything else is needed after reviewing your application.";
+    } else if (q.includes("document") || q.includes("required")) {
+      response = "Typically you'll need:\n\n📄 **Transcripts/Mark Sheets** — official academic records\n📄 **Diploma Certificate** — proof of degree completion\n\nDocuments must be sent directly from the issuing institution to be considered official. Our mailing address is:\n\n**IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522**\n\nAlternatively, you can pay **$140 for document authentication** and we will verify directly with the institution.";
     } else if (q.includes("consult") || q.includes("advising") || q.includes("advisor")) {
       response = "**Evaluation consultations** are provided at **NO CHARGE**!\n\n**Admission & Academic Advisory consultations** are available at our Dobbs Ferry office at **$60/hour**.\n\nOur senior staff has reviewed thousands of applications and can help you find the right institution and program. To schedule, email us at info@ifcsevals.com or call (914) 693-2840.";
     } else if (q.includes("shipping") || q.includes("delivery")) {
@@ -83,11 +97,12 @@ const AIChatWidget = () => {
       response = "Evaluation reports are valid for **5 years** from the date of issuance. After expiration, you can renew for **$100**, which extends validity for another 5 years.";
     } else if (q.includes("hello") || q.includes("hi") || q.includes("hey")) {
       response = "Hello! Welcome to IFCS. I can help you with information about our credential evaluations, translations, consulting services, pricing, and more. What would you like to know?";
+    } else if (attachments.length > 0 || userMsg.attachments) {
+      response = "Thank you for sharing your document(s). For a detailed review, please submit them through our online application at https://ifcsevals.com/application or email them to **info@ifcsevals.com**.\n\nIf you have questions about the evaluation process, I'm happy to help!";
     } else {
       response = "I appreciate your question! For more specific inquiries, I'd recommend contacting our team directly:\n\n📞 **Phone:** (914) 693-2840\n📧 **Email:** info@ifcsevals.com\n\nThey'll be happy to assist you with any detailed questions about your specific situation. Is there anything else I can help with regarding our services?";
     }
 
-    // Simulate typing delay
     await new Promise((r) => setTimeout(r, 800));
     setMessages((prev) => [...prev, { role: "assistant", content: response }]);
     setIsLoading(false);
@@ -95,7 +110,6 @@ const AIChatWidget = () => {
 
   return (
     <>
-      {/* Chat bubble */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -106,7 +120,6 @@ const AIChatWidget = () => {
         </button>
       )}
 
-      {/* Chat panel */}
       {isOpen && (
         <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-4rem)] rounded-3xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden animate-fade-in-up">
           {/* Header */}
@@ -140,20 +153,33 @@ const AIChatWidget = () => {
             )}
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                    msg.role === "user"
-                      ? "bg-accent text-white rounded-br-md"
-                      : "bg-muted text-foreground rounded-bl-md"
-                  }`}
-                  style={{ whiteSpace: "pre-wrap" }}
-                >
-                  {msg.content.split(/(\*\*.*?\*\*)/).map((part, j) =>
-                    part.startsWith("**") && part.endsWith("**") ? (
-                      <strong key={j}>{part.slice(2, -2)}</strong>
-                    ) : (
-                      <span key={j}>{part}</span>
-                    )
+                <div className="max-w-[80%] space-y-1">
+                  {msg.attachments && msg.attachments.length > 0 && (
+                    <div className="flex flex-wrap gap-1">
+                      {msg.attachments.map((name, j) => (
+                        <span key={j} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/20 text-[10px] text-accent font-medium">
+                          <Paperclip size={10} /> {name}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  {msg.content && (
+                    <div
+                      className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                        msg.role === "user"
+                          ? "bg-accent text-white rounded-br-md"
+                          : "bg-muted text-foreground rounded-bl-md"
+                      }`}
+                      style={{ whiteSpace: "pre-wrap" }}
+                    >
+                      {msg.content.split(/(\*\*.*?\*\*)/).map((part, j) =>
+                        part.startsWith("**") && part.endsWith("**") ? (
+                          <strong key={j}>{part.slice(2, -2)}</strong>
+                        ) : (
+                          <span key={j}>{part}</span>
+                        )
+                      )}
+                    </div>
                   )}
                 </div>
               </div>
@@ -170,9 +196,38 @@ const AIChatWidget = () => {
             <div ref={messagesEndRef} />
           </div>
 
+          {/* Attachments preview */}
+          {attachments.length > 0 && (
+            <div className="px-4 py-2 border-t border-border flex flex-wrap gap-1">
+              {attachments.map((file, i) => (
+                <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/10 text-[10px] font-medium text-accent">
+                  <Paperclip size={10} /> {file.name}
+                  <button onClick={() => removeAttachment(i)} className="ml-1 hover:text-destructive">
+                    <X size={10} />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
           {/* Input */}
           <div className="border-t border-border px-4 py-3">
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="w-10 h-10 rounded-full flex items-center justify-center text-muted-foreground hover:text-accent hover:bg-muted transition-colors flex-shrink-0"
+                aria-label="Attach file"
+              >
+                <Paperclip size={18} />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                onChange={handleFileSelect}
+                className="hidden"
+                accept="image/*,.pdf,.doc,.docx"
+              />
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -182,8 +237,8 @@ const AIChatWidget = () => {
               />
               <button
                 onClick={sendMessage}
-                disabled={!input.trim() || isLoading}
-                className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent/90 transition-colors disabled:opacity-50"
+                disabled={!input.trim() && attachments.length === 0 || isLoading}
+                className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent/90 transition-colors disabled:opacity-50 flex-shrink-0"
               >
                 <Send size={16} />
               </button>

@@ -63,7 +63,7 @@ const faqs = [
 },
 {
   q: "How long does a translation take?",
-  a: "Standard turnaround is 2–3 business days per document. Expedited options are available for same-day or next-day delivery."
+  a: "Standard turnaround is 3–5 business days per document. Expedited options are available for same-day or next-day delivery."
 },
 {
   q: "What languages do you translate?",
@@ -105,17 +105,14 @@ const Translations = () => {
             <ArrowLeft size={16} />
             Back to Home
           </Link>
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 opacity-80 text-black" style={{ color: "white" }}>
+          <p className="text-sm font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "white" }}>
             Break Language Barriers
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight" style={{ color: "white" }}>
-            Certified Translation
-            <br />
-            <span className="opacity-100">Services</span>
+            Translations
           </h1>
-          <p className="mt-6 text-base md:text-lg max-w-xl font-light opacity-80" style={{ color: "white" }}>
-            Get your documents translated and certified by professional translators in 150+ languages.
-            Fast, accurate, and accepted by USCIS, universities, and government agencies.
+          <p className="mt-6 text-base md:text-lg max-w-xl font-semibold" style={{ color: "white" }}>
+            Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
             <Link
