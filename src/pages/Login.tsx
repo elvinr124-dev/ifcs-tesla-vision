@@ -14,7 +14,7 @@ const Login = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brooklynBridge})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Welcome Back</p>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Welcome Back</p>
           <h1 className="tesla-hero-title text-white">Sign In to IFCS</h1>
           <p className="tesla-hero-subtitle text-white/80 max-w-lg">
             Select your account type to continue.
@@ -41,14 +41,14 @@ const Login = () => {
               </div>
               <Link
                 to="/login/client"
-                className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-accent/50 transition-all duration-200 hover:scale-105"
-              >
+                className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-accent/50 transition-all duration-200 hover:scale-105">
+                
                 Client Login <ArrowRight size={16} />
               </Link>
               <Link
                 to="/signup"
-                className="text-sm text-muted-foreground hover:text-accent transition-colors"
-              >
+                className="text-sm text-muted-foreground hover:text-accent transition-colors">
+                
                 Don't have an account? <span className="font-semibold text-accent underline underline-offset-2">Sign Up</span>
               </Link>
             </div>
@@ -69,8 +69,8 @@ const Login = () => {
               </div>
               <Link
                 to="/login/staff"
-                className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl border border-border bg-muted/50 text-foreground text-sm font-semibold hover:bg-muted transition-all duration-200 hover:scale-105"
-              >
+                className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl border border-border bg-muted/50 text-foreground text-sm font-semibold hover:bg-muted transition-all duration-200 hover:scale-105">
+                
                 Staff Login <ArrowRight size={16} />
               </Link>
               <p className="text-xs text-muted-foreground/60">IFCS internal access only</p>
@@ -81,8 +81,8 @@ const Login = () => {
       </section>
 
       <Footer />
-    </div>
-  );
+    </div>);
+
 };
 
 export default Login;
