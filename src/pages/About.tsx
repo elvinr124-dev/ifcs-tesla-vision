@@ -5,21 +5,21 @@ import { ArrowLeft, Award, Globe, ShieldCheck, Users } from "lucide-react";
 import aboutBg from "@/assets/about-bg.jpg";
 
 const values = [
-  { icon: Award, title: "Excellence", desc: "We uphold the highest standards in credential evaluation and translation." },
-  { icon: Globe, title: "Global Reach", desc: "Serving clients from 190+ countries with evaluations recognized across the U.S." },
-  { icon: ShieldCheck, title: "Integrity", desc: "Every evaluation is accurate, thorough, and compliant with industry standards." },
-  { icon: Users, title: "Client-Centered", desc: "Personalized service tailored to each client's unique academic background." },
-];
+{ icon: Award, title: "Excellence", desc: "We uphold the highest standards in credential evaluation and translation." },
+{ icon: Globe, title: "Global Reach", desc: "Serving clients from 190+ countries with evaluations recognized across the U.S." },
+{ icon: ShieldCheck, title: "Integrity", desc: "Every evaluation is accurate, thorough, and compliant with industry standards." },
+{ icon: Users, title: "Client-Centered", desc: "Personalized service tailored to each client's unique academic background." }];
 
-const About = () => (
-  <div className="min-h-screen">
+
+const About = () =>
+<div className="min-h-screen">
     <Navbar />
 
     <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${aboutBg})` }} />
       <div className="video-overlay" />
       <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up hero-text-shadow">
-        <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Our Story</p>
+        <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Our Story</p>
         <h1 className="tesla-hero-title text-white">About IFCS</h1>
         <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/90">
           The Institute of Foreign Credential Services has been helping international students and professionals get their credentials recognized since its founding.
@@ -39,13 +39,13 @@ const About = () => (
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {values.map((v) => (
-            <div key={v.title} className="text-center p-8 rounded-3xl border border-border bg-card shadow-lg hover:shadow-xl hover:border-accent/30 transition-all duration-300">
+          {values.map((v) =>
+        <div key={v.title} className="text-center p-8 rounded-3xl border border-border bg-card shadow-lg hover:shadow-xl hover:border-accent/30 transition-all duration-300">
               <v.icon size={32} className="text-accent mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-foreground mb-2">{v.title}</h3>
               <p className="text-sm text-muted-foreground">{v.desc}</p>
             </div>
-          ))}
+        )}
         </div>
       </div>
     </section>
@@ -57,7 +57,7 @@ const About = () => (
     </div>
 
     <Footer />
-  </div>
-);
+  </div>;
+
 
 export default About;
