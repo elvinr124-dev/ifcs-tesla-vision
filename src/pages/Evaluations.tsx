@@ -12,71 +12,71 @@ import serviceGraduate from "@/assets/service-graduate.jpg";
 import serviceHealth from "@/assets/service-health.jpg";
 
 const evaluationServices = [
-  {
-    title: "General Analysis",
-    price: 100,
-    rush3Day: 150,
-    rush24Hr: 195,
-    processing: "8–10 Business Days",
-    description:
-      "Identifies country of study, institution attended, dates of attendance, credential received, and provides an overall U.S. equivalency of the credential earned.",
-    recommendedFor: "Immigration, military and admission to junior colleges.",
-    documents: "Transcripts/mark sheets and diploma certificate",
-    bgImage: serviceMilitary,
-  },
-  {
-    title: "General Analysis plus GPA",
-    price: 150,
-    rush3Day: 205,
-    rush24Hr: 295,
-    processing: "8–10 Business Days",
-    description:
-      "Identifies country of study, institution attended, dates of attendance, credential received, and provides an overall U.S. equivalency for the credential earned. Report includes overall GPA.",
-    recommendedFor:
-      "Admission to different types of institutions when GPA is required but no credit transfer is intended.",
-    documents: "Transcripts/mark sheets and diploma certificate",
-    bgImage: serviceEducation,
-  },
-  {
-    title: "Course-by-Course",
-    price: 190,
-    rush3Day: 290,
-    rush24Hr: 425,
-    processing: "8–10 Business Days",
-    description:
-      "Identifies country of study, institution attended, dates of attendance, credential received and provides a list of courses for the credential, semester credit hours, grades, an accumulative GPA and U.S. equivalency for the credential earned.",
-    recommendedFor:
-      "Admission to secondary and post-secondary institutions, and employment.",
-    documents: "Transcripts/mark sheets and diploma certificate.",
-    bgImage: serviceEmployment,
-  },
-  {
-    title: "Comprehensive Course-by-Course",
-    price: 290,
-    rush3Day: 390,
-    rush24Hr: 490,
-    processing: "8–10 Business Days",
-    description:
-      "Identifies country of study, institution(s), dates of attendance, credentials received and provides a list of courses for each credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course and U.S. equivalency for each credential.",
-    recommendedFor:
-      "Transfer, graduate admission, professional licensure, and individuals who have earned multiple university degrees.",
-    documents:
-      "Transcripts/mark sheets and diploma certificates. (Note: this service is only provided for post-secondary credentials.)",
-    bgImage: serviceGraduate,
-  },
-  {
-    title: "Health Professions Course-by-Course",
-    price: 230,
-    rush3Day: 355,
-    rush24Hr: 490,
-    processing: "8–10 Business Days",
-    description:
-      "Identifies country of study, institution attended, dates of attendance, credential received and provides a list of courses for the credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course, lists clinical experience, and U.S. equivalency for the credential earned.",
-    recommendedFor: "Health profession licensing boards.",
-    documents: "Transcripts/mark sheets and diploma certificate",
-    bgImage: serviceHealth,
-  },
-];
+{
+  title: "General Analysis",
+  price: 100,
+  rush3Day: 150,
+  rush24Hr: 195,
+  processing: "8–10 Business Days",
+  description:
+  "Identifies country of study, institution attended, dates of attendance, credential received, and provides an overall U.S. equivalency of the credential earned.",
+  recommendedFor: "Immigration, military and admission to junior colleges.",
+  documents: "Transcripts/mark sheets and diploma certificate",
+  bgImage: serviceMilitary
+},
+{
+  title: "General Analysis plus GPA",
+  price: 150,
+  rush3Day: 205,
+  rush24Hr: 295,
+  processing: "8–10 Business Days",
+  description:
+  "Identifies country of study, institution attended, dates of attendance, credential received, and provides an overall U.S. equivalency for the credential earned. Report includes overall GPA.",
+  recommendedFor:
+  "Admission to different types of institutions when GPA is required but no credit transfer is intended.",
+  documents: "Transcripts/mark sheets and diploma certificate",
+  bgImage: serviceEducation
+},
+{
+  title: "Course-by-Course",
+  price: 190,
+  rush3Day: 290,
+  rush24Hr: 425,
+  processing: "8–10 Business Days",
+  description:
+  "Identifies country of study, institution attended, dates of attendance, credential received and provides a list of courses for the credential, semester credit hours, grades, an accumulative GPA and U.S. equivalency for the credential earned.",
+  recommendedFor:
+  "Admission to secondary and post-secondary institutions, and employment.",
+  documents: "Transcripts/mark sheets and diploma certificate.",
+  bgImage: serviceEmployment
+},
+{
+  title: "Comprehensive Course-by-Course",
+  price: 290,
+  rush3Day: 390,
+  rush24Hr: 490,
+  processing: "8–10 Business Days",
+  description:
+  "Identifies country of study, institution(s), dates of attendance, credentials received and provides a list of courses for each credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course and U.S. equivalency for each credential.",
+  recommendedFor:
+  "Transfer, graduate admission, professional licensure, and individuals who have earned multiple university degrees.",
+  documents:
+  "Transcripts/mark sheets and diploma certificates. (Note: this service is only provided for post-secondary credentials.)",
+  bgImage: serviceGraduate
+},
+{
+  title: "Health Professions Course-by-Course",
+  price: 230,
+  rush3Day: 355,
+  rush24Hr: 490,
+  processing: "8–10 Business Days",
+  description:
+  "Identifies country of study, institution attended, dates of attendance, credential received and provides a list of courses for the credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course, lists clinical experience, and U.S. equivalency for the credential earned.",
+  recommendedFor: "Health profession licensing boards.",
+  documents: "Transcripts/mark sheets and diploma certificate",
+  bgImage: serviceHealth
+}];
+
 
 type ProcessingKey = "standard" | "rush3" | "rush24";
 
@@ -99,18 +99,18 @@ const Evaluations = () => {
       <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
         <div
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${brooklynBridge})` }}
-        />
+          style={{ backgroundImage: `url(${brooklynBridge})` }} />
+        
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity text-white/70 hover:text-white"
-          >
+            className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity text-white/70 hover:text-white">
+            
             <ArrowLeft size={16} />
             Back to Home
           </Link>
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">
             Credentials Recognized
           </p>
           <h1 className="tesla-hero-title text-white">Academic Evaluations</h1>
@@ -145,13 +145,13 @@ const Evaluations = () => {
                 <div
                   key={idx}
                   className="relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:shadow-accent/20"
-                  style={{ minHeight: 480 }}
-                >
+                  style={{ minHeight: 480 }}>
+                  
                   {/* Full-bleed background image */}
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
-                    style={{ backgroundImage: `url(${service.bgImage})` }}
-                  />
+                    style={{ backgroundImage: `url(${service.bgImage})` }} />
+                  
                   {/* Dark gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/60 to-black/40" />
 
@@ -207,31 +207,31 @@ const Evaluations = () => {
                       </p>
                       <div className="grid grid-cols-3 gap-3">
                         {(
-                          [
-                            { key: "standard" as ProcessingKey, label: "Standard", price: service.price, sub: service.processing },
-                            { key: "rush3" as ProcessingKey, label: "Rush 3-Day", price: service.rush3Day, sub: "3 Business Days" },
-                            { key: "rush24" as ProcessingKey, label: "Rush 24hr", price: service.rush24Hr, sub: "24 Hours" },
-                          ] as const
-                        ).map((opt) => {
+                        [
+                        { key: "standard" as ProcessingKey, label: "Standard", price: service.price, sub: service.processing },
+                        { key: "rush3" as ProcessingKey, label: "Rush 3-Day", price: service.rush3Day, sub: "3 Business Days" },
+                        { key: "rush24" as ProcessingKey, label: "Rush 24hr", price: service.rush24Hr, sub: "24 Hours" }] as
+                        const).
+                        map((opt) => {
                           const isActive = activeKey === opt.key;
                           return (
                             <button
                               key={opt.key}
                               onClick={() =>
-                                setSelectedProcessing((prev) => ({ ...prev, [idx]: opt.key }))
+                              setSelectedProcessing((prev) => ({ ...prev, [idx]: opt.key }))
                               }
                               className={`relative rounded-2xl p-4 text-center transition-all duration-300 border ${
-                                isActive
-                                  ? "bg-accent border-accent shadow-lg shadow-accent/30 scale-[1.03]"
-                                  : "bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"
-                              }`}
-                            >
-                              {isActive && (
-                                <CheckCircle2
-                                  size={14}
-                                  className="absolute top-2 right-2 text-white"
-                                />
-                              )}
+                              isActive ?
+                              "bg-accent border-accent shadow-lg shadow-accent/30 scale-[1.03]" :
+                              "bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"}`
+                              }>
+                              
+                              {isActive &&
+                              <CheckCircle2
+                                size={14}
+                                className="absolute top-2 right-2 text-white" />
+
+                              }
                               <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isActive ? "text-white" : "text-white/60"}`}>
                                 {opt.label}
                               </p>
@@ -241,8 +241,8 @@ const Evaluations = () => {
                               <p className={`text-[10px] mt-0.5 ${isActive ? "text-white/80" : "text-white/50"}`}>
                                 {opt.sub}
                               </p>
-                            </button>
-                          );
+                            </button>);
+
                         })}
                       </div>
                     </div>
@@ -258,12 +258,12 @@ const Evaluations = () => {
                             const processingLabels: Record<ProcessingKey, string> = {
                               standard: "Standard",
                               rush3: "Rush 3-Day",
-                              rush24: "Rush 24hr",
+                              rush24: "Rush 24hr"
                             };
                             const processingTimes: Record<ProcessingKey, string> = {
                               standard: service.processing,
                               rush3: "3 Business Days",
-                              rush24: "24 Hours",
+                              rush24: "24 Hours"
                             };
                             const key = selectedProcessing[idx] ?? "standard";
                             addToCart({
@@ -272,12 +272,12 @@ const Evaluations = () => {
                               processingLabel: processingLabels[key],
                               processingTime: processingTimes[key],
                               price: getSelectedPrice(service, idx),
-                              clientUsername: "Guest",
+                              clientUsername: "Guest"
                             });
                             alert(`"${service.title}" added to cart!`);
                           }}
-                          className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/30 text-white font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-white/25 transition-all duration-200 shadow-lg hover:scale-105"
-                        >
+                          className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/30 text-white font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-white/25 transition-all duration-200 shadow-lg hover:scale-105">
+                          
                           🛒 Add to Cart
                         </button>
                         <Link
@@ -293,17 +293,17 @@ const Evaluations = () => {
                               const k = selectedProcessing[idx] ?? "standard";
                               return k === "rush3" ? "3 Business Days" : k === "rush24" ? "24 Hours" : service.processing;
                             })(),
-                            price: getSelectedPrice(service, idx),
+                            price: getSelectedPrice(service, idx)
                           }}
-                          className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                        >
+                          className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
+                          
                           Start Application →
                         </Link>
                       </div>
                     </div>
                   </div>
-                </div>
-              );
+                </div>);
+
             })}
           </div>
         </div>
@@ -312,16 +312,16 @@ const Evaluations = () => {
       <div className="text-center pb-16 content-bg">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm transition-colors text-muted-foreground hover:text-foreground"
-        >
+          className="inline-flex items-center gap-2 text-sm transition-colors text-muted-foreground hover:text-foreground">
+          
           <ArrowLeft size={16} />
           Back to Home
         </Link>
       </div>
 
       <Footer />
-    </div>
-  );
+    </div>);
+
 };
 
 export default Evaluations;
