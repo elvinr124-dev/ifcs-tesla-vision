@@ -105,7 +105,7 @@ const Translations = () => {
             <ArrowLeft size={16} />
             Back to Home
           </Link>
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 opacity-80" style={{ color: "white" }}>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 opacity-80 text-white" style={{ color: "white" }}>
             Break Language Barriers
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight" style={{ color: "white" }}>
