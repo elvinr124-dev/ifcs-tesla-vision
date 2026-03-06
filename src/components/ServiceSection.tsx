@@ -50,7 +50,7 @@ const ServiceSection = ({
       }
       <div className="tesla-section-content hero-text-shadow">
         <p
-          className="text-base tracking-[0.25em] uppercase mb-4 opacity-80 text-white font-semibold"
+          className="text-base tracking-[0.25em] uppercase mb-4 opacity-100 text-white font-semibold "
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>
 
           {subtitle}
