@@ -50,19 +50,19 @@ const ServiceSection = ({
       }
       <div className="tesla-section-content hero-text-shadow">
         <p
-          className="text-base font-semibold tracking-[0.25em] uppercase mb-4 opacity-80"
+          className="text-base tracking-[0.25em] uppercase mb-4 opacity-80 text-white font-semibold"
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>
 
           {subtitle}
         </p>
         <h2
-          className="text-5xl md:text-7xl lg:text-8xl tracking-tight font-semibold"
+          className="text-5xl md:text-7xl lg:text-8xl tracking-tight font-semibold text-white"
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>
 
           {title}
         </h2>
         <p
-          className="mt-6 text-xl md:text-2xl max-w-2xl mx-auto opacity-90 text-center font-light"
+          className="mt-6 text-xl md:text-2xl max-w-2xl mx-auto opacity-90 text-center text-white font-semibold"
           style={{ color: dark ? "rgba(255,255,255,0.9)" : "hsl(var(--muted-foreground))", textShadow: dark ? "0 2px 8px rgba(0,0,0,0.6)" : "none" }}>
 
           {description}
