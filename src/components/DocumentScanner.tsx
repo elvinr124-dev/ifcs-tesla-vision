@@ -105,7 +105,7 @@ const DocumentScanner = ({ onFilesProcessed, existingFiles = [] }: DocumentScann
         });
 
         pdf.addImage(processedUrl, "PNG", 0, 0, pdfWidth, pdfHeight);
-        const pdfBlob = pdf.output("bloburl") as string;
+        const pdfBlob = pdf.output("bloburl") as unknown as string;
 
         resolve({ processedUrl, pdfUrl: pdfBlob });
       };
