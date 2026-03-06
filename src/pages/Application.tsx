@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { Link, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import DocumentScanner from "@/components/DocumentScanner";
 import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -199,9 +200,9 @@ const Application = () => {
     );
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) setFiles([...files, ...Array.from(e.target.files)]);
-  };
+  const handleFilesProcessed = useCallback((processedFiles: File[]) => {
+    setFiles(processedFiles);
+  }, []);
 
   const handleSubmit = () => {
     alert("Application submitted! Your application ID: EE0039. We will contact you shortly.");
@@ -444,13 +445,7 @@ const Application = () => {
                   <div className="space-y-3">
                     <SectionHeading>Submission of Academic Records</SectionHeading>
                     <p className="text-xs text-muted-foreground -mt-2">Please upload clear, legible copies of your diploma certificates and transcripts/mark sheets. (Max 10MB)</p>
-                    <label className="flex flex-col items-center justify-center w-full h-28 rounded-2xl border-2 border-dashed border-border bg-muted/30 hover:bg-muted/50 transition-colors cursor-pointer">
-                      <span className="text-sm text-muted-foreground">Click to select files</span>
-                      {files.length > 0 && (
-                        <span className="text-xs text-accent mt-1">{files.length} file(s) selected</span>
-                      )}
-                      <input type="file" multiple onChange={handleFileChange} className="hidden" />
-                    </label>
+                    <DocumentScanner onFilesProcessed={handleFilesProcessed} existingFiles={files} />
 
                     <div className="space-y-2 pt-2">
                       <RadioCard value="arrange" selected={authOption === "arrange"} onSelect={() => setAuthOption("arrange")}>
