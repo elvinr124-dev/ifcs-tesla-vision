@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { FileText, Clock, Award, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 import serviceMilitary from "@/assets/service-military.jpg";
@@ -10,6 +10,8 @@ import serviceEducation from "@/assets/service-education.jpg";
 import serviceEmployment from "@/assets/service-employment.jpg";
 import serviceGraduate from "@/assets/service-graduate.jpg";
 import serviceHealth from "@/assets/service-health.jpg";
+import serviceHsUni from "@/assets/service-highschool-uni.jpg";
+import serviceCosmetology from "@/assets/service-cosmetology.jpg";
 
 const evaluationServices = [
 {
@@ -22,7 +24,8 @@ const evaluationServices = [
   "Identifies country of study, institution attended, dates of attendance, credential received, and provides an overall U.S. equivalency of the credential earned.",
   recommendedFor: "Immigration, military and admission to junior colleges.",
   documents: "Transcripts/mark sheets and diploma certificate",
-  bgImage: serviceMilitary
+  bgImage: serviceMilitary,
+  sampleUrl: ""
 },
 {
   title: "General Analysis plus GPA",
@@ -35,7 +38,21 @@ const evaluationServices = [
   recommendedFor:
   "Admission to different types of institutions when GPA is required but no credit transfer is intended.",
   documents: "Transcripts/mark sheets and diploma certificate",
-  bgImage: serviceEducation
+  bgImage: serviceEducation,
+  sampleUrl: ""
+},
+{
+  title: "Cosmetology Course-by-Course",
+  price: 170,
+  rush3Day: 275,
+  rush24Hr: 375,
+  processing: "8–10 Business Days",
+  description:
+  "Provides a detailed course-by-course evaluation of cosmetology credentials earned abroad, including training hours for each subject area, U.S. semester credit equivalencies, and an overall U.S. equivalency for the credential. Designed to meet the documentation requirements of state cosmetology licensing boards.",
+  recommendedFor: "State cosmetology licensing boards, barbering, beauty therapy, hairdressing, and esthetics licensure.",
+  documents: "Certificate and transcript with hours showing hours for each subject",
+  bgImage: serviceCosmetology,
+  sampleUrl: ""
 },
 {
   title: "Course-by-Course",
@@ -48,7 +65,21 @@ const evaluationServices = [
   recommendedFor:
   "Admission to secondary and post-secondary institutions, and employment.",
   documents: "Transcripts/mark sheets and diploma certificate.",
-  bgImage: serviceEmployment
+  bgImage: serviceEmployment,
+  sampleUrl: ""
+},
+{
+  title: "Health Professions Course-by-Course",
+  price: 230,
+  rush3Day: 355,
+  rush24Hr: 490,
+  processing: "8–10 Business Days",
+  description:
+  "Identifies country of study, institution attended, dates of attendance, credential received and provides a list of courses for the credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course, lists clinical experience, and U.S. equivalency for the credential earned.",
+  recommendedFor: "Health profession licensing boards.",
+  documents: "Transcripts/mark sheets and diploma certificate",
+  bgImage: serviceHealth,
+  sampleUrl: ""
 },
 {
   title: "Comprehensive Course-by-Course",
@@ -62,19 +93,21 @@ const evaluationServices = [
   "Transfer, graduate admission, professional licensure, and individuals who have earned multiple university degrees.",
   documents:
   "Transcripts/mark sheets and diploma certificates. (Note: this service is only provided for post-secondary credentials.)",
-  bgImage: serviceGraduate
+  bgImage: serviceGraduate,
+  sampleUrl: ""
 },
 {
-  title: "Health Professions Course-by-Course",
-  price: 230,
-  rush3Day: 355,
-  rush24Hr: 490,
+  title: "High School and University Course-by-Course",
+  price: 295,
+  rush3Day: 395,
+  rush24Hr: 495,
   processing: "8–10 Business Days",
   description:
-  "Identifies country of study, institution attended, dates of attendance, credential received and provides a list of courses for the credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course, lists clinical experience, and U.S. equivalency for the credential earned.",
-  recommendedFor: "Health profession licensing boards.",
-  documents: "Transcripts/mark sheets and diploma certificate",
-  bgImage: serviceHealth
+  "Provides a comprehensive course-by-course evaluation covering both High School and University credentials. Includes a detailed listing of courses, semester credit hours, grades, GPA, and U.S. equivalencies for each credential level. Ideal for applicants who need both secondary and post-secondary education assessed in a single report.",
+  recommendedFor: "Further education, university admission, and credential recognition for combined secondary and post-secondary studies.",
+  documents: "High School diploma, High School transcript, University degree certificate, University transcript",
+  bgImage: serviceHsUni,
+  sampleUrl: ""
 }];
 
 
@@ -253,6 +286,17 @@ const Evaluations = () => {
                         Selected: <span className="text-white font-semibold">${getSelectedPrice(service, idx)}</span>
                       </p>
                       <div className="flex gap-3">
+                        <button
+                          onClick={() => {
+                            if (service.sampleUrl) {
+                              window.open(service.sampleUrl, "_blank");
+                            } else {
+                              alert("Sample report coming soon!");
+                            }
+                          }}
+                          className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-white/20 transition-all duration-200">
+                          <Eye size={16} /> View Sample
+                        </button>
                         <button
                           onClick={() => {
                             const processingLabels: Record<ProcessingKey, string> = {
