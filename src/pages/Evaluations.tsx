@@ -288,6 +288,17 @@ const Evaluations = () => {
                       <div className="flex gap-3">
                         <button
                           onClick={() => {
+                            if (service.sampleUrl) {
+                              window.open(service.sampleUrl, "_blank");
+                            } else {
+                              alert("Sample report coming soon!");
+                            }
+                          }}
+                          className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-white/20 transition-all duration-200">
+                          <Eye size={16} /> View Sample
+                        </button>
+                        <button
+                          onClick={() => {
                             const processingLabels: Record<ProcessingKey, string> = {
                               standard: "Standard",
                               rush3: "Rush 3-Day",
