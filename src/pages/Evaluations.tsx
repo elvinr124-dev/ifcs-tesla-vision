@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye } from "lucide-react";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 import serviceMilitary from "@/assets/service-military.jpg";
 import serviceEducation from "@/assets/service-education.jpg";
@@ -23,7 +24,8 @@ const evaluationServices = [
   description:
   "Identifies country of study, institution attended, dates of attendance, credential received, and provides an overall U.S. equivalency of the credential earned.",
   recommendedFor: "Immigration, military and admission to junior colleges.",
-  documents: "Transcripts/mark sheets and diploma certificate",
+  documents: "Transcript/Marksheets and Diploma Certificate",
+  docSlots: ["Transcript/Marksheets", "Diploma Certificate"],
   bgImage: serviceMilitary,
   sampleUrl: ""
 },
@@ -37,7 +39,8 @@ const evaluationServices = [
   "Identifies country of study, institution attended, dates of attendance, credential received, and provides an overall U.S. equivalency for the credential earned. Report includes overall GPA.",
   recommendedFor:
   "Admission to different types of institutions when GPA is required but no credit transfer is intended.",
-  documents: "Transcripts/mark sheets and diploma certificate",
+  documents: "Transcript/Marksheets and Diploma Certificate",
+  docSlots: ["Transcript/Marksheets", "Diploma Certificate"],
   bgImage: serviceEducation,
   sampleUrl: ""
 },
@@ -51,6 +54,7 @@ const evaluationServices = [
   "Provides a detailed course-by-course evaluation of cosmetology credentials earned abroad, including training hours for each subject area, U.S. semester credit equivalencies, and an overall U.S. equivalency for the credential. Designed to meet the documentation requirements of state cosmetology licensing boards.",
   recommendedFor: "State cosmetology licensing boards, barbering, beauty therapy, hairdressing, and esthetics licensure.",
   documents: "Certificate and transcript with hours showing hours for each subject",
+  docSlots: ["Certificate", "Transcript with Hours"],
   bgImage: serviceCosmetology,
   sampleUrl: ""
 },
@@ -64,7 +68,8 @@ const evaluationServices = [
   "Identifies country of study, institution attended, dates of attendance, credential received and provides a list of courses for the credential, semester credit hours, grades, an accumulative GPA and U.S. equivalency for the credential earned.",
   recommendedFor:
   "Admission to secondary and post-secondary institutions, and employment.",
-  documents: "Transcripts/mark sheets and diploma certificate.",
+  documents: "Transcript/Marksheets and Diploma Certificate",
+  docSlots: ["Transcript/Marksheets", "Diploma Certificate"],
   bgImage: serviceEmployment,
   sampleUrl: ""
 },
@@ -77,7 +82,8 @@ const evaluationServices = [
   description:
   "Identifies country of study, institution attended, dates of attendance, credential received and provides a list of courses for the credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course, lists clinical experience, and U.S. equivalency for the credential earned.",
   recommendedFor: "Health profession licensing boards.",
-  documents: "Transcripts/mark sheets and diploma certificate",
+  documents: "Transcript/Marksheets and Diploma Certificate",
+  docSlots: ["Transcript/Marksheets", "Diploma Certificate"],
   bgImage: serviceHealth,
   sampleUrl: ""
 },
@@ -92,7 +98,8 @@ const evaluationServices = [
   recommendedFor:
   "Transfer, graduate admission, professional licensure, and individuals who have earned multiple university degrees.",
   documents:
-  "Transcripts/mark sheets and diploma certificates. (Note: this service is only provided for post-secondary credentials.)",
+  "Transcript/Marksheets and Diploma Certificates. (Note: this service is only provided for post-secondary credentials.)",
+  docSlots: ["Transcript/Marksheets", "Diploma Certificate"],
   bgImage: serviceGraduate,
   sampleUrl: ""
 },
@@ -106,6 +113,7 @@ const evaluationServices = [
   "Provides a comprehensive course-by-course evaluation covering both High School and University credentials. Includes a detailed listing of courses, semester credit hours, grades, GPA, and U.S. equivalencies for each credential level. Ideal for applicants who need both secondary and post-secondary education assessed in a single report.",
   recommendedFor: "Further education, university admission, and credential recognition for combined secondary and post-secondary studies.",
   documents: "High School diploma, High School transcript, University degree certificate, University transcript",
+  docSlots: ["High School Diploma", "High School Transcript", "University Degree Certificate", "University Transcript"],
   bgImage: serviceHsUni,
   sampleUrl: ""
 }];
@@ -116,6 +124,14 @@ type ProcessingKey = "standard" | "rush3" | "rush24";
 const Evaluations = () => {
   const [selectedProcessing, setSelectedProcessing] = useState<Record<number, ProcessingKey>>({});
   const { addItem: addToCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  const showToast = (msg: string) => {
+    setToastMsg(msg);
+    setTimeout(() => setToastMsg(null), 3000);
+  };
 
   const getSelectedPrice = (service: typeof evaluationServices[0], idx: number) => {
     const key = selectedProcessing[idx] ?? "standard";
@@ -127,6 +143,13 @@ const Evaluations = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+
+      {/* Toast notification */}
+      {toastMsg && (
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 animate-fade-in">
+          {toastMsg}
+        </div>
+      )}
 
       {/* Hero with Brooklyn Bridge */}
       <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
@@ -180,18 +203,14 @@ const Evaluations = () => {
                   className="relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:shadow-accent/20"
                   style={{ minHeight: 480 }}>
                   
-                  {/* Full-bleed background image */}
                   <div
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
                     style={{ backgroundImage: `url(${service.bgImage})` }} />
                   
-                  {/* Dark gradient overlay */}
                   <div className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/60 to-black/40" />
 
-                  {/* Content */}
                   <div className="relative z-10 p-8 md:p-10 h-full flex flex-col gap-6">
 
-                    {/* Top row: title + badge */}
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div>
                         <p className="text-xs font-semibold tracking-[0.25em] uppercase text-accent mb-1">
@@ -207,7 +226,6 @@ const Evaluations = () => {
                       </div>
                     </div>
 
-                    {/* Info grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
                         <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
@@ -233,37 +251,30 @@ const Evaluations = () => {
                       </div>
                     </div>
 
-                    {/* Processing option selector */}
                     <div>
                       <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5 mb-3">
                         <Clock size={11} /> Select Processing Speed
                       </p>
                       <div className="grid grid-cols-3 gap-3">
-                        {(
-                        [
-                        { key: "standard" as ProcessingKey, label: "Standard", price: service.price, sub: service.processing },
-                        { key: "rush3" as ProcessingKey, label: "Rush 3-Day", price: service.rush3Day, sub: "3 Business Days" },
-                        { key: "rush24" as ProcessingKey, label: "Rush 24hr", price: service.rush24Hr, sub: "24 Hours" }] as
-                        const).
-                        map((opt) => {
+                        {([
+                          { key: "standard" as ProcessingKey, label: "Standard", price: service.price, sub: service.processing },
+                          { key: "rush3" as ProcessingKey, label: "Rush 3-Day", price: service.rush3Day, sub: "3 Business Days" },
+                          { key: "rush24" as ProcessingKey, label: "Rush 24hr", price: service.rush24Hr, sub: "24 Hours" }
+                        ] as const).map((opt) => {
                           const isActive = activeKey === opt.key;
                           return (
                             <button
                               key={opt.key}
                               onClick={() =>
-                              setSelectedProcessing((prev) => ({ ...prev, [idx]: opt.key }))
+                                setSelectedProcessing((prev) => ({ ...prev, [idx]: opt.key }))
                               }
                               className={`relative rounded-2xl p-4 text-center transition-all duration-300 border ${
-                              isActive ?
-                              "bg-accent border-accent shadow-lg shadow-accent/30 scale-[1.03]" :
-                              "bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"}`
+                                isActive ?
+                                "bg-accent border-accent shadow-lg shadow-accent/30 scale-[1.03]" :
+                                "bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"}`
                               }>
-                              
                               {isActive &&
-                              <CheckCircle2
-                                size={14}
-                                className="absolute top-2 right-2 text-white" />
-
+                                <CheckCircle2 size={14} className="absolute top-2 right-2 text-white" />
                               }
                               <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isActive ? "text-white" : "text-white/60"}`}>
                                 {opt.label}
@@ -274,13 +285,12 @@ const Evaluations = () => {
                               <p className={`text-[10px] mt-0.5 ${isActive ? "text-white/80" : "text-white/50"}`}>
                                 {opt.sub}
                               </p>
-                            </button>);
-
+                            </button>
+                          );
                         })}
                       </div>
                     </div>
 
-                    {/* CTA */}
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-auto pt-2">
                       <p className="text-sm text-white/60">
                         Selected: <span className="text-white font-semibold">${getSelectedPrice(service, idx)}</span>
@@ -318,36 +328,41 @@ const Evaluations = () => {
                               price: getSelectedPrice(service, idx),
                               clientUsername: "Guest"
                             });
-                            alert(`"${service.title}" added to cart!`);
+                            showToast(`"${service.title} ${processingLabels[key]}" added to cart!`);
                           }}
                           className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/30 text-white font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-white/25 transition-all duration-200 shadow-lg hover:scale-105">
-                          
                           🛒 Add to Cart
                         </button>
-                        <Link
-                          to="/application"
-                          state={{
-                            serviceTitle: service.title,
-                            processingKey: selectedProcessing[idx] ?? "standard",
-                            processingLabel: (() => {
-                              const k = selectedProcessing[idx] ?? "standard";
-                              return k === "rush3" ? "Rush 3-Day" : k === "rush24" ? "Rush 24hr" : "Standard";
-                            })(),
-                            processingTime: (() => {
-                              const k = selectedProcessing[idx] ?? "standard";
-                              return k === "rush3" ? "3 Business Days" : k === "rush24" ? "24 Hours" : service.processing;
-                            })(),
-                            price: getSelectedPrice(service, idx)
+                        <button
+                          onClick={() => {
+                            if (!user) {
+                              navigate("/login");
+                            } else {
+                              navigate("/application", {
+                                state: {
+                                  serviceTitle: service.title,
+                                  processingKey: selectedProcessing[idx] ?? "standard",
+                                  processingLabel: (() => {
+                                    const k = selectedProcessing[idx] ?? "standard";
+                                    return k === "rush3" ? "Rush 3-Day" : k === "rush24" ? "Rush 24hr" : "Standard";
+                                  })(),
+                                  processingTime: (() => {
+                                    const k = selectedProcessing[idx] ?? "standard";
+                                    return k === "rush3" ? "3 Business Days" : k === "rush24" ? "24 Hours" : service.processing;
+                                  })(),
+                                  price: getSelectedPrice(service, idx)
+                                }
+                              });
+                            }
                           }}
                           className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
-                          
                           Start Application →
-                        </Link>
+                        </button>
                       </div>
                     </div>
                   </div>
-                </div>);
-
+                </div>
+              );
             })}
           </div>
         </div>
@@ -357,15 +372,14 @@ const Evaluations = () => {
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-sm transition-colors text-muted-foreground hover:text-foreground">
-          
           <ArrowLeft size={16} />
           Back to Home
         </Link>
       </div>
 
       <Footer />
-    </div>);
-
+    </div>
+  );
 };
 
 export default Evaluations;
