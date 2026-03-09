@@ -33,6 +33,8 @@ import AddonHardCopy from "./pages/AddonHardCopy";
 import AddonDomesticShipping from "./pages/AddonDomesticShipping";
 import AddonInternationalShipping from "./pages/AddonInternationalShipping";
 import AddonRenewal from "./pages/AddonRenewal";
+import TermsOfService from "./pages/TermsOfService";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +73,8 @@ const App = () => (
               <Route path="/addon/domestic-shipping" element={<AddonDomesticShipping />} />
               <Route path="/addon/international-shipping" element={<AddonInternationalShipping />} />
               <Route path="/addon/renewal" element={<AddonRenewal />} />
+              <Route path="/terms" element={<TermsOfService />} />
+              <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AIChatWidget />

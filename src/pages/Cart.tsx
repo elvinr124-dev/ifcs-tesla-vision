@@ -1,12 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
+import { useAuth } from "@/context/AuthContext";
 import { ShoppingCart, Trash2, ArrowLeft, ArrowRight, Clock } from "lucide-react";
 import cartBg from "@/assets/cart-bg.jpg";
 
 const Cart = () => {
   const { items, removeItem, clearCart } = useCart();
+  const { user } = useAuth();
   const total = items.reduce((sum, item) => sum + item.price, 0);
 
   return (
@@ -82,7 +84,7 @@ const Cart = () => {
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <Link
-                  to="/application"
+                  to={user ? "/application" : "/login"}
                   className="flex-1 inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105">
                   
                     Proceed to Application <ArrowRight size={16} />

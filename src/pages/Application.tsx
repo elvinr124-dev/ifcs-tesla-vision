@@ -1,11 +1,13 @@
 import { useState, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import DocumentScanner from "@/components/DocumentScanner";
-import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard, Upload, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useAuth } from "@/context/AuthContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -20,55 +22,28 @@ const STEPS = [
   { num: 5, label: "Payment", icon: CreditCard },
 ];
 
-/* ── Shared styled primitives ── */
 const GlassInput = ({
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-  required,
-  maxLength,
+  value, onChange, placeholder, type = "text", required, maxLength,
 }: {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  type?: string;
-  required?: boolean;
-  maxLength?: number;
+  value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string; type?: string; required?: boolean; maxLength?: number;
 }) => (
-  <input
-    type={type}
-    value={value}
-    onChange={onChange}
-    placeholder={placeholder}
-    required={required}
-    maxLength={maxLength}
-    className="w-full h-12 px-4 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 backdrop-blur-sm"
-  />
+  <input type={type} value={value} onChange={onChange} placeholder={placeholder} required={required} maxLength={maxLength}
+    className="w-full h-12 px-4 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 backdrop-blur-sm" />
 );
 
-const GlassSelect = ({
-  value,
-  onChange,
-  children,
-}: {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  children: React.ReactNode;
-}) => (
-  <select
-    value={value}
-    onChange={onChange}
-    className="w-full h-12 px-4 rounded-2xl text-sm text-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 appearance-none backdrop-blur-sm"
-  >
+const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; children: React.ReactNode }) => (
+  <select value={value} onChange={onChange}
+    className="w-full h-12 px-4 rounded-2xl text-sm text-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 appearance-none backdrop-blur-sm">
     {children}
   </select>
 );
 
-const FieldGroup = ({ label, required, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
+const FieldGroup = ({ label, required, children, note }: { label: string; required?: boolean; children: React.ReactNode; note?: string }) => (
   <div className="space-y-1.5">
     <Label className="text-xs font-semibold tracking-[0.12em] uppercase text-muted-foreground">
       {label} {required && <span className="text-accent">*</span>}
+      {note && <span className="text-[10px] font-normal normal-case tracking-normal ml-2 text-muted-foreground/60">({note})</span>}
     </Label>
     {children}
   </div>
@@ -80,43 +55,38 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
   </p>
 );
 
-const RadioCard = ({
-  value,
-  selected,
-  onSelect,
-  children,
-}: {
-  value: string;
-  selected: boolean;
-  onSelect: () => void;
-  children: React.ReactNode;
-}) => (
-  <button
-    type="button"
-    onClick={onSelect}
+const RadioCard = ({ value, selected, onSelect, children }: { value: string; selected: boolean; onSelect: () => void; children: React.ReactNode }) => (
+  <button type="button" onClick={onSelect}
     className={`w-full text-left flex items-start gap-3 p-4 rounded-2xl border transition-all duration-200 ${
-      selected
-        ? "border-accent bg-accent/10 shadow-sm shadow-accent/20"
-        : "border-border bg-muted/40 hover:bg-muted/70"
-    }`}
-  >
-    <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 mt-0.5 transition-colors ${
-      selected ? "border-accent bg-accent" : "border-muted-foreground"
+      selected ? "border-accent bg-accent/10 shadow-sm shadow-accent/20" : "border-border bg-muted/40 hover:bg-muted/70"
     }`}>
+    <div className={`w-4 h-4 rounded-full border-2 flex-shrink-0 mt-0.5 transition-colors ${selected ? "border-accent bg-accent" : "border-muted-foreground"}`}>
       {selected && <div className="w-1.5 h-1.5 rounded-full bg-white mx-auto mt-[2px]" />}
     </div>
     <div className="text-sm text-foreground/90 leading-relaxed">{children}</div>
   </button>
 );
 
+/* Terms content for popup */
+const TERMS_CONTENT = [
+  "I certify that the information provided in this application is true and correct.",
+  "No evaluation will be prepared and no refunds will be issued if IFCS determines that your documents have been in any way altered, tampered or forged. Furthermore, all relevant institutions listed on the application will be notified of the forged documentation submitted to IFCS.",
+  "Payment must be made in U.S. dollars by money order, check, cash, Visa or MasterCard. If the money order or check is issued by a bank outside of the U.S., it must contain the printed name of the U.S. bank with which the bank is affiliated. A $40 fee will be charged for all returned checks. All fees are subject to change without notice.",
+  "Refunds will be made only if an applicant has overpaid for services to IFCS. Applications for 8-10 day service can only be cancelled within 24hr of submission and will be subject to a $50 minimum processing fee. No refunds can be issued for 24hr, and 3-day service.",
+  "Institute of Foreign Credential Services reserves the right to refuse service to anyone for any reason.",
+  "Institute of Foreign Credential Services reserves the right to request additional information and/or official documentation by the issuing institution during the application process. Additionally, IFCS reserves the right to contact the issuing institution and authenticate your educational credentials.",
+  "Two copies of each evaluation are included with the regular evaluation fee. You will need to pay for shipping: Additional copies may be requested for $25 each, plus shipping.",
+  "My evaluation and/or translation will be completed entirely based on the documents I submit to IFCS.",
+  "I release IFCS from any liability for damages resulting from the use of an evaluation or translation by me or third party.",
+  "Evaluation reports can only be released once we have received official documents directly from the issuing institution(s), or confirmation of your studies, if you had selected our verification service.",
+];
+
 const Application = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const routeState = location.state as {
-    serviceTitle?: string;
-    processingKey?: string;
-    processingLabel?: string;
-    processingTime?: string;
-    price?: number;
+    serviceTitle?: string; processingKey?: string; processingLabel?: string; processingTime?: string; price?: number;
   } | null;
 
   const selectedServiceTitle = routeState?.serviceTitle ?? "General Analysis";
@@ -139,8 +109,10 @@ const Application = () => {
   const [gender, setGender] = useState("");
   const [homePhone, setHomePhone] = useState("");
   const [cellPhone, setCellPhone] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(user?.email ?? "");
   const [howHeard, setHowHeard] = useState("");
+  const [ssn, setSsn] = useState("");
+  const [idFile, setIdFile] = useState<File | null>(null);
 
   // Step 2
   const [institutionName, setInstitutionName] = useState("");
@@ -159,13 +131,24 @@ const Application = () => {
   const [files, setFiles] = useState<File[]>([]);
 
   // Step 5
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "ach">("card");
   const [cardName, setCardName] = useState("");
   const [cardNumber, setCardNumber] = useState("");
   const [cardMonth, setCardMonth] = useState("");
   const [cardYear, setCardYear] = useState("");
   const [cvv, setCvv] = useState("");
+  const [achRouting, setAchRouting] = useState("");
+  const [achAccount, setAchAccount] = useState("");
+  const [achName, setAchName] = useState("");
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
+
+  // T&C / PP popup
+  const [termsPopupOpen, setTermsPopupOpen] = useState(false);
+  const [privacyPopupOpen, setPrivacyPopupOpen] = useState(false);
+  const [termsSignature, setTermsSignature] = useState("");
+  const [privacySignature, setPrivacySignature] = useState("");
+  const [pendingAgreement, setPendingAgreement] = useState<"terms" | "privacy" | null>(null);
 
   const [stepError, setStepError] = useState("");
 
@@ -179,11 +162,13 @@ const Application = () => {
       if (!gender) return "Please select a gender.";
       if (!email.trim()) return "E-mail address is required.";
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Please enter a valid e-mail address.";
+      if (!cellPhone.trim()) return "Cell phone is required.";
     }
     if (s === 2) {
       if (!institutionName.trim()) return "Institution name is required.";
       if (!country.trim()) return "Country is required.";
       if (!attendance.trim()) return "Dates of attendance are required.";
+      if (!degrees.trim()) return "Degree(s) earned is required.";
     }
     if (s === 3) {
       if (!purpose) return "Please select a purpose of evaluation.";
@@ -195,9 +180,7 @@ const Application = () => {
   };
 
   const toggleDelivery = (val: string) => {
-    setDeliveryOptions((prev) =>
-      prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]
-    );
+    setDeliveryOptions((prev) => prev.includes(val) ? prev.filter((v) => v !== val) : [...prev, val]);
   };
 
   const handleFilesProcessed = useCallback((processedFiles: File[]) => {
@@ -205,6 +188,7 @@ const Application = () => {
   }, []);
 
   const handleSubmit = () => {
+    if (!agreeTerms || !agreePrivacy) return;
     alert("Application submitted! Your application ID: EE0039. We will contact you shortly.");
   };
 
@@ -215,6 +199,46 @@ const Application = () => {
     setStep((s) => Math.min(s + 1, 5));
   };
   const prev = () => { setStepError(""); setStep((s) => Math.max(s - 1, 1)); };
+
+  const handleTermsCheckbox = (checked: boolean) => {
+    if (checked && !agreeTerms) {
+      setPendingAgreement("terms");
+      setTermsPopupOpen(true);
+    } else {
+      setAgreeTerms(false);
+      setTermsSignature("");
+    }
+  };
+
+  const handlePrivacyCheckbox = (checked: boolean) => {
+    if (checked && !agreePrivacy) {
+      setPendingAgreement("privacy");
+      setPrivacyPopupOpen(true);
+    } else {
+      setAgreePrivacy(false);
+      setPrivacySignature("");
+    }
+  };
+
+  const confirmTermsSignature = () => {
+    if (!termsSignature.trim()) return;
+    setAgreeTerms(true);
+    setTermsPopupOpen(false);
+    setPendingAgreement(null);
+  };
+
+  const confirmPrivacySignature = () => {
+    if (!privacySignature.trim()) return;
+    setAgreePrivacy(true);
+    setPrivacyPopupOpen(false);
+    setPendingAgreement(null);
+  };
+
+  // Redirect to login if not authenticated
+  if (!user) {
+    navigate("/login");
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -243,24 +267,12 @@ const Application = () => {
             const active = s.num === step;
             return (
               <div key={s.num} className="flex items-center flex-1">
-                <button
-                  onClick={() => setStep(s.num)}
-                  className={`flex flex-col items-center gap-1.5 group transition-all duration-300 ${active ? "scale-110" : ""}`}
-                >
-                  <div
-                    className={`w-11 h-11 rounded-2xl flex items-center justify-center shadow-md transition-all duration-300 ${
-                      done
-                        ? "bg-accent/30 border border-accent/50"
-                        : active
-                        ? "bg-accent shadow-lg shadow-accent/40"
-                        : "bg-muted border border-border"
-                    }`}
-                  >
-                    {done ? (
-                      <CheckCircle2 size={18} className="text-accent" />
-                    ) : (
-                      <Icon size={18} className={active ? "text-white" : "text-muted-foreground"} />
-                    )}
+                <button onClick={() => setStep(s.num)}
+                  className={`flex flex-col items-center gap-1.5 group transition-all duration-300 ${active ? "scale-110" : ""}`}>
+                  <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shadow-md transition-all duration-300 ${
+                    done ? "bg-accent/30 border border-accent/50" : active ? "bg-accent shadow-lg shadow-accent/40" : "bg-muted border border-border"
+                  }`}>
+                    {done ? <CheckCircle2 size={18} className="text-accent" /> : <Icon size={18} className={active ? "text-white" : "text-muted-foreground"} />}
                   </div>
                   <span className={`text-[10px] font-semibold tracking-wider uppercase hidden sm:block ${active ? "text-accent" : "text-muted-foreground"}`}>
                     {s.label}
@@ -268,10 +280,7 @@ const Application = () => {
                 </button>
                 {i < STEPS.length - 1 && (
                   <div className="flex-1 h-px mx-2 bg-border overflow-hidden">
-                    <div
-                      className="h-px bg-accent transition-all duration-500"
-                      style={{ width: s.num < step ? "100%" : "0%" }}
-                    />
+                    <div className="h-px bg-accent transition-all duration-500" style={{ width: s.num < step ? "100%" : "0%" }} />
                   </div>
                 )}
               </div>
@@ -283,13 +292,8 @@ const Application = () => {
       {/* Form */}
       <section className="py-10 px-6 md:px-12 content-bg">
         <div className="max-w-4xl mx-auto">
-
-          {/* Card shell */}
           <div className="rounded-3xl border border-border bg-card shadow-xl overflow-hidden">
-
-            {/* Card top accent bar */}
             <div className="h-1 bg-gradient-to-r from-accent via-accent/60 to-transparent" />
-
             <div className="p-8 md:p-12 space-y-10">
 
               {/* STEP 1 */}
@@ -346,16 +350,10 @@ const Application = () => {
                     <SectionHeading>Gender</SectionHeading>
                     <div className="flex gap-4">
                       {["male", "female"].map((g) => (
-                        <button
-                          key={g}
-                          type="button"
-                          onClick={() => setGender(g)}
+                        <button key={g} type="button" onClick={() => setGender(g)}
                           className={`flex-1 py-3 rounded-2xl border text-sm font-semibold capitalize transition-all duration-200 ${
-                            gender === g
-                              ? "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/30"
-                              : "bg-muted/40 border-border text-foreground hover:bg-muted"
-                          }`}
-                        >
+                            gender === g ? "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/30" : "bg-muted/40 border-border text-foreground hover:bg-muted"
+                          }`}>
                           {g.charAt(0).toUpperCase() + g.slice(1)}
                         </button>
                       ))}
@@ -366,10 +364,32 @@ const Application = () => {
                     <SectionHeading>Contact Information</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FieldGroup label="Home Phone"><GlassInput value={homePhone} onChange={(e) => setHomePhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
-                      <FieldGroup label="Cell Phone"><GlassInput value={cellPhone} onChange={(e) => setCellPhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
+                      <FieldGroup label="Cell Phone" required><GlassInput value={cellPhone} onChange={(e) => setCellPhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
                     </div>
                     <FieldGroup label="E-mail Address" required><GlassInput value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" /></FieldGroup>
-                    <FieldGroup label="How did you hear about IFCS?"><GlassInput value={howHeard} onChange={(e) => setHowHeard(e.target.value)} placeholder="Google, referral, etc." /></FieldGroup>
+                    <FieldGroup label="How did you hear about IFCS?" required><GlassInput value={howHeard} onChange={(e) => setHowHeard(e.target.value)} placeholder="Google, referral, etc." /></FieldGroup>
+                  </div>
+
+                  <div className="space-y-4">
+                    <SectionHeading>Identification (Optional)</SectionHeading>
+                    <FieldGroup label="Social Security Number (SSN)" note="Not required">
+                      <GlassInput value={ssn} onChange={(e) => setSsn(e.target.value)} placeholder="XXX-XX-XXXX" maxLength={11} />
+                    </FieldGroup>
+                    <FieldGroup label="Government-Issued ID" note="Not required">
+                      <div className="flex items-center gap-3">
+                        {idFile ? (
+                          <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-muted/60 border border-border text-sm text-foreground">
+                            <span className="truncate max-w-[200px]">{idFile.name}</span>
+                            <button onClick={() => setIdFile(null)} className="text-muted-foreground hover:text-destructive"><X size={14} /></button>
+                          </div>
+                        ) : (
+                          <label className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-muted/60 border border-border text-sm text-foreground cursor-pointer hover:bg-muted transition-colors">
+                            <Upload size={16} /> Upload ID
+                            <input type="file" accept="image/*,.pdf" className="hidden" onChange={(e) => e.target.files?.[0] && setIdFile(e.target.files[0])} />
+                          </label>
+                        )}
+                      </div>
+                    </FieldGroup>
                   </div>
                 </div>
               )}
@@ -385,7 +405,7 @@ const Application = () => {
                     <FieldGroup label="Name of Institution" required><GlassInput value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} placeholder="e.g. University of Lagos" /></FieldGroup>
                     <FieldGroup label="Country" required><GlassInput value={country} onChange={(e) => setCountry(e.target.value)} placeholder="e.g. Nigeria" /></FieldGroup>
                     <FieldGroup label="Dates of Attendance" required><GlassInput value={attendance} onChange={(e) => setAttendance(e.target.value)} placeholder="e.g. 2015–2019" /></FieldGroup>
-                    <FieldGroup label="Degree(s) Earned"><GlassInput value={degrees} onChange={(e) => setDegrees(e.target.value)} placeholder="e.g. B.Sc. Computer Science" /></FieldGroup>
+                    <FieldGroup label="Degree(s) Earned" required><GlassInput value={degrees} onChange={(e) => setDegrees(e.target.value)} placeholder="e.g. B.Sc. Computer Science" /></FieldGroup>
                   </div>
                 </div>
               )}
@@ -399,12 +419,7 @@ const Application = () => {
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {["Further Education", "Immigration", "Licensing Boards", "Employment", "Military", "Other"].map((p) => (
-                      <RadioCard
-                        key={p}
-                        value={p}
-                        selected={purpose === p}
-                        onSelect={() => setPurpose(p)}
-                      >
+                      <RadioCard key={p} value={p} selected={purpose === p} onSelect={() => setPurpose(p)}>
                         <span className="font-medium">{p}</span>
                       </RadioCard>
                     ))}
@@ -444,7 +459,11 @@ const Application = () => {
 
                   <div className="space-y-3">
                     <SectionHeading>Submission of Academic Records</SectionHeading>
-                    <p className="text-xs text-muted-foreground -mt-2">Please upload clear, legible copies of your diploma certificates and transcripts/mark sheets. (Max 10MB)</p>
+                    <p className="text-xs text-muted-foreground -mt-2">
+                      Upload clear, legible copies of your documents. {selectedServiceTitle === "High School and University Course-by-Course"
+                        ? "You need to upload 4 documents: High School Diploma, High School Transcript, University Degree Certificate, and University Transcript."
+                        : "You need to upload 2 documents: your Transcript/Marksheets and Diploma Certificate."}
+                    </p>
                     <DocumentScanner onFilesProcessed={handleFilesProcessed} existingFiles={files} />
 
                     <div className="space-y-2 pt-2">
@@ -472,16 +491,10 @@ const Application = () => {
                       ].map((opt) => {
                         const active = deliveryOptions.includes(opt.value);
                         return (
-                          <button
-                            key={opt.value}
-                            type="button"
-                            onClick={() => toggleDelivery(opt.value)}
+                          <button key={opt.value} type="button" onClick={() => toggleDelivery(opt.value)}
                             className={`w-full text-left flex items-center justify-between gap-3 p-4 rounded-2xl border transition-all duration-200 ${
-                              active
-                                ? "border-accent bg-accent/10 shadow-sm shadow-accent/20"
-                                : "border-border bg-muted/40 hover:bg-muted/70"
-                            }`}
-                          >
+                              active ? "border-accent bg-accent/10 shadow-sm shadow-accent/20" : "border-border bg-muted/40 hover:bg-muted/70"
+                            }`}>
                             <div className="flex items-center gap-3">
                               <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${active ? "border-accent bg-accent" : "border-muted-foreground"}`}>
                                 {active && <CheckCircle2 size={12} className="text-white" />}
@@ -531,57 +544,94 @@ const Application = () => {
                     </p>
                   </div>
 
-                  {/* Payment */}
+                  {/* Payment method selector */}
                   <div className="space-y-6">
-                    <SectionHeading>Card Details</SectionHeading>
-                    <div className="space-y-4">
-                      <FieldGroup label="Cardholder's Name" required>
-                        <GlassInput value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="Full name as on card" />
-                      </FieldGroup>
-                      <FieldGroup label="Card Number" required>
-                        <GlassInput value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="•••• •••• •••• ••••" maxLength={19} />
-                      </FieldGroup>
-                      <div className="grid grid-cols-3 gap-4">
-                        <FieldGroup label="Month" required>
-                          <GlassSelect value={cardMonth} onChange={(e) => setCardMonth(e.target.value)}>
-                            <option value="">MM</option>
-                            {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")).map((m) => (
-                              <option key={m} value={m}>{m}</option>
-                            ))}
-                          </GlassSelect>
+                    <SectionHeading>Payment Method</SectionHeading>
+                    <div className="flex gap-3">
+                      <button type="button" onClick={() => setPaymentMethod("card")}
+                        className={`flex-1 py-3 rounded-2xl border text-sm font-semibold transition-all duration-200 ${
+                          paymentMethod === "card" ? "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/30" : "bg-muted/40 border-border text-foreground hover:bg-muted"
+                        }`}>
+                        💳 Credit / Debit Card
+                      </button>
+                      <button type="button" onClick={() => setPaymentMethod("ach")}
+                        className={`flex-1 py-3 rounded-2xl border text-sm font-semibold transition-all duration-200 ${
+                          paymentMethod === "ach" ? "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/30" : "bg-muted/40 border-border text-foreground hover:bg-muted"
+                        }`}>
+                        🏦 ACH Bank Transfer
+                      </button>
+                    </div>
+
+                    {paymentMethod === "card" && (
+                      <div className="space-y-4">
+                        <FieldGroup label="Cardholder's Name" required>
+                          <GlassInput value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="Full name as on card" />
                         </FieldGroup>
-                        <FieldGroup label="Year" required>
-                          <GlassSelect value={cardYear} onChange={(e) => setCardYear(e.target.value)}>
-                            <option value="">YYYY</option>
-                            {Array.from({ length: 14 }, (_, i) => 2024 + i).map((y) => (
-                              <option key={y} value={y}>{y}</option>
-                            ))}
-                          </GlassSelect>
+                        <FieldGroup label="Card Number" required>
+                          <GlassInput value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="•••• •••• •••• ••••" maxLength={19} />
                         </FieldGroup>
-                        <FieldGroup label="CVV" required>
-                          <GlassInput value={cvv} onChange={(e) => setCvv(e.target.value)} placeholder="•••" maxLength={4} />
+                        <div className="grid grid-cols-3 gap-4">
+                          <FieldGroup label="Month" required>
+                            <GlassSelect value={cardMonth} onChange={(e) => setCardMonth(e.target.value)}>
+                              <option value="">MM</option>
+                              {Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")).map((m) => (
+                                <option key={m} value={m}>{m}</option>
+                              ))}
+                            </GlassSelect>
+                          </FieldGroup>
+                          <FieldGroup label="Year" required>
+                            <GlassSelect value={cardYear} onChange={(e) => setCardYear(e.target.value)}>
+                              <option value="">YYYY</option>
+                              {Array.from({ length: 14 }, (_, i) => 2024 + i).map((y) => (
+                                <option key={y} value={y}>{y}</option>
+                              ))}
+                            </GlassSelect>
+                          </FieldGroup>
+                          <FieldGroup label="CVV" required>
+                            <GlassInput value={cvv} onChange={(e) => setCvv(e.target.value)} placeholder="•••" maxLength={4} />
+                          </FieldGroup>
+                        </div>
+                      </div>
+                    )}
+
+                    {paymentMethod === "ach" && (
+                      <div className="space-y-4">
+                        <FieldGroup label="Account Holder Name" required>
+                          <GlassInput value={achName} onChange={(e) => setAchName(e.target.value)} placeholder="Full name on bank account" />
+                        </FieldGroup>
+                        <FieldGroup label="Routing Number" required>
+                          <GlassInput value={achRouting} onChange={(e) => setAchRouting(e.target.value)} placeholder="9-digit routing number" maxLength={9} />
+                        </FieldGroup>
+                        <FieldGroup label="Account Number" required>
+                          <GlassInput value={achAccount} onChange={(e) => setAchAccount(e.target.value)} placeholder="Account number" maxLength={17} />
                         </FieldGroup>
                       </div>
-                    </div>
+                    )}
                   </div>
 
                   {/* Terms */}
                   <div className="space-y-3 border-t border-border pt-6">
                     <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest">Legal Agreement</p>
-                    {[
-                      { id: "terms", label: "I agree to the terms and conditions", checked: agreeTerms, onChange: (v: boolean) => setAgreeTerms(v) },
-                      { id: "privacy", label: "I agree to the privacy policy", checked: agreePrivacy, onChange: (v: boolean) => setAgreePrivacy(v) },
-                    ].map((item) => (
-                      <label key={item.id} className="flex items-center gap-3 cursor-pointer group">
-                        <Checkbox
-                          id={item.id}
-                          checked={item.checked}
-                          onCheckedChange={(v) => item.onChange(!!v)}
-                          className="rounded-md"
-                        />
-                        <span className="text-sm text-foreground/80 group-hover:text-foreground transition-colors">{item.label}</span>
-                      </label>
-                    ))}
+                    
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <Checkbox id="terms" checked={agreeTerms} onCheckedChange={(v) => handleTermsCheckbox(!!v)} className="rounded-md" />
+                      <span className="text-sm text-foreground/80 group-hover:text-foreground transition-colors">
+                        I agree to the{" "}
+                        <Link to="/terms" className="text-accent underline underline-offset-2 font-semibold" target="_blank">
+                          terms and conditions
+                        </Link>
+                      </span>
+                    </label>
+
+                    <label className="flex items-center gap-3 cursor-pointer group">
+                      <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={(v) => handlePrivacyCheckbox(!!v)} className="rounded-md" />
+                      <span className="text-sm text-foreground/80 group-hover:text-foreground transition-colors">
+                        I agree to the{" "}
+                        <Link to="/privacy" className="text-accent underline underline-offset-2 font-semibold" target="_blank">
+                          privacy policy
+                        </Link>
+                      </span>
+                    </label>
                   </div>
                 </div>
               )}
@@ -597,29 +647,20 @@ const Application = () => {
               {/* Navigation */}
               <div className="flex items-center justify-between pt-6 border-t border-border">
                 {step > 1 ? (
-                  <button
-                    onClick={prev}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-border bg-muted/50 text-sm font-semibold text-foreground hover:bg-muted transition-all duration-200"
-                  >
+                  <button onClick={prev}
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-border bg-muted/50 text-sm font-semibold text-foreground hover:bg-muted transition-all duration-200">
                     <ArrowLeft size={16} /> Back
                   </button>
-                ) : (
-                  <div />
-                )}
+                ) : <div />}
 
                 {step < 5 ? (
-                  <button
-                    onClick={next}
-                    className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-accent/50 transition-all duration-200 hover:scale-105"
-                  >
+                  <button onClick={next}
+                    className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-accent/50 transition-all duration-200 hover:scale-105">
                     Continue — {step}/5 <ArrowRight size={16} />
                   </button>
                 ) : (
-                  <button
-                    onClick={handleSubmit}
-                    disabled={!agreeTerms || !agreePrivacy}
-                    className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100"
-                  >
+                  <button onClick={handleSubmit} disabled={!agreeTerms || !agreePrivacy}
+                    className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100">
                     Submit Application 5/5 <CheckCircle2 size={16} />
                   </button>
                 )}
@@ -629,6 +670,59 @@ const Application = () => {
           </div>
         </div>
       </section>
+
+      {/* Terms Signature Popup */}
+      <Dialog open={termsPopupOpen} onOpenChange={(open) => { if (!open) { setTermsPopupOpen(false); setPendingAgreement(null); } }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Terms and Conditions</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 text-sm text-foreground/90 leading-relaxed">
+            <p className="text-muted-foreground">I agree to the following terms and conditions:</p>
+            <ol className="list-decimal pl-5 space-y-3">
+              {TERMS_CONTENT.map((t, i) => <li key={i}>{t}</li>)}
+            </ol>
+          </div>
+          <div className="border-t border-border pt-4 mt-4 space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Type your full name as your signature</p>
+            <GlassInput value={termsSignature} onChange={(e) => setTermsSignature(e.target.value)} placeholder="Type your full name" />
+            <p className="text-xs text-muted-foreground">Date: {new Date().toLocaleDateString()}</p>
+            <button onClick={confirmTermsSignature} disabled={!termsSignature.trim()}
+              className="w-full inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <CheckCircle2 size={16} /> I Agree & Sign
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Privacy Signature Popup */}
+      <Dialog open={privacyPopupOpen} onOpenChange={(open) => { if (!open) { setPrivacyPopupOpen(false); setPendingAgreement(null); } }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Privacy Policy</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 text-sm text-foreground/90 leading-relaxed">
+            <p>Institute Of Foreign Credential Services, (IFCS), is committed to keeping any and all personal information collected of those individuals that visit our website and make use of our online facilities and services accurate, confidential, secure and private.</p>
+            <p>Through the use of ifcsevals.com you are herein consenting to the data procedures expressed within this agreement.</p>
+            <h4 className="font-bold mt-4">Collection of Information</h4>
+            <p>This website collects various types of information, such as voluntarily provided information which may include your name, address, email address, billing and/or credit card information.</p>
+            <h4 className="font-bold mt-4">Use of Information</h4>
+            <p>IFCS may collect and make use of personal information to assist in the operation of our website and to ensure delivery of the services you need and request.</p>
+            <h4 className="font-bold mt-4">Security</h4>
+            <p>IFCS shall take every precaution to maintain adequate physical, procedural and technical security to prevent any loss, misuse, unauthorized access, disclosure or modification of personal information.</p>
+            <p className="text-xs text-muted-foreground mt-4">For the full privacy policy, visit our <Link to="/privacy" target="_blank" className="text-accent underline">Privacy Policy page</Link>.</p>
+          </div>
+          <div className="border-t border-border pt-4 mt-4 space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Type your full name as your signature</p>
+            <GlassInput value={privacySignature} onChange={(e) => setPrivacySignature(e.target.value)} placeholder="Type your full name" />
+            <p className="text-xs text-muted-foreground">Date: {new Date().toLocaleDateString()}</p>
+            <button onClick={confirmPrivacySignature} disabled={!privacySignature.trim()}
+              className="w-full inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <CheckCircle2 size={16} /> I Agree & Sign
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

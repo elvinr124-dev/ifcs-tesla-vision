@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, X, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail } from "lucide-react";
+import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -122,8 +122,12 @@ const Navbar = () => {
           </Link>
         )}
 
-        <Link to="/evaluations" className="inline-flex items-center justify-center px-7 py-3 text-sm font-semibold rounded-2xl ml-2 transition-all duration-200 hover:scale-105 shadow-lg"
-          style={{ background: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}>
+        {/* Apply Now → goes to login if not logged in */}
+        <Link
+          to={user ? "/application" : "/login"}
+          className="inline-flex items-center justify-center px-7 py-3 text-sm font-semibold rounded-2xl ml-2 transition-all duration-200 hover:scale-105 shadow-lg"
+          style={{ background: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}
+        >
           Apply Now
         </Link>
 
@@ -145,7 +149,6 @@ const Navbar = () => {
               {allLinks.map((link) => {
                 const Icon = link.icon;
                 const isActive = location.pathname === link.href;
-                // Skip login if user is logged in
                 if (link.href === "/login" && user) return null;
                 return (
                   <Link
@@ -195,7 +198,7 @@ const Navbar = () => {
 
               <div className="px-6 pt-6">
                 <Link
-                  to="/evaluations"
+                  to={user ? "/application" : "/login"}
                   onClick={() => setSidebarOpen(false)}
                   className="block w-full text-center px-7 py-3 text-sm font-semibold rounded-2xl bg-accent text-accent-foreground shadow-lg hover:bg-accent/90 transition-all duration-200"
                 >
@@ -269,7 +272,7 @@ const Navbar = () => {
 
             <div className="px-6 pt-6">
               <Link
-                to="/evaluations"
+                to={user ? "/application" : "/login"}
                 className="block w-full text-center px-7 py-3 text-sm font-semibold rounded-2xl bg-accent text-accent-foreground shadow-lg hover:bg-accent/90 transition-all duration-200"
               >
                 Apply Now
