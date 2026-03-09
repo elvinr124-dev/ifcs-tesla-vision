@@ -64,11 +64,25 @@ const AIChatWidget = () => {
     const q = userMsg.content.toLowerCase();
     let response = "";
 
-    // Check if it's specifically a price-only question
+    // Price-only question
     const isPriceOnly = (q.includes("price") || q.includes("cost") || q.includes("how much") || q.includes("fee")) && !q.includes("how") && !q.includes("process") && !q.includes("start") && !q.includes("apply") && !q.includes("need");
 
     if (isPriceOnly) {
-      response = "Here are our main pricing tiers:\n\n**Evaluations:**\n- General Analysis: $100\n- General Analysis + GPA: $150\n- Course-by-Course: $190\n- Comprehensive Course-by-Course: $290\n- Health Professions: $230\n\n**Rush options** are available for 3-day and 24-hour processing.\n\n**Translations:** $50 per page\n\n**Consulting:** Evaluation consultations are FREE. Admission advising is $60/hour.\n\nWould you like more details on any specific service?";
+      response = "Here are our main pricing tiers:\n\n**Evaluations:**\n- General Analysis: $100\n- General Analysis + GPA: $150\n- Cosmetology Course-by-Course: $170\n- Course-by-Course: $190\n- Health Professions: $230\n- Comprehensive Course-by-Course: $290\n- High School & University Course-by-Course: $295\n\n**Rush options** are available for 3-day and 24-hour processing.\n\n**Translations:** $50 per page\n\n**Consulting:** Evaluation consultations are FREE. Admission advising is $60/hour.\n\nWould you like more details on any specific service?";
+    } else if (q.includes("what is a credential evaluation") || q.includes("what is credential evaluation") || q.includes("what's a credential evaluation")) {
+      response = "A **credential evaluation** is an expert assessment of your foreign academic credentials to determine their U.S. equivalency. It is used for university admissions, employment, immigration, and professional licensing.";
+    } else if ((q.includes("how long") && q.includes("evaluation")) || (q.includes("turnaround") && q.includes("evaluation"))) {
+      response = "Standard processing takes **8–10 business days**. We also offer **3-day rush** and **24-hour rush** options for an additional fee.";
+    } else if (q.includes("what document") || (q.includes("document") && q.includes("need"))) {
+      response = "You will typically need your **transcripts/mark sheets** and **diploma certificate**. Some evaluations may require additional documentation. For the High School & University Course-by-Course, you'll need: High School diploma, High School transcript, University degree certificate, and University transcript.";
+    } else if (q.includes("recognized") || q.includes("accepted by universit")) {
+      response = "Yes. **IFCS evaluations are accepted** by universities, employers, and government agencies across the United States.";
+    } else if (q.includes("course-by-course") || q.includes("course by course")) {
+      response = "Yes. We offer **course-by-course evaluations** that list individual courses, credit hours, grades, and GPA — ideal for transfer credit and graduate admissions. Prices start at $170 for Cosmetology, $190 for standard Course-by-Course, $230 for Health Professions, $290 for Comprehensive, and $295 for High School & University.";
+    } else if (q.includes("check") && q.includes("status")) {
+      response = "You can check your evaluation status through our **application portal** or by contacting our office directly at **(914) 693-2840** or **info@ifcsevals.com**.";
+    } else if (q.includes("what is rush") || (q.includes("rush") && q.includes("processing"))) {
+      response = "**Rush processing** expedites your evaluation. The **3-day rush** delivers in 3 business days, and the **24-hour rush** delivers within 24 hours of document receipt. Rush fees vary by evaluation type.";
     } else if (q.includes("evaluation") || q.includes("credential") || q.includes("transcript") || q.includes("degree") || q.includes("how do i") || q.includes("get started") || q.includes("apply") || q.includes("process") || q.includes("how does") || q.includes("what do i need")) {
       response = EVALUATION_DETAILED_RESPONSE;
     } else if (q.includes("certified translation") || q.includes("what is a certified")) {
@@ -88,7 +102,7 @@ const AIChatWidget = () => {
     } else if (q.includes("rush") || q.includes("fast") || q.includes("expedite") || q.includes("urgent")) {
       response = "We offer rush processing for all evaluations:\n\n- **3-Day Rush:** Results in 3 business days\n- **24-Hour Rush:** Results within 24 hours\n\nRush fees vary by evaluation type. For example, General Analysis rush is $150 (3-day) or $195 (24hr).";
     } else if (q.includes("document") || q.includes("required")) {
-      response = "Typically you'll need:\n\n📄 **Transcripts/Mark Sheets** — official academic records\n📄 **Diploma Certificate** — proof of degree completion\n\nDocuments must be sent directly from the issuing institution to be considered official. Our mailing address is:\n\n**IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522**\n\nAlternatively, you can pay **$140 for document authentication** and we will verify directly with the institution.";
+      response = "Typically you'll need:\n\n📄 **Transcripts/Mark Sheets** — official academic records\n📄 **Diploma Certificate** — proof of degree completion\n\nFor **High School & University Course-by-Course**, you'll need all four: High School diploma, High School transcript, University degree certificate, and University transcript.\n\nDocuments must be sent directly from the issuing institution to be considered official. Our mailing address is:\n\n**IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522**\n\nAlternatively, you can pay **$140 for document authentication** and we will verify directly with the institution.";
     } else if (q.includes("consult") || q.includes("advising") || q.includes("advisor")) {
       response = "**Evaluation consultations** are provided at **NO CHARGE**!\n\n**Admission & Academic Advisory consultations** are available at our Dobbs Ferry office at **$60/hour**.\n\nOur senior staff has reviewed thousands of applications and can help you find the right institution and program. To schedule, email us at info@ifcsevals.com or call (914) 693-2840.";
     } else if (q.includes("shipping") || q.includes("delivery")) {

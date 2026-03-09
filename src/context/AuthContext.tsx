@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-export type UserRole = "client" | "staff";
+export type UserRole = "client" | "staff" | "guest";
 
 export interface AuthUser {
   username: string;
@@ -27,6 +27,7 @@ interface AuthContextType {
   user: AuthUser | null;
   loginClient: (username: string, password: string) => boolean;
   loginStaff: (username: string, password: string) => boolean;
+  loginGuest: (email: string) => void;
   signupClient: (data: SignupData) => void;
   logout: () => void;
 }
@@ -49,13 +50,11 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
 
   const loginClient = (username: string, password: string): boolean => {
-    // Check hardcoded credentials
     const cred = CLIENT_CREDENTIALS[username];
     if (cred && cred.password === password) {
       setUser({ username, role: "client" });
       return true;
     }
-    // Check registered clients
     const reg = registeredClients[username];
     if (reg && reg.password === password) {
       setUser({
@@ -73,19 +72,21 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const loginStaff = (username: string, password: string): boolean => {
-    // Check dedicated staff credentials
     const pass = STAFF_CREDENTIALS[username];
     if (pass && pass === password) {
       setUser({ username, role: "staff" });
       return true;
     }
-    // Also allow client credentials to login as staff
     const cred = CLIENT_CREDENTIALS[username];
     if (cred && cred.password === password) {
       setUser({ username, role: "staff", firstName: cred.displayName });
       return true;
     }
     return false;
+  };
+
+  const loginGuest = (email: string) => {
+    setUser({ username: email, role: "guest", email });
   };
 
   const signupClient = (data: SignupData) => {
@@ -104,7 +105,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const logout = () => setUser(null);
 
   return (
-    <AuthContext.Provider value={{ user, loginClient, loginStaff, signupClient, logout }}>
+    <AuthContext.Provider value={{ user, loginClient, loginStaff, loginGuest, signupClient, logout }}>
       {children}
     </AuthContext.Provider>
   );
