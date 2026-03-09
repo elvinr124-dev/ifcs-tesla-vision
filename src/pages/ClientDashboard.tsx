@@ -192,7 +192,7 @@ const ClientDashboard = () => {
                                   <CheckCircle2 size={24} className="text-emerald-500" />
                                   <div>
                                     <p className="font-semibold text-foreground">Delivery Approved</p>
-                                    <p className="text-sm text-muted-foreground">You approved this delivery. Your report is now available.</p>
+                                    <p className="text-sm text-muted-foreground">You approved this delivery. Your report is now available without watermark.</p>
                                   </div>
                                 </div>
                                 <Button variant="outline" className="gap-2" onClick={() => window.open(order.reportFileUrl, '_blank')}>
@@ -206,15 +206,24 @@ const ClientDashboard = () => {
                                   <div>
                                     <p className="font-semibold text-foreground text-lg">Your report is ready!</p>
                                     <p className="text-sm text-muted-foreground">
-                                      Are you pleased with the delivery and ready to approve it?
+                                      Review your report preview below. Once approved, you'll receive the final version without watermark.
                                     </p>
                                   </div>
                                 </div>
                                 <p className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
                                   ⚠️ Once you approve this delivery, the order will be marked as complete. Any revisions after this step may be subject to extra costs.
-                                  You can view the report only after approving the delivery.
                                 </p>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-3 flex-wrap">
+                                  <Button
+                                    variant="outline"
+                                    className="gap-2"
+                                    onClick={() => {
+                                      // Opens a watermarked preview
+                                      alert("Opening watermarked preview — this version cannot be downloaded or sent to institutions. Approve delivery to receive the final copy.");
+                                    }}
+                                  >
+                                    <Eye size={16} /> View with Watermark
+                                  </Button>
                                   <Button
                                     onClick={() => handleApproveDelivery(order.id)}
                                     className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
