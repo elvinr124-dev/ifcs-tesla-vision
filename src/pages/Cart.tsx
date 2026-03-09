@@ -8,6 +8,7 @@ import cartBg from "@/assets/cart-bg.jpg";
 
 const Cart = () => {
   const { items, removeItem, clearCart } = useCart();
+  const { user } = useAuth();
   const total = items.reduce((sum, item) => sum + item.price, 0);
 
   return (
