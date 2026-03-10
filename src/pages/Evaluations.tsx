@@ -335,24 +335,23 @@ const Evaluations = () => {
                         </button>
                         <button
                           onClick={() => {
+                            const k = selectedProcessing[idx] ?? "standard";
+                            const serviceData = {
+                              serviceTitle: service.title,
+                              processingKey: k,
+                              processingLabel: k === "rush3" ? "Rush 3-Day" : k === "rush24" ? "Rush 24hr" : "Standard",
+                              processingTime: k === "rush3" ? "3 Business Days" : k === "rush24" ? "24 Hours" : service.processing,
+                              price: getSelectedPrice(service, idx),
+                            };
                             if (!user) {
-                              navigate("/login");
-                            } else {
-                              navigate("/application", {
+                              navigate("/login", {
                                 state: {
-                                  serviceTitle: service.title,
-                                  processingKey: selectedProcessing[idx] ?? "standard",
-                                  processingLabel: (() => {
-                                    const k = selectedProcessing[idx] ?? "standard";
-                                    return k === "rush3" ? "Rush 3-Day" : k === "rush24" ? "Rush 24hr" : "Standard";
-                                  })(),
-                                  processingTime: (() => {
-                                    const k = selectedProcessing[idx] ?? "standard";
-                                    return k === "rush3" ? "3 Business Days" : k === "rush24" ? "24 Hours" : service.processing;
-                                  })(),
-                                  price: getSelectedPrice(service, idx)
-                                }
+                                  redirectTo: "/application",
+                                  serviceData,
+                                },
                               });
+                            } else {
+                              navigate("/application", { state: serviceData });
                             }
                           }}
                           className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
