@@ -183,8 +183,8 @@ const Evaluations = () => {
       </section>
 
       {/* Services */}
-      <section id="services" className="py-24 px-6 md:px-12 content-bg">
-        <div className="max-w-6xl mx-auto">
+      <section id="services" className="py-24 px-4 sm:px-6 content-bg">
+        <div className="max-w-[1600px] mx-auto w-full">
           <div className="text-center mb-16">
             <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
               Choose Your Evaluation
