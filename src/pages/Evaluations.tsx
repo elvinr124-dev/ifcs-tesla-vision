@@ -183,8 +183,8 @@ const Evaluations = () => {
       </section>
 
       {/* Services */}
-      <section id="services" className="py-24 px-6 md:px-12 content-bg">
-        <div className="max-w-6xl mx-auto">
+      <section id="services" className="py-24 px-4 sm:px-6 content-bg">
+        <div className="max-w-[1600px] mx-auto w-full">
           <div className="text-center mb-16">
             <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
               Choose Your Evaluation
@@ -335,24 +335,23 @@ const Evaluations = () => {
                         </button>
                         <button
                           onClick={() => {
+                            const k = selectedProcessing[idx] ?? "standard";
+                            const serviceData = {
+                              serviceTitle: service.title,
+                              processingKey: k,
+                              processingLabel: k === "rush3" ? "Rush 3-Day" : k === "rush24" ? "Rush 24hr" : "Standard",
+                              processingTime: k === "rush3" ? "3 Business Days" : k === "rush24" ? "24 Hours" : service.processing,
+                              price: getSelectedPrice(service, idx),
+                            };
                             if (!user) {
-                              navigate("/login");
-                            } else {
-                              navigate("/application", {
+                              navigate("/login", {
                                 state: {
-                                  serviceTitle: service.title,
-                                  processingKey: selectedProcessing[idx] ?? "standard",
-                                  processingLabel: (() => {
-                                    const k = selectedProcessing[idx] ?? "standard";
-                                    return k === "rush3" ? "Rush 3-Day" : k === "rush24" ? "Rush 24hr" : "Standard";
-                                  })(),
-                                  processingTime: (() => {
-                                    const k = selectedProcessing[idx] ?? "standard";
-                                    return k === "rush3" ? "3 Business Days" : k === "rush24" ? "24 Hours" : service.processing;
-                                  })(),
-                                  price: getSelectedPrice(service, idx)
-                                }
+                                  redirectTo: "/application",
+                                  serviceData,
+                                },
                               });
+                            } else {
+                              navigate("/application", { state: serviceData });
                             }
                           }}
                           className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
