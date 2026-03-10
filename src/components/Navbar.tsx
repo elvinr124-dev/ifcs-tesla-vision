@@ -6,20 +6,20 @@ import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 const headerLinks = [
-  { label: "Evaluations", href: "/evaluations", icon: GraduationCap },
-  { label: "Translations", href: "/translations", icon: Languages },
-];
+{ label: "Evaluations", href: "/evaluations", icon: GraduationCap },
+{ label: "Translations", href: "/translations", icon: Languages }];
+
 
 const allLinks = [
-  { label: "Evaluations", href: "/evaluations", icon: GraduationCap },
-  { label: "Translations", href: "/translations", icon: Languages },
-  { label: "Consulting", href: "/consulting", icon: Briefcase },
-  { label: "About Us", href: "/about", icon: Users },
-  { label: "FAQ", href: "/faq", icon: HelpCircle },
-  { label: "Contact", href: "/contact", icon: Mail },
-  { label: "Cart", href: "/cart", icon: ShoppingCart },
-  { label: "Login", href: "/login", icon: LogIn },
-];
+{ label: "Evaluations", href: "/evaluations", icon: GraduationCap },
+{ label: "Translations", href: "/translations", icon: Languages },
+{ label: "Consulting", href: "/consulting", icon: Briefcase },
+{ label: "About Us", href: "/about", icon: Users },
+{ label: "FAQ", href: "/faq", icon: HelpCircle },
+{ label: "Contact", href: "/contact", icon: Mail },
+{ label: "Cart", href: "/cart", icon: ShoppingCart },
+{ label: "Login", href: "/login", icon: LogIn }];
+
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -45,7 +45,7 @@ const Navbar = () => {
   return (
     <nav className={`tesla-nav ${scrolled ? "tesla-nav-scrolled" : ""}`}>
       <Link to="/" className="text-xl font-bold tracking-widest" style={{ color: textColor }}>
-        IFCS
+        TFCS
       </Link>
 
       {/* Desktop nav */}
@@ -61,8 +61,8 @@ const Navbar = () => {
                   {link.label}
                 </span>
               </div>
-            </Link>
-          );
+            </Link>);
+
         })}
 
         {/* Cart bubble */}
@@ -72,17 +72,17 @@ const Navbar = () => {
             <span className="text-xs font-semibold tracking-wide" style={{ color: location.pathname === "/cart" ? "white" : textColor }}>
               Cart
             </span>
-            {totalItems > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center shadow-md">
+            {totalItems > 0 &&
+            <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center shadow-md">
                 {totalItems}
               </span>
-            )}
+            }
           </div>
         </Link>
 
         {/* Login / User bubble */}
-        {user ? (
-          <div className="flex items-center gap-2">
+        {user ?
+        <div className="flex items-center gap-2">
             <Link to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"} className="group">
               <div className={`${bubbleBase} ${location.pathname.startsWith("/dashboard") ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
                 <LayoutDashboard size={18} style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }} />
@@ -91,8 +91,8 @@ const Navbar = () => {
                 </span>
               </div>
             </Link>
-            {user.role === "staff" && (
-              <Link to="/staff/cart" className="group">
+            {user.role === "staff" &&
+          <Link to="/staff/cart" className="group">
                 <div className={`${bubbleBase} ${scrolled ? bubbleScrolled : bubbleFloat}`}>
                   <Shield size={18} style={{ color: textColor }} />
                   <span className="text-xs font-semibold tracking-wide" style={{ color: textColor }}>
@@ -100,19 +100,19 @@ const Navbar = () => {
                   </span>
                 </div>
               </Link>
-            )}
+          }
             <button
-              onClick={() => { logout(); navigate("/"); }}
-              className={`${bubbleBase} ${scrolled ? bubbleScrolled : bubbleFloat}`}
-            >
+            onClick={() => {logout();navigate("/");}}
+            className={`${bubbleBase} ${scrolled ? bubbleScrolled : bubbleFloat}`}>
+            
               <LogOut size={18} style={{ color: textColor }} />
               <span className="text-xs font-semibold tracking-wide" style={{ color: textColor }}>
                 Sign Out
               </span>
             </button>
-          </div>
-        ) : (
-          <Link to="/login" className="group">
+          </div> :
+
+        <Link to="/login" className="group">
             <div className={`${bubbleBase} ${location.pathname.startsWith("/login") || location.pathname === "/signup" ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
               <LogIn size={18} style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }} />
               <span className="text-xs font-semibold tracking-wide" style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }}>
@@ -120,14 +120,14 @@ const Navbar = () => {
               </span>
             </div>
           </Link>
-        )}
+        }
 
         {/* Apply Now → goes to login if not logged in */}
         <Link
           to={user ? "/application" : "/login"}
           className="inline-flex items-center justify-center px-7 py-3 text-sm font-semibold rounded-2xl ml-2 transition-all duration-200 hover:scale-105 shadow-lg"
-          style={{ background: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}
-        >
+          style={{ background: "hsl(var(--accent))", color: "hsl(var(--accent-foreground))" }}>
+          
           Apply Now
         </Link>
 
@@ -136,8 +136,8 @@ const Navbar = () => {
           <SheetTrigger asChild>
             <button
               className={`${bubbleBase} ${scrolled ? bubbleScrolled : bubbleFloat} ml-1`}
-              aria-label="Open menu"
-            >
+              aria-label="Open menu">
+              
               <Menu size={20} style={{ color: textColor }} />
             </button>
           </SheetTrigger>
@@ -156,52 +156,52 @@ const Navbar = () => {
                     to={link.href}
                     onClick={() => setSidebarOpen(false)}
                     className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                      isActive
-                        ? "bg-accent/10 text-accent border-r-4 border-accent"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
+                    isActive ?
+                    "bg-accent/10 text-accent border-r-4 border-accent" :
+                    "text-foreground hover:bg-muted"}`
+                    }>
+                    
                     <Icon size={20} className={isActive ? "text-accent" : "text-muted-foreground"} />
                     <span className="text-sm font-semibold tracking-wide">{link.label}</span>
-                    {link.href === "/cart" && totalItems > 0 && (
-                      <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
+                    {link.href === "/cart" && totalItems > 0 &&
+                    <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
                         {totalItems}
                       </span>
-                    )}
-                  </Link>
-                );
+                    }
+                  </Link>);
+
               })}
 
-              {user && (
-                <>
+              {user &&
+              <>
                   <Link
-                    to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                      location.pathname.startsWith("/dashboard")
-                        ? "bg-accent/10 text-accent border-r-4 border-accent"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
+                  to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"}
+                  onClick={() => setSidebarOpen(false)}
+                  className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
+                  location.pathname.startsWith("/dashboard") ?
+                  "bg-accent/10 text-accent border-r-4 border-accent" :
+                  "text-foreground hover:bg-muted"}`
+                  }>
+                  
                     <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
                     <span className="text-sm font-semibold tracking-wide">My Dashboard</span>
                   </Link>
                   <button
-                    onClick={() => { logout(); navigate("/"); setSidebarOpen(false); }}
-                    className="flex items-center gap-4 px-6 py-4 text-foreground hover:bg-muted transition-all duration-200"
-                  >
+                  onClick={() => {logout();navigate("/");setSidebarOpen(false);}}
+                  className="flex items-center gap-4 px-6 py-4 text-foreground hover:bg-muted transition-all duration-200">
+                  
                     <LogOut size={20} className="text-muted-foreground" />
                     <span className="text-sm font-semibold tracking-wide">Sign Out</span>
                   </button>
                 </>
-              )}
+              }
 
               <div className="px-6 pt-6">
                 <Link
                   to={user ? "/application" : "/login"}
                   onClick={() => setSidebarOpen(false)}
-                  className="block w-full text-center px-7 py-3 text-sm font-semibold rounded-2xl bg-accent text-accent-foreground shadow-lg hover:bg-accent/90 transition-all duration-200"
-                >
+                  className="block w-full text-center px-7 py-3 text-sm font-semibold rounded-2xl bg-accent text-accent-foreground shadow-lg hover:bg-accent/90 transition-all duration-200">
+                  
                   Apply Now
                 </Link>
               </div>
@@ -231,58 +231,58 @@ const Navbar = () => {
                   key={link.label}
                   to={link.href}
                   className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                    isActive
-                      ? "bg-accent/10 text-accent border-r-4 border-accent"
-                      : "text-foreground hover:bg-muted"
-                  }`}
-                >
+                  isActive ?
+                  "bg-accent/10 text-accent border-r-4 border-accent" :
+                  "text-foreground hover:bg-muted"}`
+                  }>
+                  
                   <Icon size={20} className={isActive ? "text-accent" : "text-muted-foreground"} />
                   <span className="text-sm font-semibold tracking-wide">{link.label}</span>
-                  {link.href === "/cart" && totalItems > 0 && (
-                    <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
+                  {link.href === "/cart" && totalItems > 0 &&
+                  <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
                       {totalItems}
                     </span>
-                  )}
-                </Link>
-              );
+                  }
+                </Link>);
+
             })}
 
-            {user && (
-              <>
+            {user &&
+            <>
                 <Link
-                  to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"}
-                  className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                    location.pathname.startsWith("/dashboard")
-                      ? "bg-accent/10 text-accent border-r-4 border-accent"
-                      : "text-foreground hover:bg-muted"
-                  }`}
-                >
+                to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"}
+                className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
+                location.pathname.startsWith("/dashboard") ?
+                "bg-accent/10 text-accent border-r-4 border-accent" :
+                "text-foreground hover:bg-muted"}`
+                }>
+                
                   <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
                   <span className="text-sm font-semibold tracking-wide">My Dashboard</span>
                 </Link>
                 <button
-                  onClick={() => { logout(); navigate("/"); }}
-                  className="flex items-center gap-4 px-6 py-4 text-foreground hover:bg-muted transition-all duration-200"
-                >
+                onClick={() => {logout();navigate("/");}}
+                className="flex items-center gap-4 px-6 py-4 text-foreground hover:bg-muted transition-all duration-200">
+                
                   <LogOut size={20} className="text-muted-foreground" />
                   <span className="text-sm font-semibold tracking-wide">Sign Out</span>
                 </button>
               </>
-            )}
+            }
 
             <div className="px-6 pt-6">
               <Link
                 to={user ? "/application" : "/login"}
-                className="block w-full text-center px-7 py-3 text-sm font-semibold rounded-2xl bg-accent text-accent-foreground shadow-lg hover:bg-accent/90 transition-all duration-200"
-              >
+                className="block w-full text-center px-7 py-3 text-sm font-semibold rounded-2xl bg-accent text-accent-foreground shadow-lg hover:bg-accent/90 transition-all duration-200">
+                
                 Apply Now
               </Link>
             </div>
           </div>
         </SheetContent>
       </Sheet>
-    </nav>
-  );
+    </nav>);
+
 };
 
 export default Navbar;
