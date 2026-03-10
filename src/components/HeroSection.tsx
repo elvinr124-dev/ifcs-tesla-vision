@@ -24,7 +24,7 @@ const HeroSection = () => {
       {/* Content */}
       <div className="tesla-section-content animate-fade-in-up hero-text-shadow" style={{ color: "white" }}>
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight leading-tight">
-          Institute of Foreign<br />Credential Services
+          The Foreign<br />Credential Services
         </h1>
         <p className="text-2xl md:text-3xl font-light max-w-3xl mx-auto mt-6 opacity-90">
           Helping Students Get the Credits They Deserve
