@@ -1,19 +1,21 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-import path from "path"; // This helps find your components
-import { viteSingleFile } from "vite-plugin-singlefile";
+import path from "path";
+import { componentTagger } from "lovable-tagger";
 
-export default defineConfig({
-  // FIX: This ensures the app looks inside itself rather than your computer's root
-  base: "./", 
-  plugins: [
-    react(), 
-    viteSingleFile()
-  ],
+// https://vitejs.dev/config/
+export default defineConfig(({ mode }) => ({
+  server: {
+    host: "::",
+    port: 8080,
+    hmr: {
+      overlay: false,
+    },
+  },
+  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
   resolve: {
     alias: {
-      // FIX: This tells Vite that "@" means your "src" folder
       "@": path.resolve(__dirname, "./src"),
     },
   },
-});
+}));
