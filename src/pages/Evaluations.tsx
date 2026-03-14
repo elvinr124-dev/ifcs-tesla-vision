@@ -133,7 +133,18 @@ const Evaluations = () => {
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  // Scroll to service anchor on load
+  useEffect(() => {
+    if (location.hash) {
+      const id = location.hash.replace("#", "");
+      setTimeout(() => {
+        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 500);
+    }
+  }, [location.hash]);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
