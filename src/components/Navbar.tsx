@@ -108,8 +108,16 @@ const Navbar = () => {
                   {evalPreviews.map((ev) => (
                     <Link
                       key={ev.title}
-                      to="/evaluations"
-                      onClick={() => setEvalHover(false)}
+                      to={`/evaluations#${ev.anchor}`}
+                      onClick={() => {
+                        setEvalHover(false);
+                        // If already on evaluations page, scroll to anchor
+                        if (location.pathname === "/evaluations") {
+                          setTimeout(() => {
+                            document.getElementById(ev.anchor)?.scrollIntoView({ behavior: "smooth", block: "center" });
+                          }, 100);
+                        }
+                      }}
                       className="flex-shrink-0 w-[140px] group/card"
                     >
                       <div className="w-[140px] h-[100px] rounded-2xl overflow-hidden mb-2 border border-border/50 shadow-sm group-hover/card:shadow-lg group-hover/card:scale-105 transition-all duration-300">
