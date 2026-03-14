@@ -110,14 +110,9 @@ const AddonRenewal = () => {
               </CardContent>
             </Card>
 
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button type="button" variant="outline" size="lg" className="flex-1 py-6 text-lg rounded-2xl gap-2" onClick={handleAddToCart}>
-                <ShoppingCart size={20} /> Add to Cart
-              </Button>
-              <Button type="submit" size="lg" className="flex-1 py-6 text-lg rounded-2xl">
-                Pay $100.00
-              </Button>
-            </div>
+            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">
+              Pay $100.00
+            </Button>
           </form>
         </div>
       </div>
