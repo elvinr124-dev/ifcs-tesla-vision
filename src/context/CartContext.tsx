@@ -26,8 +26,16 @@ interface CartContextType {
 
 const CartContext = createContext<CartContextType | null>(null);
 
+const VALID_CODES: Record<string, number> = {
+  "IFCS10": 10,
+  "IFCS20": 20,
+  "WELCOME15": 15,
+};
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
+  const [discountCode, setDiscountCode] = useState("");
+  const discountAmount = VALID_CODES[discountCode.toUpperCase()] ?? 0;
 
   const addItem = (item: Omit<CartItem, "id" | "addedAt">) => {
     const newItem: CartItem = {
