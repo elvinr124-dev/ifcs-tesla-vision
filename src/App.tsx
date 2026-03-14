@@ -70,6 +70,8 @@ const App = () => (
               <Route path="/dashboard/client" element={<ClientDashboard />} />
               <Route path="/dashboard/staff" element={<StaffDashboard />} />
               <Route path="/duplicate-reports" element={<DuplicateReports />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/addon/electronic-sharing" element={<AddonElectronicSharing />} />
               <Route path="/addon/hard-copy" element={<AddonHardCopy />} />
               <Route path="/addon/domestic-shipping" element={<AddonDomesticShipping />} />
