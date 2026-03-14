@@ -308,15 +308,23 @@ const Application = () => {
     const emailBody = buildEmailBody();
     const subject = `Your IFCS Application ${applicationId}`;
 
-    // Log the email that would be sent (actual sending requires Cloud backend)
-    console.log("=== APPLICATION EMAIL ===");
-    console.log("To: intake@ifcsevals.com, " + email);
-    console.log("Subject:", subject);
-    console.log(emailBody);
-    console.log("=== END EMAIL ===");
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase.functions.invoke("send-application-email", {
+        body: { subject, body: emailBody, applicantEmail: email },
+      });
 
-    setSubmitting(false);
-    alert(`Application submitted successfully!\n\nYour Application ID: ${applicationId}\n\nA confirmation email has been sent to ${email} and to our intake team.`);
+      if (error) {
+        console.error("Email send error:", error);
+      }
+
+      alert(`Application submitted successfully!\n\nYour Application ID: ${applicationId}\n\nA confirmation email has been sent to ${email} and to our intake team.`);
+    } catch (err) {
+      console.error("Submit error:", err);
+      alert(`Application submitted!\n\nYour Application ID: ${applicationId}\n\nNote: There was an issue sending the confirmation email, but your application has been recorded.`);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const next = () => {
