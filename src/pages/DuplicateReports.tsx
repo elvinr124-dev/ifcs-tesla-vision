@@ -93,7 +93,7 @@ const DuplicateReports = () => {
     const label = delivery === "electronic"
       ? "Duplicate Report — Electronic"
       : `Duplicate Report — Hard Copy x${hardCopyQty}`;
-    addItem({ title: label, price: total });
+    addItem({ serviceTitle: label, processingKey: "standard", processingLabel: delivery === "electronic" ? "Electronic" : "Hard Copy", processingTime: "5-7 Business Days", price: total });
     toast({ title: "Added to Cart", description: `${label} ($${total.toFixed(2)}) added to your cart.` });
   };
 
