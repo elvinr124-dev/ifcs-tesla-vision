@@ -28,7 +28,7 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         from: "IFCS Applications <onboarding@resend.dev>",
-        to: ["intake@ifcsevals.com"],
+        to: [recipientEmail || "intake@ifcsevals.com"],
         subject,
         text: body,
       }),

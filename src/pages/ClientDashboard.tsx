@@ -108,6 +108,7 @@ const ClientDashboard = () => {
           subject: `Dashboard Message from ${user?.email || "Client"}`,
           body: `Message from: ${user?.email || "Unknown"}\n\nDate: ${new Date().toLocaleString()}\n\n${message}`,
           applicantEmail: user?.email,
+          recipientEmail: "info@ifcsevals.com",
         },
       });
       if (error) console.error("Send error:", error);
