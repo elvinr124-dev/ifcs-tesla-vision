@@ -121,12 +121,27 @@ const evaluationServices = [
 
 type ProcessingKey = "standard" | "rush3" | "rush24";
 
+// Slug helper for service IDs
+const toSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 const Evaluations = () => {
   const [selectedProcessing, setSelectedProcessing] = useState<Record<number, ProcessingKey>>({});
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const serviceRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // Scroll to service when hash changes
+  useEffect(() => {
+    const hash = location.hash.replace("#", "");
+    if (hash && serviceRefs.current[hash]) {
+      setTimeout(() => {
+        serviceRefs.current[hash]?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
+    }
+  }, [location.hash]);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
