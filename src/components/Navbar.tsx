@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail } from "lucide-react";
+import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
@@ -124,6 +124,16 @@ const Navbar = () => {
             </div>
           )}
         </div>
+
+        {/* Duplicate Report */}
+        <Link to="/duplicate-reports" className="group">
+          <div className={`${bubbleBase} ${location.pathname === "/duplicate-reports" ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
+            <Copy size={20} style={{ color: location.pathname === "/duplicate-reports" ? "white" : textColor }} />
+            <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/duplicate-reports" ? "white" : textColor }}>
+              Duplicate Report
+            </span>
+          </div>
+        </Link>
 
         {/* Translations */}
         <Link to="/translations" className="group">
