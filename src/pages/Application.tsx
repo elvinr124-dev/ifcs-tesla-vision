@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -75,11 +75,18 @@ const TERMS_CONTENT = [
   "Refunds will be made only if an applicant has overpaid for services to IFCS. Applications for 8-10 day service can only be cancelled within 24hr of submission and will be subject to a $50 minimum processing fee. No refunds can be issued for 24hr, and 3-day service.",
   "Institute of Foreign Credential Services reserves the right to refuse service to anyone for any reason.",
   "Institute of Foreign Credential Services reserves the right to request additional information and/or official documentation by the issuing institution during the application process. Additionally, IFCS reserves the right to contact the issuing institution and authenticate your educational credentials.",
-  "Two copies of each evaluation are included with the regular evaluation fee. You will need to pay for shipping: Additional copies may be requested for $25 each, plus shipping.",
   "My evaluation and/or translation will be completed entirely based on the documents I submit to IFCS.",
   "I release IFCS from any liability for damages resulting from the use of an evaluation or translation by me or third party.",
   "Evaluation reports can only be released once we have received official documents directly from the issuing institution(s), or confirmation of your studies, if you had selected our verification service.",
 ];
+
+/** Generate a unique application ID from first + last initials + 4-digit number */
+const generateAppId = (first: string, last: string): string => {
+  const f = (first.trim()[0] || "X").toUpperCase();
+  const l = (last.trim()[0] || "X").toUpperCase();
+  const num = String(Math.floor(1000 + Math.random() * 9000)); // 4 digits
+  return `${f}${l}${num}`;
+};
 
 const Application = () => {
   const location = useLocation();
@@ -128,6 +135,8 @@ const Application = () => {
   const [translationOption, setTranslationOption] = useState("english");
   const [authOption, setAuthOption] = useState("arrange");
   const [deliveryOptions, setDeliveryOptions] = useState<string[]>(["email-self"]);
+  const [institutionEmail, setInstitutionEmail] = useState("");
+  const [shippingAddress, setShippingAddress] = useState({ street: "", city: "", state: "", zip: "", country: "" });
   const [files, setFiles] = useState<File[]>([]);
 
   // Step 5
@@ -151,6 +160,30 @@ const Application = () => {
   const [pendingAgreement, setPendingAgreement] = useState<"terms" | "privacy" | null>(null);
 
   const [stepError, setStepError] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+
+  // Generate application ID based on first + last name (memoized so it stays stable)
+  const [appIdSeed] = useState(() => Math.floor(1000 + Math.random() * 9000));
+  const applicationId = useMemo(() => {
+    const f = (firstName.trim()[0] || "X").toUpperCase();
+    const l = (lastName.trim()[0] || "X").toUpperCase();
+    return `${f}${l}${String(appIdSeed).padStart(4, "0")}`;
+  }, [firstName, lastName, appIdSeed]);
+
+  // Calculate delivery costs
+  const deliveryCosts = useMemo(() => {
+    let cost = 0;
+    if (deliveryOptions.includes("email-inst")) cost += 5;
+    if (deliveryOptions.includes("us-postage")) cost += 15;
+    if (deliveryOptions.includes("domestic-courier")) cost += 25;
+    if (deliveryOptions.includes("intl-courier")) cost += 75;
+    return cost;
+  }, [deliveryOptions]);
+
+  const authCost = authOption === "authenticate" ? 140 : 0;
+  const totalPrice = selectedPrice + deliveryCosts + authCost;
+
+  const needsAddress = deliveryOptions.some(o => ["us-postage", "domestic-courier", "intl-courier"].includes(o));
 
   const validateStep = (s: number): string => {
     if (s === 1) {
@@ -163,6 +196,7 @@ const Application = () => {
       if (!email.trim()) return "E-mail address is required.";
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Please enter a valid e-mail address.";
       if (!cellPhone.trim()) return "Cell phone is required.";
+      if (!howHeard.trim()) return "Please tell us how you heard about IFCS.";
     }
     if (s === 2) {
       if (!institutionName.trim()) return "Institution name is required.";
@@ -175,6 +209,15 @@ const Application = () => {
     }
     if (s === 4) {
       if (deliveryOptions.length === 0) return "Please select at least one delivery option.";
+      if (deliveryOptions.includes("email-inst") && !institutionEmail.trim()) return "Please enter the institution email address.";
+      if (deliveryOptions.includes("email-inst") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(institutionEmail)) return "Please enter a valid institution email.";
+      if (needsAddress) {
+        if (!shippingAddress.street.trim()) return "Street address is required for shipping.";
+        if (!shippingAddress.city.trim()) return "City is required for shipping.";
+        if (!shippingAddress.state.trim()) return "State/Province is required for shipping.";
+        if (!shippingAddress.zip.trim()) return "ZIP/Postal code is required for shipping.";
+        if (!shippingAddress.country.trim()) return "Country is required for shipping.";
+      }
     }
     return "";
   };
@@ -187,9 +230,93 @@ const Application = () => {
     setFiles(processedFiles);
   }, []);
 
-  const handleSubmit = () => {
+  const buildEmailBody = () => {
+    const lines: string[] = [];
+    lines.push("INSTITUTE OF FOREIGN CREDENTIAL SERVICES");
+    lines.push("6 CEDAR ST, DOBBS FERRY, NY 10522 WWW.IFCSEVALS.COM");
+    lines.push("PHONE: (914) 693-2840 FAX: (914) 231-7782 EMAIL: INFO@IFCSEVALS.COM");
+    lines.push("");
+    lines.push("Please do not reply to this email");
+    lines.push("");
+    lines.push("Part 1 - Personal Information");
+    lines.push("");
+    lines.push(`First name: ${firstName}`);
+    if (middleName) lines.push(`Middle name: ${middleName}`);
+    lines.push(`Last name: ${lastName}`);
+    if (credFirstName || credLastName) {
+      lines.push(`Name on Education Credentials: ${credFirstName} ${credMiddleName ? `(${credMiddleName}) ` : ""}${credLastName}`);
+    }
+    lines.push(`Date of Birth: ${dobMonth} ${dobDay}, ${dobYear}`);
+    lines.push(`Gender: ${gender.charAt(0).toUpperCase() + gender.slice(1)}`);
+    if (homePhone) lines.push(`Home Phone: ${homePhone}`);
+    lines.push(`Cell Phone: ${cellPhone}`);
+    lines.push(`E-mail Address: ${email}`);
+    lines.push(`How Did You Hear About IFCS? ${howHeard}`);
+    lines.push("");
+    lines.push("Part 2 - Academic History");
+    lines.push("");
+    lines.push(`Name of Institution: ${institutionName}`);
+    lines.push(`Country: ${country}`);
+    lines.push(`Dates Attended: ${attendance}`);
+    lines.push(`Degree(s) Earned: ${degrees}`);
+    lines.push("");
+    lines.push("Part 3 - Purpose of Evaluation");
+    lines.push("");
+    lines.push(`Purpose of Evaluation: ${purpose}`);
+    lines.push("");
+    lines.push("Part 4 - Types of Evaluation Reports and Additional Services");
+    lines.push("");
+    lines.push(`Credential Evaluations: ${selectedServiceTitle} ${selectedProcessingTime}`);
+    lines.push(`Translation: ${translationOption === "english" ? "All my documents are in English and I do not need translation of my documents" : translationOption === "own-translation" ? "I will provide a certified translation" : "I need a quote for translation services"}`);
+    lines.push(`Authentication: ${authOption === "authenticate" ? "Perform Document Authentication" : "I will arrange with the issuing institution"}`);
+    const deliveryLabels: string[] = [];
+    if (deliveryOptions.includes("email-self")) deliveryLabels.push("Email My Report To Address Provided");
+    if (deliveryOptions.includes("email-inst")) deliveryLabels.push(`Email My Report To An Institution`);
+    if (deliveryOptions.includes("us-postage")) deliveryLabels.push("US Postage");
+    if (deliveryOptions.includes("domestic-courier")) deliveryLabels.push("Domestic Courier (USPS Priority Mail)");
+    if (deliveryOptions.includes("intl-courier")) deliveryLabels.push("International Courier");
+    lines.push(`Delivery: ${deliveryLabels.join(", ")}`);
+    if (deliveryOptions.includes("email-inst")) {
+      lines.push(`E-mail Address to send the evaluation: ${institutionEmail}`);
+    }
+    if (needsAddress) {
+      lines.push(`Shipping Address: ${shippingAddress.street}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zip}, ${shippingAddress.country}`);
+    }
+    lines.push("");
+    lines.push("Part 5 - Payment Options");
+    lines.push("");
+    lines.push(`Total: ${totalPrice.toFixed(2)}`);
+    lines.push("");
+    lines.push("I agree to the following terms and conditions:");
+    TERMS_CONTENT.forEach((t, i) => lines.push(`${i + 1}. ${t}`));
+    lines.push("");
+    if (paymentMethod === "card") {
+      lines.push(`Card Type: ${cardNumber.startsWith("4") ? "Visa" : cardNumber.startsWith("5") ? "Mastercard" : "Card"}`);
+      lines.push(`Last Four Digits: ${cardNumber.slice(-4)}`);
+    } else {
+      lines.push("Payment Method: ACH Bank Transfer");
+      lines.push(`Routing: ***${achRouting.slice(-4)}`);
+      lines.push(`Account: ***${achAccount.slice(-4)}`);
+    }
+    return lines.join("\n");
+  };
+
+  const handleSubmit = async () => {
     if (!agreeTerms || !agreePrivacy) return;
-    alert("Application submitted! Your application ID: EE0039. We will contact you shortly.");
+    setSubmitting(true);
+
+    const emailBody = buildEmailBody();
+    const subject = `Your IFCS Application ${applicationId}`;
+
+    // Log the email that would be sent (actual sending requires Cloud backend)
+    console.log("=== APPLICATION EMAIL ===");
+    console.log("To: intake@ifcsevals.com, " + email);
+    console.log("Subject:", subject);
+    console.log(emailBody);
+    console.log("=== END EMAIL ===");
+
+    setSubmitting(false);
+    alert(`Application submitted successfully!\n\nYour Application ID: ${applicationId}\n\nA confirmation email has been sent to ${email} and to our intake team.`);
   };
 
   const next = () => {
@@ -258,7 +385,7 @@ const Application = () => {
         </div>
       </section>
 
-      {/* Stepper */}
+      {/* Stepper — NO click to skip */}
       <div className="max-w-4xl mx-auto px-6 pt-12 pb-2">
         <div className="flex items-center justify-between gap-1">
           {STEPS.map((s, i) => {
@@ -267,8 +394,7 @@ const Application = () => {
             const active = s.num === step;
             return (
               <div key={s.num} className="flex items-center flex-1">
-                <button onClick={() => setStep(s.num)}
-                  className={`flex flex-col items-center gap-1.5 group transition-all duration-300 ${active ? "scale-110" : ""}`}>
+                <div className={`flex flex-col items-center gap-1.5 transition-all duration-300 ${active ? "scale-110" : ""}`}>
                   <div className={`w-11 h-11 rounded-2xl flex items-center justify-center shadow-md transition-all duration-300 ${
                     done ? "bg-accent/30 border border-accent/50" : active ? "bg-accent shadow-lg shadow-accent/40" : "bg-muted border border-border"
                   }`}>
@@ -277,7 +403,7 @@ const Application = () => {
                   <span className={`text-[10px] font-semibold tracking-wider uppercase hidden sm:block ${active ? "text-accent" : "text-muted-foreground"}`}>
                     {s.label}
                   </span>
-                </button>
+                </div>
                 {i < STEPS.length - 1 && (
                   <div className="flex-1 h-px mx-2 bg-border overflow-hidden">
                     <div className="h-px bg-accent transition-all duration-500" style={{ width: s.num < step ? "100%" : "0%" }} />
@@ -485,9 +611,9 @@ const Application = () => {
                       {[
                         { value: "email-self", label: "E-Mail to the address provided in part one", price: "Free" },
                         { value: "email-inst", label: "E-mail address of the institution receiving my report", price: "$5" },
-                        { value: "us-postage", label: "US Postage", price: "$10/address" },
-                        { value: "domestic-courier", label: "Domestic Courier", price: "$25/address" },
-                        { value: "intl-courier", label: "International Courier", price: "$60/address" },
+                        { value: "us-postage", label: "US Postage (no tracking number provided)", price: "$15/address" },
+                        { value: "domestic-courier", label: "Domestic Courier (USPS Priority Mail)", price: "$25/address" },
+                        { value: "intl-courier", label: "International Courier", price: "$75/address" },
                       ].map((opt) => {
                         const active = deliveryOptions.includes(opt.value);
                         return (
@@ -506,7 +632,41 @@ const Application = () => {
                         );
                       })}
                     </div>
-                    <p className="text-xs text-muted-foreground mt-2">Two copies of the evaluation are included. Additional copies available at $20 each.</p>
+
+                    {/* Institution email input */}
+                    {deliveryOptions.includes("email-inst") && (
+                      <div className="pl-8 pt-2">
+                        <FieldGroup label="Institution Email Address" required>
+                          <GlassInput value={institutionEmail} onChange={(e) => setInstitutionEmail(e.target.value)} type="email" placeholder="e.g. admissions@university.edu" />
+                        </FieldGroup>
+                      </div>
+                    )}
+
+                    {/* Shipping address */}
+                    {needsAddress && (
+                      <div className="pl-8 pt-2 space-y-3">
+                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Shipping Address</p>
+                        <FieldGroup label="Street Address" required>
+                          <GlassInput value={shippingAddress.street} onChange={(e) => setShippingAddress(p => ({ ...p, street: e.target.value }))} placeholder="123 Main St, Apt 4" />
+                        </FieldGroup>
+                        <div className="grid grid-cols-2 gap-3">
+                          <FieldGroup label="City" required>
+                            <GlassInput value={shippingAddress.city} onChange={(e) => setShippingAddress(p => ({ ...p, city: e.target.value }))} placeholder="City" />
+                          </FieldGroup>
+                          <FieldGroup label="State / Province" required>
+                            <GlassInput value={shippingAddress.state} onChange={(e) => setShippingAddress(p => ({ ...p, state: e.target.value }))} placeholder="State" />
+                          </FieldGroup>
+                        </div>
+                        <div className="grid grid-cols-2 gap-3">
+                          <FieldGroup label="ZIP / Postal Code" required>
+                            <GlassInput value={shippingAddress.zip} onChange={(e) => setShippingAddress(p => ({ ...p, zip: e.target.value }))} placeholder="10001" />
+                          </FieldGroup>
+                          <FieldGroup label="Country" required>
+                            <GlassInput value={shippingAddress.country} onChange={(e) => setShippingAddress(p => ({ ...p, country: e.target.value }))} placeholder="United States" />
+                          </FieldGroup>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
@@ -523,18 +683,52 @@ const Application = () => {
                   <div className="rounded-2xl border border-border bg-muted/40 p-6 space-y-3">
                     <SectionHeading>Your Order Summary</SectionHeading>
                     <div className="space-y-2">
-                      {[
-                        { label: "Order", value: `${selectedServiceTitle} — ${selectedProcessingLabel} (${selectedProcessingTime})` },
-                        { label: "Price", value: `$${selectedPrice}` },
-                        { label: "Authentication", value: authOption === "authenticate" ? "Perform Document Authentication (+$140)" : "Self-arranged" },
-                        { label: "Delivery", value: deliveryOptions.includes("email-self") ? "E-Mail To Address Provided (Free)" : deliveryOptions.join(", ") },
-                        { label: "Application ID", value: "EE0039", highlight: true },
-                      ].map((row) => (
-                        <div key={row.label} className="flex items-start justify-between gap-4 text-sm">
-                          <span className="text-muted-foreground flex-shrink-0">{row.label}:</span>
-                          <span className={`text-right font-medium ${row.highlight ? "text-accent font-bold" : "text-foreground"}`}>{row.value}</span>
+                      <div className="flex items-start justify-between gap-4 text-sm">
+                        <span className="text-muted-foreground">Credential Evaluation:</span>
+                        <span className="text-right font-medium text-foreground">{selectedServiceTitle} — {selectedProcessingLabel} ({selectedProcessingTime})</span>
+                      </div>
+                      <div className="flex items-start justify-between gap-4 text-sm">
+                        <span className="text-muted-foreground">Service Price:</span>
+                        <span className="text-right font-medium text-foreground">${selectedPrice}</span>
+                      </div>
+                      {deliveryOptions.includes("email-inst") && (
+                        <div className="flex items-start justify-between gap-4 text-sm">
+                          <span className="text-muted-foreground">Email to Institution ({institutionEmail}):</span>
+                          <span className="text-right font-medium text-foreground">+$5</span>
                         </div>
-                      ))}
+                      )}
+                      {deliveryOptions.includes("us-postage") && (
+                        <div className="flex items-start justify-between gap-4 text-sm">
+                          <span className="text-muted-foreground">US Postage:</span>
+                          <span className="text-right font-medium text-foreground">+$15</span>
+                        </div>
+                      )}
+                      {deliveryOptions.includes("domestic-courier") && (
+                        <div className="flex items-start justify-between gap-4 text-sm">
+                          <span className="text-muted-foreground">Domestic Courier (USPS Priority Mail):</span>
+                          <span className="text-right font-medium text-foreground">+$25</span>
+                        </div>
+                      )}
+                      {deliveryOptions.includes("intl-courier") && (
+                        <div className="flex items-start justify-between gap-4 text-sm">
+                          <span className="text-muted-foreground">International Courier:</span>
+                          <span className="text-right font-medium text-foreground">+$75</span>
+                        </div>
+                      )}
+                      {authOption === "authenticate" && (
+                        <div className="flex items-start justify-between gap-4 text-sm">
+                          <span className="text-muted-foreground">Document Authentication:</span>
+                          <span className="text-right font-medium text-foreground">+$140</span>
+                        </div>
+                      )}
+                      <div className="border-t border-border pt-3 mt-3 flex items-start justify-between gap-4 text-sm">
+                        <span className="font-bold text-foreground">Total:</span>
+                        <span className="text-right font-bold text-2xl text-accent">${totalPrice}</span>
+                      </div>
+                      <div className="flex items-start justify-between gap-4 text-sm pt-2">
+                        <span className="text-muted-foreground">Application ID:</span>
+                        <span className="text-right font-bold text-accent">{applicationId}</span>
+                      </div>
                     </div>
                   </div>
 
@@ -659,9 +853,9 @@ const Application = () => {
                     Continue — {step}/5 <ArrowRight size={16} />
                   </button>
                 ) : (
-                  <button onClick={handleSubmit} disabled={!agreeTerms || !agreePrivacy}
+                  <button onClick={handleSubmit} disabled={!agreeTerms || !agreePrivacy || submitting}
                     className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100">
-                    Submit Application 5/5 <CheckCircle2 size={16} />
+                    {submitting ? "Submitting..." : "Submit Application 5/5"} <CheckCircle2 size={16} />
                   </button>
                 )}
               </div>
