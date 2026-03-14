@@ -125,6 +125,16 @@ const Navbar = () => {
           )}
         </div>
 
+        {/* Duplicate Report */}
+        <Link to="/duplicate-reports" className="group">
+          <div className={`${bubbleBase} ${location.pathname === "/duplicate-reports" ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
+            <Copy size={20} style={{ color: location.pathname === "/duplicate-reports" ? "white" : textColor }} />
+            <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/duplicate-reports" ? "white" : textColor }}>
+              Duplicate Report
+            </span>
+          </div>
+        </Link>
+
         {/* Translations */}
         <Link to="/translations" className="group">
           <div className={`${bubbleBase} ${location.pathname === "/translations" ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>

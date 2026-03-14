@@ -43,7 +43,7 @@ const DuplicateReports = () => {
 
       {/* Hero */}
       <section className="relative h-[40vh] flex items-center justify-center overflow-hidden">
-        <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img src={duplicateReportsBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">Duplicate Reports</h1>
