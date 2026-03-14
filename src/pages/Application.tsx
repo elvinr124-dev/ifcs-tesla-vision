@@ -270,21 +270,28 @@ const Application = () => {
     lines.push("");
     lines.push("Part 4 - Types of Evaluation Reports and Additional Services");
     lines.push("");
-    lines.push(`Credential Evaluations: ${selectedServiceTitle} ${selectedProcessingTime}`);
+    lines.push(`Credential Evaluations: ${selectedServiceTitle} ${selectedProcessingTime} ($${selectedPrice})`);
     lines.push(`Translation: ${translationOption === "english" ? "All my documents are in English and I do not need translation of my documents" : translationOption === "own-translation" ? "I will provide a certified translation" : "I need a quote for translation services"}`);
-    lines.push(`Authentication: ${authOption === "authenticate" ? "Perform Document Authentication" : "I will arrange with the issuing institution"}`);
+    lines.push(`Authentication: ${authOption === "authenticate" ? "Perform Document Authentication ($140)" : "I Will Arrange With The Issuing Institution(s) To Send Official Documents To IFCS"}`);
     const deliveryLabels: string[] = [];
-    if (deliveryOptions.includes("email-self")) deliveryLabels.push("Email My Report To Address Provided");
-    if (deliveryOptions.includes("email-inst")) deliveryLabels.push(`Email My Report To An Institution`);
-    if (deliveryOptions.includes("us-postage")) deliveryLabels.push("US Postage");
-    if (deliveryOptions.includes("domestic-courier")) deliveryLabels.push("Domestic Courier (USPS Priority Mail)");
-    if (deliveryOptions.includes("intl-courier")) deliveryLabels.push("International Courier");
+    if (deliveryOptions.includes("email-self")) deliveryLabels.push("E Mail To The Address Provided");
+    if (deliveryOptions.includes("email-inst")) deliveryLabels.push(`Email My Report To An Institution ($5)`);
+    if (deliveryOptions.includes("us-postage")) deliveryLabels.push("US Postage ($15)");
+    if (deliveryOptions.includes("domestic-courier")) deliveryLabels.push("Domestic Courier - USPS Priority Mail ($25)");
+    if (deliveryOptions.includes("intl-courier")) deliveryLabels.push("International Courier ($75)");
     lines.push(`Delivery: ${deliveryLabels.join(", ")}`);
     if (deliveryOptions.includes("email-inst")) {
       lines.push(`E-mail Address to send the evaluation: ${institutionEmail}`);
     }
     if (needsAddress) {
       lines.push(`Shipping Address: ${shippingAddress.street}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zip}, ${shippingAddress.country}`);
+    }
+    lines.push("");
+    lines.push("Attachments");
+    if (files.length > 0) {
+      files.forEach((f) => lines.push(f.name));
+    } else {
+      lines.push("No attachments");
     }
     lines.push("");
     lines.push("Part 5 - Payment Options");
