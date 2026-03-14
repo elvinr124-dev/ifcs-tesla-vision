@@ -14,13 +14,13 @@ import serviceGraduate from "@/assets/service-graduate.jpg";
 import serviceHsUni from "@/assets/service-highschool-uni.jpg";
 
 const evalPreviews = [
-  { title: "General Analysis", price: 100, image: serviceMilitary, anchor: "general-analysis" },
-  { title: "General Analysis + GPA", price: 150, image: serviceEducation, anchor: "general-analysis-gpa" },
-  { title: "Cosmetology CBC", price: 170, image: serviceCosmetology, anchor: "cosmetology-cbc" },
-  { title: "Course-by-Course", price: 190, image: serviceEmployment, anchor: "course-by-course" },
-  { title: "Health Professions CBC", price: 230, image: serviceHealth, anchor: "health-professions-cbc" },
-  { title: "Comprehensive CBC", price: 290, image: serviceGraduate, anchor: "comprehensive-cbc" },
-  { title: "HS & University CBC", price: 295, image: serviceHsUni, anchor: "hs-university-cbc" },
+  { title: "General Analysis", price: 100, image: serviceMilitary },
+  { title: "General Analysis + GPA", price: 150, image: serviceEducation },
+  { title: "Cosmetology CBC", price: 170, image: serviceCosmetology },
+  { title: "Course-by-Course", price: 190, image: serviceEmployment },
+  { title: "Health Professions CBC", price: 230, image: serviceHealth },
+  { title: "Comprehensive CBC", price: 290, image: serviceGraduate },
+  { title: "HS & University CBC", price: 295, image: serviceHsUni },
 ];
 
 const allLinks = [
@@ -108,16 +108,8 @@ const Navbar = () => {
                   {evalPreviews.map((ev) => (
                     <Link
                       key={ev.title}
-                      to={`/evaluations#${ev.anchor}`}
-                      onClick={() => {
-                        setEvalHover(false);
-                        // If already on evaluations page, scroll to anchor
-                        if (location.pathname === "/evaluations") {
-                          setTimeout(() => {
-                            document.getElementById(ev.anchor)?.scrollIntoView({ behavior: "smooth", block: "center" });
-                          }, 100);
-                        }
-                      }}
+                      to="/evaluations"
+                      onClick={() => setEvalHover(false)}
                       className="flex-shrink-0 w-[140px] group/card"
                     >
                       <div className="w-[140px] h-[100px] rounded-2xl overflow-hidden mb-2 border border-border/50 shadow-sm group-hover/card:shadow-lg group-hover/card:scale-105 transition-all duration-300">

@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate, useLocation } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye } from "lucide-react";
@@ -16,7 +16,6 @@ import serviceCosmetology from "@/assets/service-cosmetology.jpg";
 
 const evaluationServices = [
 {
-  id: "general-analysis",
   title: "General Analysis",
   price: 100,
   rush3Day: 150,
@@ -31,7 +30,6 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
-  id: "general-analysis-gpa",
   title: "General Analysis plus GPA",
   price: 150,
   rush3Day: 205,
@@ -47,7 +45,6 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
-  id: "cosmetology-cbc",
   title: "Cosmetology Course-by-Course",
   price: 170,
   rush3Day: 275,
@@ -62,7 +59,6 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
-  id: "course-by-course",
   title: "Course-by-Course",
   price: 190,
   rush3Day: 290,
@@ -78,7 +74,6 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
-  id: "health-professions-cbc",
   title: "Health Professions Course-by-Course",
   price: 230,
   rush3Day: 355,
@@ -93,7 +88,6 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
-  id: "comprehensive-cbc",
   title: "Comprehensive Course-by-Course",
   price: 290,
   rush3Day: 390,
@@ -110,7 +104,6 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
-  id: "hs-university-cbc",
   title: "High School and University Course-by-Course",
   price: 295,
   rush3Day: 395,
@@ -133,18 +126,7 @@ const Evaluations = () => {
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
-
-  // Scroll to service anchor on load
-  useEffect(() => {
-    if (location.hash) {
-      const id = location.hash.replace("#", "");
-      setTimeout(() => {
-        document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "center" });
-      }, 500);
-    }
-  }, [location.hash]);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -218,7 +200,6 @@ const Evaluations = () => {
               return (
                 <div
                   key={idx}
-                  id={service.id}
                   className="relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:shadow-accent/20"
                   style={{ minHeight: 480 }}>
                   
