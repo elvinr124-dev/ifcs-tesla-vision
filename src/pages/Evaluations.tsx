@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye } from "lucide-react";
@@ -121,12 +121,27 @@ const evaluationServices = [
 
 type ProcessingKey = "standard" | "rush3" | "rush24";
 
+// Slug helper for service IDs
+const toSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
+
 const Evaluations = () => {
   const [selectedProcessing, setSelectedProcessing] = useState<Record<number, ProcessingKey>>({});
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
+  const serviceRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // Scroll to service when hash changes
+  useEffect(() => {
+    const hash = location.hash.replace("#", "");
+    if (hash && serviceRefs.current[hash]) {
+      setTimeout(() => {
+        serviceRefs.current[hash]?.scrollIntoView({ behavior: "smooth", block: "center" });
+      }, 300);
+    }
+  }, [location.hash]);
 
   const showToast = (msg: string) => {
     setToastMsg(msg);
@@ -200,6 +215,8 @@ const Evaluations = () => {
               return (
                 <div
                   key={idx}
+                  id={toSlug(service.title)}
+                  ref={(el) => { serviceRefs.current[toSlug(service.title)] = el; }}
                   className="relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:shadow-accent/20"
                   style={{ minHeight: 480 }}>
                   

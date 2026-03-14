@@ -3,14 +3,17 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { ShoppingCart, Trash2, ArrowLeft, ArrowRight, Clock } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowLeft, ArrowRight, Clock, Tag } from "lucide-react";
 import cartBg from "@/assets/cart-bg.jpg";
+import { useState } from "react";
 
 const Cart = () => {
-  const { items, removeItem, clearCart } = useCart();
+  const { items, removeItem, clearCart, discountCode, setDiscountCode, discountAmount } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [codeInput, setCodeInput] = useState(discountCode);
   const total = items.reduce((sum, item) => sum + item.price, 0);
+  const discountedTotal = Math.max(0, total - discountAmount);
 
   const handleProceed = () => {
     // Build service data from first cart item to pass through
@@ -97,6 +100,31 @@ const Cart = () => {
                 </div>
               ))}
 
+              {/* Discount Code */}
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5"><Tag size={12} /> Discount Code</p>
+                <div className="flex gap-3">
+                  <input
+                    value={codeInput}
+                    onChange={(e) => setCodeInput(e.target.value.toUpperCase())}
+                    placeholder="Enter code"
+                    className="flex-1 h-11 px-4 rounded-xl text-sm bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 text-foreground placeholder:text-muted-foreground"
+                  />
+                  <button
+                    onClick={() => setDiscountCode(codeInput)}
+                    className="px-5 h-11 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all"
+                  >
+                    Apply
+                  </button>
+                </div>
+                {discountCode && discountAmount > 0 && (
+                  <p className="text-sm text-emerald-600 mt-2 font-semibold">✓ Code "{discountCode}" applied — ${discountAmount} off</p>
+                )}
+                {discountCode && discountAmount === 0 && (
+                  <p className="text-sm text-destructive mt-2 font-semibold">Invalid discount code</p>
+                )}
+              </div>
+
               {/* Summary */}
               <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -104,7 +132,12 @@ const Cart = () => {
                     <p className="text-xs font-semibold uppercase tracking-widest text-accent">Order Total</p>
                     <p className="text-sm text-muted-foreground">{items.length} item{items.length !== 1 ? "s" : ""}</p>
                   </div>
-                  <p className="text-4xl font-bold text-foreground">${total}</p>
+                  <div className="text-right">
+                    {discountAmount > 0 && (
+                      <p className="text-sm text-muted-foreground line-through">${total}</p>
+                    )}
+                    <p className="text-4xl font-bold text-foreground">${discountedTotal}</p>
+                  </div>
                 </div>
                 <div className="flex flex-col sm:flex-row gap-3">
                   <button

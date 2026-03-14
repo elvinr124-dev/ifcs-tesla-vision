@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/context/AuthContext";
+import { useCart } from "@/context/CartContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -92,6 +93,7 @@ const Application = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { discountCode, setDiscountCode, discountAmount } = useCart();
   const routeState = location.state as {
     serviceTitle?: string; processingKey?: string; processingLabel?: string; processingTime?: string; price?: number;
   } | null;
@@ -181,7 +183,7 @@ const Application = () => {
   }, [deliveryOptions]);
 
   const authCost = authOption === "authenticate" ? 140 : 0;
-  const totalPrice = selectedPrice + deliveryCosts + authCost;
+  const totalPrice = selectedPrice + deliveryCosts + authCost - discountAmount;
 
   const needsAddress = deliveryOptions.some(o => ["us-postage", "domestic-courier", "intl-courier"].includes(o));
 
@@ -246,7 +248,9 @@ const Application = () => {
     if (credFirstName || credLastName) {
       lines.push(`Name on Education Credentials: ${credFirstName} ${credMiddleName ? `(${credMiddleName}) ` : ""}${credLastName}`);
     }
-    lines.push(`Date of Birth: ${dobMonth} ${dobDay}, ${dobYear}`);
+    const monthIdx = months.indexOf(dobMonth) + 1;
+    const dobFormatted = `${String(monthIdx).padStart(2, "0")}/${String(dobDay).padStart(2, "0")}/${String(dobYear).slice(-2)}`;
+    lines.push(`Date of Birth: ${dobFormatted}`);
     lines.push(`Gender: ${gender.charAt(0).toUpperCase() + gender.slice(1)}`);
     if (homePhone) lines.push(`Home Phone: ${homePhone}`);
     lines.push(`Cell Phone: ${cellPhone}`);
@@ -285,7 +289,10 @@ const Application = () => {
     lines.push("");
     lines.push("Part 5 - Payment Options");
     lines.push("");
-    lines.push(`Total: ${totalPrice.toFixed(2)}`);
+    if (discountCode && discountAmount > 0) {
+      lines.push(`Discount Code: ${discountCode} (-$${discountAmount})`);
+    }
+    lines.push(`Total: $${Math.max(0, totalPrice).toFixed(2)}`);
     lines.push("");
     lines.push("I agree to the following terms and conditions:");
     TERMS_CONTENT.forEach((t, i) => lines.push(`${i + 1}. ${t}`));
@@ -729,14 +736,39 @@ const Application = () => {
                           <span className="text-right font-medium text-foreground">+$140</span>
                         </div>
                       )}
+                      {discountAmount > 0 && (
+                        <div className="flex items-start justify-between gap-4 text-sm">
+                          <span className="text-emerald-600 font-semibold">Discount ({discountCode}):</span>
+                          <span className="text-right font-medium text-emerald-600">-${discountAmount}</span>
+                        </div>
+                      )}
                       <div className="border-t border-border pt-3 mt-3 flex items-start justify-between gap-4 text-sm">
                         <span className="font-bold text-foreground">Total:</span>
-                        <span className="text-right font-bold text-2xl text-accent">${totalPrice}</span>
+                        <span className="text-right font-bold text-2xl text-accent">${Math.max(0, totalPrice)}</span>
                       </div>
                       <div className="flex items-start justify-between gap-4 text-sm pt-2">
                         <span className="text-muted-foreground">Application ID:</span>
                         <span className="text-right font-bold text-accent">{applicationId}</span>
                       </div>
+                    </div>
+
+                    {/* Discount code input */}
+                    <div className="pt-3 border-t border-border">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Discount Code</p>
+                      <div className="flex gap-3">
+                        <input
+                          value={discountCode}
+                          onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                          placeholder="Enter discount code"
+                          className="flex-1 h-10 px-4 rounded-xl text-sm bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 text-foreground placeholder:text-muted-foreground"
+                        />
+                      </div>
+                      {discountCode && discountAmount > 0 && (
+                        <p className="text-sm text-emerald-600 mt-2 font-semibold">✓ Code "{discountCode}" applied — ${discountAmount} off</p>
+                      )}
+                      {discountCode && discountAmount === 0 && (
+                        <p className="text-sm text-destructive mt-2 font-semibold">Invalid discount code</p>
+                      )}
                     </div>
                   </div>
 

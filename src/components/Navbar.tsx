@@ -14,13 +14,13 @@ import serviceGraduate from "@/assets/service-graduate.jpg";
 import serviceHsUni from "@/assets/service-highschool-uni.jpg";
 
 const evalPreviews = [
-  { title: "General Analysis", price: 100, image: serviceMilitary },
-  { title: "General Analysis + GPA", price: 150, image: serviceEducation },
-  { title: "Cosmetology CBC", price: 170, image: serviceCosmetology },
-  { title: "Course-by-Course", price: 190, image: serviceEmployment },
-  { title: "Health Professions CBC", price: 230, image: serviceHealth },
-  { title: "Comprehensive CBC", price: 290, image: serviceGraduate },
-  { title: "HS & University CBC", price: 295, image: serviceHsUni },
+  { title: "General Analysis", price: 100, image: serviceMilitary, slug: "general-analysis" },
+  { title: "General Analysis + GPA", price: 150, image: serviceEducation, slug: "general-analysis-plus-gpa" },
+  { title: "Cosmetology CBC", price: 170, image: serviceCosmetology, slug: "cosmetology-course-by-course" },
+  { title: "Course-by-Course", price: 190, image: serviceEmployment, slug: "course-by-course" },
+  { title: "Health Professions CBC", price: 230, image: serviceHealth, slug: "health-professions-course-by-course" },
+  { title: "Comprehensive CBC", price: 290, image: serviceGraduate, slug: "comprehensive-course-by-course" },
+  { title: "HS & University CBC", price: 295, image: serviceHsUni, slug: "high-school-and-university-course-by-course" },
 ];
 
 const allLinks = [
@@ -108,7 +108,7 @@ const Navbar = () => {
                   {evalPreviews.map((ev) => (
                     <Link
                       key={ev.title}
-                      to="/evaluations"
+                      to={`/evaluations#${ev.slug}`}
                       onClick={() => setEvalHover(false)}
                       className="flex-shrink-0 w-[140px] group/card"
                     >
