@@ -733,14 +733,39 @@ const Application = () => {
                           <span className="text-right font-medium text-foreground">+$140</span>
                         </div>
                       )}
+                      {discountAmount > 0 && (
+                        <div className="flex items-start justify-between gap-4 text-sm">
+                          <span className="text-emerald-600 font-semibold">Discount ({discountCode}):</span>
+                          <span className="text-right font-medium text-emerald-600">-${discountAmount}</span>
+                        </div>
+                      )}
                       <div className="border-t border-border pt-3 mt-3 flex items-start justify-between gap-4 text-sm">
                         <span className="font-bold text-foreground">Total:</span>
-                        <span className="text-right font-bold text-2xl text-accent">${totalPrice}</span>
+                        <span className="text-right font-bold text-2xl text-accent">${Math.max(0, totalPrice)}</span>
                       </div>
                       <div className="flex items-start justify-between gap-4 text-sm pt-2">
                         <span className="text-muted-foreground">Application ID:</span>
                         <span className="text-right font-bold text-accent">{applicationId}</span>
                       </div>
+                    </div>
+
+                    {/* Discount code input */}
+                    <div className="pt-3 border-t border-border">
+                      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Discount Code</p>
+                      <div className="flex gap-3">
+                        <input
+                          value={discountCode}
+                          onChange={(e) => setDiscountCode(e.target.value.toUpperCase())}
+                          placeholder="Enter discount code"
+                          className="flex-1 h-10 px-4 rounded-xl text-sm bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 text-foreground placeholder:text-muted-foreground"
+                        />
+                      </div>
+                      {discountCode && discountAmount > 0 && (
+                        <p className="text-sm text-emerald-600 mt-2 font-semibold">✓ Code "{discountCode}" applied — ${discountAmount} off</p>
+                      )}
+                      {discountCode && discountAmount === 0 && (
+                        <p className="text-sm text-destructive mt-2 font-semibold">Invalid discount code</p>
+                      )}
                     </div>
                   </div>
 
