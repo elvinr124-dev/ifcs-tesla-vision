@@ -1,25 +1,54 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, RefreshCw } from "lucide-react";
+import { CreditCard, RefreshCw, ShoppingCart, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/context/CartContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const AddonRenewal = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { addItem } = useCart();
   const [payment, setPayment] = useState({ name: "", ifcsId: "", email: "", phone: "", cardHolder: "", cardNumber: "", month: "", year: "", cvv: "" });
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
+  const [termsPopupOpen, setTermsPopupOpen] = useState(false);
+  const [privacyPopupOpen, setPrivacyPopupOpen] = useState(false);
+  const [termsSignature, setTermsSignature] = useState("");
+  const [privacySignature, setPrivacySignature] = useState("");
+
+  const handleTermsCheck = (checked: boolean | "indeterminate") => {
+    if (checked === true) setTermsPopupOpen(true);
+    else { setAgreeTerms(false); setTermsSignature(""); }
+  };
+  const handlePrivacyCheck = (checked: boolean | "indeterminate") => {
+    if (checked === true) setPrivacyPopupOpen(true);
+    else { setAgreePrivacy(false); setPrivacySignature(""); }
+  };
+  const confirmTermsSignature = () => { if (!termsSignature.trim()) return; setAgreeTerms(true); setTermsPopupOpen(false); };
+  const confirmPrivacySignature = () => { if (!privacySignature.trim()) return; setAgreePrivacy(true); setPrivacyPopupOpen(false); };
+
+  const validate = () => {
+    if (!agreeTerms || !agreePrivacy) { toast({ title: "Agreement required", description: "Please agree to terms and privacy policy.", variant: "destructive" }); return false; }
+    return true;
+  };
+
+  const handleAddToCart = () => {
+    if (!validate()) return;
+    addItem({ serviceTitle: "Renewal (5 Years)", processingKey: "standard", processingLabel: "Renewal", processingTime: "5-7 Business Days", price: 100 });
+    toast({ title: "Added to Cart", description: "Renewal (5 Years) ($100.00) added to your cart." });
+  };
 
   const handlePay = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!agreeTerms || !agreePrivacy) { toast({ title: "Agreement required", description: "Please agree to terms and privacy policy.", variant: "destructive" }); return; }
+    if (!validate()) return;
     toast({ title: "Payment Submitted", description: "Your renewal order for $100.00 has been submitted. Your report will be valid for 5 more years." });
     navigate("/dashboard/client");
   };
@@ -27,12 +56,12 @@ const AddonRenewal = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <section className="relative h-[40vh] flex items-center justify-center overflow-hidden">
+      <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
         <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">Renew Report</h1>
-          <p className="text-white/80 mt-2 text-lg">Extend your evaluation validity for 5 more years</p>
+          <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white hero-text-shadow">Renew Report</h1>
+          <p className="text-white/80 mt-4 text-lg md:text-xl">Extend your evaluation validity for 5 more years</p>
         </div>
       </section>
 
@@ -49,9 +78,10 @@ const AddonRenewal = () => {
             <Card className="border-border bg-card">
               <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> Your Information & Payment</CardTitle></CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
-                {[{ label: "Name on Documents *", key: "name" },{ label: "IFCS ID *", key: "ifcsId", placeholder: "IFCS-XXXXX" },{ label: "Email *", key: "email", type: "email" },{ label: "Phone *", key: "phone", type: "tel" }].map(({ label, key, ...rest }) => (
-                  <div key={key} className="space-y-1"><label className="text-sm font-medium text-foreground">{label}</label><Input required value={(payment as any)[key]} onChange={(e) => setPayment({ ...payment, [key]: e.target.value })} {...rest} /></div>
-                ))}
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Name on Documents *</label><Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">IFCS ID *</label><Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Email *</label><Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Phone *</label><Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} /></div>
                 <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Name on Credit Card *</label><Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} /></div>
                 <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Card Number *</label><Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">Month *</label><Input required value={payment.month} onChange={(e) => setPayment({ ...payment, month: e.target.value })} placeholder="MM" /></div>
@@ -60,15 +90,84 @@ const AddonRenewal = () => {
               </CardContent>
             </Card>
 
-            <Card className="border-border bg-card"><CardContent className="pt-6 space-y-4">
-              <div className="flex items-start gap-3"><Checkbox id="terms" checked={agreeTerms} onCheckedChange={(c) => setAgreeTerms(c === true)} /><label htmlFor="terms" className="text-sm text-muted-foreground">I agree to the <span className="text-accent underline cursor-pointer">Terms and Conditions</span></label></div>
-              <div className="flex items-start gap-3"><Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={(c) => setAgreePrivacy(c === true)} /><label htmlFor="privacy" className="text-sm text-muted-foreground">I agree to the <span className="text-accent underline cursor-pointer">Privacy Policy</span></label></div>
-            </CardContent></Card>
+            <Card className="border-border bg-card">
+              <CardContent className="pt-6 space-y-4">
+                <p className="text-sm font-medium text-foreground mb-2">Please read and agree to the terms and conditions & privacy policy:</p>
+                <div className="flex items-start gap-3">
+                  <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
+                  <label htmlFor="terms" className="text-sm text-muted-foreground">
+                    I agree to the <Link to="/terms" className="text-accent underline">Terms and Conditions</Link>
+                    {agreeTerms && termsSignature && <span className="ml-2 text-xs text-accent">✓ Signed: {termsSignature}</span>}
+                  </label>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={handlePrivacyCheck} />
+                  <label htmlFor="privacy" className="text-sm text-muted-foreground">
+                    I agree to the <Link to="/privacy" className="text-accent underline">Privacy Policy</Link>
+                    {agreePrivacy && privacySignature && <span className="ml-2 text-xs text-accent">✓ Signed: {privacySignature}</span>}
+                  </label>
+                </div>
+              </CardContent>
+            </Card>
 
-            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">Pay $100.00</Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button type="button" variant="outline" size="lg" className="flex-1 py-6 text-lg rounded-2xl gap-2" onClick={handleAddToCart}>
+                <ShoppingCart size={20} /> Add to Cart
+              </Button>
+              <Button type="submit" size="lg" className="flex-1 py-6 text-lg rounded-2xl">
+                Pay $100.00
+              </Button>
+            </div>
           </form>
         </div>
       </div>
+
+      {/* Terms Signature Popup */}
+      <Dialog open={termsPopupOpen} onOpenChange={(open) => { if (!open) setTermsPopupOpen(false); }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader><DialogTitle className="text-xl font-bold text-foreground">Terms and Conditions</DialogTitle></DialogHeader>
+          <div className="text-sm text-muted-foreground space-y-3 max-h-[40vh] overflow-y-auto pr-2">
+            <p>By using the services provided by The Foreign Credential Services (TFCS/IFCS), you agree to the following terms and conditions.</p>
+            <p><strong>1. Service Agreement:</strong> TFCS provides credential evaluation, translation, and consulting services. All orders are subject to review and acceptance.</p>
+            <p><strong>2. Payment:</strong> All fees are due at the time of order submission. Prices are subject to change without notice.</p>
+            <p><strong>3. Processing Times:</strong> Estimated processing times begin after all required documents have been received and verified.</p>
+            <p><strong>4. Refund Policy:</strong> Refunds may be issued at the discretion of TFCS management. Processing fees are non-refundable once work has begun.</p>
+          </div>
+          <div className="border-t border-border pt-4 mt-4 space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Type your full name as your signature</p>
+            <Input value={termsSignature} onChange={(e) => setTermsSignature(e.target.value)} placeholder="Type your full name" />
+            <p className="text-xs text-muted-foreground">Date: {new Date().toLocaleDateString()}</p>
+            <button onClick={confirmTermsSignature} disabled={!termsSignature.trim()}
+              className="w-full inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <CheckCircle2 size={16} /> I Agree & Sign
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Privacy Signature Popup */}
+      <Dialog open={privacyPopupOpen} onOpenChange={(open) => { if (!open) setPrivacyPopupOpen(false); }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader><DialogTitle className="text-xl font-bold text-foreground">Privacy Policy</DialogTitle></DialogHeader>
+          <div className="text-sm text-muted-foreground space-y-3 max-h-[40vh] overflow-y-auto pr-2">
+            <p>The Foreign Credential Services (TFCS/IFCS) is committed to protecting your privacy.</p>
+            <p><strong>1. Information Collection:</strong> We collect personal information necessary to process your order.</p>
+            <p><strong>2. Use of Information:</strong> Your information is used solely for providing our services.</p>
+            <p><strong>3. Data Security:</strong> We implement appropriate security measures to protect your personal information.</p>
+            <p><strong>4. Third Parties:</strong> We do not sell or share your personal information with third parties except as required.</p>
+          </div>
+          <div className="border-t border-border pt-4 mt-4 space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Type your full name as your signature</p>
+            <Input value={privacySignature} onChange={(e) => setPrivacySignature(e.target.value)} placeholder="Type your full name" />
+            <p className="text-xs text-muted-foreground">Date: {new Date().toLocaleDateString()}</p>
+            <button onClick={confirmPrivacySignature} disabled={!privacySignature.trim()}
+              className="w-full inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <CheckCircle2 size={16} /> I Agree & Sign
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
