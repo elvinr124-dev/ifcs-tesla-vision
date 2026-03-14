@@ -93,7 +93,7 @@ const DuplicateReports = () => {
     const label = delivery === "electronic"
       ? "Duplicate Report — Electronic"
       : `Duplicate Report — Hard Copy x${hardCopyQty}`;
-    addItem({ id: `dup-${Date.now()}`, title: label, price: total });
+    addItem({ title: label, price: total });
     toast({ title: "Added to Cart", description: `${label} ($${total.toFixed(2)}) added to your cart.` });
   };
 
