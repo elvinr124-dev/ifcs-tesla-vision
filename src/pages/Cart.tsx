@@ -8,10 +8,12 @@ import cartBg from "@/assets/cart-bg.jpg";
 import { useState } from "react";
 
 const Cart = () => {
-  const { items, removeItem, clearCart } = useCart();
+  const { items, removeItem, clearCart, discountCode, setDiscountCode, discountAmount } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [codeInput, setCodeInput] = useState(discountCode);
   const total = items.reduce((sum, item) => sum + item.price, 0);
+  const discountedTotal = Math.max(0, total - discountAmount);
 
   const handleProceed = () => {
     // Build service data from first cart item to pass through
