@@ -754,6 +754,10 @@ const Application = () => {
                         <span className="text-right font-bold text-2xl text-accent">${Math.max(0, totalPrice)}</span>
                       </div>
                       <div className="flex items-start justify-between gap-4 text-sm pt-2">
+                        <span className="text-muted-foreground">Number of Attachments:</span>
+                        <span className="text-right font-medium text-foreground">{files.length}</span>
+                      </div>
+                      <div className="flex items-start justify-between gap-4 text-sm pt-2">
                         <span className="text-muted-foreground">Application ID:</span>
                         <span className="text-right font-bold text-accent">{applicationId}</span>
                       </div>
