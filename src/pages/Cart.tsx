@@ -3,8 +3,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
-import { ShoppingCart, Trash2, ArrowLeft, ArrowRight, Clock } from "lucide-react";
+import { ShoppingCart, Trash2, ArrowLeft, ArrowRight, Clock, Tag } from "lucide-react";
 import cartBg from "@/assets/cart-bg.jpg";
+import { useState } from "react";
 
 const Cart = () => {
   const { items, removeItem, clearCart } = useCart();
