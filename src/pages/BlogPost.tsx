@@ -190,7 +190,7 @@ const BlogPost = () => {
         <div className="max-w-3xl mx-auto">
           <div className="rounded-3xl border border-border bg-card shadow-xl overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-accent via-accent/60 to-transparent" />
-            <div className="p-8 md:p-12 prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-8 prose-h2:mb-4 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-6 prose-h3:mb-3 prose-p:text-foreground/90 prose-p:leading-relaxed prose-p:mb-4 prose-li:text-foreground/90 prose-strong:text-foreground prose-ul:space-y-2">
+            <div className="p-8 md:p-12 prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-5 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-4 prose-p:text-foreground/90 prose-p:leading-[1.9] prose-p:mb-5 prose-li:text-foreground/90 prose-li:leading-[1.8] prose-strong:text-foreground prose-ul:space-y-3 prose-ul:my-5">
               {post.content}
               <div className="mt-12 pt-6 border-t border-border">
                 <p className="text-sm text-muted-foreground italic">Written by {post.author}</p>
