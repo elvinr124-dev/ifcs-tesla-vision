@@ -16,7 +16,20 @@ const Cart = () => {
   const discountedTotal = Math.max(0, total - discountAmount);
 
   const handleProceed = () => {
-    // Build service data from first cart item to pass through
+    // Check if cart contains only duplicate report or renewal items
+    const hasDuplicateOnly = items.every(i => i.serviceTitle.startsWith("Duplicate Report"));
+    const hasRenewalOnly = items.every(i => i.serviceTitle === "Renewal (5 Years)");
+
+    if (hasDuplicateOnly) {
+      navigate("/duplicate-reports");
+      return;
+    }
+    if (hasRenewalOnly) {
+      navigate("/addon/renewal");
+      return;
+    }
+
+    // Default: proceed to application for evaluation items
     const firstItem = items[0];
     const serviceData = firstItem ? {
       serviceTitle: firstItem.serviceTitle,

@@ -296,11 +296,6 @@ const DuplicateReports = () => {
             <Card className="border-border bg-card">
               <CardContent className="pt-6 space-y-4">
                 <p className="text-sm font-medium text-foreground mb-2">Please read and agree to the terms and conditions & privacy policy:</p>
-                <div className="flex items-center gap-4 text-sm">
-                  <Link to="/terms" className="text-accent underline hover:text-accent/80 transition-colors">Terms and Conditions</Link>
-                  <span className="text-muted-foreground">|</span>
-                  <Link to="/privacy" className="text-accent underline hover:text-accent/80 transition-colors">Privacy Policy</Link>
-                </div>
                 <div className="flex items-start gap-3">
                   <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
                   <label htmlFor="terms" className="text-sm text-muted-foreground">
