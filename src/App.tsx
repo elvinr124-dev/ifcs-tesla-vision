@@ -28,6 +28,8 @@ import TranslationOrder from "./pages/TranslationOrder";
 import ClientDashboard from "./pages/ClientDashboard";
 import StaffDashboard from "./pages/StaffDashboard";
 import DuplicateReports from "./pages/DuplicateReports";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import AddonElectronicSharing from "./pages/AddonElectronicSharing";
 import AddonHardCopy from "./pages/AddonHardCopy";
 import AddonDomesticShipping from "./pages/AddonDomesticShipping";
