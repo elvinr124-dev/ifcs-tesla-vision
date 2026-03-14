@@ -28,6 +28,8 @@ import TranslationOrder from "./pages/TranslationOrder";
 import ClientDashboard from "./pages/ClientDashboard";
 import StaffDashboard from "./pages/StaffDashboard";
 import DuplicateReports from "./pages/DuplicateReports";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
 import AddonElectronicSharing from "./pages/AddonElectronicSharing";
 import AddonHardCopy from "./pages/AddonHardCopy";
 import AddonDomesticShipping from "./pages/AddonDomesticShipping";
@@ -68,6 +70,8 @@ const App = () => (
               <Route path="/dashboard/client" element={<ClientDashboard />} />
               <Route path="/dashboard/staff" element={<StaffDashboard />} />
               <Route path="/duplicate-reports" element={<DuplicateReports />} />
+              <Route path="/blog" element={<Blog />} />
+              <Route path="/blog/:slug" element={<BlogPost />} />
               <Route path="/addon/electronic-sharing" element={<AddonElectronicSharing />} />
               <Route path="/addon/hard-copy" element={<AddonHardCopy />} />
               <Route path="/addon/domestic-shipping" element={<AddonDomesticShipping />} />

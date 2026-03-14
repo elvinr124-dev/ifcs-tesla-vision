@@ -13,6 +13,7 @@ const Footer = () => {
     { label: "For Individuals", to: "/for-individuals" },
     { label: "FAQ", to: "/faq" },
     { label: "Contact Us", to: "/contact" },
+    { label: "Blog", to: "/blog" },
   ];
 
   return (
