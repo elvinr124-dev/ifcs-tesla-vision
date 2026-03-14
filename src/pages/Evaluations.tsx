@@ -16,6 +16,7 @@ import serviceCosmetology from "@/assets/service-cosmetology.jpg";
 
 const evaluationServices = [
 {
+  id: "general-analysis",
   title: "General Analysis",
   price: 100,
   rush3Day: 150,
@@ -30,6 +31,7 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
+  id: "general-analysis-gpa",
   title: "General Analysis plus GPA",
   price: 150,
   rush3Day: 205,
@@ -45,6 +47,7 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
+  id: "cosmetology-cbc",
   title: "Cosmetology Course-by-Course",
   price: 170,
   rush3Day: 275,
@@ -59,6 +62,7 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
+  id: "course-by-course",
   title: "Course-by-Course",
   price: 190,
   rush3Day: 290,
@@ -74,6 +78,7 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
+  id: "health-professions-cbc",
   title: "Health Professions Course-by-Course",
   price: 230,
   rush3Day: 355,
@@ -88,6 +93,7 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
+  id: "comprehensive-cbc",
   title: "Comprehensive Course-by-Course",
   price: 290,
   rush3Day: 390,
@@ -104,6 +110,7 @@ const evaluationServices = [
   sampleUrl: ""
 },
 {
+  id: "hs-university-cbc",
   title: "High School and University Course-by-Course",
   price: 295,
   rush3Day: 395,
