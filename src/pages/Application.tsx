@@ -183,7 +183,7 @@ const Application = () => {
   }, [deliveryOptions]);
 
   const authCost = authOption === "authenticate" ? 140 : 0;
-  const totalPrice = selectedPrice + deliveryCosts + authCost;
+  const totalPrice = selectedPrice + deliveryCosts + authCost - discountAmount;
 
   const needsAddress = deliveryOptions.some(o => ["us-postage", "domestic-courier", "intl-courier"].includes(o));
 
