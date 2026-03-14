@@ -19,6 +19,9 @@ interface CartContextType {
   removeItem: (id: string) => void;
   clearCart: () => void;
   totalItems: number;
+  discountCode: string;
+  setDiscountCode: (code: string) => void;
+  discountAmount: number;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
