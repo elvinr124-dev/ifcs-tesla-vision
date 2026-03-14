@@ -289,7 +289,10 @@ const Application = () => {
     lines.push("");
     lines.push("Part 5 - Payment Options");
     lines.push("");
-    lines.push(`Total: ${totalPrice.toFixed(2)}`);
+    if (discountCode && discountAmount > 0) {
+      lines.push(`Discount Code: ${discountCode} (-$${discountAmount})`);
+    }
+    lines.push(`Total: $${Math.max(0, totalPrice).toFixed(2)}`);
     lines.push("");
     lines.push("I agree to the following terms and conditions:");
     TERMS_CONTENT.forEach((t, i) => lines.push(`${i + 1}. ${t}`));
