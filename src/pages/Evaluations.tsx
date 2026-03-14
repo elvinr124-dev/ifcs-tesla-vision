@@ -215,6 +215,8 @@ const Evaluations = () => {
               return (
                 <div
                   key={idx}
+                  id={toSlug(service.title)}
+                  ref={(el) => { serviceRefs.current[toSlug(service.title)] = el; }}
                   className="relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:scale-[1.01] hover:shadow-accent/20"
                   style={{ minHeight: 480 }}>
                   

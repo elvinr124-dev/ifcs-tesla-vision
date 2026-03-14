@@ -108,7 +108,7 @@ const Navbar = () => {
                   {evalPreviews.map((ev) => (
                     <Link
                       key={ev.title}
-                      to="/evaluations"
+                      to={`/evaluations#${ev.slug}`}
                       onClick={() => setEvalHover(false)}
                       className="flex-shrink-0 w-[140px] group/card"
                     >

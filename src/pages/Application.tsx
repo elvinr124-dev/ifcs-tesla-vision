@@ -246,7 +246,9 @@ const Application = () => {
     if (credFirstName || credLastName) {
       lines.push(`Name on Education Credentials: ${credFirstName} ${credMiddleName ? `(${credMiddleName}) ` : ""}${credLastName}`);
     }
-    lines.push(`Date of Birth: ${dobMonth} ${dobDay}, ${dobYear}`);
+    const monthIdx = months.indexOf(dobMonth) + 1;
+    const dobFormatted = `${String(monthIdx).padStart(2, "0")}/${String(dobDay).padStart(2, "0")}/${String(dobYear).slice(-2)}`;
+    lines.push(`Date of Birth: ${dobFormatted}`);
     lines.push(`Gender: ${gender.charAt(0).toUpperCase() + gender.slice(1)}`);
     if (homePhone) lines.push(`Home Phone: ${homePhone}`);
     lines.push(`Cell Phone: ${cellPhone}`);

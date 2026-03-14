@@ -99,10 +99,24 @@ const ClientDashboard = () => {
   const [rejectOrderId, setRejectOrderId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) return;
-    toast({ title: "Message Sent", description: "We have received your message and will respond within 24–48 hours." });
-    setMessage("");
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      const { error } = await supabase.functions.invoke("send-application-email", {
+        body: {
+          subject: `Dashboard Message from ${user?.email || "Client"}`,
+          body: `Message from: ${user?.email || "Unknown"}\n\nDate: ${new Date().toLocaleString()}\n\n${message}`,
+          applicantEmail: user?.email,
+        },
+      });
+      if (error) console.error("Send error:", error);
+      toast({ title: "Message Sent", description: "We have received your message and will respond within 24–48 hours." });
+      setMessage("");
+    } catch (err) {
+      console.error("Send error:", err);
+      toast({ title: "Error", description: "Failed to send message. Please try again.", variant: "destructive" });
+    }
   };
 
   const handleApproveDelivery = (orderId: string) => {
