@@ -1,48 +1,44 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard } from "lucide-react";
+import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTriangle, FileText, Plus, Minus } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import translationsBg from "@/assets/translations-bg.jpg";
+import { toast } from "@/hooks/use-toast";
 
 const countries = [
-  "Afghanistan","Albania","Algeria","American Samoa","Andorra","Angola","Anguilla","Antarctica",
-  "Antigua and Barbuda","Argentina","Armenia","Aruba","Australia","Austria","Azerbaijan","Bahamas",
-  "Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bermuda","Bhutan","Bolivia",
-  "Bosnia and Herzegowina","Botswana","Bouvet Island","Brazil","British Indian Ocean Territory",
-  "Brunei Darussalam","Bulgaria","Burkina Faso","Burundi","Cambodia","Cameroon","Canada","Cape Verde",
-  "Cayman Islands","Central African Republic","Chad","Chile","China","Christmas Island",
-  "Cocos (Keeling) Islands","Colombia","Comoros","Congo","Congo, the Democratic Republic of the",
-  "Cook Islands","Costa Rica","Cote d'Ivoire","Croatia (Hrvatska)","Cuba","Cyprus","Czech Republic",
-  "Denmark","Djibouti","Dominica","Dominican Republic","East Timor","Ecuador","Egypt","El Salvador",
-  "Equatorial Guinea","Eritrea","Estonia","Ethiopia","Falkland Islands (Malvinas)","Faroe Islands",
-  "Fiji","Finland","France","France Metropolitan","French Guiana","French Polynesia",
-  "French Southern Territories","Gabon","Gambia","Georgia","Germany","Ghana","Gibraltar","Greece",
-  "Greenland","Grenada","Guadeloupe","Guam","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti",
-  "Heard and Mc Donald Islands","Holy See (Vatican City State)","Honduras","Hong Kong","Hungary",
-  "Iceland","India","Indonesia","Iran (Islamic Republic of)","Iraq","Ireland","Israel","Italy",
-  "Jamaica","Japan","Jordan","Kazakhstan","Kenya","Kiribati","Korea, Democratic People's Republic of",
-  "Korea, Republic of","Kuwait","Kyrgyzstan","Lao, People's Democratic Republic","Latvia","Lebanon",
-  "Lesotho","Liberia","Libyan Arab Jamahiriya","Liechtenstein","Lithuania","Luxembourg","Macau",
-  "Macedonia, The Former Yugoslav Republic of","Madagascar","Malawi","Malaysia","Maldives","Mali",
-  "Malta","Marshall Islands","Martinique","Mauritania","Mauritius","Mayotte","Mexico",
-  "Micronesia, Federated States of","Moldova, Republic of","Monaco","Mongolia","Montserrat","Morocco",
-  "Mozambique","Myanmar","Namibia","Nauru","Nepal","Netherlands","Netherlands Antilles",
-  "New Caledonia","New Zealand","Nicaragua","Niger","Nigeria","Niue","Norfolk Island",
-  "Northern Mariana Islands","Norway","Oman","Pakistan","Palau","Panama","Papua New Guinea",
-  "Paraguay","Peru","Philippines","Pitcairn","Poland","Portugal","Puerto Rico","Qatar","Reunion",
-  "Romania","Russian Federation","Rwanda","Saint Kitts and Nevis","Saint Lucia",
-  "Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia",
-  "Senegal","Seychelles","Sierra Leone","Singapore","Slovakia (Slovak Republic)","Slovenia",
-  "Solomon Islands","Somalia","South Africa","South Georgia and the South Sandwich Islands","Spain",
-  "Sri Lanka","St. Helena","St. Pierre and Miquelon","Sudan","Suriname","Svalbard and Jan Mayen Islands",
-  "Swaziland","Sweden","Switzerland","Syrian Arab Republic","Taiwan, Province of China","Tajikistan",
-  "Tanzania, United Republic of","Thailand","Togo","Tokelau","Tonga","Trinidad and Tobago","Tunisia",
-  "Turkey","Turkmenistan","Turks and Caicos Islands","Tuvalu","Uganda","Ukraine","United Arab Emirates",
-  "United Kingdom","United States","United States Minor Outlying Islands","Uruguay","Uzbekistan",
-  "Vanuatu","Venezuela","Vietnam","Virgin Islands (British)","Virgin Islands (U.S.)",
-  "Wallis and Futuna Islands","Western Sahara","Yemen","Yugoslavia","Zambia","Zimbabwe",
+  "Afghanistan","Albania","Algeria","Argentina","Armenia","Australia","Austria","Azerbaijan",
+  "Bahrain","Bangladesh","Belarus","Belgium","Bolivia","Bosnia and Herzegowina","Brazil","Bulgaria",
+  "Cambodia","Cameroon","Canada","Chile","China","Colombia","Costa Rica","Croatia (Hrvatska)",
+  "Cuba","Cyprus","Czech Republic","Denmark","Dominican Republic","Ecuador","Egypt","El Salvador",
+  "Estonia","Ethiopia","Finland","France","Georgia","Germany","Ghana","Greece","Guatemala",
+  "Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran (Islamic Republic of)",
+  "Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya",
+  "Korea, Republic of","Kuwait","Kyrgyzstan","Latvia","Lebanon","Libya","Lithuania","Luxembourg",
+  "Malaysia","Mexico","Moldova, Republic of","Mongolia","Morocco","Myanmar","Nepal","Netherlands",
+  "New Zealand","Nicaragua","Nigeria","Norway","Oman","Pakistan","Panama","Paraguay","Peru",
+  "Philippines","Poland","Portugal","Qatar","Romania","Russian Federation","Saudi Arabia","Senegal",
+  "Serbia","Singapore","Slovakia","Slovenia","Somalia","South Africa","Spain","Sri Lanka","Sudan",
+  "Sweden","Switzerland","Syrian Arab Republic","Taiwan","Tajikistan","Tanzania","Thailand",
+  "Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Uganda","Ukraine","United Arab Emirates",
+  "United Kingdom","United States","Uruguay","Uzbekistan","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe",
 ];
+
+interface FileAnalysis {
+  file: File;
+  analyzing: boolean;
+  analysis: {
+    wordCount: number;
+    hasFormattedBoxes: boolean;
+    isBlurry: boolean;
+    isBirthCertificate: boolean;
+    isDoublePage: boolean;
+    documentType: string;
+    blurryReason?: string;
+  } | null;
+  error?: string;
+  preview?: string;
+}
 
 const GlassInput = ({
   value, onChange, placeholder, type = "text", required,
@@ -85,6 +81,40 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
   </p>
 );
 
+function calculatePagePrice(analysis: FileAnalysis["analysis"], totalPages: number): { basePrice: number; extraWordsCost: number; pageCount: number; label: string } {
+  if (!analysis) return { basePrice: 50, extraWordsCost: 0, pageCount: 1, label: "Standard" };
+
+  const pageCount = analysis.isDoublePage ? 2 : 1;
+  let basePrice: number;
+  let label: string;
+
+  if (analysis.isBirthCertificate) {
+    basePrice = 75;
+    label = "Birth Certificate";
+  } else if (analysis.hasFormattedBoxes && totalPages < 10) {
+    basePrice = 70;
+    label = "Custom Formatting (5+ boxes)";
+  } else {
+    basePrice = totalPages >= 10 ? 50 : 50;
+    label = totalPages >= 10 ? "10+ pages rate" : "Standard";
+  }
+
+  const extraWords = Math.max(0, analysis.wordCount - 300);
+  const extraWordsCost = extraWords * 0.10;
+
+  if (analysis.isDoublePage) {
+    const total = (basePrice * 2) + (extraWordsCost * 2);
+    return {
+      basePrice: Math.max(basePrice * 2, 100),
+      extraWordsCost: extraWordsCost * 2,
+      pageCount: 2,
+      label: label + " (Double Page)"
+    };
+  }
+
+  return { basePrice, extraWordsCost, pageCount, label };
+}
+
 const TranslationOrder = () => {
   const [lastName, setLastName] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -99,7 +129,6 @@ const TranslationOrder = () => {
   const [country, setCountry] = useState("");
   const [transFrom, setTransFrom] = useState("");
   const [transTo, setTransTo] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
   const [contactPhone, setContactPhone] = useState("");
@@ -107,22 +136,128 @@ const TranslationOrder = () => {
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  // Files with AI analysis
+  const [fileAnalyses, setFileAnalyses] = useState<FileAnalysis[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Add-ons
+  const [addExpedited, setAddExpedited] = useState(false);
+  const [addNotarization, setAddNotarization] = useState(false);
+  const [addHardCopy, setAddHardCopy] = useState(false);
+
+  const totalPages = fileAnalyses.reduce((sum, fa) => {
+    if (!fa.analysis) return sum + 1;
+    return sum + (fa.analysis.isDoublePage ? 2 : 1);
+  }, 0);
+
+  const analyzeFile = async (file: File, index: number) => {
+    // Create preview
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const base64 = (e.target?.result as string).split(",")[1];
+      const preview = e.target?.result as string;
+
+      setFileAnalyses(prev => prev.map((fa, i) =>
+        i === index ? { ...fa, preview, analyzing: true } : fa
+      ));
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-document`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ imageBase64: base64, fileName: file.name }),
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Analysis failed");
+        }
+
+        const analysis = await response.json();
+
+        if (analysis.isBlurry) {
+          toast({
+            title: "Blurry Document Detected",
+            description: analysis.blurryReason || "Please re-upload a clearer version of this document.",
+            variant: "destructive",
+          });
+        }
+
+        setFileAnalyses(prev => prev.map((fa, i) =>
+          i === index ? { ...fa, analyzing: false, analysis } : fa
+        ));
+      } catch (err) {
+        setFileAnalyses(prev => prev.map((fa, i) =>
+          i === index ? { ...fa, analyzing: false, error: "Could not analyze document. You can still submit for manual review." } : fa
+        ));
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const newFiles = Array.from(e.target.files);
-      setFiles(prev => [...prev, ...newFiles]);
+      const startIndex = fileAnalyses.length;
+      const newAnalyses: FileAnalysis[] = newFiles.map(f => ({
+        file: f,
+        analyzing: false,
+        analysis: null,
+      }));
+
+      setFileAnalyses(prev => [...prev, ...newAnalyses]);
+
+      // Trigger AI analysis for each file
+      newFiles.forEach((file, i) => {
+        analyzeFile(file, startIndex + i);
+      });
     }
+    if (e.target) e.target.value = "";
   };
 
   const removeFile = (idx: number) => {
-    setFiles(prev => prev.filter((_, i) => i !== idx));
+    setFileAnalyses(prev => prev.filter((_, i) => i !== idx));
   };
+
+  // Calculate totals
+  const pageSubtotals = fileAnalyses.map(fa => {
+    const pricing = calculatePagePrice(fa.analysis, totalPages);
+    return {
+      base: fa.analysis?.isDoublePage ? Math.max(pricing.basePrice, 100) : pricing.basePrice,
+      extra: pricing.extraWordsCost,
+      pages: pricing.pageCount,
+      label: pricing.label,
+      isBlurry: fa.analysis?.isBlurry || false,
+    };
+  });
+
+  const subtotal = pageSubtotals.reduce((sum, p) => sum + p.base + p.extra, 0);
+  const expeditedCost = addExpedited ? 25 : 0;
+  const notarizationCost = addNotarization ? 19.95 : 0;
+  const hardCopyCost = addHardCopy ? 25 : 0;
+  const total = subtotal + expeditedCost + notarizationCost + hardCopyCost;
+
+  const hasBlurryFiles = fileAnalyses.some(fa => fa.analysis?.isBlurry);
+  const isAnalyzing = fileAnalyses.some(fa => fa.analyzing);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!lastName.trim() || !firstName.trim() || !phone.trim() || !emailVal.trim() ||
         !transFrom.trim() || !transTo.trim()) {
       setError("Please fill in all required fields before submitting.");
+      return;
+    }
+    if (hasBlurryFiles) {
+      setError("Please remove or re-upload blurry documents before submitting.");
+      return;
+    }
+    if (isAnalyzing) {
+      setError("Please wait for document analysis to complete.");
       return;
     }
     setError("");
@@ -146,7 +281,7 @@ const TranslationOrder = () => {
             Translation Order
           </h1>
           <p className="mt-4 text-base md:text-lg text-white/80 font-light max-w-xl">
-            We provide translations from any language, for any document type, into English. Submit your documents to receive a quote.
+            Upload your documents and our AI will automatically analyze word count and pricing. Certified translations starting at $50/page.
           </p>
         </div>
       </section>
@@ -240,26 +375,93 @@ const TranslationOrder = () => {
                 </div>
               </div>
 
-              {/* Upload Documents */}
+              {/* Upload Documents with AI Analysis */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
                 <SectionHeading>Upload Your Documents</SectionHeading>
-                <p className="text-sm text-muted-foreground font-light">Select your files for upload (Max 4MB per file)</p>
+                <p className="text-sm text-muted-foreground font-light">
+                  Upload clear, legible images or PDFs. Our AI will automatically count words and calculate pricing.
+                </p>
 
                 <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border rounded-2xl p-8 cursor-pointer hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 group">
                   <Upload size={28} className="text-muted-foreground group-hover:text-accent transition-colors" />
                   <span className="text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Click to browse files</span>
-                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported</span>
-                  <input type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
+                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · Max 4MB per file</span>
+                  <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                 </label>
 
-                {files.length > 0 && (
-                  <div className="space-y-2">
-                    {files.map((f, i) => (
-                      <div key={i} className="flex items-center justify-between px-4 py-3 rounded-2xl bg-muted/50 border border-border">
-                        <span className="text-sm text-foreground truncate">{f.name}</span>
-                        <button type="button" onClick={() => removeFile(i)} className="ml-3 text-muted-foreground hover:text-destructive transition-colors">
-                          <X size={16} />
-                        </button>
+                {/* File list with analysis results */}
+                {fileAnalyses.length > 0 && (
+                  <div className="space-y-3">
+                    {fileAnalyses.map((fa, i) => (
+                      <div key={i} className={`rounded-2xl border p-4 ${fa.analysis?.isBlurry ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/30'}`}>
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-start gap-3 flex-1 min-w-0">
+                            {fa.preview && (
+                              <img src={fa.preview} alt="" className="w-12 h-12 rounded-lg object-cover shrink-0 border border-border" />
+                            )}
+                            <div className="min-w-0 flex-1">
+                              <p className="text-sm font-medium text-foreground truncate">{fa.file.name}</p>
+
+                              {fa.analyzing && (
+                                <div className="flex items-center gap-2 mt-1">
+                                  <Loader2 size={12} className="animate-spin text-accent" />
+                                  <span className="text-xs text-muted-foreground">Analyzing document...</span>
+                                </div>
+                              )}
+
+                              {fa.analysis && !fa.analysis.isBlurry && (
+                                <div className="mt-1 space-y-1">
+                                  <div className="flex flex-wrap gap-2">
+                                    <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent font-medium">
+                                      <FileText size={10} /> {fa.analysis.documentType}
+                                    </span>
+                                    <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground font-medium">
+                                      {fa.analysis.wordCount} words
+                                    </span>
+                                    {fa.analysis.hasFormattedBoxes && (
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium dark:bg-orange-900/30 dark:text-orange-400">
+                                        5+ boxes
+                                      </span>
+                                    )}
+                                    {fa.analysis.isDoublePage && (
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium dark:bg-blue-900/30 dark:text-blue-400">
+                                        Double page
+                                      </span>
+                                    )}
+                                    {fa.analysis.isBirthCertificate && (
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium dark:bg-purple-900/30 dark:text-purple-400">
+                                        Birth Certificate
+                                      </span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-muted-foreground">
+                                    {pageSubtotals[i]?.label} · ${(pageSubtotals[i]?.base + pageSubtotals[i]?.extra).toFixed(2)}
+                                    {pageSubtotals[i]?.extra > 0 && (
+                                      <span className="text-muted-foreground/60"> (base ${pageSubtotals[i]?.base} + ${pageSubtotals[i]?.extra.toFixed(2)} extra words)</span>
+                                    )}
+                                  </p>
+                                </div>
+                              )}
+
+                              {fa.analysis?.isBlurry && (
+                                <div className="mt-1 flex items-start gap-2">
+                                  <AlertTriangle size={14} className="text-destructive shrink-0 mt-0.5" />
+                                  <div>
+                                    <p className="text-xs text-destructive font-medium">Blurry document detected</p>
+                                    <p className="text-xs text-destructive/70">{fa.analysis.blurryReason || "Please re-upload a clearer version."}</p>
+                                  </div>
+                                </div>
+                              )}
+
+                              {fa.error && (
+                                <p className="text-xs text-muted-foreground mt-1">{fa.error}</p>
+                              )}
+                            </div>
+                          </div>
+                          <button type="button" onClick={() => removeFile(i)} className="text-muted-foreground hover:text-destructive transition-colors shrink-0">
+                            <X size={16} />
+                          </button>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -267,18 +469,57 @@ const TranslationOrder = () => {
 
                 <button
                   type="button"
-                  onClick={() => document.querySelector<HTMLInputElement>('input[type="file"]')?.click()}
+                  onClick={() => fileInputRef.current?.click()}
                   className="text-sm font-medium text-accent hover:opacity-75 transition-opacity underline underline-offset-4"
                 >
                   + Add another file
                 </button>
               </div>
 
+              {/* Add-Ons */}
+              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
+                <SectionHeading>Add-Ons</SectionHeading>
+
+                <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
+                  <div className="flex items-center gap-3">
+                    <input type="checkbox" checked={addExpedited} onChange={e => setAddExpedited(e.target.checked)} className="w-4 h-4 rounded border-border text-accent focus:ring-accent" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Expedited Turnaround</p>
+                      <p className="text-xs text-muted-foreground">1–2 business days delivery (standard is 3–5 days)</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">$25.00</span>
+                </label>
+
+                <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
+                  <div className="flex items-center gap-3">
+                    <input type="checkbox" checked={addNotarization} onChange={e => setAddNotarization(e.target.checked)} className="w-4 h-4 rounded border-border text-accent focus:ring-accent" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Notarization</p>
+                      <p className="text-xs text-muted-foreground">Notarized stamp valid in all 50 states</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">$19.95</span>
+                </label>
+
+                <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
+                  <div className="flex items-center gap-3">
+                    <input type="checkbox" checked={addHardCopy} onChange={e => setAddHardCopy(e.target.checked)} className="w-4 h-4 rounded border-border text-accent focus:ring-accent" />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Hard Copy</p>
+                      <p className="text-xs text-muted-foreground">Printed original shipped via FedEx with tracking</p>
+                    </div>
+                  </div>
+                  <span className="text-sm font-bold text-foreground">$25.00</span>
+                </label>
+              </div>
+
               {/* Submit */}
               <div className="flex justify-center pt-2 pb-6">
                 <button
                   type="submit"
-                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300"
+                  disabled={isAnalyzing || hasBlurryFiles}
+                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <span>Submit Order</span>
                   <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
@@ -288,13 +529,75 @@ const TranslationOrder = () => {
               </div>
             </div>
 
-            {/* Right Column — Contact Us + Payment */}
+            {/* Right Column — Pricing Summary + Contact */}
             <div className="space-y-6">
 
-              {/* Contact Us sidebar */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5 sticky top-24">
-                <SectionHeading>Contact Us</SectionHeading>
+              {/* Order Summary */}
+              <div className="rounded-3xl border border-accent/30 bg-card shadow-lg p-8 space-y-5 sticky top-24">
+                <SectionHeading>Order Summary</SectionHeading>
 
+                {fileAnalyses.length === 0 ? (
+                  <p className="text-sm text-muted-foreground font-light text-center py-4">
+                    Upload documents to see pricing
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {fileAnalyses.map((fa, i) => (
+                      <div key={i} className="flex justify-between text-sm">
+                        <span className="text-muted-foreground truncate max-w-[60%]">
+                          {fa.file.name}
+                          {fa.analyzing && " (analyzing...)"}
+                        </span>
+                        <span className="font-medium text-foreground">
+                          {fa.analysis
+                            ? `$${(pageSubtotals[i]?.base + pageSubtotals[i]?.extra).toFixed(2)}`
+                            : "—"
+                          }
+                        </span>
+                      </div>
+                    ))}
+
+                    <div className="border-t border-border pt-3 space-y-2">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-muted-foreground">Documents subtotal</span>
+                        <span className="font-medium text-foreground">${subtotal.toFixed(2)}</span>
+                      </div>
+                      {addExpedited && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Expedited</span>
+                          <span className="font-medium text-foreground">$25.00</span>
+                        </div>
+                      )}
+                      {addNotarization && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Notarization</span>
+                          <span className="font-medium text-foreground">$19.95</span>
+                        </div>
+                      )}
+                      {addHardCopy && (
+                        <div className="flex justify-between text-sm">
+                          <span className="text-muted-foreground">Hard Copy</span>
+                          <span className="font-medium text-foreground">$25.00</span>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="border-t border-border pt-3">
+                      <div className="flex justify-between">
+                        <span className="text-base font-bold text-foreground">Estimated Total</span>
+                        <span className="text-xl font-bold text-accent">${total.toFixed(2)}</span>
+                      </div>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {totalPages} page{totalPages !== 1 ? "s" : ""} · {addExpedited ? "1–2 business days" : "3–5 business days"}
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Contact Us sidebar */}
+              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
+                <SectionHeading>Contact Us</SectionHeading>
                 <div className="space-y-1.5">
                   <label className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground">
                     Your Name <span className="text-accent">*</span>
@@ -325,7 +628,6 @@ const TranslationOrder = () => {
                     className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 resize-none"
                   />
                 </div>
-
                 <button
                   type="button"
                   className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-accent text-accent-foreground font-bold text-base shadow-xl shadow-accent/30 hover:shadow-accent/50 hover:scale-105 transition-all duration-300"
