@@ -479,17 +479,47 @@ const TranslationOrder = () => {
                   </p>
                 ) : (
                   <div className="space-y-3">
-                    {fileAnalyses.map((fa, i) => (
-                      <div key={i} className="flex justify-between text-sm">
-                        <span className="text-muted-foreground truncate max-w-[60%]">
-                          {fa.file.name}
-                          {fa.analyzing && " (analyzing...)"}
-                        </span>
-                        <span className="font-medium text-foreground">
-                          {fa.analysis ? `$${pagePricing[i]?.price.toFixed(2)}` : "—"}
-                        </span>
-                      </div>
-                    ))}
+                    {fileAnalyses.map((fa, i) => {
+                      const pp = pagePricing[i];
+                      return (
+                        <div key={i} className="space-y-1">
+                          <p className="text-sm font-medium text-foreground truncate">{fa.file.name}</p>
+                          {fa.analyzing && <p className="text-xs text-muted-foreground">Analyzing...</p>}
+                          {fa.analysis && pp && (
+                            <div className="space-y-0.5 text-xs text-muted-foreground">
+                              {pp.baseFee > 0 && (
+                                <div className="flex justify-between">
+                                  <span>{i === 0 ? "First page flat fee" : pp.label === "Double Page" ? "Double page flat" : "Base"}</span>
+                                  <span className="font-medium text-foreground">${pp.baseFee.toFixed(2)}</span>
+                                </div>
+                              )}
+                              {pp.formattingFee > 0 && (
+                                <div className="flex justify-between">
+                                  <span>Formatting</span>
+                                  <span className="font-medium text-foreground">${pp.formattingFee.toFixed(2)}</span>
+                                </div>
+                              )}
+                              {pp.wordCost > 0 && (
+                                <div className="flex justify-between">
+                                  <span>{fa.analysis.wordCount} words{pp.baseFee > 0 ? " (overage)" : ""} × $0.10</span>
+                                  <span className="font-medium text-foreground">${pp.wordCost.toFixed(2)}</span>
+                                </div>
+                              )}
+                              {pp.baseFee === 0 && pp.wordCost === 0 && pp.formattingFee === 0 && (
+                                <div className="flex justify-between">
+                                  <span>Included (≤300 words)</span>
+                                  <span className="font-medium text-foreground">$0.00</span>
+                                </div>
+                              )}
+                              <div className="flex justify-between pt-1 border-t border-border/50">
+                                <span className="font-medium">Subtotal</span>
+                                <span className="font-medium text-foreground">${pp.price.toFixed(2)}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
 
                     <div className="border-t border-border pt-3 space-y-2">
                       <div className="flex justify-between text-sm">
