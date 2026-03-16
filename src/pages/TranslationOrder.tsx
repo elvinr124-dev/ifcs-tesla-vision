@@ -361,7 +361,7 @@ const TranslationOrder = () => {
                                       {fa.analysis.wordCount} words
                                     </span>
                                     {fa.analysis.hasFormattedBoxes && (
-                                      <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium dark:bg-orange-900/30 dark:text-orange-400">5+ boxes</span>
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-medium dark:bg-emerald-900/30 dark:text-emerald-400">Formatting Needed</span>
                                     )}
                                     {fa.analysis.isDoublePage && (
                                       <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium dark:bg-blue-900/30 dark:text-blue-400">Double page</span>
