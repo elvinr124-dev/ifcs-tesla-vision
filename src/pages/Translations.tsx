@@ -152,23 +152,54 @@ const Translations = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             {/* Left side — text */}
-            <div>
-              <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
-                Details & Pricing
-              </p>
-              <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
-                What's included in our certified translation service
-              </h2>
-              <p className="mt-6 text-base text-muted-foreground font-light leading-relaxed">
-                A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 mt-8">
-                <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
-                  Start Your Order
-                </Link>
-                <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted transition-all duration-300">
-                  Get a Quote
-                </Link>
+            <div className="space-y-8">
+              <div>
+                <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
+                  Details & Pricing
+                </p>
+                <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
+                  What's included in our certified translation service
+                </h2>
+                <p className="mt-6 text-base text-muted-foreground font-light leading-relaxed">
+                  A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 mt-8">
+                  <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
+                    Start Your Order
+                  </Link>
+                  <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted transition-all duration-300">
+                    Get a Quote
+                  </Link>
+                </div>
+              </div>
+
+              {/* ATA Certified Translations */}
+              <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Award size={20} className="text-accent" />
+                  <h3 className="text-base font-semibold text-foreground">ATA Certified Translations</h3>
+                </div>
+                <p className="text-sm text-muted-foreground font-light leading-relaxed">
+                  Our translations are performed by <strong className="text-foreground">ATA-certified translators</strong> — members of the American Translators Association who have passed rigorous certification exams. ATA certification is the gold standard in the translation industry, ensuring the highest level of accuracy and professionalism for your important documents.
+                </p>
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={12} className="text-accent shrink-0" />
+                    <span className="text-xs text-muted-foreground">ATA member translators</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={12} className="text-accent shrink-0" />
+                    <span className="text-xs text-muted-foreground">Exam-certified accuracy</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={12} className="text-accent shrink-0" />
+                    <span className="text-xs text-muted-foreground">Industry gold standard</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={12} className="text-accent shrink-0" />
+                    <span className="text-xs text-muted-foreground">Accepted by all agencies</span>
+                  </div>
+                </div>
               </div>
             </div>
 
