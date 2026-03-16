@@ -57,67 +57,64 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
 
 /**
  * Pricing logic:
- * - Page 1: base price ($50 standard, $70 formatting, $75 birth cert) + extra words over 300 at $0.10
- * - Pages 2+: only extra words over 300 at $0.10 (no base price) — same for formatting pages
- * - Double page: $100 flat, 600 words included, $0.10 per word over 600
- * - Birth certificate: always $75 per page
+ * - Page 1: $50 base (300 words included) + $0.10/word over 300 + $20 formatting if 5+ boxes
+ * - Pages 2+: $0.10/word for ALL words (no base) + $20 formatting if 5+ boxes
+ * - Double page: $100 flat (600 words included) + $0.10/word over 600 + $20 formatting if 5+ boxes
+ * - Birth certificate: always $75 per page + $0.10/word over 300
  */
 function calculatePagePrice(
   analysis: FileAnalysis["analysis"],
-  pageIndex: number // 0-based index in the order
-): { price: number; pageCount: number; label: string; breakdown: string } {
-  if (!analysis) return { price: 50, pageCount: 1, label: "Standard", breakdown: "$50 base" };
+  pageIndex: number
+): { price: number; pageCount: number; label: string; breakdown: string; formattingFee: number; baseFee: number; wordCost: number } {
+  if (!analysis) return { price: 50, pageCount: 1, label: "Standard", breakdown: "$50 base", formattingFee: 0, baseFee: 50, wordCost: 0 };
+
+  const formattingFee = analysis.hasFormattedBoxes ? 20 : 0;
 
   // Double page
   if (analysis.isDoublePage) {
     const extraWords = Math.max(0, analysis.wordCount - 600);
-    const extraCost = extraWords * 0.10;
-    const price = 100 + extraCost;
+    const wordCost = extraWords * 0.10;
+    const price = 100 + wordCost + formattingFee;
     return {
-      price,
-      pageCount: 2,
-      label: "Double Page",
-      breakdown: `$100 flat${extraCost > 0 ? ` + $${extraCost.toFixed(2)} (${extraWords} extra words)` : ""}`,
+      price, pageCount: 2, label: "Double Page",
+      breakdown: `$100 flat${wordCost > 0 ? ` + $${wordCost.toFixed(2)} (${extraWords} extra words)` : ""}${formattingFee > 0 ? ` + $20 formatting` : ""}`,
+      formattingFee, baseFee: 100, wordCost,
     };
   }
 
-  // Birth certificate — always $75
+  // Birth certificate
   if (analysis.isBirthCertificate) {
     const extraWords = Math.max(0, analysis.wordCount - 300);
-    const extraCost = extraWords * 0.10;
-    const price = 75 + extraCost;
+    const wordCost = extraWords * 0.10;
+    const price = 75 + wordCost;
     return {
-      price,
-      pageCount: 1,
-      label: "Birth Certificate",
-      breakdown: `$75 base${extraCost > 0 ? ` + $${extraCost.toFixed(2)} (${extraWords} extra words)` : ""}`,
+      price, pageCount: 1, label: "Birth Certificate",
+      breakdown: `$75 base${wordCost > 0 ? ` + $${wordCost.toFixed(2)} (${extraWords} extra words)` : ""}`,
+      formattingFee: 0, baseFee: 75, wordCost,
     };
   }
 
-  const extraWords = Math.max(0, analysis.wordCount - 300);
-  const extraCost = extraWords * 0.10;
-
-  // First page gets base price
+  // First page
   if (pageIndex === 0) {
-    const hasFormatting = analysis.hasFormattedBoxes;
-    const base = hasFormatting ? 70 : 50;
-    const price = base + extraCost;
+    const extraWords = Math.max(0, analysis.wordCount - 300);
+    const wordCost = extraWords * 0.10;
+    const price = 50 + wordCost + formattingFee;
     return {
-      price,
-      pageCount: 1,
-      label: hasFormatting ? "Custom Formatting (5+ boxes)" : "Standard",
-      breakdown: `$${base} base${extraCost > 0 ? ` + $${extraCost.toFixed(2)} (${extraWords} extra words)` : ""}`,
+      price, pageCount: 1,
+      label: formattingFee > 0 ? "Standard + Formatting" : "Standard",
+      breakdown: `$50 base${wordCost > 0 ? ` + $${wordCost.toFixed(2)} (${extraWords} extra words)` : ""}${formattingFee > 0 ? ` + $20 formatting` : ""}`,
+      formattingFee, baseFee: 50, wordCost,
     };
   }
 
-  // Subsequent pages — charge per word for ALL words (no base fee, no 300 threshold)
-  const allWordsCost = analysis.wordCount * 0.10;
-  const hasFormatting = analysis.hasFormattedBoxes;
+  // Subsequent pages
+  const wordCost = analysis.wordCount * 0.10;
+  const price = wordCost + formattingFee;
   return {
-    price: allWordsCost,
-    pageCount: 1,
-    label: hasFormatting ? "Additional page (formatting)" : "Additional page",
-    breakdown: allWordsCost > 0 ? `$${allWordsCost.toFixed(2)} (${analysis.wordCount} words × $0.10)` : "No words detected",
+    price, pageCount: 1,
+    label: formattingFee > 0 ? "Additional page + Formatting" : "Additional page",
+    breakdown: `${wordCost > 0 ? `$${wordCost.toFixed(2)} (${analysis.wordCount} words × $0.10)` : "No words"}${formattingFee > 0 ? ` + $20 formatting` : ""}`,
+    formattingFee, baseFee: 0, wordCost,
   };
 }
 
@@ -364,7 +361,7 @@ const TranslationOrder = () => {
                                       {fa.analysis.wordCount} words
                                     </span>
                                     {fa.analysis.hasFormattedBoxes && (
-                                      <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium dark:bg-orange-900/30 dark:text-orange-400">5+ boxes</span>
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 font-medium dark:bg-emerald-900/30 dark:text-emerald-400">Formatting Needed</span>
                                     )}
                                     {fa.analysis.isDoublePage && (
                                       <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium dark:bg-blue-900/30 dark:text-blue-400">Double page</span>
@@ -482,17 +479,47 @@ const TranslationOrder = () => {
                   </p>
                 ) : (
                   <div className="space-y-3">
-                    {fileAnalyses.map((fa, i) => (
-                      <div key={i} className="flex justify-between text-sm">
-                        <span className="text-muted-foreground truncate max-w-[60%]">
-                          {fa.file.name}
-                          {fa.analyzing && " (analyzing...)"}
-                        </span>
-                        <span className="font-medium text-foreground">
-                          {fa.analysis ? `$${pagePricing[i]?.price.toFixed(2)}` : "—"}
-                        </span>
-                      </div>
-                    ))}
+                    {fileAnalyses.map((fa, i) => {
+                      const pp = pagePricing[i];
+                      return (
+                        <div key={i} className="space-y-1">
+                          <p className="text-sm font-medium text-foreground truncate">{fa.file.name}</p>
+                          {fa.analyzing && <p className="text-xs text-muted-foreground">Analyzing...</p>}
+                          {fa.analysis && pp && (
+                            <div className="space-y-0.5 text-xs text-muted-foreground">
+                              {pp.baseFee > 0 && (
+                                <div className="flex justify-between">
+                                  <span>{i === 0 ? "First page flat fee" : pp.label === "Double Page" ? "Double page flat" : "Base"}</span>
+                                  <span className="font-medium text-foreground">${pp.baseFee.toFixed(2)}</span>
+                                </div>
+                              )}
+                              {pp.formattingFee > 0 && (
+                                <div className="flex justify-between">
+                                  <span>Formatting</span>
+                                  <span className="font-medium text-foreground">${pp.formattingFee.toFixed(2)}</span>
+                                </div>
+                              )}
+                              {pp.wordCost > 0 && (
+                                <div className="flex justify-between">
+                                  <span>{fa.analysis.wordCount} words{pp.baseFee > 0 ? " (overage)" : ""} × $0.10</span>
+                                  <span className="font-medium text-foreground">${pp.wordCost.toFixed(2)}</span>
+                                </div>
+                              )}
+                              {pp.baseFee === 0 && pp.wordCost === 0 && pp.formattingFee === 0 && (
+                                <div className="flex justify-between">
+                                  <span>Included (≤300 words)</span>
+                                  <span className="font-medium text-foreground">$0.00</span>
+                                </div>
+                              )}
+                              <div className="flex justify-between pt-1 border-t border-border/50">
+                                <span className="font-medium">Subtotal</span>
+                                <span className="font-medium text-foreground">${pp.price.toFixed(2)}</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
 
                     <div className="border-t border-border pt-3 space-y-2">
                       <div className="flex justify-between text-sm">
