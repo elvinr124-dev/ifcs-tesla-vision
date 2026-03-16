@@ -251,8 +251,8 @@ const Translations = () => {
                   </div>
                   <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex justify-between">
-                      <span>1st page with custom formatting (5+ boxes)</span>
-                      <span className="font-semibold text-foreground">$70</span>
+                      <span>Custom formatting (5+ boxes)</span>
+                      <span className="font-semibold text-foreground">+$20/page</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Additional pages</span>
