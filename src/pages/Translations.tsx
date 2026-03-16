@@ -175,76 +175,76 @@ const Translations = () => {
             {/* Right side — pricing card */}
             <div className="space-y-6">
               {/* Main pricing card */}
-              <div className="rounded-2xl border-2 border-accent bg-primary text-primary-foreground p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
+              <div className="rounded-2xl border-2 border-accent bg-accent text-white p-8 relative overflow-hidden">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-white/20" />
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h3 className="text-xl font-semibold">Certified Translation</h3>
-                    <p className="text-sm text-primary-foreground/70 mt-1">
+                    <h3 className="text-xl font-semibold text-white">Certified Translation</h3>
+                    <p className="text-sm text-white/70 mt-1">
                       Word-for-word document translation with certification letter for official use.
                     </p>
                   </div>
                   <div className="text-right shrink-0 ml-4">
-                    <span className="text-3xl font-bold text-primary-foreground">$50</span>
-                    <p className="text-xs text-primary-foreground/60 mt-0.5">per page</p>
+                    <span className="text-3xl font-bold text-white">$50</span>
+                    <p className="text-xs text-white/60 mt-0.5">per page</p>
                   </div>
                 </div>
 
                 {/* Pricing tiers info */}
-                <div className="mt-6 p-4 rounded-xl bg-primary-foreground/10 border border-primary-foreground/20">
+                <div className="mt-6 p-4 rounded-xl bg-white/10 border border-white/20">
                   <div className="flex items-start gap-2 mb-3">
-                    <Info size={14} className="text-accent shrink-0 mt-0.5" />
-                    <p className="text-xs text-primary-foreground/80 leading-relaxed">
-                      Pages are limited to <strong>300 words</strong> or less (including numbers, characters, stamps, and signatures). Additional words are billed at <strong>$0.10/word</strong>.
+                    <Info size={14} className="text-white shrink-0 mt-0.5" />
+                    <p className="text-xs text-white/80 leading-relaxed">
+                      First page includes up to <strong>300 words</strong> (including numbers, stamps, signatures). Additional pages are charged at <strong>$0.10/word</strong> for all words. Overage on any page: <strong>$0.10/word</strong> beyond 300.
                     </p>
                   </div>
-                  <div className="space-y-2 text-xs text-primary-foreground/70">
+                  <div className="space-y-2 text-xs text-white/70">
                     <div className="flex justify-between">
-                      <span>1–9 pages with custom formatting (5+ boxes)</span>
-                      <span className="font-semibold text-primary-foreground">$70/page</span>
+                      <span>1st page with custom formatting (5+ boxes)</span>
+                      <span className="font-semibold text-white">$70</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>10+ pages</span>
-                      <span className="font-semibold text-primary-foreground">$50/page</span>
+                      <span>Additional pages</span>
+                      <span className="font-semibold text-white">$0.10/word</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Birth Certificates</span>
-                      <span className="font-semibold text-primary-foreground">$75/page</span>
+                      <span className="font-semibold text-white">$75/page</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Double pages (side-by-side)</span>
-                      <span className="font-semibold text-primary-foreground">$100 min</span>
+                      <span className="font-semibold text-white">$100 flat</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Included features */}
                 <div className="mt-6">
-                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-primary-foreground/50 mb-3">What's Included</p>
+                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-white/50 mb-3">What's Included</p>
                   <div className="grid grid-cols-1 gap-2.5">
                     {pricingFeatures.map((f) =>
                     <div key={f} className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-primary-foreground/80">{f}</span>
+                      <CheckCircle size={14} className="text-white shrink-0" />
+                      <span className="text-xs text-white/80">{f}</span>
                     </div>
                     )}
                   </div>
-                  <div className="mt-5 pt-4 border-t border-primary-foreground/10 space-y-2">
+                  <div className="mt-5 pt-4 border-t border-white/10 space-y-2">
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-primary-foreground/80">USCIS acceptance guaranteed</span>
+                      <CheckCircle size={14} className="text-white shrink-0" />
+                      <span className="text-xs text-white/80">USCIS acceptance guaranteed</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-primary-foreground/80">Unlimited revisions</span>
+                      <CheckCircle size={14} className="text-white shrink-0" />
+                      <span className="text-xs text-white/80">Unlimited revisions</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-primary-foreground/80">AI-powered word count verification</span>
+                      <CheckCircle size={14} className="text-white shrink-0" />
+                      <span className="text-xs text-white/80">AI-powered word count verification</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-primary-foreground/80">Native-speaking professional translators</span>
+                      <CheckCircle size={14} className="text-white shrink-0" />
+                      <span className="text-xs text-white/80">Native-speaking professional translators</span>
                     </div>
                   </div>
                 </div>
@@ -261,13 +261,6 @@ const Translations = () => {
                     </div>
                     <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
                   </div>
-                  <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground">Notarization</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">Notarized stamp valid in all 50 states.</p>
-                    </div>
-                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">$19.95</span>
-                  </div>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h4 className="text-sm font-semibold text-foreground">Hard Copy</h4>
@@ -278,12 +271,29 @@ const Translations = () => {
                 </div>
               </div>
 
-              {/* Turnaround note */}
-              <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-muted border border-border">
-                <Clock size={16} className="text-accent shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-medium text-foreground">Standard turnaround: 3–5 business days</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Expedited: 1–2 business days (+$25)</p>
+              {/* Turnaround & Guarantee */}
+              <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-2">Turnaround & Guarantee</p>
+                <div className="flex items-start gap-3">
+                  <Clock size={16} className="text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Standard: 3–5 business days</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Expedited: 1–2 business days (+$25)</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <ShieldCheck size={16} className="text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">100% Acceptance Guarantee</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">If your translation is not accepted by USCIS, we'll re-translate at no charge.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Lock size={16} className="text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Secure & Confidential</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">All documents are encrypted and handled with strict privacy protocols.</p>
+                  </div>
                 </div>
               </div>
             </div>

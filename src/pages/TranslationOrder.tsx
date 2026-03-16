@@ -6,23 +6,8 @@ import Footer from "@/components/Footer";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
 
-const countries = [
-  "Afghanistan","Albania","Algeria","Argentina","Armenia","Australia","Austria","Azerbaijan",
-  "Bahrain","Bangladesh","Belarus","Belgium","Bolivia","Bosnia and Herzegowina","Brazil","Bulgaria",
-  "Cambodia","Cameroon","Canada","Chile","China","Colombia","Costa Rica","Croatia (Hrvatska)",
-  "Cuba","Cyprus","Czech Republic","Denmark","Dominican Republic","Ecuador","Egypt","El Salvador",
-  "Estonia","Ethiopia","Finland","France","Georgia","Germany","Ghana","Greece","Guatemala",
-  "Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran (Islamic Republic of)",
-  "Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya",
-  "Korea, Republic of","Kuwait","Kyrgyzstan","Latvia","Lebanon","Libya","Lithuania","Luxembourg",
-  "Malaysia","Mexico","Moldova, Republic of","Mongolia","Morocco","Myanmar","Nepal","Netherlands",
-  "New Zealand","Nicaragua","Nigeria","Norway","Oman","Pakistan","Panama","Paraguay","Peru",
-  "Philippines","Poland","Portugal","Qatar","Romania","Russian Federation","Saudi Arabia","Senegal",
-  "Serbia","Singapore","Slovakia","Slovenia","Somalia","South Africa","Spain","Sri Lanka","Sudan",
-  "Sweden","Switzerland","Syrian Arab Republic","Taiwan","Tajikistan","Tanzania","Thailand",
-  "Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Uganda","Ukraine","United Arab Emirates",
-  "United Kingdom","United States","Uruguay","Uzbekistan","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe",
-];
+
+
 
 interface FileAnalysis {
   file: File;
@@ -52,19 +37,8 @@ const GlassInput = ({
   />
 );
 
-const GlassSelect = ({
-  value, onChange, children, required,
-}: {
-  value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  children: React.ReactNode; required?: boolean;
-}) => (
-  <select
-    value={value} onChange={onChange} required={required}
-    className="w-full h-12 px-4 rounded-2xl text-sm text-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 appearance-none backdrop-blur-sm"
-  >
-    {children}
-  </select>
-);
+
+
 
 const FieldGroup = ({ label, required: req, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
   <div className="space-y-1.5">
@@ -136,31 +110,25 @@ function calculatePagePrice(
     };
   }
 
-  // Subsequent pages — word cost only
-  const price = extraCost;
+  // Subsequent pages — charge per word for ALL words (no base fee, no 300 threshold)
+  const allWordsCost = analysis.wordCount * 0.10;
   const hasFormatting = analysis.hasFormattedBoxes;
   return {
-    price,
+    price: allWordsCost,
     pageCount: 1,
     label: hasFormatting ? "Additional page (formatting)" : "Additional page",
-    breakdown: extraCost > 0 ? `$${extraCost.toFixed(2)} (${extraWords} extra words)` : "Included (≤300 words)",
+    breakdown: allWordsCost > 0 ? `$${allWordsCost.toFixed(2)} (${analysis.wordCount} words × $0.10)` : "No words detected",
   };
 }
 
 const TranslationOrder = () => {
-  const [lastName, setLastName] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [middle, setMiddle] = useState("");
-  const [phone, setPhone] = useState("");
+  const [fullName, setFullName] = useState("");
   const [emailVal, setEmail] = useState("");
-  const [addr1, setAddr1] = useState("");
-  const [addr2, setAddr2] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
+  const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
   const [transFrom, setTransFrom] = useState("");
   const [transTo, setTransTo] = useState("");
+  const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -169,7 +137,6 @@ const TranslationOrder = () => {
 
   // Add-ons
   const [addExpedited, setAddExpedited] = useState(false);
-  const [addNotarization, setAddNotarization] = useState(false);
   const [addHardCopy, setAddHardCopy] = useState(false);
 
   // Payment fields
@@ -248,17 +215,15 @@ const TranslationOrder = () => {
   const subtotal = pagePricing.reduce((sum, p) => sum + p.price, 0);
   const totalPages = pagePricing.reduce((sum, p) => sum + p.pageCount, 0);
   const expeditedCost = addExpedited ? 25 : 0;
-  const notarizationCost = addNotarization ? 19.95 : 0;
   const hardCopyCost = addHardCopy ? 25 : 0;
-  const total = subtotal + expeditedCost + notarizationCost + hardCopyCost;
+  const total = subtotal + expeditedCost + hardCopyCost;
 
   const hasBlurryFiles = fileAnalyses.some(fa => fa.analysis?.isBlurry);
   const isAnalyzing = fileAnalyses.some(fa => fa.analyzing);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lastName.trim() || !firstName.trim() || !phone.trim() || !emailVal.trim() ||
-        !transFrom.trim() || !transTo.trim()) {
+    if (!fullName.trim() || !emailVal.trim() || !transFrom.trim() || !transTo.trim()) {
       setError("Please fill in all required fields before submitting.");
       return;
     }
@@ -324,60 +289,19 @@ const TranslationOrder = () => {
                 </div>
               )}
 
-              {/* Name on Documents */}
+              {/* Your Information */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Name on Documents</SectionHeading>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <FieldGroup label="Last" required>
-                    <GlassInput value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" required />
-                  </FieldGroup>
-                  <FieldGroup label="First" required>
-                    <GlassInput value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" required />
-                  </FieldGroup>
-                  <FieldGroup label="Middle">
-                    <GlassInput value={middle} onChange={e => setMiddle(e.target.value)} placeholder="Middle (optional)" />
-                  </FieldGroup>
-                </div>
-              </div>
-
-              {/* Contact */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Contact</SectionHeading>
+                <SectionHeading>Your Information</SectionHeading>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FieldGroup label="Phone" required>
-                    <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" required />
+                  <FieldGroup label="Full Name" required>
+                    <GlassInput value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full name" required />
                   </FieldGroup>
                   <FieldGroup label="E-mail" required>
                     <GlassInput value={emailVal} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" type="email" required />
                   </FieldGroup>
                 </div>
-              </div>
-
-              {/* Address */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Address</SectionHeading>
-                <FieldGroup label="Address Line One">
-                  <GlassInput value={addr1} onChange={e => setAddr1(e.target.value)} placeholder="Street address" />
-                </FieldGroup>
-                <FieldGroup label="Address Line Two">
-                  <GlassInput value={addr2} onChange={e => setAddr2(e.target.value)} placeholder="Apt, suite, unit..." />
-                </FieldGroup>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <FieldGroup label="City">
-                    <GlassInput value={city} onChange={e => setCity(e.target.value)} placeholder="City" />
-                  </FieldGroup>
-                  <FieldGroup label="State">
-                    <GlassInput value={state} onChange={e => setState(e.target.value)} placeholder="State" />
-                  </FieldGroup>
-                  <FieldGroup label="Zip">
-                    <GlassInput value={zip} onChange={e => setZip(e.target.value)} placeholder="Zip code" />
-                  </FieldGroup>
-                </div>
-                <FieldGroup label="Country">
-                  <GlassSelect value={country} onChange={e => setCountry(e.target.value)}>
-                    <option value="">Select country...</option>
-                    {countries.map(c => <option key={c} value={c}>{c}</option>)}
-                  </GlassSelect>
+                <FieldGroup label="Phone">
+                  <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
                 </FieldGroup>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FieldGroup label="Translating From" required>
@@ -387,6 +311,14 @@ const TranslationOrder = () => {
                     <GlassInput value={transTo} onChange={e => setTransTo(e.target.value)} placeholder="e.g. English" required />
                   </FieldGroup>
                 </div>
+                <FieldGroup label="Additional Notes">
+                  <textarea
+                    value={notes} onChange={e => setNotes(e.target.value)}
+                    placeholder="Any special instructions or details about your documents..."
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 resize-none"
+                  />
+                </FieldGroup>
               </div>
 
               {/* Upload Documents */}
@@ -490,16 +422,6 @@ const TranslationOrder = () => {
                   <span className="text-sm font-bold text-foreground">$25.00</span>
                 </label>
 
-                <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" checked={addNotarization} onChange={e => setAddNotarization(e.target.checked)} className="w-4 h-4 rounded border-border text-accent focus:ring-accent" />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">Notarization</p>
-                      <p className="text-xs text-muted-foreground">Notarized stamp valid in all 50 states</p>
-                    </div>
-                  </div>
-                  <span className="text-sm font-bold text-foreground">$19.95</span>
-                </label>
 
                 <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
                   <div className="flex items-center gap-3">
@@ -581,12 +503,6 @@ const TranslationOrder = () => {
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Expedited</span>
                           <span className="font-medium text-foreground">$25.00</span>
-                        </div>
-                      )}
-                      {addNotarization && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Notarization</span>
-                          <span className="font-medium text-foreground">$19.95</span>
                         </div>
                       )}
                       {addHardCopy && (
