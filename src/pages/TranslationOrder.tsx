@@ -148,16 +148,9 @@ function calculatePagePrice(
 }
 
 const TranslationOrder = () => {
-  const [lastName, setLastName] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [middle, setMiddle] = useState("");
-  const [phone, setPhone] = useState("");
+  const [fullName, setFullName] = useState("");
   const [emailVal, setEmail] = useState("");
-  const [addr1, setAddr1] = useState("");
-  const [addr2, setAddr2] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
+  const [phone, setPhone] = useState("");
   const [country, setCountry] = useState("");
   const [transFrom, setTransFrom] = useState("");
   const [transTo, setTransTo] = useState("");
