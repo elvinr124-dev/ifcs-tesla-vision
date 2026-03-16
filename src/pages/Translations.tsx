@@ -163,16 +163,12 @@ const Translations = () => {
                 A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mt-8">
-                <Link to="/translations/order" className="tesla-btn-primary">
+                <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
                   Start Your Order
                 </Link>
-                <a
-                  href="https://ifcsevals.com/contact-us"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tesla-btn-outline border-border text-foreground hover:bg-muted">
+                <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted transition-all duration-300">
                   Get a Quote
-                </a>
+                </Link>
               </div>
             </div>
 
