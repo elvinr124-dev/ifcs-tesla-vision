@@ -249,8 +249,7 @@ const TranslationOrder = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!lastName.trim() || !firstName.trim() || !phone.trim() || !emailVal.trim() ||
-        !transFrom.trim() || !transTo.trim()) {
+    if (!fullName.trim() || !emailVal.trim() || !transFrom.trim() || !transTo.trim()) {
       setError("Please fill in all required fields before submitting.");
       return;
     }
