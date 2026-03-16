@@ -154,6 +154,7 @@ const TranslationOrder = () => {
   const [country, setCountry] = useState("");
   const [transFrom, setTransFrom] = useState("");
   const [transTo, setTransTo] = useState("");
+  const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
