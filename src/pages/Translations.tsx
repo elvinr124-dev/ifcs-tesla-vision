@@ -147,11 +147,11 @@ const Translations = () => {
         </div>
       </section>
 
-      {/* Pricing & Details — MOVED ABOVE LANGUAGES */}
+      {/* Pricing & Details */}
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
-            {/* Left side — text */}
+            {/* Left side — text + add-ons + turnaround */}
             <div className="space-y-8">
               <div>
                 <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
@@ -173,31 +173,51 @@ const Translations = () => {
                 </div>
               </div>
 
-              {/* ATA Certified Translations */}
-              <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Award size={20} className="text-accent" />
-                  <h3 className="text-base font-semibold text-foreground">ATA Certified Translations</h3>
+              {/* Add-ons */}
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">Available Add-Ons</p>
+                <div className="space-y-4">
+                  <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
+                    <div>
+                      <h4 className="text-sm font-semibold text-foreground">Expedited Turnaround</h4>
+                      <p className="text-xs text-muted-foreground font-light mt-1">Priority processing — 1–2 business days delivery.</p>
+                    </div>
+                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
+                  </div>
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <h4 className="text-sm font-semibold text-foreground">Hard Copy</h4>
+                      <p className="text-xs text-muted-foreground font-light mt-1">Printed original shipped via FedEx with tracking.</p>
+                    </div>
+                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
+                  </div>
                 </div>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                  Our translations are performed by <strong className="text-foreground">ATA-certified translators</strong> — members of the American Translators Association who have passed rigorous certification exams. ATA certification is the gold standard in the translation industry, ensuring the highest level of accuracy and professionalism for your important documents.
-                </p>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle size={12} className="text-accent shrink-0" />
-                    <span className="text-xs text-muted-foreground">ATA member translators</span>
+              </div>
+
+              {/* Turnaround & Guarantee */}
+              <div className="rounded-2xl border border-border bg-card p-6">
+                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">Turnaround & Guarantee</p>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="flex items-start gap-2">
+                    <Clock size={16} className="text-accent shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">3–5 business days</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Expedited: 1–2 days (+$25)</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle size={12} className="text-accent shrink-0" />
-                    <span className="text-xs text-muted-foreground">Exam-certified accuracy</span>
+                  <div className="flex items-start gap-2">
+                    <ShieldCheck size={16} className="text-accent shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">100% Accepted</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">USCIS guaranteed</p>
+                    </div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle size={12} className="text-accent shrink-0" />
-                    <span className="text-xs text-muted-foreground">Industry gold standard</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle size={12} className="text-accent shrink-0" />
-                    <span className="text-xs text-muted-foreground">Accepted by all agencies</span>
+                  <div className="flex items-start gap-2">
+                    <Lock size={16} className="text-accent shrink-0 mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">Secure</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Encrypted & confidential</p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -279,52 +299,13 @@ const Translations = () => {
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* Add-ons */}
-              <div className="rounded-2xl border border-border bg-card p-6">
-                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">Available Add-Ons</p>
-                <div className="space-y-4">
-                  <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground">Expedited Turnaround</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">Priority processing — 1–2 business days delivery.</p>
-                    </div>
-                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
-                  </div>
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground">Hard Copy</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">Printed original shipped via FedEx with tracking.</p>
-                    </div>
-                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Turnaround & Guarantee */}
-              <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
-                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-2">Turnaround & Guarantee</p>
-                <div className="flex items-start gap-3">
-                  <Clock size={16} className="text-accent shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Standard: 3–5 business days</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">Expedited: 1–2 business days (+$25)</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <ShieldCheck size={16} className="text-accent shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">100% Acceptance Guarantee</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">If your translation is not accepted by USCIS, we'll re-translate at no charge.</p>
-                  </div>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Lock size={16} className="text-accent shrink-0 mt-0.5" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Secure & Confidential</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">All documents are encrypted and handled with strict privacy protocols.</p>
-                  </div>
+                {/* ATA badge inline */}
+                <div className="mt-6 pt-4 border-t border-border flex items-center gap-3">
+                  <Award size={18} className="text-accent shrink-0" />
+                  <p className="text-xs text-muted-foreground">
+                    Translated by <strong className="text-foreground">ATA-certified translators</strong> — the gold standard in professional translation accuracy.
+                  </p>
                 </div>
               </div>
             </div>
