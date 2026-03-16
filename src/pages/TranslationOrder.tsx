@@ -448,16 +448,6 @@ const TranslationOrder = () => {
                   <span className="text-sm font-bold text-foreground">$25.00</span>
                 </label>
 
-                <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
-                  <div className="flex items-center gap-3">
-                    <input type="checkbox" checked={addNotarization} onChange={e => setAddNotarization(e.target.checked)} className="w-4 h-4 rounded border-border text-accent focus:ring-accent" />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">Notarization</p>
-                      <p className="text-xs text-muted-foreground">Notarized stamp valid in all 50 states</p>
-                    </div>
-                  </div>
-                  <span className="text-sm font-bold text-foreground">$19.95</span>
-                </label>
 
                 <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
                   <div className="flex items-center gap-3">
