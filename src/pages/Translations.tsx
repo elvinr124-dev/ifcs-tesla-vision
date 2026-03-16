@@ -261,13 +261,6 @@ const Translations = () => {
                     </div>
                     <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
                   </div>
-                  <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
-                    <div>
-                      <h4 className="text-sm font-semibold text-foreground">Notarization</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">Notarized stamp valid in all 50 states.</p>
-                    </div>
-                    <span className="text-sm font-semibold text-foreground whitespace-nowrap">$19.95</span>
-                  </div>
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h4 className="text-sm font-semibold text-foreground">Hard Copy</h4>
@@ -278,12 +271,29 @@ const Translations = () => {
                 </div>
               </div>
 
-              {/* Turnaround note */}
-              <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-muted border border-border">
-                <Clock size={16} className="text-accent shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-xs font-medium text-foreground">Standard turnaround: 3–5 business days</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">Expedited: 1–2 business days (+$25)</p>
+              {/* Turnaround & Guarantee */}
+              <div className="rounded-2xl border border-border bg-card p-6 space-y-4">
+                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-2">Turnaround & Guarantee</p>
+                <div className="flex items-start gap-3">
+                  <Clock size={16} className="text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Standard: 3–5 business days</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">Expedited: 1–2 business days (+$25)</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <ShieldCheck size={16} className="text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">100% Acceptance Guarantee</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">If your translation is not accepted by USCIS, we'll re-translate at no charge.</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Lock size={16} className="text-accent shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-foreground">Secure & Confidential</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">All documents are encrypted and handled with strict privacy protocols.</p>
+                  </div>
                 </div>
               </div>
             </div>
