@@ -315,60 +315,19 @@ const TranslationOrder = () => {
                 </div>
               )}
 
-              {/* Name on Documents */}
+              {/* Your Information */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Name on Documents</SectionHeading>
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <FieldGroup label="Last" required>
-                    <GlassInput value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" required />
-                  </FieldGroup>
-                  <FieldGroup label="First" required>
-                    <GlassInput value={firstName} onChange={e => setFirstName(e.target.value)} placeholder="First name" required />
-                  </FieldGroup>
-                  <FieldGroup label="Middle">
-                    <GlassInput value={middle} onChange={e => setMiddle(e.target.value)} placeholder="Middle (optional)" />
-                  </FieldGroup>
-                </div>
-              </div>
-
-              {/* Contact */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Contact</SectionHeading>
+                <SectionHeading>Your Information</SectionHeading>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FieldGroup label="Phone" required>
-                    <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" required />
+                  <FieldGroup label="Full Name" required>
+                    <GlassInput value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full name" required />
                   </FieldGroup>
                   <FieldGroup label="E-mail" required>
                     <GlassInput value={emailVal} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" type="email" required />
                   </FieldGroup>
                 </div>
-              </div>
-
-              {/* Address */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Address</SectionHeading>
-                <FieldGroup label="Address Line One">
-                  <GlassInput value={addr1} onChange={e => setAddr1(e.target.value)} placeholder="Street address" />
-                </FieldGroup>
-                <FieldGroup label="Address Line Two">
-                  <GlassInput value={addr2} onChange={e => setAddr2(e.target.value)} placeholder="Apt, suite, unit..." />
-                </FieldGroup>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                  <FieldGroup label="City">
-                    <GlassInput value={city} onChange={e => setCity(e.target.value)} placeholder="City" />
-                  </FieldGroup>
-                  <FieldGroup label="State">
-                    <GlassInput value={state} onChange={e => setState(e.target.value)} placeholder="State" />
-                  </FieldGroup>
-                  <FieldGroup label="Zip">
-                    <GlassInput value={zip} onChange={e => setZip(e.target.value)} placeholder="Zip code" />
-                  </FieldGroup>
-                </div>
-                <FieldGroup label="Country">
-                  <GlassSelect value={country} onChange={e => setCountry(e.target.value)}>
-                    <option value="">Select country...</option>
-                    {countries.map(c => <option key={c} value={c}>{c}</option>)}
-                  </GlassSelect>
+                <FieldGroup label="Phone">
+                  <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
                 </FieldGroup>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FieldGroup label="Translating From" required>
@@ -378,6 +337,14 @@ const TranslationOrder = () => {
                     <GlassInput value={transTo} onChange={e => setTransTo(e.target.value)} placeholder="e.g. English" required />
                   </FieldGroup>
                 </div>
+                <FieldGroup label="Additional Notes">
+                  <textarea
+                    value={notes} onChange={e => setNotes(e.target.value)}
+                    placeholder="Any special instructions or details about your documents..."
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 resize-none"
+                  />
+                </FieldGroup>
               </div>
 
               {/* Upload Documents */}
