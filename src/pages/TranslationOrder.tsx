@@ -136,14 +136,14 @@ function calculatePagePrice(
     };
   }
 
-  // Subsequent pages — word cost only
-  const price = extraCost;
+  // Subsequent pages — charge per word for ALL words (no base fee, no 300 threshold)
+  const allWordsCost = analysis.wordCount * 0.10;
   const hasFormatting = analysis.hasFormattedBoxes;
   return {
-    price,
+    price: allWordsCost,
     pageCount: 1,
     label: hasFormatting ? "Additional page (formatting)" : "Additional page",
-    breakdown: extraCost > 0 ? `$${extraCost.toFixed(2)} (${extraWords} extra words)` : "Included (≤300 words)",
+    breakdown: allWordsCost > 0 ? `$${allWordsCost.toFixed(2)} (${analysis.wordCount} words × $0.10)` : "No words detected",
   };
 }
 
