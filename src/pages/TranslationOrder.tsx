@@ -163,7 +163,6 @@ const TranslationOrder = () => {
 
   // Add-ons
   const [addExpedited, setAddExpedited] = useState(false);
-  const [addNotarization, setAddNotarization] = useState(false);
   const [addHardCopy, setAddHardCopy] = useState(false);
 
   // Payment fields
