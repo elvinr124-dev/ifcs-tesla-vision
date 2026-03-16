@@ -152,99 +152,130 @@ const Translations = () => {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             {/* Left side — text */}
-            <div>
-              <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
-                Details & Pricing
-              </p>
-              <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
-                What's included in our certified translation service
-              </h2>
-              <p className="mt-6 text-base text-muted-foreground font-light leading-relaxed">
-                A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-3 mt-8">
-                <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
-                  Start Your Order
-                </Link>
-                <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted transition-all duration-300">
-                  Get a Quote
-                </Link>
+            <div className="space-y-8">
+              <div>
+                <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
+                  Details & Pricing
+                </p>
+                <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
+                  What's included in our certified translation service
+                </h2>
+                <p className="mt-6 text-base text-muted-foreground font-light leading-relaxed">
+                  A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 mt-8">
+                  <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
+                    Start Your Order
+                  </Link>
+                  <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted transition-all duration-300">
+                    Get a Quote
+                  </Link>
+                </div>
+              </div>
+
+              {/* ATA Certified Translations */}
+              <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Award size={20} className="text-accent" />
+                  <h3 className="text-base font-semibold text-foreground">ATA Certified Translations</h3>
+                </div>
+                <p className="text-sm text-muted-foreground font-light leading-relaxed">
+                  Our translations are performed by <strong className="text-foreground">ATA-certified translators</strong> — members of the American Translators Association who have passed rigorous certification exams. ATA certification is the gold standard in the translation industry, ensuring the highest level of accuracy and professionalism for your important documents.
+                </p>
+                <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={12} className="text-accent shrink-0" />
+                    <span className="text-xs text-muted-foreground">ATA member translators</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={12} className="text-accent shrink-0" />
+                    <span className="text-xs text-muted-foreground">Exam-certified accuracy</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={12} className="text-accent shrink-0" />
+                    <span className="text-xs text-muted-foreground">Industry gold standard</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={12} className="text-accent shrink-0" />
+                    <span className="text-xs text-muted-foreground">Accepted by all agencies</span>
+                  </div>
+                </div>
               </div>
             </div>
 
             {/* Right side — pricing card */}
             <div className="space-y-6">
               {/* Main pricing card */}
-              <div className="rounded-2xl border-2 border-accent bg-accent text-white p-8 relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-1 bg-white/20" />
+              <div className="rounded-2xl border-2 border-border bg-card text-foreground p-8 relative overflow-hidden shadow-lg">
+                <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h3 className="text-xl font-semibold text-white">Certified Translation</h3>
-                    <p className="text-sm text-white/70 mt-1">
+                    <h3 className="text-xl font-semibold text-foreground">Certified Translation</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
                       Word-for-word document translation with certification letter for official use.
                     </p>
                   </div>
                   <div className="text-right shrink-0 ml-4">
-                    <span className="text-3xl font-bold text-white">$50</span>
-                    <p className="text-xs text-white/60 mt-0.5">per page</p>
+                    <span className="text-3xl font-bold text-foreground">$50</span>
+                    <p className="text-xs text-muted-foreground mt-0.5">per page</p>
                   </div>
                 </div>
 
                 {/* Pricing tiers info */}
-                <div className="mt-6 p-4 rounded-xl bg-white/10 border border-white/20">
+                <div className="mt-6 p-4 rounded-xl bg-muted/60 border border-border">
                   <div className="flex items-start gap-2 mb-3">
-                    <Info size={14} className="text-white shrink-0 mt-0.5" />
-                    <p className="text-xs text-white/80 leading-relaxed">
-                      First page includes up to <strong>300 words</strong> (including numbers, stamps, signatures). Additional pages are charged at <strong>$0.10/word</strong> for all words. Overage on any page: <strong>$0.10/word</strong> beyond 300.
+                    <Info size={14} className="text-accent shrink-0 mt-0.5" />
+                    <p className="text-xs text-muted-foreground leading-relaxed">
+                      First page includes up to <strong className="text-foreground">300 words</strong> (including numbers, stamps, signatures). Additional pages are charged at <strong className="text-foreground">$0.10/word</strong> for all words. Overage on any page: <strong className="text-foreground">$0.10/word</strong> beyond 300.
                     </p>
                   </div>
-                  <div className="space-y-2 text-xs text-white/70">
+                  <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex justify-between">
                       <span>1st page with custom formatting (5+ boxes)</span>
-                      <span className="font-semibold text-white">$70</span>
+                      <span className="font-semibold text-foreground">$70</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Additional pages</span>
-                      <span className="font-semibold text-white">$0.10/word</span>
+                      <span className="font-semibold text-foreground">$0.10/word</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Birth Certificates</span>
-                      <span className="font-semibold text-white">$75/page</span>
+                      <span className="font-semibold text-foreground">$75/page</span>
                     </div>
                     <div className="flex justify-between">
                       <span>Double pages (side-by-side)</span>
-                      <span className="font-semibold text-white">$100 flat</span>
+                      <span className="font-semibold text-foreground">$100 flat</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Included features */}
                 <div className="mt-6">
-                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-white/50 mb-3">What's Included</p>
+                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground mb-3">What's Included</p>
                   <div className="grid grid-cols-1 gap-2.5">
                     {pricingFeatures.map((f) =>
                     <div key={f} className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-white shrink-0" />
-                      <span className="text-xs text-white/80">{f}</span>
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-muted-foreground">{f}</span>
                     </div>
                     )}
                   </div>
-                  <div className="mt-5 pt-4 border-t border-white/10 space-y-2">
+                  <div className="mt-5 pt-4 border-t border-border space-y-2">
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-white shrink-0" />
-                      <span className="text-xs text-white/80">USCIS acceptance guaranteed</span>
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-muted-foreground">USCIS acceptance guaranteed</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-white shrink-0" />
-                      <span className="text-xs text-white/80">Unlimited revisions</span>
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-muted-foreground">Unlimited revisions</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-white shrink-0" />
-                      <span className="text-xs text-white/80">AI-powered word count verification</span>
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-muted-foreground">AI-powered word count verification</span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <CheckCircle size={14} className="text-white shrink-0" />
-                      <span className="text-xs text-white/80">Native-speaking professional translators</span>
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-muted-foreground">Native-speaking professional translators</span>
                     </div>
                   </div>
                 </div>
