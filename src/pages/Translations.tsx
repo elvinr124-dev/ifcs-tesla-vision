@@ -220,14 +220,32 @@ const Translations = () => {
 
                 {/* Included features */}
                 <div className="mt-6">
-                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-primary-foreground/50 mb-3">Included</p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-primary-foreground/50 mb-3">What's Included</p>
+                  <div className="grid grid-cols-1 gap-2.5">
                     {pricingFeatures.map((f) =>
                     <div key={f} className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
                       <span className="text-xs text-primary-foreground/80">{f}</span>
                     </div>
                     )}
+                  </div>
+                  <div className="mt-5 pt-4 border-t border-primary-foreground/10 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-primary-foreground/80">USCIS acceptance guaranteed</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-primary-foreground/80">Unlimited revisions</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-primary-foreground/80">AI-powered word count verification</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-primary-foreground/80">Native-speaking professional translators</span>
+                    </div>
                   </div>
                 </div>
               </div>
