@@ -241,9 +241,8 @@ const TranslationOrder = () => {
   const subtotal = pagePricing.reduce((sum, p) => sum + p.price, 0);
   const totalPages = pagePricing.reduce((sum, p) => sum + p.pageCount, 0);
   const expeditedCost = addExpedited ? 25 : 0;
-  const notarizationCost = addNotarization ? 19.95 : 0;
   const hardCopyCost = addHardCopy ? 25 : 0;
-  const total = subtotal + expeditedCost + notarizationCost + hardCopyCost;
+  const total = subtotal + expeditedCost + hardCopyCost;
 
   const hasBlurryFiles = fileAnalyses.some(fa => fa.analysis?.isBlurry);
   const isAnalyzing = fileAnalyses.some(fa => fa.analyzing);
