@@ -185,7 +185,7 @@ const Translations = () => {
                     </p>
                   </div>
                   <div className="text-right shrink-0 ml-4">
-                    <span className="text-3xl font-bold">$50</span>
+                    <span className="text-3xl font-bold text-primary-foreground">$50</span>
                     <p className="text-xs text-primary-foreground/60 mt-0.5">per page</p>
                   </div>
                 </div>
