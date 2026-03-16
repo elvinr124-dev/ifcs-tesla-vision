@@ -37,19 +37,8 @@ const GlassInput = ({
   />
 );
 
-const GlassSelect = ({
-  value, onChange, children, required,
-}: {
-  value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  children: React.ReactNode; required?: boolean;
-}) => (
-  <select
-    value={value} onChange={onChange} required={required}
-    className="w-full h-12 px-4 rounded-2xl text-sm text-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 appearance-none backdrop-blur-sm"
-  >
-    {children}
-  </select>
-);
+
+
 
 const FieldGroup = ({ label, required: req, children }: { label: string; required?: boolean; children: React.ReactNode }) => (
   <div className="space-y-1.5">
