@@ -1,6 +1,6 @@
 import { useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTriangle, FileText, Plus, Minus } from "lucide-react";
+import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTriangle, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import translationsBg from "@/assets/translations-bg.jpg";
@@ -81,38 +81,70 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
   </p>
 );
 
-function calculatePagePrice(analysis: FileAnalysis["analysis"], totalPages: number): { basePrice: number; extraWordsCost: number; pageCount: number; label: string } {
-  if (!analysis) return { basePrice: 50, extraWordsCost: 0, pageCount: 1, label: "Standard" };
+/**
+ * Pricing logic:
+ * - Page 1: base price ($50 standard, $70 formatting, $75 birth cert) + extra words over 300 at $0.10
+ * - Pages 2+: only extra words over 300 at $0.10 (no base price) — same for formatting pages
+ * - Double page: $100 flat, 600 words included, $0.10 per word over 600
+ * - Birth certificate: always $75 per page
+ */
+function calculatePagePrice(
+  analysis: FileAnalysis["analysis"],
+  pageIndex: number // 0-based index in the order
+): { price: number; pageCount: number; label: string; breakdown: string } {
+  if (!analysis) return { price: 50, pageCount: 1, label: "Standard", breakdown: "$50 base" };
 
-  const pageCount = analysis.isDoublePage ? 2 : 1;
-  let basePrice: number;
-  let label: string;
-
-  if (analysis.isBirthCertificate) {
-    basePrice = 75;
-    label = "Birth Certificate";
-  } else if (analysis.hasFormattedBoxes && totalPages < 10) {
-    basePrice = 70;
-    label = "Custom Formatting (5+ boxes)";
-  } else {
-    basePrice = totalPages >= 10 ? 50 : 50;
-    label = totalPages >= 10 ? "10+ pages rate" : "Standard";
-  }
-
-  const extraWords = Math.max(0, analysis.wordCount - 300);
-  const extraWordsCost = extraWords * 0.10;
-
+  // Double page
   if (analysis.isDoublePage) {
-    const total = (basePrice * 2) + (extraWordsCost * 2);
+    const extraWords = Math.max(0, analysis.wordCount - 600);
+    const extraCost = extraWords * 0.10;
+    const price = 100 + extraCost;
     return {
-      basePrice: Math.max(basePrice * 2, 100),
-      extraWordsCost: extraWordsCost * 2,
+      price,
       pageCount: 2,
-      label: label + " (Double Page)"
+      label: "Double Page",
+      breakdown: `$100 flat${extraCost > 0 ? ` + $${extraCost.toFixed(2)} (${extraWords} extra words)` : ""}`,
     };
   }
 
-  return { basePrice, extraWordsCost, pageCount, label };
+  // Birth certificate — always $75
+  if (analysis.isBirthCertificate) {
+    const extraWords = Math.max(0, analysis.wordCount - 300);
+    const extraCost = extraWords * 0.10;
+    const price = 75 + extraCost;
+    return {
+      price,
+      pageCount: 1,
+      label: "Birth Certificate",
+      breakdown: `$75 base${extraCost > 0 ? ` + $${extraCost.toFixed(2)} (${extraWords} extra words)` : ""}`,
+    };
+  }
+
+  const extraWords = Math.max(0, analysis.wordCount - 300);
+  const extraCost = extraWords * 0.10;
+
+  // First page gets base price
+  if (pageIndex === 0) {
+    const hasFormatting = analysis.hasFormattedBoxes;
+    const base = hasFormatting ? 70 : 50;
+    const price = base + extraCost;
+    return {
+      price,
+      pageCount: 1,
+      label: hasFormatting ? "Custom Formatting (5+ boxes)" : "Standard",
+      breakdown: `$${base} base${extraCost > 0 ? ` + $${extraCost.toFixed(2)} (${extraWords} extra words)` : ""}`,
+    };
+  }
+
+  // Subsequent pages — word cost only
+  const price = extraCost;
+  const hasFormatting = analysis.hasFormattedBoxes;
+  return {
+    price,
+    pageCount: 1,
+    label: hasFormatting ? "Additional page (formatting)" : "Additional page",
+    breakdown: extraCost > 0 ? `$${extraCost.toFixed(2)} (${extraWords} extra words)` : "Included (≤300 words)",
+  };
 }
 
 const TranslationOrder = () => {
@@ -129,14 +161,9 @@ const TranslationOrder = () => {
   const [country, setCountry] = useState("");
   const [transFrom, setTransFrom] = useState("");
   const [transTo, setTransTo] = useState("");
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
-  const [contactMsg, setContactMsg] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  // Files with AI analysis
   const [fileAnalyses, setFileAnalyses] = useState<FileAnalysis[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -145,13 +172,14 @@ const TranslationOrder = () => {
   const [addNotarization, setAddNotarization] = useState(false);
   const [addHardCopy, setAddHardCopy] = useState(false);
 
-  const totalPages = fileAnalyses.reduce((sum, fa) => {
-    if (!fa.analysis) return sum + 1;
-    return sum + (fa.analysis.isDoublePage ? 2 : 1);
-  }, 0);
+  // Payment fields
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardExpiry, setCardExpiry] = useState("");
+  const [cardCvc, setCardCvc] = useState("");
+  const [cardZip, setCardZip] = useState("");
+  const [cardName, setCardName] = useState("");
 
   const analyzeFile = async (file: File, index: number) => {
-    // Create preview
     const reader = new FileReader();
     reader.onload = async (e) => {
       const base64 = (e.target?.result as string).split(",")[1];
@@ -174,10 +202,7 @@ const TranslationOrder = () => {
           }
         );
 
-        if (!response.ok) {
-          throw new Error("Analysis failed");
-        }
-
+        if (!response.ok) throw new Error("Analysis failed");
         const analysis = await response.json();
 
         if (analysis.isBlurry) {
@@ -191,7 +216,7 @@ const TranslationOrder = () => {
         setFileAnalyses(prev => prev.map((fa, i) =>
           i === index ? { ...fa, analyzing: false, analysis } : fa
         ));
-      } catch (err) {
+      } catch {
         setFileAnalyses(prev => prev.map((fa, i) =>
           i === index ? { ...fa, analyzing: false, error: "Could not analyze document. You can still submit for manual review." } : fa
         ));
@@ -205,17 +230,10 @@ const TranslationOrder = () => {
       const newFiles = Array.from(e.target.files);
       const startIndex = fileAnalyses.length;
       const newAnalyses: FileAnalysis[] = newFiles.map(f => ({
-        file: f,
-        analyzing: false,
-        analysis: null,
+        file: f, analyzing: false, analysis: null,
       }));
-
       setFileAnalyses(prev => [...prev, ...newAnalyses]);
-
-      // Trigger AI analysis for each file
-      newFiles.forEach((file, i) => {
-        analyzeFile(file, startIndex + i);
-      });
+      newFiles.forEach((file, i) => analyzeFile(file, startIndex + i));
     }
     if (e.target) e.target.value = "";
   };
@@ -224,19 +242,11 @@ const TranslationOrder = () => {
     setFileAnalyses(prev => prev.filter((_, i) => i !== idx));
   };
 
-  // Calculate totals
-  const pageSubtotals = fileAnalyses.map(fa => {
-    const pricing = calculatePagePrice(fa.analysis, totalPages);
-    return {
-      base: fa.analysis?.isDoublePage ? Math.max(pricing.basePrice, 100) : pricing.basePrice,
-      extra: pricing.extraWordsCost,
-      pages: pricing.pageCount,
-      label: pricing.label,
-      isBlurry: fa.analysis?.isBlurry || false,
-    };
-  });
+  // Calculate pricing per page
+  const pagePricing = fileAnalyses.map((fa, i) => calculatePagePrice(fa.analysis, i));
 
-  const subtotal = pageSubtotals.reduce((sum, p) => sum + p.base + p.extra, 0);
+  const subtotal = pagePricing.reduce((sum, p) => sum + p.price, 0);
+  const totalPages = pagePricing.reduce((sum, p) => sum + p.pageCount, 0);
   const expeditedCost = addExpedited ? 25 : 0;
   const notarizationCost = addNotarization ? 19.95 : 0;
   const hardCopyCost = addHardCopy ? 25 : 0;
@@ -260,6 +270,10 @@ const TranslationOrder = () => {
       setError("Please wait for document analysis to complete.");
       return;
     }
+    if (!cardNumber.trim() || !cardExpiry.trim() || !cardCvc.trim()) {
+      setError("Please enter your payment details.");
+      return;
+    }
     setError("");
     setSubmitted(true);
   };
@@ -276,12 +290,12 @@ const TranslationOrder = () => {
           <Link to="/translations" className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity text-white">
             <ArrowLeft size={16} /> Back to Translations
           </Link>
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">Get Your Documents Translated</p>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">Place Your Order</p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white">
             Translation Order
           </h1>
           <p className="mt-4 text-base md:text-lg text-white/80 font-light max-w-xl">
-            Upload your documents and our AI will automatically analyze word count and pricing. Certified translations starting at $50/page.
+            Upload your documents, our AI calculates pricing, and pay securely. Certified translations starting at $50/page.
           </p>
         </div>
       </section>
@@ -290,8 +304,8 @@ const TranslationOrder = () => {
         <section className="py-32 px-6 md:px-12 text-center">
           <div className="max-w-xl mx-auto rounded-3xl border border-accent/40 bg-accent/5 p-12">
             <CheckCircle size={56} className="text-accent mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-foreground mb-3">Order Submitted!</h2>
-            <p className="text-muted-foreground font-light mb-8">Thank you! We'll review your documents and send a quote to your email shortly.</p>
+            <h2 className="text-3xl font-bold text-foreground mb-3">Order Placed!</h2>
+            <p className="text-muted-foreground font-light mb-8">Thank you! We'll begin translating your documents and deliver within the selected timeframe.</p>
             <Link to="/translations" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl bg-accent text-accent-foreground font-bold shadow-xl shadow-accent/40 hover:scale-105 transition-all duration-300">
               Back to Translations
             </Link>
@@ -375,7 +389,7 @@ const TranslationOrder = () => {
                 </div>
               </div>
 
-              {/* Upload Documents with AI Analysis */}
+              {/* Upload Documents */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
                 <SectionHeading>Upload Your Documents</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
@@ -389,7 +403,6 @@ const TranslationOrder = () => {
                   <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                 </label>
 
-                {/* File list with analysis results */}
                 {fileAnalyses.length > 0 && (
                   <div className="space-y-3">
                     {fileAnalyses.map((fa, i) => (
@@ -419,26 +432,18 @@ const TranslationOrder = () => {
                                       {fa.analysis.wordCount} words
                                     </span>
                                     {fa.analysis.hasFormattedBoxes && (
-                                      <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium dark:bg-orange-900/30 dark:text-orange-400">
-                                        5+ boxes
-                                      </span>
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-orange-100 text-orange-700 font-medium dark:bg-orange-900/30 dark:text-orange-400">5+ boxes</span>
                                     )}
                                     {fa.analysis.isDoublePage && (
-                                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium dark:bg-blue-900/30 dark:text-blue-400">
-                                        Double page
-                                      </span>
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium dark:bg-blue-900/30 dark:text-blue-400">Double page</span>
                                     )}
                                     {fa.analysis.isBirthCertificate && (
-                                      <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium dark:bg-purple-900/30 dark:text-purple-400">
-                                        Birth Certificate
-                                      </span>
+                                      <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-medium dark:bg-purple-900/30 dark:text-purple-400">Birth Certificate</span>
                                     )}
                                   </div>
                                   <p className="text-xs text-muted-foreground">
-                                    {pageSubtotals[i]?.label} · ${(pageSubtotals[i]?.base + pageSubtotals[i]?.extra).toFixed(2)}
-                                    {pageSubtotals[i]?.extra > 0 && (
-                                      <span className="text-muted-foreground/60"> (base ${pageSubtotals[i]?.base} + ${pageSubtotals[i]?.extra.toFixed(2)} extra words)</span>
-                                    )}
+                                    {pagePricing[i]?.label} · ${pagePricing[i]?.price.toFixed(2)}
+                                    <span className="text-muted-foreground/60"> ({pagePricing[i]?.breakdown})</span>
                                   </p>
                                 </div>
                               )}
@@ -453,9 +458,7 @@ const TranslationOrder = () => {
                                 </div>
                               )}
 
-                              {fa.error && (
-                                <p className="text-xs text-muted-foreground mt-1">{fa.error}</p>
-                              )}
+                              {fa.error && <p className="text-xs text-muted-foreground mt-1">{fa.error}</p>}
                             </div>
                           </div>
                           <button type="button" onClick={() => removeFile(i)} className="text-muted-foreground hover:text-destructive transition-colors shrink-0">
@@ -467,11 +470,7 @@ const TranslationOrder = () => {
                   </div>
                 )}
 
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="text-sm font-medium text-accent hover:opacity-75 transition-opacity underline underline-offset-4"
-                >
+                <button type="button" onClick={() => fileInputRef.current?.click()} className="text-sm font-medium text-accent hover:opacity-75 transition-opacity underline underline-offset-4">
                   + Add another file
                 </button>
               </div>
@@ -514,6 +513,28 @@ const TranslationOrder = () => {
                 </label>
               </div>
 
+              {/* Payment Details */}
+              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
+                <SectionHeading>Payment Details</SectionHeading>
+                <FieldGroup label="Name on Card" required>
+                  <GlassInput value={cardName} onChange={e => setCardName(e.target.value)} placeholder="Full name on card" required />
+                </FieldGroup>
+                <FieldGroup label="Card Number" required>
+                  <GlassInput value={cardNumber} onChange={e => setCardNumber(e.target.value)} placeholder="1234 5678 9012 3456" required />
+                </FieldGroup>
+                <div className="grid grid-cols-3 gap-4">
+                  <FieldGroup label="Expiry" required>
+                    <GlassInput value={cardExpiry} onChange={e => setCardExpiry(e.target.value)} placeholder="MM/YY" required />
+                  </FieldGroup>
+                  <FieldGroup label="CVC" required>
+                    <GlassInput value={cardCvc} onChange={e => setCardCvc(e.target.value)} placeholder="123" required />
+                  </FieldGroup>
+                  <FieldGroup label="Billing Zip" required>
+                    <GlassInput value={cardZip} onChange={e => setCardZip(e.target.value)} placeholder="10001" required />
+                  </FieldGroup>
+                </div>
+              </div>
+
               {/* Submit */}
               <div className="flex justify-center pt-2 pb-6">
                 <button
@@ -521,18 +542,15 @@ const TranslationOrder = () => {
                   disabled={isAnalyzing || hasBlurryFiles}
                   className="group inline-flex items-center gap-4 px-12 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
                 >
-                  <span>Submit Order</span>
-                  <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                    <Send size={20} />
-                  </div>
+                  <CreditCard size={20} />
+                  <span>Place Order — ${total.toFixed(2)}</span>
                 </button>
               </div>
             </div>
 
-            {/* Right Column — Pricing Summary + Contact */}
+            {/* Right Column — Order Summary */}
             <div className="space-y-6">
 
-              {/* Order Summary */}
               <div className="rounded-3xl border border-accent/30 bg-card shadow-lg p-8 space-y-5 sticky top-24">
                 <SectionHeading>Order Summary</SectionHeading>
 
@@ -549,10 +567,7 @@ const TranslationOrder = () => {
                           {fa.analyzing && " (analyzing...)"}
                         </span>
                         <span className="font-medium text-foreground">
-                          {fa.analysis
-                            ? `$${(pageSubtotals[i]?.base + pageSubtotals[i]?.extra).toFixed(2)}`
-                            : "—"
-                          }
+                          {fa.analysis ? `$${pagePricing[i]?.price.toFixed(2)}` : "—"}
                         </span>
                       </div>
                     ))}
@@ -593,63 +608,6 @@ const TranslationOrder = () => {
                     </div>
                   </div>
                 )}
-              </div>
-
-              {/* Contact Us sidebar */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
-                <SectionHeading>Contact Us</SectionHeading>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground">
-                    Your Name <span className="text-accent">*</span>
-                  </label>
-                  <GlassInput value={contactName} onChange={e => setContactName(e.target.value)} placeholder="Full name" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground">
-                    Your E-mail Address <span className="text-accent">*</span>
-                  </label>
-                  <GlassInput value={contactEmail} onChange={e => setContactEmail(e.target.value)} placeholder="email@example.com" type="email" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground">
-                    Your Phone Number
-                  </label>
-                  <GlassInput value={contactPhone} onChange={e => setContactPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground">
-                    How Can We Help You? <span className="text-accent">*</span>
-                  </label>
-                  <textarea
-                    value={contactMsg}
-                    onChange={e => setContactMsg(e.target.value)}
-                    placeholder="Tell us about your translation needs..."
-                    rows={4}
-                    className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 resize-none"
-                  />
-                </div>
-                <button
-                  type="button"
-                  className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-accent text-accent-foreground font-bold text-base shadow-xl shadow-accent/30 hover:shadow-accent/50 hover:scale-105 transition-all duration-300"
-                >
-                  <span>Submit</span>
-                  <Send size={16} />
-                </button>
-              </div>
-
-              {/* Make a Payment */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-4">
-                <SectionHeading>Make a Payment</SectionHeading>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                  Make a payment for translation (if you have already received a quote).
-                </p>
-                <button
-                  type="button"
-                  className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-foreground text-background font-bold text-base shadow-lg hover:scale-105 transition-all duration-300"
-                >
-                  <CreditCard size={18} />
-                  <span>Make Payment</span>
-                </button>
               </div>
             </div>
           </div>

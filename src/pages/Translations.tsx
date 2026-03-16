@@ -110,16 +110,12 @@ const Translations = () => {
             Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
-            <Link to="/translations/order" className="tesla-btn-primary">
+            <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
               Start Your Order
             </Link>
-            <a
-              href="https://ifcsevals.com/contact-us"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tesla-btn-outline">
+            <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-white/30 text-white font-semibold text-sm hover:bg-white/10 transition-all duration-300">
               Get a Quote
-            </a>
+            </Link>
           </div>
           <div className="flex items-center gap-2 mt-8">
             <div className="flex">
@@ -167,16 +163,12 @@ const Translations = () => {
                 A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 mt-8">
-                <Link to="/translations/order" className="tesla-btn-primary">
+                <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
                   Start Your Order
                 </Link>
-                <a
-                  href="https://ifcsevals.com/contact-us"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="tesla-btn-outline border-border text-foreground hover:bg-muted">
+                <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted transition-all duration-300">
                   Get a Quote
-                </a>
+                </Link>
               </div>
             </div>
 
@@ -193,7 +185,7 @@ const Translations = () => {
                     </p>
                   </div>
                   <div className="text-right shrink-0 ml-4">
-                    <span className="text-3xl font-bold">$50</span>
+                    <span className="text-3xl font-bold text-primary-foreground">$50</span>
                     <p className="text-xs text-primary-foreground/60 mt-0.5">per page</p>
                   </div>
                 </div>
@@ -228,14 +220,32 @@ const Translations = () => {
 
                 {/* Included features */}
                 <div className="mt-6">
-                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-primary-foreground/50 mb-3">Included</p>
-                  <div className="grid grid-cols-2 gap-2">
+                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-primary-foreground/50 mb-3">What's Included</p>
+                  <div className="grid grid-cols-1 gap-2.5">
                     {pricingFeatures.map((f) =>
                     <div key={f} className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
                       <span className="text-xs text-primary-foreground/80">{f}</span>
                     </div>
                     )}
+                  </div>
+                  <div className="mt-5 pt-4 border-t border-primary-foreground/10 space-y-2">
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-primary-foreground/80">USCIS acceptance guaranteed</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-primary-foreground/80">Unlimited revisions</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-primary-foreground/80">AI-powered word count verification</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <CheckCircle size={14} className="text-accent shrink-0" />
+                      <span className="text-xs text-primary-foreground/80">Native-speaking professional translators</span>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -452,16 +462,12 @@ const Translations = () => {
             Upload your document and receive a certified translation in as little as 24 hours.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8 justify-center">
-            <Link to="/translations/order" className="tesla-btn-primary">
+            <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
               Start Your Order
             </Link>
-            <a
-              href="https://ifcsevals.com/contact-us"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tesla-btn-outline">
-              Contact Us
-            </a>
+            <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-primary-foreground/30 text-primary-foreground font-semibold text-sm hover:bg-primary-foreground/10 transition-all duration-300">
+              Get a Quote
+            </Link>
           </div>
         </div>
       </section>
