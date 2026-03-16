@@ -531,12 +531,6 @@ const TranslationOrder = () => {
                           <span className="font-medium text-foreground">$25.00</span>
                         </div>
                       )}
-                      {addNotarization && (
-                        <div className="flex justify-between text-sm">
-                          <span className="text-muted-foreground">Notarization</span>
-                          <span className="font-medium text-foreground">$19.95</span>
-                        </div>
-                      )}
                       {addHardCopy && (
                         <div className="flex justify-between text-sm">
                           <span className="text-muted-foreground">Hard Copy</span>
