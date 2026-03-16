@@ -6,23 +6,8 @@ import Footer from "@/components/Footer";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
 
-const countries = [
-  "Afghanistan","Albania","Algeria","Argentina","Armenia","Australia","Austria","Azerbaijan",
-  "Bahrain","Bangladesh","Belarus","Belgium","Bolivia","Bosnia and Herzegowina","Brazil","Bulgaria",
-  "Cambodia","Cameroon","Canada","Chile","China","Colombia","Costa Rica","Croatia (Hrvatska)",
-  "Cuba","Cyprus","Czech Republic","Denmark","Dominican Republic","Ecuador","Egypt","El Salvador",
-  "Estonia","Ethiopia","Finland","France","Georgia","Germany","Ghana","Greece","Guatemala",
-  "Haiti","Honduras","Hong Kong","Hungary","Iceland","India","Indonesia","Iran (Islamic Republic of)",
-  "Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan","Kenya",
-  "Korea, Republic of","Kuwait","Kyrgyzstan","Latvia","Lebanon","Libya","Lithuania","Luxembourg",
-  "Malaysia","Mexico","Moldova, Republic of","Mongolia","Morocco","Myanmar","Nepal","Netherlands",
-  "New Zealand","Nicaragua","Nigeria","Norway","Oman","Pakistan","Panama","Paraguay","Peru",
-  "Philippines","Poland","Portugal","Qatar","Romania","Russian Federation","Saudi Arabia","Senegal",
-  "Serbia","Singapore","Slovakia","Slovenia","Somalia","South Africa","Spain","Sri Lanka","Sudan",
-  "Sweden","Switzerland","Syrian Arab Republic","Taiwan","Tajikistan","Tanzania","Thailand",
-  "Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Uganda","Ukraine","United Arab Emirates",
-  "United Kingdom","United States","Uruguay","Uzbekistan","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe",
-];
+
+
 
 interface FileAnalysis {
   file: File;
