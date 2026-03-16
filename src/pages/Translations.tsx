@@ -462,16 +462,12 @@ const Translations = () => {
             Upload your document and receive a certified translation in as little as 24 hours.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8 justify-center">
-            <Link to="/translations/order" className="tesla-btn-primary">
+            <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
               Start Your Order
             </Link>
-            <a
-              href="https://ifcsevals.com/contact-us"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="tesla-btn-outline">
-              Contact Us
-            </a>
+            <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-primary-foreground/30 text-primary-foreground font-semibold text-sm hover:bg-primary-foreground/10 transition-all duration-300">
+              Get a Quote
+            </Link>
           </div>
         </div>
       </section>
