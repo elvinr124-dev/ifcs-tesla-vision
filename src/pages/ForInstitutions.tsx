@@ -43,27 +43,27 @@ const evaluationTypes = [
 
 const resources = [
   {
-    name: "International Association of Universities",
+    name: "WHED - International Association of Universities",
     logo: logoIau,
-    url: "https://www.iau-aiu.net/",
+    url: "https://www.whed.net/",
   },
   {
-    name: "NAFSA: Association of International Educators",
+    name: "NAFSA - Association of International Educators",
     logo: logoNafsa,
     url: "https://www.nafsa.org/",
   },
   {
-    name: "UNESCO",
+    name: "UNESCO - United Nations Educational, Scientific and Cultural Organization",
     logo: logoUnesco,
     url: "https://www.unesco.org/",
   },
   {
-    name: "European Association for International Education",
+    name: "EAIE - European Association for International Education",
     logo: logoEaie,
     url: "https://www.eaie.org/",
   },
   {
-    name: "AACRAO",
+    name: "AACRAO - American Association of Collegiate Registrars and Admissions Officers",
     logo: logoAacrao,
     url: "https://www.aacrao.org/",
   },
@@ -310,27 +310,6 @@ const ForInstitutions = () => {
               </div>
             </form>
           )}
-        </div>
-      </section>
-
-      {/* CTA — Online Application */}
-      <section className="py-20 px-6 md:px-12 content-bg-alt">
-        <div className="max-w-3xl mx-auto text-center space-y-6">
-          <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-foreground">Ready to get started?</h3>
-          <p className="text-base md:text-lg text-muted-foreground font-light">
-            Submit your institution's application online and our team will reach out within one business day.
-          </p>
-          <div className="flex justify-center pt-2">
-            <Link
-              to="/application"
-              className="group inline-flex items-center gap-4 px-10 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300"
-            >
-              <span>Online Application</span>
-              <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
-                <ArrowRight size={20} />
-              </div>
-            </Link>
-          </div>
         </div>
       </section>
 
