@@ -402,6 +402,14 @@ const StaffDashboard = () => {
                             <Send size={14} /> Send Requirement
                           </Button>
                         </div>
+
+                        {/* Start live chat with applicant */}
+                        <div>
+                          <p className="text-sm font-medium text-foreground mb-2">Live Chat</p>
+                          <Button size="sm" variant="outline" className="gap-1" onClick={() => handleStartChatWithApplicant(o.applicant, o.email)}>
+                            <MessageCircle size={14} /> Start Chat with {o.applicant}
+                          </Button>
+                        </div>
                       </div>
                     )}
                   </div>
