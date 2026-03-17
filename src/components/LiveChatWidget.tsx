@@ -115,6 +115,31 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
     };
   }, [convId]);
 
+  // Client: listen for staff-initiated conversations
+  useEffect(() => {
+    if (isStaff || !user || convId) return;
+    const clientId = user.username || user.email || "unknown";
+
+    const channel = supabase
+      .channel("client-incoming-chats")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "chat_conversations" },
+        (payload) => {
+          const conv = payload.new as any;
+          if (conv.client_identifier === clientId && conv.status === "active" && conv.staff_identifier) {
+            setConvId(conv.id);
+            setWaitingForAgent(false);
+            setIsOpen(true);
+            toast({ title: "IFCS Agent", description: "An agent has started a chat with you." });
+          }
+        }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [isStaff, user, convId, toast]);
+
   // Client: start a new conversation
   const handleStartChat = async () => {
     if (!user) return;
