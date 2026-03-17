@@ -41,11 +41,11 @@ interface MockOrder {
 /* ---------- mock data ---------- */
 const initialOrders: MockOrder[] = [
   {
-    id: "ORD-1001", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "03/01/2026", staffNote: "",
+    id: "44507", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "03/01/2026", staffNote: "",
     requirements: [], reportFileUrl: "/sample-report.pdf",
   },
   {
-    id: "ORD-1002", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "02/28/2026",
+    id: "44512", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "02/28/2026",
     staffNote: "We need additional documents before we can proceed with your evaluation.",
     requirements: [
       { id: "req-1", label: "Official Transcripts", description: "Please upload certified copies of your university transcripts.", type: "document", resolved: false },
@@ -54,7 +54,7 @@ const initialOrders: MockOrder[] = [
     ],
   },
   {
-    id: "ORD-1003", service: "Document Translation", status: "delivered", submitted: "02/20/2026", staffNote: "",
+    id: "44518", service: "Document Translation", status: "delivered", submitted: "02/20/2026", staffNote: "",
     requirements: [], deliveryApproved: false, reportFileUrl: "/sample-report.pdf",
   },
 ];
