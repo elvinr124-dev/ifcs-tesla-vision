@@ -69,10 +69,22 @@ const AIChatWidget = () => {
 
     if (isPriceOnly) {
       response = "Here are our main pricing tiers:\n\n**Evaluations:**\n- General Analysis: $100\n- General Analysis + GPA: $150\n- Cosmetology Course-by-Course: $170\n- Course-by-Course: $190\n- Health Professions: $230\n- Comprehensive Course-by-Course: $290\n- High School & University Course-by-Course: $295\n\n**Rush options** are available for 3-day and 24-hour processing.\n\n**Translations:** $50 per page\n\n**Consulting:** Evaluation consultations are FREE. Admission advising is $60/hour.\n\nWould you like more details on any specific service?";
+    } else if (q.includes("what type") && q.includes("evaluation")) {
+      response = "Selecting an evaluation depends on your situation:\n\n• **General evaluation analysis** — recommended for employment, military and emigration situations. General evaluations plus GPA are recommended for graduate or undergraduate admission when no transfer credits are intended.\n\n• **Course-by-course evaluation** — required for continued education (secondary and post-secondary transfers).\n\n• **Comprehensive course-by-course** — appropriate for graduate admissions and professional licensing boards.\n\n• **Health professions course-by-course** — recommended if you completed studies in healthcare and are seeking licensure with U.S. healthcare licensing boards.";
+    } else if (q.includes("refund")) {
+      response = "Refunds will be made only if you have overpaid for services to IFCS. Applications for 8–10 day service can only be canceled within **24 hours** of submission and will be subject to a **$50 minimum processing fee**. No refunds can be issued for 24-hour and 3-day service.";
+    } else if (q.includes("additional cop") || q.includes("duplicate") || q.includes("extra cop")) {
+      response = "Additional copies of your previous evaluation are available for **$25 plus shipping**.";
+    } else if (q.includes("difference") && (q.includes("evaluation") && q.includes("translation"))) {
+      response = "An **evaluation** provides a US equivalency of your foreign academic credentials. A **translation** is a word-for-word conversion from your native language into English.";
+    } else if (q.includes("send") && (q.includes("application") || q.includes("document"))) {
+      response = "We accept applications and related documents at our office between **9 a.m. to 5 p.m.** on business days. You may also send your completed application and paperwork to us via U.S. mail.\n\n📍 **IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522**";
+    } else if (q.includes("assistance") || q.includes("help") && q.includes("application") || q.includes("guidance") || q.includes("consulting")) {
+      response = "Yes! You may come in for consulting during normal business hours. We do prefer to make an appointment via email or telephone to ensure someone will be on hand to help you.\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**";
     } else if (q.includes("what is a credential evaluation") || q.includes("what is credential evaluation") || q.includes("what's a credential evaluation")) {
       response = "A **credential evaluation** is an expert assessment of your foreign academic credentials to determine their U.S. equivalency. It is used for university admissions, employment, immigration, and professional licensing.";
     } else if ((q.includes("how long") && q.includes("evaluation")) || (q.includes("turnaround") && q.includes("evaluation"))) {
-      response = "Standard processing takes **8–10 business days**. We also offer **3-day rush** and **24-hour rush** options for an additional fee.";
+      response = "Typically, evaluations done by IFCS are turned around within **8–10 business days**. We provide **24-hour priority service** and **three-day \"rush\" evaluation service** at additional costs.";
     } else if (q.includes("what document") || (q.includes("document") && q.includes("need"))) {
       response = "You will typically need your **transcripts/mark sheets** and **diploma certificate**. Some evaluations may require additional documentation. For the High School & University Course-by-Course, you'll need: High School diploma, High School transcript, University degree certificate, and University transcript.";
     } else if (q.includes("recognized") || q.includes("accepted by universit")) {
