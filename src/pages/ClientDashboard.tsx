@@ -166,7 +166,7 @@ const ClientDashboard = () => {
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <p className="font-semibold text-foreground">{order.id}</p>
+                          <p className="font-semibold text-foreground">#{order.id}</p>
                           <Badge variant="secondary" className={`${meta.color} gap-1`}>
                             {meta.icon} {meta.label}
                           </Badge>
