@@ -128,6 +128,26 @@ const StaffDashboard = () => {
     toast({ title: "Connected", description: "You are now chatting with the client." });
   };
 
+  const handleStartChatWithApplicant = async (applicant: string, email: string) => {
+    const { data, error } = await supabase
+      .from("chat_conversations")
+      .insert({
+        client_identifier: email,
+        client_display_name: applicant,
+        staff_identifier: "IFCSstaff",
+        status: "active",
+      })
+      .select()
+      .single();
+
+    if (error || !data) {
+      toast({ title: "Error", description: "Could not start chat.", variant: "destructive" });
+      return;
+    }
+    setActiveConvId(data.id);
+    toast({ title: "Chat Started", description: `Live chat opened with ${applicant}.` });
+  };
+
   // Search & filter logic
   const filtered = queue.filter((o) => {
     const matchesFilter = filter === "all" || o.status === filter;
