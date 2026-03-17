@@ -88,7 +88,6 @@ const reportStatusColor: Record<string, string> = {
 const ClientDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [message, setMessage] = useState("");
   const [expandedOrder, setExpandedOrder] = useState<string | null>("44512");
   const [orders, setOrders] = useState<MockOrder[]>(initialOrders);
 
@@ -96,26 +95,6 @@ const ClientDashboard = () => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectOrderId, setRejectOrderId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
-
-  const handleSend = async () => {
-    if (!message.trim()) return;
-    try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { error } = await supabase.functions.invoke("send-application-email", {
-        body: {
-          subject: `Dashboard Message from ${user?.email || "Client"}`,
-          body: `Message from: ${user?.email || "Unknown"}\n\nDate: ${new Date().toLocaleString()}\n\n${message}`,
-          applicantEmail: user?.email,
-          recipientEmail: "info@ifcsevals.com",
-        },
-      });
-      if (error) console.error("Send error:", error);
-      toast({ title: "Message Sent", description: "We have received your message and will respond within 24–48 hours." });
-      setMessage("");
-    } catch (err) {
-      console.error("Send error:", err);
-      toast({ title: "Error", description: "Failed to send message. Please try again.", variant: "destructive" });
-    }
   };
 
   const handleApproveDelivery = (orderId: string) => {
