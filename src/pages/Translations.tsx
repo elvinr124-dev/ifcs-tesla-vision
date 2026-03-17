@@ -131,7 +131,7 @@ const Translations = () => {
 
       {/* Trust Badges */}
       <section className="border-b border-border content-bg-alt">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-5 gap-6">
+        <div className="max-w-6xl mx-auto px-6 md:px-12 py-8 flex flex-wrap justify-center gap-x-10 gap-y-6">
           <div className="flex items-center gap-3">
             <ShieldCheck size={24} className="text-accent shrink-0" />
             <span className="text-sm font-medium text-foreground">USCIS Acceptance Guaranteed</span>
