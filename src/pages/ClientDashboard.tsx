@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { useCart } from "@/context/CartContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import LiveChatWidget from "@/components/LiveChatWidget";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -40,11 +40,11 @@ interface MockOrder {
 /* ---------- mock data ---------- */
 const initialOrders: MockOrder[] = [
   {
-    id: "ORD-1001", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "03/01/2026", staffNote: "",
+    id: "44507", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "03/01/2026", staffNote: "",
     requirements: [], reportFileUrl: "/sample-report.pdf",
   },
   {
-    id: "ORD-1002", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "02/28/2026",
+    id: "44512", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "02/28/2026",
     staffNote: "We need additional documents before we can proceed with your evaluation.",
     requirements: [
       { id: "req-1", label: "Official Transcripts", description: "Please upload certified copies of your university transcripts.", type: "document", resolved: false },
@@ -53,7 +53,7 @@ const initialOrders: MockOrder[] = [
     ],
   },
   {
-    id: "ORD-1003", service: "Document Translation", status: "delivered", submitted: "02/20/2026", staffNote: "",
+    id: "44518", service: "Document Translation", status: "delivered", submitted: "02/20/2026", staffNote: "",
     requirements: [], deliveryApproved: false, reportFileUrl: "/sample-report.pdf",
   },
 ];
@@ -87,35 +87,13 @@ const reportStatusColor: Record<string, string> = {
 const ClientDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [message, setMessage] = useState("");
-  const [expandedOrder, setExpandedOrder] = useState<string | null>("ORD-1002");
+  const [expandedOrder, setExpandedOrder] = useState<string | null>("44512");
   const [orders, setOrders] = useState<MockOrder[]>(initialOrders);
 
   // Delivery approval state
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectOrderId, setRejectOrderId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
-
-  const handleSend = async () => {
-    if (!message.trim()) return;
-    try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { error } = await supabase.functions.invoke("send-application-email", {
-        body: {
-          subject: `Dashboard Message from ${user?.email || "Client"}`,
-          body: `Message from: ${user?.email || "Unknown"}\n\nDate: ${new Date().toLocaleString()}\n\n${message}`,
-          applicantEmail: user?.email,
-          recipientEmail: "info@ifcsevals.com",
-        },
-      });
-      if (error) console.error("Send error:", error);
-      toast({ title: "Message Sent", description: "We have received your message and will respond within 24–48 hours." });
-      setMessage("");
-    } catch (err) {
-      console.error("Send error:", err);
-      toast({ title: "Error", description: "Failed to send message. Please try again.", variant: "destructive" });
-    }
-  };
 
   const handleApproveDelivery = (orderId: string) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, deliveryApproved: true } : o));
@@ -165,7 +143,7 @@ const ClientDashboard = () => {
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <p className="font-semibold text-foreground">{order.id}</p>
+                          <p className="font-semibold text-foreground">#{order.id}</p>
                           <Badge variant="secondary" className={`${meta.color} gap-1`}>
                             {meta.icon} {meta.label}
                           </Badge>
@@ -363,17 +341,17 @@ const ClientDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* ── Message IFCS ── */}
+          {/* ── Contact IFCS ── */}
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <MessageSquare size={22} className="text-accent" /> Message IFCS
+                <MessageSquare size={22} className="text-accent" /> Contact IFCS
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">Send a message to IFCS — Email: info@ifcsevals.com</p>
-              <Textarea placeholder="Type your message here..." value={message} onChange={(e) => setMessage(e.target.value)} className="min-h-[140px]" />
-              <Button onClick={handleSend} className="gap-2"><Send size={16} /> Send Message</Button>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Need help? Click the <span className="font-semibold text-emerald-500">Contact Agent</span> button in the bottom-right corner to start a live chat with an IFCS representative. You can also reach us at <a href="mailto:info@ifcsevals.com" className="text-accent underline">info@ifcsevals.com</a>.
+              </p>
             </CardContent>
           </Card>
         </div>
@@ -402,6 +380,9 @@ const ClientDashboard = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Live Chat Widget */}
+      <LiveChatWidget />
 
       <Footer />
     </div>

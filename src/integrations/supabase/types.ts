@@ -14,7 +14,77 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      chat_conversations: {
+        Row: {
+          client_display_name: string
+          client_identifier: string
+          created_at: string
+          id: string
+          staff_identifier: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_display_name?: string
+          client_identifier: string
+          created_at?: string
+          id?: string
+          staff_identifier?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_display_name?: string
+          client_identifier?: string
+          created_at?: string
+          id?: string
+          staff_identifier?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      chat_messages: {
+        Row: {
+          attachment_name: string | null
+          attachment_url: string | null
+          content: string | null
+          conversation_id: string
+          created_at: string
+          id: string
+          sender_name: string
+          sender_type: string
+        }
+        Insert: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          content?: string | null
+          conversation_id: string
+          created_at?: string
+          id?: string
+          sender_name?: string
+          sender_type: string
+        }
+        Update: {
+          attachment_name?: string | null
+          attachment_url?: string | null
+          content?: string | null
+          conversation_id?: string
+          created_at?: string
+          id?: string
+          sender_name?: string
+          sender_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "chat_messages_conversation_id_fkey"
+            columns: ["conversation_id"]
+            isOneToOne: false
+            referencedRelation: "chat_conversations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
