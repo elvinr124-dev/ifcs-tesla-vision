@@ -92,7 +92,7 @@ const ForIndividuals = () => {
           {/* Online Application bubble button */}
           <div className="flex justify-center pt-8">
             <Link
-              to="/application"
+              to="/evaluations"
               className="group inline-flex items-center gap-4 px-10 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300"
             >
               <span>Online Application</span>
