@@ -364,17 +364,17 @@ const ClientDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* ── Message IFCS ── */}
+          {/* ── Contact IFCS ── */}
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <MessageSquare size={22} className="text-accent" /> Message IFCS
+                <MessageSquare size={22} className="text-accent" /> Contact IFCS
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-sm text-muted-foreground">Send a message to IFCS — Email: info@ifcsevals.com</p>
-              <Textarea placeholder="Type your message here..." value={message} onChange={(e) => setMessage(e.target.value)} className="min-h-[140px]" />
-              <Button onClick={handleSend} className="gap-2"><Send size={16} /> Send Message</Button>
+            <CardContent>
+              <p className="text-sm text-muted-foreground">
+                Need help? Click the <span className="font-semibold text-emerald-500">Contact Agent</span> button in the bottom-right corner to start a live chat with an IFCS representative. You can also reach us at <a href="mailto:info@ifcsevals.com" className="text-accent underline">info@ifcsevals.com</a>.
+              </p>
             </CardContent>
           </Card>
         </div>
