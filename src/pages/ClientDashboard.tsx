@@ -404,6 +404,9 @@ const ClientDashboard = () => {
         </DialogContent>
       </Dialog>
 
+      {/* Live Chat Widget */}
+      <LiveChatWidget />
+
       <Footer />
     </div>
   );
