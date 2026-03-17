@@ -95,7 +95,6 @@ const ClientDashboard = () => {
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectOrderId, setRejectOrderId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
-  };
 
   const handleApproveDelivery = (orderId: string) => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, deliveryApproved: true } : o));
