@@ -128,6 +128,26 @@ const StaffDashboard = () => {
     toast({ title: "Connected", description: "You are now chatting with the client." });
   };
 
+  const handleStartChatWithApplicant = async (applicant: string, email: string) => {
+    const { data, error } = await supabase
+      .from("chat_conversations")
+      .insert({
+        client_identifier: email,
+        client_display_name: applicant,
+        staff_identifier: "IFCSstaff",
+        status: "active",
+      })
+      .select()
+      .single();
+
+    if (error || !data) {
+      toast({ title: "Error", description: "Could not start chat.", variant: "destructive" });
+      return;
+    }
+    setActiveConvId(data.id);
+    toast({ title: "Chat Started", description: `Live chat opened with ${applicant}.` });
+  };
+
   // Search & filter logic
   const filtered = queue.filter((o) => {
     const matchesFilter = filter === "all" || o.status === filter;
@@ -380,6 +400,14 @@ const StaffDashboard = () => {
                           </div>
                           <Button size="sm" onClick={() => handleAddRequirement(o.id)} className="gap-1">
                             <Send size={14} /> Send Requirement
+                          </Button>
+                        </div>
+
+                        {/* Start live chat with applicant */}
+                        <div>
+                          <p className="text-sm font-medium text-foreground mb-2">Live Chat</p>
+                          <Button size="sm" variant="outline" className="gap-1" onClick={() => handleStartChatWithApplicant(o.applicant, o.email)}>
+                            <MessageCircle size={14} /> Start Chat with {o.applicant}
                           </Button>
                         </div>
                       </div>
