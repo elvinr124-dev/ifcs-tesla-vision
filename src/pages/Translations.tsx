@@ -90,25 +90,26 @@ const Translations = () => {
       {/* Hero Section */}
       <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${translationsBg})` }} />
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(215,80%,20%)]/[0.92] via-[hsl(215,70%,30%)]/[0.85] to-[hsl(215,60%,25%)]/[0.90]" />
+        <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
           <Link
             to="/"
-            className="inline-flex items-center gap-2 text-sm font-medium mb-8 text-white opacity-70 hover:opacity-100 transition-opacity">
+            className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity"
+            style={{ color: "white" }}>
             <ArrowLeft size={16} />
             Back to Home
           </Link>
-          <p className="text-sm font-semibold tracking-[0.2em] uppercase mb-3 text-blue-200">
+          <p className="text-sm font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "white" }}>
             Break Language Barriers
           </p>
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight text-white">
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight" style={{ color: "white" }}>
             Translations
           </h1>
-          <p className="mt-6 text-base md:text-lg max-w-xl font-semibold text-white/90">
+          <p className="mt-6 text-base md:text-lg max-w-xl font-semibold" style={{ color: "white" }}>
             Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
-            <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-white text-[hsl(215,80%,25%)] font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
+            <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
               Start Your Order
             </Link>
             <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-white/30 text-white font-semibold text-sm hover:bg-white/10 transition-all duration-300">
@@ -118,10 +119,10 @@ const Translations = () => {
           <div className="flex items-center gap-2 mt-8">
             <div className="flex">
               {[...Array(5)].map((_, i) =>
-              <Star key={i} size={16} fill="white" stroke="none" />
+              <Star key={i} size={16} fill="hsl(45 93% 58%)" stroke="none" />
               )}
             </div>
-            <span className="text-sm font-medium text-white/90">
+            <span className="text-sm font-medium opacity-90" style={{ color: "white" }}>
               4.9 · Trusted by thousands of clients
             </span>
           </div>
@@ -129,21 +130,27 @@ const Translations = () => {
       </section>
 
       {/* Trust Badges */}
-      <section className="border-b border-blue-200 bg-blue-50">
+      <section className="border-b border-border content-bg-alt">
         <div className="max-w-6xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-5 gap-6">
-          {[
-          { icon: ShieldCheck, text: "USCIS Acceptance Guaranteed" },
-          { icon: Award, text: "Professional Certified Translators" },
-          { icon: Clock, text: "Fast Turnaround — Same-Day Available" },
-          { icon: Lock, text: "Secure & Confidential" }].
-          map(({ icon: Icon, text }) =>
-          <div key={text} className="flex items-center gap-3">
-              <Icon size={24} className="text-blue-700 shrink-0" />
-              <span className="text-sm font-medium text-blue-950">{text}</span>
-            </div>
-          )}
           <div className="flex items-center gap-3">
-            <img src={logoAta} alt="American Translators Association" className="h-8 object-contain" style={{ filter: "brightness(0) saturate(100%) invert(25%) sepia(80%) saturate(600%) hue-rotate(200deg)" }} />
+            <ShieldCheck size={24} className="text-accent shrink-0" />
+            <span className="text-sm font-medium text-foreground">USCIS Acceptance Guaranteed</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Award size={24} className="text-accent shrink-0" />
+            <span className="text-sm font-medium text-foreground">Professional Certified Translators</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <img src={logoAta} alt="American Translators Association" className="h-6 object-contain shrink-0" style={{ filter: "brightness(0) saturate(100%) invert(25%) sepia(80%) saturate(600%) hue-rotate(200deg)" }} />
+            <span className="text-sm font-medium text-foreground">American Translators Association</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Clock size={24} className="text-accent shrink-0" />
+            <span className="text-sm font-medium text-foreground">Fast Turnaround — Same-Day Available</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <Lock size={24} className="text-accent shrink-0" />
+            <span className="text-sm font-medium text-foreground">Secure & Confidential</span>
           </div>
         </div>
       </section>
