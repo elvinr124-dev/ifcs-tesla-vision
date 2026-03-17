@@ -141,7 +141,7 @@ const Translations = () => {
             <span className="text-sm font-medium text-foreground">Professional Certified Translators</span>
           </div>
           <div className="flex items-center gap-3">
-            <img src={logoAta} alt="American Translators Association" className="h-6 object-contain shrink-0" style={{ filter: "brightness(0) saturate(100%) invert(25%) sepia(80%) saturate(600%) hue-rotate(200deg)" }} />
+            <img src={logoAta} alt="American Translators Association" className="h-6 object-contain shrink-0" style={{ filter: "brightness(0) saturate(100%) invert(36%) sepia(96%) saturate(1200%) hue-rotate(209deg) brightness(95%) contrast(95%)" }} />
             <span className="text-sm font-medium text-foreground">American Translators Association</span>
           </div>
           <div className="flex items-center gap-3">
