@@ -4,6 +4,7 @@ import { ArrowLeft, Globe, FileText, ShieldCheck, Clock, CheckCircle, ChevronDow
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import translationsBg from "@/assets/translations-bg.jpg";
+import logoAta from "@/assets/logo-ata.png";
 
 const languages = [
 "Spanish", "French", "Arabic", "Chinese (Simplified)", "Chinese (Traditional)",
