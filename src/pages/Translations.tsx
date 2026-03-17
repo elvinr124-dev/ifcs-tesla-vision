@@ -131,25 +131,25 @@ const Translations = () => {
 
       {/* Trust Badges */}
       <section className="border-b border-border content-bg-alt">
-        <div className="max-w-6xl mx-auto px-6 md:px-12 py-8 flex flex-wrap items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <ShieldCheck size={22} className="text-accent shrink-0" />
+        <div className="max-w-6xl mx-auto px-6 md:px-12 py-8 grid grid-cols-2 md:grid-cols-5 gap-6">
+          <div className="flex items-center gap-3">
+            <ShieldCheck size={24} className="text-accent shrink-0" />
             <span className="text-sm font-medium text-foreground">USCIS Acceptance Guaranteed</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Award size={22} className="text-accent shrink-0" />
+          <div className="flex items-center gap-3">
+            <Award size={24} className="text-accent shrink-0" />
             <span className="text-sm font-medium text-foreground">Professional Certified Translators</span>
           </div>
-          <div className="flex items-center gap-2">
-            <img src={logoAta} alt="ATA" className="h-5 w-auto shrink-0" style={{ filter: "brightness(0) saturate(100%) invert(26%) sepia(89%) saturate(1583%) hue-rotate(212deg) brightness(92%) contrast(95%)" }} />
+          <div className="flex items-center gap-3">
+            <img src={logoAta} alt="American Translators Association" className="h-6 object-contain shrink-0" style={{ filter: "brightness(0) saturate(100%) invert(36%) sepia(96%) saturate(1200%) hue-rotate(209deg) brightness(95%) contrast(95%)" }} />
             <span className="text-sm font-medium text-foreground">American Translators Association</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Clock size={22} className="text-accent shrink-0" />
+          <div className="flex items-center gap-3">
+            <Clock size={24} className="text-accent shrink-0" />
             <span className="text-sm font-medium text-foreground">Fast Turnaround — Same-Day Available</span>
           </div>
-          <div className="flex items-center gap-2">
-            <Lock size={22} className="text-accent shrink-0" />
+          <div className="flex items-center gap-3">
+            <Lock size={24} className="text-accent shrink-0" />
             <span className="text-sm font-medium text-foreground">Secure & Confidential</span>
           </div>
         </div>
