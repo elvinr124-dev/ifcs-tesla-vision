@@ -89,7 +89,7 @@ const ClientDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [message, setMessage] = useState("");
-  const [expandedOrder, setExpandedOrder] = useState<string | null>("ORD-1002");
+  const [expandedOrder, setExpandedOrder] = useState<string | null>("44512");
   const [orders, setOrders] = useState<MockOrder[]>(initialOrders);
 
   // Delivery approval state
