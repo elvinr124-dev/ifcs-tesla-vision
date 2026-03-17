@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
-import { ArrowRight, Search, FileText, Upload, Send } from "lucide-react";
+import { ArrowRight, Search, FileText, Upload, Send, GraduationCap, MessageSquare, Languages } from "lucide-react";
 
 const steps = [
   {
@@ -51,21 +51,91 @@ const ForIndividuals = () => {
         </div>
       </section>
 
+      {/* Intro */}
+      <section className="py-24 px-6 md:px-12 content-bg">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">Individuals</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">How We Help You</h2>
+
+          <div className="rounded-3xl border border-border bg-card shadow-lg p-8 md:p-12">
+            <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed">
+              Foreign credential standards vary among universities, employers, state and government institutions. Knowing exactly how the educational accomplishments you have achieved abroad align with U.S. admissions departments and corporate employers is a task best left to a resource that knows the game inside out. The Institute of Foreign Credential Services (IFCS) can provide the insight you need to get your academic credentials recognized and determine exactly what you may need to do in order to make your next transition successful professionally or academically speaking.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Services: Evaluations, Consulting, Translations */}
+      <section className="py-24 px-6 md:px-12 content-bg-alt">
+        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Evaluations */}
+          <div className="rounded-3xl border border-border bg-card shadow-lg hover:border-accent/40 hover:shadow-xl transition-all duration-300 p-8 group flex flex-col">
+            <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center mb-5">
+              <GraduationCap size={24} className="text-accent" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold tracking-tight text-foreground mb-4 group-hover:text-accent transition-colors">Evaluations</h3>
+            <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed flex-1">
+              Our foreign academic transcript evaluation services are as thorough as any you will find in the profession, yet they bear one significant distinction; the evaluators themselves. Our professionals rank highest among the industry's most elite consultants and you will be in direct contact with our team from the very beginning when you undergo your free assessment. See our{" "}
+              <Link to="/evaluations" className="text-accent underline underline-offset-4 hover:text-accent/80 transition-colors font-medium">
+                Evaluations
+              </Link>{" "}
+              page to help you determine what services you need.
+            </p>
+          </div>
+
+          {/* Consulting */}
+          <div className="rounded-3xl border border-border bg-card shadow-lg hover:border-accent/40 hover:shadow-xl transition-all duration-300 p-8 group flex flex-col">
+            <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center mb-5">
+              <MessageSquare size={24} className="text-accent" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold tracking-tight text-foreground mb-4 group-hover:text-accent transition-colors">Consulting</h3>
+            <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed flex-1">
+              We will help you complete the forms necessary to make the process go well from the start and ensure everything is done with accuracy and speed. Then, once you are ready to progress toward admissions and foreign academic transcript evaluation, your IFCS consulting team will guide you through that stage to help you select the institution and program in the U.S.A that's right for you.
+            </p>
+            <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed mt-4">
+              Consultations are available by appointment. Visit our{" "}
+              <Link to="/consulting" className="text-accent underline underline-offset-4 hover:text-accent/80 transition-colors font-medium">
+                Consulting
+              </Link>{" "}
+              page for more info.
+            </p>
+          </div>
+
+          {/* Translations */}
+          <div className="rounded-3xl border border-border bg-card shadow-lg hover:border-accent/40 hover:shadow-xl transition-all duration-300 p-8 group flex flex-col">
+            <div className="w-12 h-12 rounded-2xl bg-accent/10 flex items-center justify-center mb-5">
+              <Languages size={24} className="text-accent" />
+            </div>
+            <h3 className="text-xl md:text-2xl font-bold tracking-tight text-foreground mb-4 group-hover:text-accent transition-colors">Translations</h3>
+            <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed flex-1">
+              We provide translations from any language, for any document type, into English.{" "}
+              <Link to="/translations" className="text-accent underline underline-offset-4 hover:text-accent/80 transition-colors font-medium">
+                Click here
+              </Link>{" "}
+              to access our translations form.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Steps */}
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-5xl mx-auto space-y-8">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">How It Works</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Application Steps</h2>
+          </div>
+
           {steps.map((step, i) => {
             const Icon = step.icon;
             const isLast = i === steps.length - 1;
             return (
               <div key={step.num} className="relative">
-                {/* Connector line */}
                 {!isLast && (
                   <div className="absolute left-9 top-[88px] bottom-[-2rem] w-px bg-gradient-to-b from-accent/40 to-transparent hidden md:block" />
                 )}
 
                 <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-start">
-                  {/* Step bubble */}
                   <div className="flex-shrink-0 flex flex-col items-center gap-3">
                     <div className="w-[72px] h-[72px] rounded-3xl bg-accent flex items-center justify-center shadow-xl shadow-accent/30">
                       <Icon size={30} className="text-white" />
@@ -75,7 +145,6 @@ const ForIndividuals = () => {
                     </span>
                   </div>
 
-                  {/* Content bubble */}
                   <div className="flex-1 rounded-3xl border border-border bg-card shadow-lg hover:shadow-xl hover:border-accent/30 transition-all duration-300 p-8 md:p-10 group">
                     <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-4 group-hover:text-accent transition-colors duration-200">
                       {step.title}
@@ -89,7 +158,7 @@ const ForIndividuals = () => {
             );
           })}
 
-          {/* Online Application bubble button */}
+          {/* Online Application button */}
           <div className="flex justify-center pt-8">
             <Link
               to="/evaluations"
@@ -102,7 +171,6 @@ const ForIndividuals = () => {
             </Link>
           </div>
 
-          {/* Or download PDF */}
           <p className="text-center text-sm text-muted-foreground mt-4">
             Prefer a PDF?{" "}
             <a href="mailto:info@ifcsevals.com" className="text-accent underline underline-offset-4 hover:text-accent/80 transition-colors">
