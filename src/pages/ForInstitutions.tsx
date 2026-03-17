@@ -43,27 +43,27 @@ const evaluationTypes = [
 
 const resources = [
   {
-    name: "International Association of Universities",
+    name: "WHED - International Association of Universities",
     logo: logoIau,
-    url: "https://www.iau-aiu.net/",
+    url: "https://www.whed.net/",
   },
   {
-    name: "NAFSA: Association of International Educators",
+    name: "NAFSA - Association of International Educators",
     logo: logoNafsa,
     url: "https://www.nafsa.org/",
   },
   {
-    name: "UNESCO",
+    name: "UNESCO - United Nations Educational, Scientific and Cultural Organization",
     logo: logoUnesco,
     url: "https://www.unesco.org/",
   },
   {
-    name: "European Association for International Education",
+    name: "EAIE - European Association for International Education",
     logo: logoEaie,
     url: "https://www.eaie.org/",
   },
   {
-    name: "AACRAO",
+    name: "AACRAO - American Association of Collegiate Registrars and Admissions Officers",
     logo: logoAacrao,
     url: "https://www.aacrao.org/",
   },
