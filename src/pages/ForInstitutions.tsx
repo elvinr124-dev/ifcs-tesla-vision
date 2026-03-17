@@ -3,7 +3,12 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
-import { CheckCircle, ArrowRight, Send } from "lucide-react";
+import { CheckCircle, ArrowRight, Send, FileText } from "lucide-react";
+import logoIau from "@/assets/logo-iau.png";
+import logoNafsa from "@/assets/logo-nafsa.png";
+import logoUnesco from "@/assets/logo-unesco.png";
+import logoEaie from "@/assets/logo-eaie.png";
+import logoAacrao from "@/assets/logo-aacrao.png";
 
 const benefits = [
   "Tailored evaluations in accordance with your admissions and transfer policies",
@@ -11,6 +16,57 @@ const benefits = [
   "Direct access to our senior evaluators",
   "Electronic Evaluation reports sent directly to the person who handles international admission",
   "Reduced turnaround time",
+];
+
+const evaluationTypes = [
+  {
+    title: "General Analysis plus GPA",
+    description:
+      "Identifies Country of study, institution(s), dates of attendance, credentials received, and provides an overall U.S. equivalency for each credential earned. Report includes overall GPA.",
+  },
+  {
+    title: "Course-by-Course",
+    description:
+      "Identifies Country of study, institution(s), dates of attendance, credentials received and provides a list of courses for each credential, semester credit hours, grades, an accumulative GPA and US equivalency for each credential.",
+  },
+  {
+    title: "Comprehensive Course-by-Course",
+    description:
+      "Identifies Country of study, institution(s), dates of attendance, credentials received and provides a list of courses for each credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course and U.S. equivalency for each credential.",
+  },
+  {
+    title: "Health Professions Course-by-Course",
+    description:
+      "Identifies Country of study, institution(s), dates of attendance, credentials received and provides a list of courses for each credential, semester credit hours, grades, classifies lower and upper-division, graduate level designations for each course, lists clinical experience, and U.S. equivalency for each credential.",
+  },
+];
+
+const resources = [
+  {
+    name: "International Association of Universities",
+    logo: logoIau,
+    url: "https://www.iau-aiu.net/",
+  },
+  {
+    name: "NAFSA: Association of International Educators",
+    logo: logoNafsa,
+    url: "https://www.nafsa.org/",
+  },
+  {
+    name: "UNESCO",
+    logo: logoUnesco,
+    url: "https://www.unesco.org/",
+  },
+  {
+    name: "European Association for International Education",
+    logo: logoEaie,
+    url: "https://www.eaie.org/",
+  },
+  {
+    name: "AACRAO",
+    logo: logoAacrao,
+    url: "https://www.aacrao.org/",
+  },
 ];
 
 const GlassInput = ({
@@ -73,11 +129,11 @@ const ForInstitutions = () => {
         </div>
       </section>
 
-      {/* About IFCS for Institutions */}
+      {/* Information */}
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-5xl mx-auto">
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">Information</p>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">Resources &amp; Evaluation Descriptions</h2>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">About Us</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">Information</h2>
 
           <div className="rounded-3xl border border-border bg-card shadow-lg p-8 md:p-12 space-y-6 text-base md:text-lg text-muted-foreground font-light leading-relaxed">
             <p>
@@ -107,6 +163,62 @@ const ForInstitutions = () => {
                 <CheckCircle size={22} className="text-accent shrink-0 mt-0.5" />
                 <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed">{b}</p>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Evaluation Descriptions */}
+      <section className="py-24 px-6 md:px-12 content-bg-alt">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">Our Services</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">Evaluation Descriptions</h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {evaluationTypes.map((evalType, i) => (
+              <div
+                key={i}
+                className="rounded-3xl border border-border bg-card shadow-lg hover:border-accent/40 hover:shadow-xl transition-all duration-300 p-8 group"
+              >
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center shrink-0">
+                    <FileText size={20} className="text-accent" />
+                  </div>
+                  <h3 className="text-lg md:text-xl font-bold tracking-tight text-foreground group-hover:text-accent transition-colors">
+                    {evalType.title}
+                  </h3>
+                </div>
+                <p className="text-sm md:text-base text-muted-foreground font-light leading-relaxed">
+                  {evalType.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Resources */}
+      <section className="py-24 px-6 md:px-12 content-bg">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">Affiliations</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">Resources</h2>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {resources.map((resource, i) => (
+              <a
+                key={i}
+                href={resource.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group rounded-3xl border border-border bg-card shadow-lg hover:border-accent/40 hover:shadow-xl transition-all duration-300 p-8 flex flex-col items-center gap-5 text-center"
+              >
+                <div className="w-24 h-24 rounded-2xl bg-white flex items-center justify-center overflow-hidden p-3">
+                  <img src={resource.logo} alt={resource.name} className="w-full h-full object-contain" />
+                </div>
+                <p className="text-sm md:text-base font-semibold text-foreground group-hover:text-accent transition-colors">
+                  {resource.name}
+                </p>
+              </a>
             ))}
           </div>
         </div>
