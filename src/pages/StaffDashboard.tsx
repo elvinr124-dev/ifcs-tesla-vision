@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,12 +9,13 @@ import { Textarea } from "@/components/ui/textarea";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Upload, Send, Users, Clock, AlertCircle, CheckCircle2, Package, FileText, Star,
-  Plus, X, Languages, FileUp, Info,
+  Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import LiveChatWidget from "@/components/LiveChatWidget";
 
 /* ---------- types ---------- */
 interface Requirement {
@@ -34,18 +35,25 @@ interface QueueOrder {
   requirements: Requirement[];
 }
 
+interface PendingChat {
+  id: string;
+  client_display_name: string;
+  client_identifier: string;
+  created_at: string;
+}
+
 /* ---------- mock queue ---------- */
 const initialQueue: QueueOrder[] = [
-  { id: "ORD-1001", applicant: "John Doe", email: "john@example.com", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "02/28/2026", requirements: [] },
+  { id: "44507", applicant: "John Doe", email: "john@example.com", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "02/28/2026", requirements: [] },
   {
-    id: "ORD-1002", applicant: "Maria Garcia", email: "maria@example.com", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "03/01/2026",
+    id: "44512", applicant: "Maria Garcia", email: "maria@example.com", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "03/01/2026",
     requirements: [
       { id: "r1", label: "Official Transcripts", description: "Upload certified copies of university transcripts.", type: "document" },
       { id: "r2", label: "Document Translation", description: "Diploma must be translated into English.", type: "translation" },
     ],
   },
-  { id: "ORD-1003", applicant: "Ahmed Ali", email: "ahmed@example.com", service: "Document Translation", status: "requested", submitted: "02/25/2026", requirements: [] },
-  { id: "ORD-1004", applicant: "Li Wei", email: "li@example.com", service: "Comprehensive Course-by-Course", status: "delivered", submitted: "02/20/2026", requirements: [] },
+  { id: "44518", applicant: "Ahmed Ali", email: "ahmed@example.com", service: "Document Translation", status: "requested", submitted: "02/25/2026", requirements: [] },
+  { id: "44523", applicant: "Li Wei", email: "li@example.com", service: "Comprehensive Course-by-Course", status: "delivered", submitted: "02/20/2026", requirements: [] },
 ];
 
 const statusMeta: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
@@ -69,6 +77,7 @@ const StaffDashboard = () => {
   const [filter, setFilter] = useState("all");
   const [queue, setQueue] = useState(initialQueue);
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Share form
   const [shareEmail, setShareEmail] = useState("");
@@ -81,9 +90,57 @@ const StaffDashboard = () => {
   const [newReqDesc, setNewReqDesc] = useState("");
   const [newReqType, setNewReqType] = useState<"document" | "translation" | "info">("document");
 
-  const [staffNote, setStaffNote] = useState("");
+  // Live chat
+  const [pendingChats, setPendingChats] = useState<PendingChat[]>([]);
+  const [activeConvId, setActiveConvId] = useState<string | null>(null);
 
-  const filtered = filter === "all" ? queue : queue.filter((o) => o.status === filter);
+  // Load pending chats
+  useEffect(() => {
+    const loadPending = async () => {
+      const { data } = await supabase
+        .from("chat_conversations")
+        .select("*")
+        .eq("status", "pending")
+        .order("created_at", { ascending: false });
+      if (data) setPendingChats(data as PendingChat[]);
+    };
+    loadPending();
+
+    // Realtime for new chat requests
+    const channel = supabase
+      .channel("staff-chat-requests")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "chat_conversations" },
+        () => { loadPending(); }
+      )
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  const handleConnectChat = async (chatId: string) => {
+    await supabase
+      .from("chat_conversations")
+      .update({ status: "active", staff_identifier: "IFCSstaff" })
+      .eq("id", chatId);
+    setActiveConvId(chatId);
+    toast({ title: "Connected", description: "You are now chatting with the client." });
+  };
+
+  // Search & filter logic
+  const filtered = queue.filter((o) => {
+    const matchesFilter = filter === "all" || o.status === filter;
+    if (!searchQuery.trim()) return matchesFilter;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch = o.id.toLowerCase().includes(q) || o.email.toLowerCase().includes(q);
+    return matchesFilter && matchesSearch;
+  });
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    // The filtering is already reactive via the `filtered` variable
+  };
 
   const handleStatusChange = (orderId: string, newStatus: string) => {
     setQueue((prev) => prev.map((o) => o.id === orderId ? { ...o, status: newStatus } : o));
@@ -140,38 +197,105 @@ const StaffDashboard = () => {
       <div className="content-bg">
         <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-10">
 
+          {/* ── Incoming Chat Requests ── */}
+          {pendingChats.length > 0 && (
+            <Card className="border-border bg-card border-emerald-500/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Headphones size={22} className="text-emerald-500" />
+                  Incoming Chat Requests
+                  <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-600 ml-2">
+                    {pendingChats.length}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                {pendingChats.map((chat) => (
+                  <div key={chat.id} className="flex items-center justify-between rounded-xl border border-border p-4">
+                    <div>
+                      <p className="font-medium text-foreground">{chat.client_display_name}</p>
+                      <p className="text-xs text-muted-foreground">{chat.client_identifier} · {new Date(chat.created_at).toLocaleString()}</p>
+                    </div>
+                    <Button size="sm" onClick={() => handleConnectChat(chat.id)} className="gap-1 bg-emerald-600 hover:bg-emerald-700 text-white">
+                      <MessageCircle size={14} /> Connect
+                    </Button>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          {/* ── Active Chat Window ── */}
+          {activeConvId && (
+            <Card className="border-border bg-card border-emerald-500/30">
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <MessageCircle size={22} className="text-emerald-500" /> Live Chat
+                </CardTitle>
+                <Button size="sm" variant="ghost" onClick={() => setActiveConvId(null)}>
+                  <X size={16} /> Close
+                </Button>
+              </CardHeader>
+              <CardContent className="h-[400px]">
+                <LiveChatWidget conversationId={activeConvId} isStaff onClose={() => setActiveConvId(null)} />
+              </CardContent>
+            </Card>
+          )}
+
           {/* ── Queue Management ── */}
           <Card className="border-border bg-card">
-            <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Users size={22} className="text-accent" /> Application Queue
-              </CardTitle>
-              <Select value={filter} onValueChange={setFilter}>
-                <SelectTrigger className="w-48"><SelectValue placeholder="Filter by status" /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All</SelectItem>
-                  <SelectItem value="requested">Requested</SelectItem>
-                  <SelectItem value="in_review">In Review</SelectItem>
-                  <SelectItem value="on_hold">On Hold</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
-                </SelectContent>
-              </Select>
+            <CardHeader className="flex flex-col gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <CardTitle className="flex items-center gap-2 text-xl">
+                  <Users size={22} className="text-accent" /> Application Queue
+                </CardTitle>
+                <Select value={filter} onValueChange={setFilter}>
+                  <SelectTrigger className="w-48"><SelectValue placeholder="Filter by status" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All</SelectItem>
+                    <SelectItem value="requested">Requested</SelectItem>
+                    <SelectItem value="in_review">In Review</SelectItem>
+                    <SelectItem value="on_hold">On Hold</SelectItem>
+                    <SelectItem value="delivered">Delivered</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Search bar */}
+              <form onSubmit={handleSearch} className="flex gap-2">
+                <div className="relative flex-1">
+                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                  <Input
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search by IFCS reference # or email..."
+                    className="pl-9"
+                  />
+                </div>
+                <Button type="submit" variant="outline" className="gap-1">
+                  <Search size={14} /> Search
+                </Button>
+              </form>
             </CardHeader>
             <CardContent className="space-y-4">
+              {filtered.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-muted-foreground">No applications found for "{searchQuery}"</p>
+                </div>
+              )}
               {filtered.map((o) => {
                 const meta = statusMeta[o.status] ?? statusMeta.requested;
                 const isSelected = selectedOrder === o.id;
 
                 return (
                   <div key={o.id} className="rounded-xl border border-border overflow-hidden">
-                    {/* Row header */}
                     <button
                       onClick={() => setSelectedOrder(isSelected ? null : o.id)}
                       className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <p className="font-semibold text-foreground">{o.id}</p>
+                          <p className="font-semibold text-foreground">#{o.id}</p>
                           <Badge variant="secondary" className={`${meta.color} gap-1`}>{meta.icon} {meta.label}</Badge>
                         </div>
                         <p className="text-sm text-foreground mt-1">{o.applicant} <span className="text-muted-foreground">— {o.email}</span></p>
@@ -258,16 +382,6 @@ const StaffDashboard = () => {
                             <Send size={14} /> Send Requirement
                           </Button>
                         </div>
-
-                        {/* Send message */}
-                        <div className="space-y-2">
-                          <p className="text-sm font-medium text-foreground">Message Applicant</p>
-                          <Textarea placeholder="Type a message to this applicant..."
-                            value={staffNote} onChange={(e) => setStaffNote(e.target.value)} className="min-h-[80px]" />
-                          <Button size="sm" onClick={() => { toast({ title: "Message Sent" }); setStaffNote(""); }} className="gap-1">
-                            <Send size={14} /> Send
-                          </Button>
-                        </div>
                       </div>
                     )}
                   </div>
@@ -291,7 +405,7 @@ const StaffDashboard = () => {
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">IFCS Reference # *</label>
-                  <Input placeholder="IFCS-XXXXX" value={shareRef} onChange={(e) => setShareRef(e.target.value)} required />
+                  <Input placeholder="44507" value={shareRef} onChange={(e) => setShareRef(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">Evaluation Type *</label>
