@@ -215,7 +215,7 @@ const StaffDashboard = () => {
     };
 
     // Insert report record
-    const { data: report, error: insertErr } = await supabase
+    const { data: report, error: insertErr } = await (supabase as any)
       .from("evaluation_reports")
       .insert({
         reference_id: shareRef,
