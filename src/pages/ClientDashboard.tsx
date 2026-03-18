@@ -59,11 +59,17 @@ const initialOrders: MockOrder[] = [
   },
 ];
 
-const mockReports = [
-  { id: "IFCS-41522", type: "Course-by-Course", dateShared: "12/01/2025", expires: "12/01/2030", status: "active" as const },
-  { id: "IFCS-39871", type: "General Evaluation", dateShared: "11/15/2025", expires: "11/15/2030", status: "pending" as const },
-  { id: "IFCS-39001", type: "High School Evaluation", dateShared: "10/20/2025", expires: "10/20/2029", status: "expired" as const },
-];
+const mockReports: any[] = [];
+
+interface DBReport {
+  id: string;
+  reference_id: string;
+  evaluation_type: string;
+  created_at: string;
+  expiry_date: string | null;
+  status: string;
+  access_token: string;
+}
 
 const addOns = [
   { id: "addon-duplicate", label: "Duplicate Report", price: 25, link: "/duplicate-reports" },
