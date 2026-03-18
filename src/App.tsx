@@ -82,6 +82,7 @@ const App = () => (
               <Route path="/addon/renewal" element={<AddonRenewal />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/transcript" element={<TranscriptViewer />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AIChatWidget />
