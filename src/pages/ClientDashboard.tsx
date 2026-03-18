@@ -64,6 +64,7 @@ const mockReports: any[] = [];
 interface DBReport {
   id: string;
   reference_id: string;
+  applicant_email: string;
   evaluation_type: string;
   created_at: string;
   expiry_date: string | null;
