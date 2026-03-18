@@ -44,11 +44,18 @@ const Navbar = () => {
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
 
+  // Pages that have a dark hero where transparent bubbles look good
+  const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog"];
+  const hasDarkHero = darkHeroPages.some(p => p === "/" ? location.pathname === "/" : location.pathname.startsWith(p));
+
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  // Always use scrolled style on pages without dark heroes
+  const useScrolledStyle = scrolled || !hasDarkHero;
 
   const handleEvalEnter = () => {
     clearTimeout(evalTimeout.current);
@@ -58,7 +65,7 @@ const Navbar = () => {
     evalTimeout.current = setTimeout(() => setEvalHover(false), 200);
   };
 
-  const textColor = scrolled ? "hsl(var(--foreground))" : "white";
+  const textColor = useScrolledStyle ? "hsl(var(--foreground))" : "white";
 
   const bubbleBase = `flex items-center gap-3 px-6 py-3.5 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105`;
   const bubbleScrolled = `bg-foreground/10 hover:bg-accent/20`;
@@ -66,7 +73,7 @@ const Navbar = () => {
   const bubbleActive = `bg-accent shadow-accent/30`;
 
   return (
-    <nav className={`tesla-nav ${scrolled ? "tesla-nav-scrolled" : ""}`}>
+    <nav className={`tesla-nav ${useScrolledStyle ? "tesla-nav-scrolled" : ""}`}>
       <Link to="/" className="text-2xl font-bold tracking-widest" style={{ color: textColor }}>
         TFCS
       </Link>
@@ -127,7 +134,7 @@ const Navbar = () => {
 
         {/* Duplicate Report */}
         <Link to="/duplicate-reports" className="group">
-          <div className={`${bubbleBase} ${location.pathname === "/duplicate-reports" ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
+          <div className={`${bubbleBase} ${location.pathname === "/duplicate-reports" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
             <Copy size={20} style={{ color: location.pathname === "/duplicate-reports" ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/duplicate-reports" ? "white" : textColor }}>
               Duplicate Report
@@ -137,7 +144,7 @@ const Navbar = () => {
 
         {/* Translations */}
         <Link to="/translations" className="group">
-          <div className={`${bubbleBase} ${location.pathname === "/translations" ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
+          <div className={`${bubbleBase} ${location.pathname === "/translations" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
             <Languages size={20} style={{ color: location.pathname === "/translations" ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/translations" ? "white" : textColor }}>
               Translations
@@ -148,7 +155,7 @@ const Navbar = () => {
         {/* My Dashboard (when logged in) */}
         {user && (
           <Link to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"} className="group">
-            <div className={`${bubbleBase} ${location.pathname.startsWith("/dashboard") ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
+            <div className={`${bubbleBase} ${location.pathname.startsWith("/dashboard") ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
               <LayoutDashboard size={20} style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }} />
               <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }}>
                 My Dashboard
@@ -159,7 +166,7 @@ const Navbar = () => {
 
         {/* Cart bubble */}
         <Link to="/cart" className="group">
-          <div className={`${bubbleBase} relative ${location.pathname === "/cart" ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
+          <div className={`${bubbleBase} relative ${location.pathname === "/cart" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
             <ShoppingCart size={20} style={{ color: location.pathname === "/cart" ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/cart" ? "white" : textColor }}>
               Cart
@@ -177,7 +184,7 @@ const Navbar = () => {
           <div className="flex items-center gap-2">
             {user.role === "staff" && (
               <Link to="/staff/cart" className="group">
-                <div className={`${bubbleBase} ${scrolled ? bubbleScrolled : bubbleFloat}`}>
+                <div className={`${bubbleBase} ${useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
                   <Shield size={20} style={{ color: textColor }} />
                   <span className="text-sm font-semibold tracking-wide" style={{ color: textColor }}>
                     Staff View
@@ -187,7 +194,7 @@ const Navbar = () => {
             )}
             <button
               onClick={() => { logout(); navigate("/"); }}
-              className={`${bubbleBase} ${scrolled ? bubbleScrolled : bubbleFloat}`}
+              className={`${bubbleBase} ${useScrolledStyle ? bubbleScrolled : bubbleFloat}`}
             >
               <LogOut size={20} style={{ color: textColor }} />
               <span className="text-sm font-semibold tracking-wide" style={{ color: textColor }}>
@@ -197,7 +204,7 @@ const Navbar = () => {
           </div>
         ) : (
           <Link to="/login" className="group">
-            <div className={`${bubbleBase} ${location.pathname.startsWith("/login") || location.pathname === "/signup" ? bubbleActive : scrolled ? bubbleScrolled : bubbleFloat}`}>
+            <div className={`${bubbleBase} ${location.pathname.startsWith("/login") || location.pathname === "/signup" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
               <LogIn size={20} style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }} />
               <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }}>
                 Login
@@ -210,7 +217,7 @@ const Navbar = () => {
         <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
           <SheetTrigger asChild>
             <button
-              className={`${bubbleBase} ${scrolled ? bubbleScrolled : bubbleFloat} ml-1`}
+              className={`${bubbleBase} ${useScrolledStyle ? bubbleScrolled : bubbleFloat} ml-1`}
               aria-label="Open menu"
             >
               <Menu size={22} style={{ color: textColor }} />
