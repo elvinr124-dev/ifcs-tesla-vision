@@ -31,7 +31,7 @@ const TranscriptViewer = () => {
       return;
     }
     const fetchReport = async () => {
-      const { data, error: fetchErr } = await supabase
+      const { data, error: fetchErr } = await (supabase as any)
         .from("evaluation_reports")
         .select("*")
         .eq("access_token", token)
