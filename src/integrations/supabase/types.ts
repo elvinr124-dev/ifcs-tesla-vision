@@ -85,6 +85,81 @@ export type Database = {
           },
         ]
       }
+      evaluation_reports: {
+        Row: {
+          access_token: string | null
+          applicant_email: string
+          applicant_name: string
+          created_at: string | null
+          evaluation_type: string
+          expiry_date: string | null
+          id: string
+          reference_id: string
+          report_file_url: string | null
+          shared_to_edu: boolean | null
+          shared_to_email: string | null
+          status: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          applicant_email: string
+          applicant_name: string
+          created_at?: string | null
+          evaluation_type: string
+          expiry_date?: string | null
+          id?: string
+          reference_id: string
+          report_file_url?: string | null
+          shared_to_edu?: boolean | null
+          shared_to_email?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          applicant_email?: string
+          applicant_name?: string
+          created_at?: string | null
+          evaluation_type?: string
+          expiry_date?: string | null
+          id?: string
+          reference_id?: string
+          report_file_url?: string | null
+          shared_to_edu?: boolean | null
+          shared_to_email?: string | null
+          status?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
+      password_reset_codes: {
+        Row: {
+          code: string
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          used: boolean | null
+        }
+        Insert: {
+          code: string
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          used?: boolean | null
+        }
+        Update: {
+          code?: string
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          used?: boolean | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
