@@ -132,7 +132,7 @@ const ClientLogin = () => {
       return;
     }
     // Mark code as used
-    await supabase
+    await (supabase as any)
       .from("password_reset_codes")
       .update({ used: true })
       .eq("email", resetEmail.trim())
