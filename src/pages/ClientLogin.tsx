@@ -104,7 +104,7 @@ const ClientLogin = () => {
       setForgotError("Please enter the 6-digit code.");
       return;
     }
-    const { data } = await supabase
+    const { data } = await (supabase as any)
       .from("password_reset_codes")
       .select("*")
       .eq("email", resetEmail.trim())
