@@ -103,7 +103,7 @@ const ClientDashboard = () => {
     const loadReports = async () => {
       if (!user?.email && !user?.username) return;
       const identifier = user.email || user.username;
-      const { data } = await supabase
+      const { data } = await (supabase as any)
         .from("evaluation_reports")
         .select("*")
         .eq("applicant_email", identifier)
