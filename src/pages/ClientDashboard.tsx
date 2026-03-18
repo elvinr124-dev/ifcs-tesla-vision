@@ -23,6 +23,7 @@ import {
 interface ClientOrder {
   id: string;
   reference_id: string;
+  client_email: string;
   service: string;
   status: string;
   staff_note: string;
