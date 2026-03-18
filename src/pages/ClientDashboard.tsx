@@ -356,30 +356,41 @@ const ClientDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {mockReports.map((r) => (
-                <div key={r.id} className="rounded-xl border border-border p-5 flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <p className="font-semibold text-foreground">{r.id}</p>
-                    <p className="text-sm text-muted-foreground">{r.type}</p>
-                    <p className="text-xs text-muted-foreground">Shared {r.dateShared} · Expires {r.expires}</p>
+              {dbReports.length === 0 && mockReports.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No reports shared yet.</p>
+              )}
+              {dbReports.map((r) => {
+                const isExpired = r.expiry_date ? new Date(r.expiry_date) < new Date() : false;
+                const statusLabel = isExpired ? "expired" : r.status;
+                return (
+                  <div key={r.id} className="rounded-xl border border-border p-5 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <p className="font-semibold text-foreground">#{r.reference_id}</p>
+                      <p className="text-sm text-muted-foreground">{r.evaluation_type}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Shared {new Date(r.created_at).toLocaleDateString()}
+                        {r.expiry_date && ` · Expires ${new Date(r.expiry_date).toLocaleDateString()}`}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-sm font-semibold capitalize ${reportStatusColor[statusLabel] || "text-muted-foreground"}`}>{statusLabel}</span>
+                      {!isExpired && (
+                        <>
+                          <Link to={`/transcript?token=${r.access_token}`}>
+                            <Button size="sm" variant="outline" className="gap-1"><Eye size={14} /> View</Button>
+                          </Link>
+                          <Button size="sm" variant="outline" className="gap-1"><Download size={14} /> Download</Button>
+                        </>
+                      )}
+                      {isExpired && (
+                        <Link to="/addon/renewal">
+                          <Button size="sm" variant="destructive" className="gap-1"><RefreshCw size={14} /> Renew ($100)</Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-sm font-semibold capitalize ${reportStatusColor[r.status]}`}>{r.status}</span>
-                    {r.status === "active" && (
-                      <>
-                        <Button size="sm" variant="outline" className="gap-1"><Share2 size={14} /> Share</Button>
-                        <Button size="sm" variant="outline" className="gap-1"><Download size={14} /> Download</Button>
-                      </>
-                    )}
-                    {r.status === "pending" && <Button size="sm" variant="outline" className="gap-1"><Share2 size={14} /> Share</Button>}
-                    {r.status === "expired" && (
-                      <Link to="/addon/renewal">
-                        <Button size="sm" variant="destructive" className="gap-1"><RefreshCw size={14} /> Renew ($100)</Button>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
 
