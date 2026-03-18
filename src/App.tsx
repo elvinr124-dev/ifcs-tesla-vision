@@ -38,6 +38,7 @@ import AddonInternationalShipping from "./pages/AddonInternationalShipping";
 import AddonRenewal from "./pages/AddonRenewal";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TranscriptViewer from "./pages/TranscriptViewer";
 
 const queryClient = new QueryClient();
 
