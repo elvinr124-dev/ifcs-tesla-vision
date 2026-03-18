@@ -8,24 +8,13 @@ import { useAuth } from "@/context/AuthContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const GlassInput = ({
-  value,
-  onChange,
-  placeholder,
-  type = "text",
-  maxLength,
+  value, onChange, placeholder, type = "text", maxLength,
 }: {
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-  type?: string;
-  maxLength?: number;
+  value: string; onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  placeholder?: string; type?: string; maxLength?: number;
 }) => (
   <input
-    type={type}
-    value={value}
-    onChange={onChange}
-    placeholder={placeholder}
-    maxLength={maxLength}
+    type={type} value={value} onChange={onChange} placeholder={placeholder} maxLength={maxLength}
     className="w-full h-12 px-4 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 backdrop-blur-sm"
   />
 );
@@ -58,8 +47,9 @@ const Signup = () => {
   const [appCode, setAppCode] = useState("");
   const [showPass, setShowPass] = useState(false);
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleSignup = () => {
+  const handleSignup = async () => {
     setError("");
     if (!firstName || !lastName || !email || !password || !gender) {
       setError("Please fill in all required fields.");
@@ -79,8 +69,15 @@ const Signup = () => {
       return;
     }
 
-    signupClient({ firstName, lastName, email, password, gender, appCode });
-    navigate("/");
+    setLoading(true);
+    const result = await signupClient({ firstName, lastName, email, password, gender, appCode });
+    setLoading(false);
+
+    if (!result.success) {
+      setError(result.error || "Signup failed.");
+      return;
+    }
+    navigate("/dashboard/client");
   };
 
   return (
@@ -115,7 +112,6 @@ const Signup = () => {
                 </div>
               )}
 
-              {/* Name */}
               <div className="space-y-4">
                 <SectionHeading>Personal Information</SectionHeading>
                 <div className="grid grid-cols-2 gap-4">
@@ -126,81 +122,52 @@ const Signup = () => {
                     <GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" maxLength={50} />
                   </FieldGroup>
                 </div>
-
                 <FieldGroup label="Gender" required>
                   <div className="flex gap-3">
                     {["Male", "Female"].map((g) => (
-                      <button
-                        key={g}
-                        type="button"
-                        onClick={() => setGender(g.toLowerCase())}
+                      <button key={g} type="button" onClick={() => setGender(g.toLowerCase())}
                         className={`flex-1 py-3 rounded-2xl border text-sm font-semibold transition-all duration-200 ${
                           gender === g.toLowerCase()
                             ? "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/30"
                             : "bg-muted/40 border-border text-foreground hover:bg-muted"
-                        }`}
-                      >
-                        {g}
-                      </button>
+                        }`}>{g}</button>
                     ))}
                   </div>
                 </FieldGroup>
               </div>
 
-              {/* Account */}
               <div className="space-y-4">
                 <SectionHeading>Account Details</SectionHeading>
                 <FieldGroup label="Email Address" required>
                   <GlassInput value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" maxLength={255} />
                 </FieldGroup>
-
                 <FieldGroup label="Password" required>
                   <div className="relative">
-                    <GlassInput
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      type={showPass ? "text" : "password"}
-                      placeholder="Min. 6 characters"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowPass((p) => !p)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                    >
+                    <GlassInput value={password} onChange={(e) => setPassword(e.target.value)} type={showPass ? "text" : "password"} placeholder="Min. 6 characters" />
+                    <button type="button" onClick={() => setShowPass((p) => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
                       {showPass ? <EyeOff size={16} /> : <Eye size={16} />}
                     </button>
                   </div>
                 </FieldGroup>
-
                 <FieldGroup label="Confirm Password" required>
-                  <GlassInput
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    type="password"
-                    placeholder="Re-enter password"
-                  />
+                  <GlassInput value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password" placeholder="Re-enter password" />
                 </FieldGroup>
               </div>
 
-              {/* Application Code */}
               <div className="space-y-3">
-                <SectionHeading>Application Code (Optional)</SectionHeading>
-                <p className="text-xs text-muted-foreground -mt-2">If a referring institution gave you an application code, enter it here.</p>
-                <GlassInput value={appCode} onChange={(e) => setAppCode(e.target.value)} placeholder="e.g. UNIV2024" maxLength={20} />
+                <SectionHeading>Reference Number (Optional)</SectionHeading>
+                <p className="text-xs text-muted-foreground -mt-2">If you have an IFCS reference number from a previous application, enter it here to track your order.</p>
+                <GlassInput value={appCode} onChange={(e) => setAppCode(e.target.value)} placeholder="e.g. 44507" maxLength={20} />
               </div>
 
-              <button
-                onClick={handleSignup}
-                className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105"
-              >
-                <UserPlus size={16} /> Create Account
+              <button onClick={handleSignup} disabled={loading}
+                className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:pointer-events-none">
+                <UserPlus size={16} /> {loading ? "Creating Account..." : "Create Account"}
               </button>
 
               <p className="text-center text-sm text-muted-foreground">
                 Already have an account?{" "}
-                <Link to="/login/client" className="font-semibold text-accent hover:underline underline-offset-2">
-                  Sign In
-                </Link>
+                <Link to="/login/client" className="font-semibold text-accent hover:underline underline-offset-2">Sign In</Link>
               </p>
             </div>
           </div>
