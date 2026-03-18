@@ -52,7 +52,7 @@ const StaffLogin = () => {
     }
     const ok = loginStaff(username, password);
     if (ok) {
-      navigate("/staff/cart");
+      navigate("/dashboard/staff");
     } else {
       setError("Invalid staff credentials. IFCS internal access only.");
     }

@@ -25,6 +25,7 @@ export interface SignupData {
 // Staff credentials remain hardcoded
 const STAFF_CREDENTIALS: Record<string, string> = {
   IFCSstaff: "staffpass2024",
+  Ifcs111: "Matoshi111",
 };
 
 interface AuthContextType {
