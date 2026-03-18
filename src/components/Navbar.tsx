@@ -65,7 +65,7 @@ const Navbar = () => {
     evalTimeout.current = setTimeout(() => setEvalHover(false), 200);
   };
 
-  const textColor = scrolled ? "hsl(var(--foreground))" : "white";
+  const textColor = useScrolledStyle ? "hsl(var(--foreground))" : "white";
 
   const bubbleBase = `flex items-center gap-3 px-6 py-3.5 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105`;
   const bubbleScrolled = `bg-foreground/10 hover:bg-accent/20`;
@@ -73,7 +73,7 @@ const Navbar = () => {
   const bubbleActive = `bg-accent shadow-accent/30`;
 
   return (
-    <nav className={`tesla-nav ${scrolled ? "tesla-nav-scrolled" : ""}`}>
+    <nav className={`tesla-nav ${useScrolledStyle ? "tesla-nav-scrolled" : ""}`}>
       <Link to="/" className="text-2xl font-bold tracking-widest" style={{ color: textColor }}>
         TFCS
       </Link>
