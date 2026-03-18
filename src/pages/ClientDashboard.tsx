@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import LiveChatWidget from "@/components/LiveChatWidget";
+import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -58,11 +59,18 @@ const initialOrders: MockOrder[] = [
   },
 ];
 
-const mockReports = [
-  { id: "IFCS-41522", type: "Course-by-Course", dateShared: "12/01/2025", expires: "12/01/2030", status: "active" as const },
-  { id: "IFCS-39871", type: "General Evaluation", dateShared: "11/15/2025", expires: "11/15/2030", status: "pending" as const },
-  { id: "IFCS-39001", type: "High School Evaluation", dateShared: "10/20/2025", expires: "10/20/2029", status: "expired" as const },
-];
+const mockReports: any[] = [];
+
+interface DBReport {
+  id: string;
+  reference_id: string;
+  applicant_email: string;
+  evaluation_type: string;
+  created_at: string;
+  expiry_date: string | null;
+  status: string;
+  access_token: string;
+}
 
 const addOns = [
   { id: "addon-duplicate", label: "Duplicate Report", price: 25, link: "/duplicate-reports" },
@@ -89,6 +97,40 @@ const ClientDashboard = () => {
   const { toast } = useToast();
   const [expandedOrder, setExpandedOrder] = useState<string | null>("44512");
   const [orders, setOrders] = useState<MockOrder[]>(initialOrders);
+  const [dbReports, setDbReports] = useState<DBReport[]>([]);
+
+  // Load reports from database for this user
+  useEffect(() => {
+    const loadReports = async () => {
+      if (!user?.email && !user?.username) return;
+      const identifier = user.email || user.username;
+      const { data } = await (supabase as any)
+        .from("evaluation_reports")
+        .select("*")
+        .eq("applicant_email", identifier)
+        .order("created_at", { ascending: false });
+      if (data) setDbReports(data as DBReport[]);
+    };
+    loadReports();
+
+    // Realtime subscription for new reports
+    const channel = supabase
+      .channel("client-reports")
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "evaluation_reports",
+      }, (payload) => {
+        const newReport = payload.new as DBReport;
+        const identifier = user?.email || user?.username;
+        if (newReport.applicant_email === identifier) {
+          setDbReports(prev => [newReport, ...prev]);
+        }
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
 
   // Delivery approval state
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
@@ -314,30 +356,41 @@ const ClientDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {mockReports.map((r) => (
-                <div key={r.id} className="rounded-xl border border-border p-5 flex flex-wrap items-center justify-between gap-4">
-                  <div>
-                    <p className="font-semibold text-foreground">{r.id}</p>
-                    <p className="text-sm text-muted-foreground">{r.type}</p>
-                    <p className="text-xs text-muted-foreground">Shared {r.dateShared} · Expires {r.expires}</p>
+              {dbReports.length === 0 && mockReports.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No reports shared yet.</p>
+              )}
+              {dbReports.map((r) => {
+                const isExpired = r.expiry_date ? new Date(r.expiry_date) < new Date() : false;
+                const statusLabel = isExpired ? "expired" : r.status;
+                return (
+                  <div key={r.id} className="rounded-xl border border-border p-5 flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                      <p className="font-semibold text-foreground">#{r.reference_id}</p>
+                      <p className="text-sm text-muted-foreground">{r.evaluation_type}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Shared {new Date(r.created_at).toLocaleDateString()}
+                        {r.expiry_date && ` · Expires ${new Date(r.expiry_date).toLocaleDateString()}`}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-sm font-semibold capitalize ${reportStatusColor[statusLabel] || "text-muted-foreground"}`}>{statusLabel}</span>
+                      {!isExpired && (
+                        <>
+                          <Link to={`/transcript?token=${r.access_token}`}>
+                            <Button size="sm" variant="outline" className="gap-1"><Eye size={14} /> View</Button>
+                          </Link>
+                          <Button size="sm" variant="outline" className="gap-1"><Download size={14} /> Download</Button>
+                        </>
+                      )}
+                      {isExpired && (
+                        <Link to="/addon/renewal">
+                          <Button size="sm" variant="destructive" className="gap-1"><RefreshCw size={14} /> Renew ($100)</Button>
+                        </Link>
+                      )}
+                    </div>
                   </div>
-                  <div className="flex items-center gap-3">
-                    <span className={`text-sm font-semibold capitalize ${reportStatusColor[r.status]}`}>{r.status}</span>
-                    {r.status === "active" && (
-                      <>
-                        <Button size="sm" variant="outline" className="gap-1"><Share2 size={14} /> Share</Button>
-                        <Button size="sm" variant="outline" className="gap-1"><Download size={14} /> Download</Button>
-                      </>
-                    )}
-                    {r.status === "pending" && <Button size="sm" variant="outline" className="gap-1"><Share2 size={14} /> Share</Button>}
-                    {r.status === "expired" && (
-                      <Link to="/addon/renewal">
-                        <Button size="sm" variant="destructive" className="gap-1"><RefreshCw size={14} /> Renew ($100)</Button>
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </CardContent>
           </Card>
 

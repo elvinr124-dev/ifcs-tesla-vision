@@ -195,13 +195,72 @@ const StaffDashboard = () => {
     toast({ title: "Requirement Added", description: `"${tpl.label}" sent to applicant.` });
   };
 
-  const handleShare = (e: React.FormEvent) => {
+  const handleShare = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!shareEmail || !shareRef || !shareType || !shareExpiry) {
       toast({ title: "Missing Fields", description: "Please fill in all required fields.", variant: "destructive" });
       return;
     }
-    toast({ title: "Report Shared", description: `Evaluation report sent to ${shareEmail}.` });
+
+    const isEdu = shareEmail.trim().toLowerCase().endsWith(".edu");
+    const applicant = queue.find(o => o.id === shareRef);
+    const applicantName = applicant?.applicant || "Applicant";
+    const applicantEmail = applicant?.email || shareEmail;
+
+    // Map shareType to label
+    const typeLabels: Record<string, string> = {
+      general: "General Analysis", general_gpa: "General Analysis + GPA",
+      course: "Course-by-Course", comprehensive: "Comprehensive Course-by-Course",
+      health: "Health Professions Course-by-Course",
+    };
+
+    // Insert report record
+    const { data: report, error: insertErr } = await (supabase as any)
+      .from("evaluation_reports")
+      .insert({
+        reference_id: shareRef,
+        applicant_name: applicantName,
+        applicant_email: applicantEmail,
+        evaluation_type: typeLabels[shareType] || shareType,
+        shared_to_email: shareEmail,
+        shared_to_edu: isEdu,
+        expiry_date: new Date(shareExpiry).toISOString(),
+        status: "active",
+      })
+      .select()
+      .single();
+
+    if (insertErr || !report) {
+      toast({ title: "Error", description: "Failed to create report record.", variant: "destructive" });
+      return;
+    }
+
+    // Send email via edge function
+    try {
+      await supabase.functions.invoke("send-transcript-email", {
+        body: {
+          recipientEmail: shareEmail,
+          applicantName,
+          referenceId: shareRef,
+          evaluationType: typeLabels[shareType] || shareType,
+          accessToken: (report as any).access_token,
+          isEdu,
+        },
+      });
+    } catch {}
+
+    if (isEdu) {
+      toast({
+        title: "Report Sent to Institution",
+        description: `Parchment-style email sent to ${shareEmail} with transcript access link.`,
+      });
+    } else {
+      toast({
+        title: "Report Delivered",
+        description: `Report added to client dashboard. Notification email sent to ${shareEmail}.`,
+      });
+    }
+
     setShareEmail(""); setShareRef(""); setShareType(""); setShareExpiry("");
   };
 

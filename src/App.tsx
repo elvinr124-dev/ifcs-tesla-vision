@@ -38,6 +38,7 @@ import AddonInternationalShipping from "./pages/AddonInternationalShipping";
 import AddonRenewal from "./pages/AddonRenewal";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TranscriptViewer from "./pages/TranscriptViewer";
 
 const queryClient = new QueryClient();
 
@@ -81,6 +82,7 @@ const App = () => (
               <Route path="/addon/renewal" element={<AddonRenewal />} />
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
+              <Route path="/transcript" element={<TranscriptViewer />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AIChatWidget />
