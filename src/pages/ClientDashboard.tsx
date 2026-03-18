@@ -96,6 +96,40 @@ const ClientDashboard = () => {
   const { toast } = useToast();
   const [expandedOrder, setExpandedOrder] = useState<string | null>("44512");
   const [orders, setOrders] = useState<MockOrder[]>(initialOrders);
+  const [dbReports, setDbReports] = useState<DBReport[]>([]);
+
+  // Load reports from database for this user
+  useEffect(() => {
+    const loadReports = async () => {
+      if (!user?.email && !user?.username) return;
+      const identifier = user.email || user.username;
+      const { data } = await supabase
+        .from("evaluation_reports")
+        .select("*")
+        .eq("applicant_email", identifier)
+        .order("created_at", { ascending: false });
+      if (data) setDbReports(data as DBReport[]);
+    };
+    loadReports();
+
+    // Realtime subscription for new reports
+    const channel = supabase
+      .channel("client-reports")
+      .on("postgres_changes", {
+        event: "INSERT",
+        schema: "public",
+        table: "evaluation_reports",
+      }, (payload) => {
+        const newReport = payload.new as DBReport;
+        const identifier = user?.email || user?.username;
+        if (newReport.applicant_email === identifier) {
+          setDbReports(prev => [newReport, ...prev]);
+        }
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [user]);
 
   // Delivery approval state
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
