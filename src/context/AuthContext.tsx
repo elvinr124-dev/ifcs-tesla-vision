@@ -1,4 +1,5 @@
-import { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
 
 export type UserRole = "client" | "staff" | "guest";
 
@@ -12,26 +13,6 @@ export interface AuthUser {
   appCode?: string;
 }
 
-// Hardcoded client credentials (Ifcs111-999 with Matoshi111-999)
-const CLIENT_CREDENTIALS: Record<string, { password: string; displayName: string }> = {};
-for (let i = 1; i <= 9; i++) {
-  CLIENT_CREDENTIALS[`Ifcs${i}${i}${i}`] = { password: `Matoshi${i}${i}${i}`, displayName: `Client ${i}` };
-}
-
-// Hardcoded staff credentials
-const STAFF_CREDENTIALS: Record<string, string> = {
-  IFCSstaff: "staffpass2024",
-};
-
-interface AuthContextType {
-  user: AuthUser | null;
-  loginClient: (username: string, password: string) => boolean;
-  loginStaff: (username: string, password: string) => boolean;
-  loginGuest: (email: string) => void;
-  signupClient: (data: SignupData) => void;
-  logout: () => void;
-}
-
 export interface SignupData {
   firstName: string;
   lastName: string;
@@ -41,30 +22,53 @@ export interface SignupData {
   appCode?: string;
 }
 
-// In-memory registered clients (session only)
-const registeredClients: Record<string, { password: string; data: SignupData }> = {};
+// Staff credentials remain hardcoded
+const STAFF_CREDENTIALS: Record<string, string> = {
+  IFCSstaff: "staffpass2024",
+};
+
+interface AuthContextType {
+  user: AuthUser | null;
+  loginClient: (username: string, password: string) => Promise<boolean>;
+  loginStaff: (username: string, password: string) => boolean;
+  loginGuest: (email: string) => void;
+  signupClient: (data: SignupData) => Promise<{ success: boolean; error?: string }>;
+  logout: () => void;
+}
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<AuthUser | null>(null);
+  const [user, setUser] = useState<AuthUser | null>(() => {
+    const saved = localStorage.getItem("tfcs_user");
+    return saved ? JSON.parse(saved) : null;
+  });
 
-  const loginClient = (username: string, password: string): boolean => {
-    const cred = CLIENT_CREDENTIALS[username];
-    if (cred && cred.password === password) {
-      setUser({ username, role: "client" });
-      return true;
+  useEffect(() => {
+    if (user) {
+      localStorage.setItem("tfcs_user", JSON.stringify(user));
+    } else {
+      localStorage.removeItem("tfcs_user");
     }
-    const reg = registeredClients[username];
-    if (reg && reg.password === password) {
+  }, [user]);
+
+  const loginClient = async (username: string, password: string): Promise<boolean> => {
+    // Check DB for client account by email
+    const { data } = await (supabase as any)
+      .from("client_accounts")
+      .select("*")
+      .eq("email", username)
+      .single();
+
+    if (data && data.password_hash === password) {
       setUser({
-        username,
+        username: data.email,
         role: "client",
-        firstName: reg.data.firstName,
-        lastName: reg.data.lastName,
-        email: reg.data.email,
-        gender: reg.data.gender,
-        appCode: reg.data.appCode,
+        firstName: data.first_name,
+        lastName: data.last_name,
+        email: data.email,
+        gender: data.gender,
+        appCode: data.app_code,
       });
       return true;
     }
@@ -77,11 +81,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       setUser({ username, role: "staff" });
       return true;
     }
-    const cred = CLIENT_CREDENTIALS[username];
-    if (cred && cred.password === password) {
-      setUser({ username, role: "staff", firstName: cred.displayName });
-      return true;
-    }
     return false;
   };
 
@@ -89,8 +88,33 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser({ username: email, role: "guest", email });
   };
 
-  const signupClient = (data: SignupData) => {
-    registeredClients[data.email] = { password: data.password, data };
+  const signupClient = async (data: SignupData): Promise<{ success: boolean; error?: string }> => {
+    // Check if email already exists
+    const { data: existing } = await (supabase as any)
+      .from("client_accounts")
+      .select("id")
+      .eq("email", data.email)
+      .single();
+
+    if (existing) {
+      return { success: false, error: "An account with this email already exists." };
+    }
+
+    const { error } = await (supabase as any)
+      .from("client_accounts")
+      .insert({
+        first_name: data.firstName,
+        last_name: data.lastName,
+        email: data.email,
+        password_hash: data.password,
+        gender: data.gender,
+        app_code: data.appCode || null,
+      });
+
+    if (error) {
+      return { success: false, error: "Failed to create account. Please try again." };
+    }
+
     setUser({
       username: data.email,
       role: "client",
@@ -100,6 +124,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       gender: data.gender,
       appCode: data.appCode,
     });
+    return { success: true };
   };
 
   const logout = () => setUser(null);

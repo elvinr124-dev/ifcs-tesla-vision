@@ -11,11 +11,14 @@ import {
 } from "@/components/ui/select";
 import {
   Upload, Send, Users, Clock, AlertCircle, CheckCircle2, Package, FileText, Star,
-  Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones,
+  Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones, Trash2, UserX,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import LiveChatWidget from "@/components/LiveChatWidget";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
 
 /* ---------- types ---------- */
 interface Requirement {
@@ -25,14 +28,27 @@ interface Requirement {
   type: "document" | "translation" | "info";
 }
 
-interface QueueOrder {
+interface DBOrder {
   id: string;
-  applicant: string;
-  email: string;
+  reference_id: string;
+  client_email: string;
   service: string;
   status: string;
-  submitted: string;
-  requirements: Requirement[];
+  staff_note: string;
+  requirements: any[];
+  submitted_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ClientAccount {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  gender: string;
+  app_code: string | null;
+  created_at: string;
 }
 
 interface PendingChat {
@@ -41,20 +57,6 @@ interface PendingChat {
   client_identifier: string;
   created_at: string;
 }
-
-/* ---------- mock queue ---------- */
-const initialQueue: QueueOrder[] = [
-  { id: "44507", applicant: "John Doe", email: "john@example.com", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "02/28/2026", requirements: [] },
-  {
-    id: "44512", applicant: "Maria Garcia", email: "maria@example.com", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "03/01/2026",
-    requirements: [
-      { id: "r1", label: "Official Transcripts", description: "Upload certified copies of university transcripts.", type: "document" },
-      { id: "r2", label: "Document Translation", description: "Diploma must be translated into English.", type: "translation" },
-    ],
-  },
-  { id: "44518", applicant: "Ahmed Ali", email: "ahmed@example.com", service: "Document Translation", status: "requested", submitted: "02/25/2026", requirements: [] },
-  { id: "44523", applicant: "Li Wei", email: "li@example.com", service: "Comprehensive Course-by-Course", status: "delivered", submitted: "02/20/2026", requirements: [] },
-];
 
 const statusMeta: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
   requested:  { label: "Requested",  color: "bg-muted text-muted-foreground",    icon: <Clock size={14} /> },
@@ -75,9 +77,12 @@ const requirementTemplates = [
 const StaffDashboard = () => {
   const { toast } = useToast();
   const [filter, setFilter] = useState("all");
-  const [queue, setQueue] = useState(initialQueue);
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // DB data
+  const [orders, setOrders] = useState<DBOrder[]>([]);
+  const [clients, setClients] = useState<ClientAccount[]>([]);
 
   // Share form
   const [shareEmail, setShareEmail] = useState("");
@@ -94,173 +99,166 @@ const StaffDashboard = () => {
   const [pendingChats, setPendingChats] = useState<PendingChat[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
 
-  // Load pending chats
-  useEffect(() => {
-    const loadPending = async () => {
-      const { data } = await supabase
-        .from("chat_conversations")
-        .select("*")
-        .eq("status", "pending")
-        .order("created_at", { ascending: false });
-      if (data) setPendingChats(data as PendingChat[]);
-    };
-    loadPending();
+  // Delete confirmation
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; type: "client" | "order"; id: string; label: string }>({ open: false, type: "client", id: "", label: "" });
 
-    // Realtime for new chat requests
+  // Load all data
+  useEffect(() => {
+    const loadAll = async () => {
+      const [ordersRes, clientsRes, chatsRes] = await Promise.all([
+        (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false }),
+        (supabase as any).from("client_accounts").select("*").order("created_at", { ascending: false }),
+        supabase.from("chat_conversations").select("*").eq("status", "pending").order("created_at", { ascending: false }),
+      ]);
+      if (ordersRes.data) setOrders(ordersRes.data);
+      if (clientsRes.data) setClients(clientsRes.data);
+      if (chatsRes.data) setPendingChats(chatsRes.data as PendingChat[]);
+    };
+    loadAll();
+
+    // Realtime for orders, clients, and chats
     const channel = supabase
-      .channel("staff-chat-requests")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "chat_conversations" },
-        () => { loadPending(); }
-      )
+      .channel("staff-all-rt")
+      .on("postgres_changes", { event: "*", schema: "public", table: "client_orders" }, () => {
+        (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false }).then((r: any) => { if (r.data) setOrders(r.data); });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "client_accounts" }, () => {
+        (supabase as any).from("client_accounts").select("*").order("created_at", { ascending: false }).then((r: any) => { if (r.data) setClients(r.data); });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "chat_conversations" }, () => {
+        supabase.from("chat_conversations").select("*").eq("status", "pending").order("created_at", { ascending: false }).then((r) => { if (r.data) setPendingChats(r.data as PendingChat[]); });
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, []);
 
   const handleConnectChat = async (chatId: string) => {
-    await supabase
-      .from("chat_conversations")
-      .update({ status: "active", staff_identifier: "IFCSstaff" })
-      .eq("id", chatId);
+    await supabase.from("chat_conversations").update({ status: "active", staff_identifier: "IFCSstaff" }).eq("id", chatId);
     setActiveConvId(chatId);
     toast({ title: "Connected", description: "You are now chatting with the client." });
   };
 
-  const handleStartChatWithApplicant = async (applicant: string, email: string) => {
-    const { data, error } = await supabase
-      .from("chat_conversations")
-      .insert({
-        client_identifier: email,
-        client_display_name: applicant,
-        staff_identifier: "IFCSstaff",
-        status: "active",
-      })
-      .select()
-      .single();
-
-    if (error || !data) {
-      toast({ title: "Error", description: "Could not start chat.", variant: "destructive" });
-      return;
-    }
+  const handleStartChatWithApplicant = async (name: string, email: string) => {
+    const { data, error } = await supabase.from("chat_conversations").insert({
+      client_identifier: email, client_display_name: name, staff_identifier: "IFCSstaff", status: "active",
+    }).select().single();
+    if (error || !data) { toast({ title: "Error", description: "Could not start chat.", variant: "destructive" }); return; }
     setActiveConvId(data.id);
-    toast({ title: "Chat Started", description: `Live chat opened with ${applicant}.` });
+    toast({ title: "Chat Started", description: `Live chat opened with ${name}.` });
   };
 
-  // Search & filter logic
-  const filtered = queue.filter((o) => {
+  // Search & filter
+  const filtered = orders.filter((o) => {
     const matchesFilter = filter === "all" || o.status === filter;
     if (!searchQuery.trim()) return matchesFilter;
     const q = searchQuery.toLowerCase().trim();
-    const matchesSearch = o.id.toLowerCase().includes(q) || o.email.toLowerCase().includes(q);
+    const matchesSearch = o.reference_id.toLowerCase().includes(q) || o.client_email.toLowerCase().includes(q);
     return matchesFilter && matchesSearch;
   });
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    // The filtering is already reactive via the `filtered` variable
+  // Status change
+  const handleStatusChange = async (orderId: string, newStatus: string) => {
+    await (supabase as any).from("client_orders").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", orderId);
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+    toast({ title: "Status Updated", description: `Order → ${statusMeta[newStatus]?.label}` });
   };
 
-  const handleStatusChange = (orderId: string, newStatus: string) => {
-    setQueue((prev) => prev.map((o) => o.id === orderId ? { ...o, status: newStatus } : o));
-    toast({ title: "Status Updated", description: `${orderId} → ${statusMeta[newStatus]?.label}` });
-  };
-
-  const handleAddRequirement = (orderId: string) => {
+  // Add requirement
+  const handleAddRequirement = async (orderId: string) => {
     if (!newReqLabel.trim()) return;
-    const req: Requirement = {
-      id: `req-${Date.now()}`,
-      label: newReqLabel,
-      description: newReqDesc || `Please provide: ${newReqLabel}`,
-      type: newReqType,
-    };
-    setQueue((prev) => prev.map((o) => o.id === orderId ? { ...o, requirements: [...o.requirements, req] } : o));
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+    const req = { id: `req-${Date.now()}`, label: newReqLabel, description: newReqDesc || `Please provide: ${newReqLabel}`, type: newReqType };
+    const updatedReqs = [...(Array.isArray(order.requirements) ? order.requirements : []), req];
+    await (supabase as any).from("client_orders").update({ requirements: updatedReqs, updated_at: new Date().toISOString() }).eq("id", orderId);
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, requirements: updatedReqs } : o));
     setNewReqLabel(""); setNewReqDesc("");
     toast({ title: "Requirement Added", description: `"${req.label}" sent to applicant.` });
   };
 
-  const handleRemoveRequirement = (orderId: string, reqId: string) => {
-    setQueue((prev) => prev.map((o) => o.id === orderId ? { ...o, requirements: o.requirements.filter((r) => r.id !== reqId) } : o));
-  };
-
-  const handleQuickReq = (orderId: string, tpl: typeof requirementTemplates[0]) => {
-    const req: Requirement = {
-      id: `req-${Date.now()}`,
-      label: tpl.label,
-      description: `Please provide: ${tpl.label}`,
-      type: tpl.type,
-    };
-    setQueue((prev) => prev.map((o) => o.id === orderId ? { ...o, requirements: [...o.requirements, req] } : o));
+  const handleQuickReq = async (orderId: string, tpl: typeof requirementTemplates[0]) => {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+    const req = { id: `req-${Date.now()}`, label: tpl.label, description: `Please provide: ${tpl.label}`, type: tpl.type };
+    const updatedReqs = [...(Array.isArray(order.requirements) ? order.requirements : []), req];
+    await (supabase as any).from("client_orders").update({ requirements: updatedReqs, updated_at: new Date().toISOString() }).eq("id", orderId);
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, requirements: updatedReqs } : o));
     toast({ title: "Requirement Added", description: `"${tpl.label}" sent to applicant.` });
   };
 
+  const handleRemoveRequirement = async (orderId: string, reqId: string) => {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+    const updatedReqs = (Array.isArray(order.requirements) ? order.requirements : []).filter((r: any) => r.id !== reqId);
+    await (supabase as any).from("client_orders").update({ requirements: updatedReqs, updated_at: new Date().toISOString() }).eq("id", orderId);
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, requirements: updatedReqs } : o));
+  };
+
+  // Staff note
+  const handleUpdateNote = async (orderId: string, note: string) => {
+    await (supabase as any).from("client_orders").update({ staff_note: note, updated_at: new Date().toISOString() }).eq("id", orderId);
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, staff_note: note } : o));
+    toast({ title: "Note Updated" });
+  };
+
+  // Delete client or order
+  const handleDelete = async () => {
+    if (deleteDialog.type === "client") {
+      await (supabase as any).from("client_accounts").delete().eq("id", deleteDialog.id);
+      setClients(prev => prev.filter(c => c.id !== deleteDialog.id));
+      toast({ title: "Client Deleted", description: `Account removed.` });
+    } else {
+      await (supabase as any).from("client_orders").delete().eq("id", deleteDialog.id);
+      setOrders(prev => prev.filter(o => o.id !== deleteDialog.id));
+      toast({ title: "Order Deleted" });
+    }
+    setDeleteDialog({ open: false, type: "client", id: "", label: "" });
+  };
+
+  // Share report
   const handleShare = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!shareEmail || !shareRef || !shareType || !shareExpiry) {
       toast({ title: "Missing Fields", description: "Please fill in all required fields.", variant: "destructive" });
       return;
     }
-
     const isEdu = shareEmail.trim().toLowerCase().endsWith(".edu");
-    const applicant = queue.find(o => o.id === shareRef);
-    const applicantName = applicant?.applicant || "Applicant";
-    const applicantEmail = applicant?.email || shareEmail;
+    const order = orders.find(o => o.reference_id === shareRef);
+    const applicantEmail = order?.client_email || shareEmail;
+    const client = clients.find(c => c.email === applicantEmail);
+    const applicantName = client ? `${client.first_name} ${client.last_name}` : "Applicant";
 
-    // Map shareType to label
     const typeLabels: Record<string, string> = {
       general: "General Analysis", general_gpa: "General Analysis + GPA",
       course: "Course-by-Course", comprehensive: "Comprehensive Course-by-Course",
       health: "Health Professions Course-by-Course",
     };
 
-    // Insert report record
     const { data: report, error: insertErr } = await (supabase as any)
       .from("evaluation_reports")
       .insert({
-        reference_id: shareRef,
-        applicant_name: applicantName,
-        applicant_email: applicantEmail,
-        evaluation_type: typeLabels[shareType] || shareType,
-        shared_to_email: shareEmail,
-        shared_to_edu: isEdu,
-        expiry_date: new Date(shareExpiry).toISOString(),
-        status: "active",
+        reference_id: shareRef, applicant_name: applicantName, applicant_email: applicantEmail,
+        evaluation_type: typeLabels[shareType] || shareType, shared_to_email: shareEmail,
+        shared_to_edu: isEdu, expiry_date: new Date(shareExpiry).toISOString(), status: "active",
       })
-      .select()
-      .single();
+      .select().single();
 
     if (insertErr || !report) {
       toast({ title: "Error", description: "Failed to create report record.", variant: "destructive" });
       return;
     }
 
-    // Send email via edge function
     try {
       await supabase.functions.invoke("send-transcript-email", {
-        body: {
-          recipientEmail: shareEmail,
-          applicantName,
-          referenceId: shareRef,
-          evaluationType: typeLabels[shareType] || shareType,
-          accessToken: (report as any).access_token,
-          isEdu,
-        },
+        body: { recipientEmail: shareEmail, applicantName, referenceId: shareRef, evaluationType: typeLabels[shareType] || shareType, accessToken: (report as any).access_token, isEdu },
       });
     } catch {}
 
-    if (isEdu) {
-      toast({
-        title: "Report Sent to Institution",
-        description: `Parchment-style email sent to ${shareEmail} with transcript access link.`,
-      });
-    } else {
-      toast({
-        title: "Report Delivered",
-        description: `Report added to client dashboard. Notification email sent to ${shareEmail}.`,
-      });
-    }
-
+    toast({
+      title: isEdu ? "Report Sent to Institution" : "Report Delivered",
+      description: isEdu ? `Parchment-style email sent to ${shareEmail}.` : `Report added to client dashboard. Notification email sent to ${shareEmail}.`,
+    });
     setShareEmail(""); setShareRef(""); setShareType(""); setShareExpiry("");
   };
 
@@ -281,11 +279,8 @@ const StaffDashboard = () => {
             <Card className="border-border bg-card border-emerald-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Headphones size={22} className="text-emerald-500" />
-                  Incoming Chat Requests
-                  <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-600 ml-2">
-                    {pendingChats.length}
-                  </Badge>
+                  <Headphones size={22} className="text-emerald-500" /> Incoming Chat Requests
+                  <Badge variant="secondary" className="bg-emerald-500/20 text-emerald-600 ml-2">{pendingChats.length}</Badge>
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-3">
@@ -304,16 +299,12 @@ const StaffDashboard = () => {
             </Card>
           )}
 
-          {/* ── Active Chat Window ── */}
+          {/* ── Active Chat ── */}
           {activeConvId && (
             <Card className="border-border bg-card border-emerald-500/30">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <MessageCircle size={22} className="text-emerald-500" /> Live Chat
-                </CardTitle>
-                <Button size="sm" variant="ghost" onClick={() => setActiveConvId(null)}>
-                  <X size={16} /> Close
-                </Button>
+                <CardTitle className="flex items-center gap-2 text-xl"><MessageCircle size={22} className="text-emerald-500" /> Live Chat</CardTitle>
+                <Button size="sm" variant="ghost" onClick={() => setActiveConvId(null)}><X size={16} /> Close</Button>
               </CardHeader>
               <CardContent className="h-[400px]">
                 <LiveChatWidget conversationId={activeConvId} isStaff onClose={() => setActiveConvId(null)} />
@@ -321,12 +312,47 @@ const StaffDashboard = () => {
             </Card>
           )}
 
-          {/* ── Queue Management ── */}
+          {/* ── Registered Clients ── */}
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Users size={22} className="text-accent" /> Registered Clients
+                <Badge variant="secondary" className="ml-2">{clients.length}</Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {clients.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-4">No registered clients yet.</p>
+              ) : (
+                <div className="space-y-3">
+                  {clients.map((c) => (
+                    <div key={c.id} className="flex items-center justify-between rounded-xl border border-border p-4">
+                      <div>
+                        <p className="font-medium text-foreground">{c.first_name} {c.last_name}</p>
+                        <p className="text-xs text-muted-foreground">{c.email} · Joined {new Date(c.created_at).toLocaleDateString()}</p>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" className="gap-1" onClick={() => handleStartChatWithApplicant(`${c.first_name} ${c.last_name}`, c.email)}>
+                          <MessageCircle size={14} /> Chat
+                        </Button>
+                        <Button size="sm" variant="destructive" className="gap-1" onClick={() => setDeleteDialog({ open: true, type: "client", id: c.id, label: `${c.first_name} ${c.last_name}` })}>
+                          <UserX size={14} /> Delete
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* ── Order Queue ── */}
           <Card className="border-border bg-card">
             <CardHeader className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <CardTitle className="flex items-center gap-2 text-xl">
-                  <Users size={22} className="text-accent" /> Application Queue
+                  <Package size={22} className="text-accent" /> Application Queue
+                  <Badge variant="secondary" className="ml-2">{orders.length}</Badge>
                 </CardTitle>
                 <Select value={filter} onValueChange={setFilter}>
                   <SelectTrigger className="w-48"><SelectValue placeholder="Filter by status" /></SelectTrigger>
@@ -339,46 +365,37 @@ const StaffDashboard = () => {
                   </SelectContent>
                 </Select>
               </div>
-
-              {/* Search bar */}
-              <form onSubmit={handleSearch} className="flex gap-2">
+              <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
                 <div className="relative flex-1">
                   <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <Input
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search by IFCS reference # or email..."
-                    className="pl-9"
-                  />
+                  <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by IFCS reference # or email..." className="pl-9" />
                 </div>
-                <Button type="submit" variant="outline" className="gap-1">
-                  <Search size={14} /> Search
-                </Button>
               </form>
             </CardHeader>
             <CardContent className="space-y-4">
               {filtered.length === 0 && (
                 <div className="text-center py-8">
-                  <p className="text-muted-foreground">No applications found for "{searchQuery}"</p>
+                  <p className="text-muted-foreground">{searchQuery ? `No applications found for "${searchQuery}"` : "No orders in the queue yet."}</p>
                 </div>
               )}
               {filtered.map((o) => {
                 const meta = statusMeta[o.status] ?? statusMeta.requested;
                 const isSelected = selectedOrder === o.id;
+                const client = clients.find(c => c.email === o.client_email);
+                const applicantName = client ? `${client.first_name} ${client.last_name}` : o.client_email;
+                const requirements = Array.isArray(o.requirements) ? o.requirements : [];
 
                 return (
                   <div key={o.id} className="rounded-xl border border-border overflow-hidden">
-                    <button
-                      onClick={() => setSelectedOrder(isSelected ? null : o.id)}
-                      className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left"
-                    >
+                    <button onClick={() => setSelectedOrder(isSelected ? null : o.id)}
+                      className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <p className="font-semibold text-foreground">#{o.id}</p>
+                          <p className="font-semibold text-foreground">#{o.reference_id}</p>
                           <Badge variant="secondary" className={`${meta.color} gap-1`}>{meta.icon} {meta.label}</Badge>
                         </div>
-                        <p className="text-sm text-foreground mt-1">{o.applicant} <span className="text-muted-foreground">— {o.email}</span></p>
-                        <p className="text-xs text-muted-foreground">{o.service} · Submitted {o.submitted}</p>
+                        <p className="text-sm text-foreground mt-1">{applicantName} <span className="text-muted-foreground">— {o.client_email}</span></p>
+                        <p className="text-xs text-muted-foreground">{o.service || "No service specified"} · Added {new Date(o.submitted_at).toLocaleDateString()}</p>
                       </div>
                     </button>
 
@@ -389,27 +406,48 @@ const StaffDashboard = () => {
                           <p className="text-sm font-medium text-foreground mb-2">Update Status</p>
                           <div className="flex flex-wrap gap-2">
                             {Object.entries(statusMeta).map(([key, val]) => (
-                              <Button key={key} size="sm"
-                                variant={o.status === key ? "default" : "outline"}
-                                className="gap-1"
-                                onClick={() => handleStatusChange(o.id, key)}
-                              >
+                              <Button key={key} size="sm" variant={o.status === key ? "default" : "outline"} className="gap-1"
+                                onClick={() => handleStatusChange(o.id, key)}>
                                 {val.icon} {val.label}
                               </Button>
                             ))}
                           </div>
                         </div>
 
-                        {/* Current requirements */}
+                        {/* Service update */}
+                        <div>
+                          <p className="text-sm font-medium text-foreground mb-2">Service</p>
+                          <div className="flex gap-2">
+                            <Input defaultValue={o.service} placeholder="e.g. Course-by-Course — Rush 3-Day"
+                              onBlur={async (e) => {
+                                if (e.target.value !== o.service) {
+                                  await (supabase as any).from("client_orders").update({ service: e.target.value, updated_at: new Date().toISOString() }).eq("id", o.id);
+                                  setOrders(prev => prev.map(x => x.id === o.id ? { ...x, service: e.target.value } : x));
+                                  toast({ title: "Service Updated" });
+                                }
+                              }}
+                            />
+                          </div>
+                        </div>
+
+                        {/* Staff note */}
+                        <div>
+                          <p className="text-sm font-medium text-foreground mb-2">Staff Note (visible to client)</p>
+                          <Textarea defaultValue={o.staff_note} placeholder="Add a note for the client..."
+                            onBlur={(e) => { if (e.target.value !== o.staff_note) handleUpdateNote(o.id, e.target.value); }}
+                          />
+                        </div>
+
+                        {/* Requirements */}
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
                             <AlertCircle size={16} className="text-accent" /> Requirements Sent to Applicant
                           </p>
-                          {o.requirements.length === 0 ? (
+                          {requirements.length === 0 ? (
                             <p className="text-xs text-muted-foreground">No requirements sent yet.</p>
                           ) : (
                             <div className="space-y-2">
-                              {o.requirements.map((req) => (
+                              {requirements.map((req: any) => (
                                 <div key={req.id} className="rounded-lg border border-border p-3 flex items-center justify-between">
                                   <div className="flex items-center gap-3">
                                     {req.type === "translation" ? <Languages size={16} className="text-accent" /> :
@@ -420,9 +458,7 @@ const StaffDashboard = () => {
                                       <p className="text-xs text-muted-foreground">{req.description}</p>
                                     </div>
                                   </div>
-                                  <Button size="sm" variant="ghost" onClick={() => handleRemoveRequirement(o.id, req.id)}>
-                                    <X size={14} />
-                                  </Button>
+                                  <Button size="sm" variant="ghost" onClick={() => handleRemoveRequirement(o.id, req.id)}><X size={14} /></Button>
                                 </div>
                               ))}
                             </div>
@@ -457,16 +493,17 @@ const StaffDashboard = () => {
                               </SelectContent>
                             </Select>
                           </div>
-                          <Button size="sm" onClick={() => handleAddRequirement(o.id)} className="gap-1">
-                            <Send size={14} /> Send Requirement
-                          </Button>
+                          <Button size="sm" onClick={() => handleAddRequirement(o.id)} className="gap-1"><Send size={14} /> Send Requirement</Button>
                         </div>
 
-                        {/* Start live chat with applicant */}
-                        <div>
-                          <p className="text-sm font-medium text-foreground mb-2">Live Chat</p>
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => handleStartChatWithApplicant(o.applicant, o.email)}>
-                            <MessageCircle size={14} /> Start Chat with {o.applicant}
+                        {/* Chat & Delete */}
+                        <div className="flex gap-3 flex-wrap">
+                          <Button size="sm" variant="outline" className="gap-1" onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
+                            <MessageCircle size={14} /> Chat with {applicantName}
+                          </Button>
+                          <Button size="sm" variant="destructive" className="gap-1"
+                            onClick={() => setDeleteDialog({ open: true, type: "order", id: o.id, label: `#${o.reference_id}` })}>
+                            <Trash2 size={14} /> Delete Order
                           </Button>
                         </div>
                       </div>
@@ -480,15 +517,13 @@ const StaffDashboard = () => {
           {/* ── Share Evaluation Report ── */}
           <Card className="border-border bg-card">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <FileText size={22} className="text-accent" /> Share Evaluation Report
-              </CardTitle>
+              <CardTitle className="flex items-center gap-2 text-xl"><FileText size={22} className="text-accent" /> Share Evaluation Report</CardTitle>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleShare} className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Applicant Email *</label>
-                  <Input type="email" placeholder="applicant@email.com" value={shareEmail} onChange={(e) => setShareEmail(e.target.value)} required />
+                  <label className="text-sm font-medium text-foreground">Recipient Email *</label>
+                  <Input type="email" placeholder="applicant@email.com or institution@school.edu" value={shareEmail} onChange={(e) => setShareEmail(e.target.value)} required />
                 </div>
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground">IFCS Reference # *</label>
@@ -521,35 +556,24 @@ const StaffDashboard = () => {
               </form>
             </CardContent>
           </Card>
-
-          {/* ── Feedback ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Star size={22} className="text-accent" /> Recent Feedback
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {[
-                { from: "John Doe", rating: 5, text: "Excellent evaluation, very thorough!" },
-                { from: "Maria Garcia", rating: 4, text: "Fast service. Would have liked more detail on GPA conversion." },
-              ].map((f, i) => (
-                <div key={i} className="border border-border rounded-xl p-4">
-                  <div className="flex items-center justify-between">
-                    <p className="font-medium text-foreground">{f.from}</p>
-                    <div className="flex gap-0.5">
-                      {Array.from({ length: 5 }).map((_, s) => (
-                        <Star key={s} size={14} className={s < f.rating ? "text-amber-400 fill-amber-400" : "text-muted"} />
-                      ))}
-                    </div>
-                  </div>
-                  <p className="text-sm text-muted-foreground mt-1">{f.text}</p>
-                </div>
-              ))}
-            </CardContent>
-          </Card>
         </div>
       </div>
+
+      {/* Delete confirmation dialog */}
+      <Dialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog(prev => ({ ...prev, open }))}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete {deleteDialog.type === "client" ? "client" : "order"} <strong>{deleteDialog.label}</strong>? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteDialog(prev => ({ ...prev, open: false }))}>Cancel</Button>
+            <Button variant="destructive" onClick={handleDelete} className="gap-1"><Trash2 size={14} /> Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>

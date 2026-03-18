@@ -7,6 +7,7 @@ import LiveChatWidget from "@/components/LiveChatWidget";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -19,47 +20,16 @@ import {
 } from "@/components/ui/dialog";
 
 /* ---------- types ---------- */
-interface StaffRequirement {
+interface ClientOrder {
   id: string;
-  label: string;
-  description: string;
-  type: "document" | "translation" | "info";
-  resolved: boolean;
-}
-
-interface MockOrder {
-  id: string;
+  reference_id: string;
+  client_email: string;
   service: string;
-  status: "requested" | "in_review" | "on_hold" | "delivered";
-  submitted: string;
-  staffNote: string;
-  requirements: StaffRequirement[];
-  deliveryApproved?: boolean;
-  reportFileUrl?: string;
+  status: string;
+  staff_note: string;
+  requirements: any[];
+  submitted_at: string;
 }
-
-/* ---------- mock data ---------- */
-const initialOrders: MockOrder[] = [
-  {
-    id: "44507", service: "Course-by-Course — Rush 3-Day", status: "in_review", submitted: "03/01/2026", staffNote: "",
-    requirements: [], reportFileUrl: "/sample-report.pdf",
-  },
-  {
-    id: "44512", service: "General Evaluation — 10 Business Days", status: "on_hold", submitted: "02/28/2026",
-    staffNote: "We need additional documents before we can proceed with your evaluation.",
-    requirements: [
-      { id: "req-1", label: "Official Transcripts", description: "Please upload certified copies of your university transcripts.", type: "document", resolved: false },
-      { id: "req-2", label: "Document Translation", description: "Your diploma must be translated into English by a certified translator.", type: "translation", resolved: false },
-      { id: "req-3", label: "Passport Copy", description: "Please provide a copy of your passport name page.", type: "document", resolved: true },
-    ],
-  },
-  {
-    id: "44518", service: "Document Translation", status: "delivered", submitted: "02/20/2026", staffNote: "",
-    requirements: [], deliveryApproved: false, reportFileUrl: "/sample-report.pdf",
-  },
-];
-
-const mockReports: any[] = [];
 
 interface DBReport {
   id: string;
@@ -95,25 +65,68 @@ const reportStatusColor: Record<string, string> = {
 const ClientDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
-  const [expandedOrder, setExpandedOrder] = useState<string | null>("44512");
-  const [orders, setOrders] = useState<MockOrder[]>(initialOrders);
+  const [orders, setOrders] = useState<ClientOrder[]>([]);
+  const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [dbReports, setDbReports] = useState<DBReport[]>([]);
+  const [addRefInput, setAddRefInput] = useState("");
+  const [addingRef, setAddingRef] = useState(false);
 
-  // Load reports from database for this user
+  const clientEmail = user?.email || user?.username || "";
+
+  // Load orders from DB
   useEffect(() => {
+    if (!clientEmail) return;
+
+    const loadOrders = async () => {
+      const { data } = await (supabase as any)
+        .from("client_orders")
+        .select("*")
+        .eq("client_email", clientEmail)
+        .order("created_at", { ascending: false });
+      if (data) setOrders(data);
+    };
+    loadOrders();
+
+    // Realtime for order updates
+    const channel = supabase
+      .channel("client-orders-rt")
+      .on("postgres_changes", {
+        event: "*",
+        schema: "public",
+        table: "client_orders",
+      }, (payload) => {
+        if (payload.eventType === "INSERT") {
+          const newOrder = payload.new as ClientOrder;
+          if (newOrder.client_email === clientEmail) {
+            setOrders(prev => [newOrder, ...prev]);
+          }
+        } else if (payload.eventType === "UPDATE") {
+          const updated = payload.new as ClientOrder;
+          setOrders(prev => prev.map(o => o.id === updated.id ? updated : o));
+        } else if (payload.eventType === "DELETE") {
+          const deleted = payload.old as any;
+          setOrders(prev => prev.filter(o => o.id !== deleted.id));
+        }
+      })
+      .subscribe();
+
+    return () => { supabase.removeChannel(channel); };
+  }, [clientEmail]);
+
+  // Load reports from database
+  useEffect(() => {
+    if (!clientEmail) return;
+
     const loadReports = async () => {
-      if (!user?.email && !user?.username) return;
-      const identifier = user.email || user.username;
       const { data } = await (supabase as any)
         .from("evaluation_reports")
         .select("*")
-        .eq("applicant_email", identifier)
+        .eq("applicant_email", clientEmail)
         .order("created_at", { ascending: false });
       if (data) setDbReports(data as DBReport[]);
     };
     loadReports();
 
-    // Realtime subscription for new reports
     const channel = supabase
       .channel("client-reports")
       .on("postgres_changes", {
@@ -122,29 +135,67 @@ const ClientDashboard = () => {
         table: "evaluation_reports",
       }, (payload) => {
         const newReport = payload.new as DBReport;
-        const identifier = user?.email || user?.username;
-        if (newReport.applicant_email === identifier) {
+        if (newReport.applicant_email === clientEmail) {
           setDbReports(prev => [newReport, ...prev]);
+          toast({ title: "New Report Available", description: "A new evaluation report has been shared with you." });
         }
       })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
-  }, [user]);
+  }, [clientEmail]);
 
-  // Delivery approval state
+  // Add reference number
+  const handleAddReference = async () => {
+    if (!addRefInput.trim() || !clientEmail) return;
+    setAddingRef(true);
+
+    // Check if already linked
+    const { data: existing } = await (supabase as any)
+      .from("client_orders")
+      .select("id")
+      .eq("reference_id", addRefInput.trim())
+      .eq("client_email", clientEmail)
+      .single();
+
+    if (existing) {
+      toast({ title: "Already Added", description: "This reference number is already in your dashboard.", variant: "destructive" });
+      setAddingRef(false);
+      return;
+    }
+
+    // Insert the order reference
+    const { error } = await (supabase as any)
+      .from("client_orders")
+      .insert({
+        reference_id: addRefInput.trim(),
+        client_email: clientEmail,
+        service: "",
+        status: "requested",
+      });
+
+    if (error) {
+      toast({ title: "Error", description: "Failed to add reference. Please try again.", variant: "destructive" });
+    } else {
+      toast({ title: "Reference Added", description: `Order #${addRefInput.trim()} has been added to your dashboard.` });
+      setAddRefInput("");
+    }
+    setAddingRef(false);
+  };
+
+  // Delivery approval
   const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
   const [rejectOrderId, setRejectOrderId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
 
   const handleApproveDelivery = (orderId: string) => {
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, deliveryApproved: true } : o));
+    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, deliveryApproved: true } as any : o));
     toast({ title: "Delivery Approved", description: "You have approved the delivery. You can now view your report." });
   };
 
   const handleRejectDelivery = () => {
     if (!rejectReason.trim()) return;
-    toast({ title: "Feedback Sent", description: "Your feedback has been sent to IFCS staff. They will review and follow up." });
+    toast({ title: "Feedback Sent", description: "Your feedback has been sent to IFCS staff." });
     setRejectDialogOpen(false);
     setRejectReason("");
     setRejectOrderId(null);
@@ -164,6 +215,31 @@ const ClientDashboard = () => {
       <div className="content-bg">
         <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-10">
 
+          {/* ── Add Reference Number ── */}
+          <Card className="border-border bg-card">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-xl">
+                <Plus size={22} className="text-accent" /> Track an Order
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-4">
+                Enter your IFCS reference number to add it to your dashboard and track its progress.
+              </p>
+              <div className="flex gap-3">
+                <Input
+                  value={addRefInput}
+                  onChange={(e) => setAddRefInput(e.target.value)}
+                  placeholder="e.g. 44507"
+                  className="max-w-xs"
+                />
+                <Button onClick={handleAddReference} disabled={addingRef || !addRefInput.trim()} className="gap-2">
+                  <Plus size={16} /> {addingRef ? "Adding..." : "Add Reference"}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* ── Order Tracking ── */}
           <Card className="border-border bg-card">
             <CardHeader>
@@ -172,26 +248,32 @@ const ClientDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
+              {orders.length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No orders yet. Add a reference number above to start tracking your evaluation.
+                </p>
+              )}
               {orders.map((order) => {
                 const meta = statusMeta[order.status] ?? statusMeta.requested;
-                const isExpanded = expandedOrder === order.id;
+                const isExpanded = expandedOrder === order.reference_id;
                 const currentIdx = statusSteps.indexOf(order.status);
+                const requirements = Array.isArray(order.requirements) ? order.requirements : [];
 
                 return (
                   <div key={order.id} className="rounded-xl border border-border overflow-hidden">
                     <button
-                      onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
+                      onClick={() => setExpandedOrder(isExpanded ? null : order.reference_id)}
                       className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left"
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <p className="font-semibold text-foreground">#{order.id}</p>
+                          <p className="font-semibold text-foreground">#{order.reference_id}</p>
                           <Badge variant="secondary" className={`${meta.color} gap-1`}>
                             {meta.icon} {meta.label}
                           </Badge>
                         </div>
-                        <p className="text-sm text-muted-foreground mt-1">{order.service}</p>
-                        <p className="text-xs text-muted-foreground">Submitted {order.submitted}</p>
+                        {order.service && <p className="text-sm text-muted-foreground mt-1">{order.service}</p>}
+                        <p className="text-xs text-muted-foreground">Added {new Date(order.submitted_at).toLocaleDateString()}</p>
                       </div>
                       {isExpanded ? <ChevronUp size={20} className="text-muted-foreground" /> : <ChevronDown size={20} className="text-muted-foreground" />}
                     </button>
@@ -215,79 +297,38 @@ const ClientDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Delivery Approval (Fiverr-style) — shown when delivered */}
+                        {/* Staff note */}
+                        {order.staff_note && (
+                          <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
+                            <p className="text-sm text-muted-foreground">{order.staff_note}</p>
+                          </div>
+                        )}
+
+                        {/* Delivery Approval — shown when delivered */}
                         {order.status === "delivered" && (
                           <div className="rounded-xl border-2 border-accent/30 bg-accent/5 p-6">
-                            {order.deliveryApproved ? (
-                              <div className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                  <CheckCircle2 size={24} className="text-emerald-500" />
-                                  <div>
-                                    <p className="font-semibold text-foreground">Delivery Approved</p>
-                                    <p className="text-sm text-muted-foreground">You approved this delivery. Your report is now available without watermark.</p>
-                                  </div>
-                                </div>
-                                <Button variant="outline" className="gap-2" onClick={() => window.open(order.reportFileUrl, '_blank')}>
-                                  <Eye size={16} /> View Report
-                                </Button>
-                              </div>
-                            ) : (
-                              <div className="space-y-4">
-                                <div className="flex items-center gap-3">
-                                  <Package size={24} className="text-accent" />
-                                  <div>
-                                    <p className="font-semibold text-foreground text-lg">Your report is ready!</p>
-                                    <p className="text-sm text-muted-foreground">
-                                      Review your report preview below. Once approved, you'll receive the final version without watermark.
-                                    </p>
-                                  </div>
-                                </div>
-                                <p className="text-xs text-muted-foreground bg-muted/50 rounded-lg p-3">
-                                  ⚠️ Once you approve this delivery, the order will be marked as complete. Any revisions after this step may be subject to extra costs.
-                                </p>
-                                <div className="flex items-center gap-3 flex-wrap">
-                                  <Button
-                                    variant="outline"
-                                    className="gap-2"
-                                    onClick={() => {
-                                      // Opens a watermarked preview
-                                      alert("Opening watermarked preview — this version cannot be downloaded or sent to institutions. Approve delivery to receive the final copy.");
-                                    }}
-                                  >
-                                    <Eye size={16} /> View with Watermark
-                                  </Button>
-                                  <Button
-                                    onClick={() => handleApproveDelivery(order.id)}
-                                    className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-                                  >
-                                    <ThumbsUp size={16} /> Yes, I approve delivery
-                                  </Button>
-                                  <Button
-                                    variant="outline"
-                                    onClick={() => { setRejectOrderId(order.id); setRejectDialogOpen(true); }}
-                                    className="gap-2"
-                                  >
-                                    <ThumbsDown size={16} /> I'm not ready yet
-                                  </Button>
+                            <div className="space-y-4">
+                              <div className="flex items-center gap-3">
+                                <Package size={24} className="text-accent" />
+                                <div>
+                                  <p className="font-semibold text-foreground text-lg">Your report is ready!</p>
+                                  <p className="text-sm text-muted-foreground">
+                                    Check the Shared Evaluation Reports section below for your report.
+                                  </p>
                                 </div>
                               </div>
-                            )}
+                            </div>
                           </div>
                         )}
 
                         {/* Staff requirements */}
-                        {order.requirements.length > 0 && (
+                        {requirements.length > 0 && (
                           <div>
                             <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
                               <AlertCircle size={16} className="text-destructive" /> Requirements from IFCS Staff
                             </p>
-                            {order.staffNote && (
-                              <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4 mb-4">
-                                <p className="text-sm text-muted-foreground">{order.staffNote}</p>
-                              </div>
-                            )}
                             <div className="space-y-3">
-                              {order.requirements.map((req) => (
+                              {requirements.map((req: any) => (
                                 <div key={req.id} className={`rounded-lg border p-4 flex items-start gap-4 ${req.resolved ? "border-emerald-500/30 bg-emerald-500/5" : "border-border"}`}>
                                   <div className="mt-0.5">
                                     {req.resolved
@@ -298,20 +339,17 @@ const ClientDashboard = () => {
                                     <p className={`font-medium text-sm ${req.resolved ? "text-emerald-600 line-through" : "text-foreground"}`}>{req.label}</p>
                                     <p className="text-xs text-muted-foreground mt-0.5">{req.description}</p>
                                   </div>
-                                  {!req.resolved && (
-                                    <div className="flex gap-2 shrink-0">
-                                      {req.type === "translation" ? (
-                                        <Link to="/translations">
-                                          <Button size="sm" variant="outline" className="gap-1 text-xs">
-                                            <Languages size={14} /> Get Translation
-                                          </Button>
-                                        </Link>
-                                      ) : (
-                                        <Button size="sm" variant="outline" className="gap-1 text-xs">
-                                          <Upload size={14} /> Upload
-                                        </Button>
-                                      )}
-                                    </div>
+                                  {!req.resolved && req.type === "translation" && (
+                                    <Link to="/translations">
+                                      <Button size="sm" variant="outline" className="gap-1 text-xs">
+                                        <Languages size={14} /> Get Translation
+                                      </Button>
+                                    </Link>
+                                  )}
+                                  {!req.resolved && req.type !== "translation" && (
+                                    <Button size="sm" variant="outline" className="gap-1 text-xs">
+                                      <Upload size={14} /> Upload
+                                    </Button>
                                   )}
                                 </div>
                               ))}
@@ -356,7 +394,7 @@ const ClientDashboard = () => {
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              {dbReports.length === 0 && mockReports.length === 0 && (
+              {dbReports.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">No reports shared yet.</p>
               )}
               {dbReports.map((r) => {
@@ -410,33 +448,21 @@ const ClientDashboard = () => {
         </div>
       </div>
 
-      {/* Reject / Not Ready Dialog */}
       <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Tell us what's wrong</DialogTitle>
-            <DialogDescription>
-              Please explain why you're not ready to approve this delivery. Our staff will review your feedback and follow up.
-            </DialogDescription>
+            <DialogDescription>Please explain why you're not ready to approve this delivery.</DialogDescription>
           </DialogHeader>
-          <Textarea
-            placeholder="Describe the issue or what needs to be revised..."
-            value={rejectReason}
-            onChange={(e) => setRejectReason(e.target.value)}
-            className="min-h-[120px]"
-          />
+          <Textarea placeholder="Describe the issue..." value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} className="min-h-[120px]" />
           <DialogFooter>
             <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleRejectDelivery} disabled={!rejectReason.trim()} className="gap-2">
-              <Send size={16} /> Send Feedback
-            </Button>
+            <Button onClick={handleRejectDelivery} disabled={!rejectReason.trim()} className="gap-2"><Send size={16} /> Send Feedback</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Live Chat Widget */}
       <LiveChatWidget />
-
       <Footer />
     </div>
   );

@@ -43,13 +43,13 @@ const ClientLogin = () => {
     }
   }, []);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     setError("");
     if (!email || !password) {
       setError("Please enter both email/username and password.");
       return;
     }
-    const ok = loginClient(email, password);
+    const ok = await loginClient(email, password);
     if (ok) {
       if (rememberMe) {
         localStorage.setItem("ifcs_remembered_login", JSON.stringify({ email, password }));
@@ -62,7 +62,7 @@ const ClientLogin = () => {
         navigate("/dashboard/client");
       }
     } else {
-      setError("Invalid username or password. Please try again.");
+      setError("Invalid email or password. Please try again.");
     }
   };
 
