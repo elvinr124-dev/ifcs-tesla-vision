@@ -85,6 +85,86 @@ export type Database = {
           },
         ]
       }
+      client_accounts: {
+        Row: {
+          app_code: string | null
+          created_at: string
+          email: string
+          first_name: string
+          gender: string | null
+          id: string
+          last_name: string
+          password_hash: string
+        }
+        Insert: {
+          app_code?: string | null
+          created_at?: string
+          email: string
+          first_name: string
+          gender?: string | null
+          id?: string
+          last_name: string
+          password_hash: string
+        }
+        Update: {
+          app_code?: string | null
+          created_at?: string
+          email?: string
+          first_name?: string
+          gender?: string | null
+          id?: string
+          last_name?: string
+          password_hash?: string
+        }
+        Relationships: []
+      }
+      client_orders: {
+        Row: {
+          client_email: string
+          created_at: string
+          id: string
+          reference_id: string
+          requirements: Json | null
+          service: string
+          staff_note: string | null
+          status: string
+          submitted_at: string
+          updated_at: string
+        }
+        Insert: {
+          client_email: string
+          created_at?: string
+          id?: string
+          reference_id: string
+          requirements?: Json | null
+          service?: string
+          staff_note?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Update: {
+          client_email?: string
+          created_at?: string
+          id?: string
+          reference_id?: string
+          requirements?: Json | null
+          service?: string
+          staff_note?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "client_orders_client_email_fkey"
+            columns: ["client_email"]
+            isOneToOne: false
+            referencedRelation: "client_accounts"
+            referencedColumns: ["email"]
+          },
+        ]
+      }
       evaluation_reports: {
         Row: {
           access_token: string | null
