@@ -86,6 +86,7 @@ const App = () => (
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/transcript" element={<TranscriptViewer />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/account" element={<Account />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AIChatWidget />
