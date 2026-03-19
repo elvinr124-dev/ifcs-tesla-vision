@@ -303,7 +303,7 @@ const Evaluations = () => {
                               <p className="text-xl font-bold text-black/80 group-hover:text-white">
                                 ${opt.price}
                               </p>
-                              <p className="text-[10px] mt-0.5 text-black/40 group-hover:text-white/80">
+                              <p className="text-xs font-semibold mt-0.5 text-black/70 group-hover:text-white/80">
                                 {opt.sub}
                               </p>
                             </button>
