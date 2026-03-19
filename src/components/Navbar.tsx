@@ -70,6 +70,14 @@ const Navbar = () => {
     evalTimeout.current = setTimeout(() => setEvalHover(false), 200);
   };
 
+  const handleSupportEnter = () => {
+    clearTimeout(supportTimeout.current);
+    setSupportHover(true);
+  };
+  const handleSupportLeave = () => {
+    supportTimeout.current = setTimeout(() => setSupportHover(false), 200);
+  };
+
   const textColor = useScrolledStyle ? "hsl(var(--foreground))" : "white";
 
   const bubbleBase = `flex items-center gap-3 px-6 py-3.5 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105`;
