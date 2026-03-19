@@ -324,6 +324,18 @@ const TranslationOrder = () => {
     setFileAnalyses(prev => prev.filter((_, i) => i !== idx));
   };
 
+  // Replace a specific file (for errored/blurry pages)
+  const replaceInputRefs = useRef<Record<number, HTMLInputElement | null>>({});
+  const handleReplaceFile = (idx: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    // Replace with a new image file, re-analyze
+    const newEntry: FileAnalysis = { file, analyzing: false, analysis: null };
+    setFileAnalyses(prev => prev.map((fa, i) => i === idx ? newEntry : fa));
+    analyzeFile(file, idx);
+    if (e.target) e.target.value = "";
+  };
+
   // Calculate pricing per page — exclude errored/blurry pages
   const pagePricing = fileAnalyses.map((fa, i) => calculatePagePrice(fa.analysis, i));
 
