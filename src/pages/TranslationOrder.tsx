@@ -1,13 +1,14 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTriangle, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
+import * as pdfjsLib from "pdfjs-dist";
 
-
-
+// Set the worker source
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
 
 interface FileAnalysis {
   file: File;
