@@ -375,7 +375,7 @@ const Evaluations = () => {
                               navigate("/application", { state: serviceData });
                             }
                           }}
-                          className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
+                          className="inline-flex items-center gap-2 bg-black text-white font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-black/80 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
                           Start Application →
                         </button>
                       </div>
