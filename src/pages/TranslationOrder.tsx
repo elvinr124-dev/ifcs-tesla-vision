@@ -437,16 +437,28 @@ const TranslationOrder = () => {
               </div>
 
               {/* Upload Documents */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
+              <div
+                className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5"
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
                 <SectionHeading>Upload Your Documents</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
-                  Upload clear, legible images or PDFs. Our AI will automatically count words and calculate pricing.
+                  Upload clear, legible images or PDFs. Our AI will automatically count words per page and calculate pricing.
                 </p>
 
-                <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border rounded-2xl p-8 cursor-pointer hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 group">
-                  <Upload size={28} className="text-muted-foreground group-hover:text-accent transition-colors" />
-                  <span className="text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Click to browse files</span>
-                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · Max 4MB per file</span>
+                <label className={`flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all duration-200 group ${
+                  dragging
+                    ? "border-accent bg-accent/10 scale-[1.02]"
+                    : "border-border hover:border-accent/50 hover:bg-accent/5"
+                }`}>
+                  <Upload size={28} className={`transition-colors ${dragging ? "text-accent" : "text-muted-foreground group-hover:text-accent"}`} />
+                  <span className={`text-sm font-medium transition-colors ${dragging ? "text-accent" : "text-muted-foreground group-hover:text-accent"}`}>
+                    {dragging ? "Drop files here" : "Drag & drop or click to browse files"}
+                  </span>
+                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · PDFs are split into individual pages · Max 4MB per file</span>
                   <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                 </label>
 
