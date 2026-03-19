@@ -82,6 +82,9 @@ const Navbar = () => {
       {/* Desktop nav */}
       <div className="hidden md:flex items-center gap-2.5">
 
+        {/* Search Bar */}
+        <NavSearchBar scrolled={useScrolledStyle} hasDarkHero={hasDarkHero} />
+
         {/* Get an Evaluation - with hover dropdown */}
         <div
           className="relative"
