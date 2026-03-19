@@ -41,7 +41,9 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [evalHover, setEvalHover] = useState(false);
+  const [supportHover, setSupportHover] = useState(false);
   const evalTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const supportTimeout = useRef<ReturnType<typeof setTimeout>>();
   const location = useLocation();
   const navigate = useNavigate();
   const { totalItems } = useCart();
