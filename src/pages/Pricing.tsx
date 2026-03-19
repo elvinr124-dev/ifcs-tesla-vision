@@ -109,7 +109,7 @@ const Pricing = () => {
                 >
                   <TableCell className="py-5 px-6">
                     <Link
-                      to={`/evaluations#${toSlug(item.title)}`}
+                      to={`/evaluations#${item.slug}`}
                       className="font-semibold text-sm text-foreground underline decoration-accent/40 underline-offset-2 hover:text-accent transition-colors"
                     >
                       {item.title}
