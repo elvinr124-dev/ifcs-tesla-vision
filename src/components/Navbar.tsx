@@ -346,13 +346,18 @@ const Navbar = () => {
                     <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
                     <span className="text-sm font-semibold tracking-wide">My Dashboard</span>
                   </Link>
-                  <button
-                    onClick={() => { logout(); navigate("/"); setSidebarOpen(false); }}
-                    className="flex items-center gap-4 px-6 py-4 text-foreground hover:bg-muted transition-all duration-200"
+                  <Link
+                    to="/account"
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
+                      location.pathname === "/account"
+                        ? "bg-accent/10 text-accent border-r-4 border-accent"
+                        : "text-foreground hover:bg-muted"
+                    }`}
                   >
-                    <LogOut size={20} className="text-muted-foreground" />
-                    <span className="text-sm font-semibold tracking-wide">Sign Out</span>
-                  </button>
+                    <User size={20} className={location.pathname === "/account" ? "text-accent" : "text-muted-foreground"} />
+                    <span className="text-sm font-semibold tracking-wide">My Account</span>
+                  </Link>
                 </>
               )}
             </div>
