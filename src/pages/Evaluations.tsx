@@ -351,7 +351,7 @@ const Evaluations = () => {
                             });
                             showToast(`"${service.title} ${processingLabels[key]}" added to cart!`);
                           }}
-                          className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/30 text-white font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-white/25 transition-all duration-200 shadow-lg hover:scale-105">
+                          className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200 shadow-lg hover:scale-105">
                           🛒 Add to Cart
                         </button>
                         <button
