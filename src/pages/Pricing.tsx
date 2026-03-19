@@ -1,6 +1,9 @@
+import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
+
+const toSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
 
 const evaluationPricing = [
   {
@@ -99,8 +102,13 @@ const Pricing = () => {
                     i % 2 === 0 ? "bg-background" : "bg-muted/20"
                   }`}
                 >
-                  <TableCell className="py-5 px-6 font-semibold text-sm text-foreground underline decoration-accent/40 underline-offset-2">
-                    {item.title}
+                  <TableCell className="py-5 px-6">
+                    <Link
+                      to={`/evaluations#${toSlug(item.title)}`}
+                      className="font-semibold text-sm text-foreground underline decoration-accent/40 underline-offset-2 hover:text-accent transition-colors"
+                    >
+                      {item.title}
+                    </Link>
                   </TableCell>
                   <TableCell className="text-center py-5 px-4 text-accent font-bold text-base">
                     ${item.standard}
@@ -116,8 +124,13 @@ const Pricing = () => {
 
               {/* Extra copies row */}
               <TableRow className="border-b border-border/50 bg-muted/20">
-                <TableCell className="py-5 px-6 font-semibold text-sm text-foreground italic">
-                  Extra Copies
+                <TableCell className="py-5 px-6">
+                  <Link
+                    to="/duplicate-reports"
+                    className="font-semibold text-sm text-foreground underline decoration-accent/40 underline-offset-2 hover:text-accent transition-colors italic"
+                  >
+                    Extra Copies
+                  </Link>
                 </TableCell>
                 <TableCell className="text-center py-5 px-4 text-accent font-bold text-base" colSpan={3}>
                   $25 per copy
