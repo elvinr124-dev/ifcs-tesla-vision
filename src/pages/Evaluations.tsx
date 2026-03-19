@@ -254,10 +254,10 @@ const Evaluations = () => {
                       </div>
                       <div className="space-y-4">
                         <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
-                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
-                            <Award size={11} className="text-accent" /> Recommended For
+                          <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5">
+                            <Award size={12} className="text-accent" /> Recommended For
                           </p>
-                          <p className="text-sm leading-relaxed text-black/80">{service.recommendedFor}</p>
+                          <p className="text-[15px] font-medium leading-relaxed text-black/90">{service.recommendedFor}</p>
                         </div>
                         <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
                           <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
