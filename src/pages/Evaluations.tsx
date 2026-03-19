@@ -314,7 +314,7 @@ const Evaluations = () => {
 
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-auto pt-2">
                       <p className="text-sm text-black/50">
-                        Selected: <span className="text-white font-semibold">${getSelectedPrice(service, idx)}</span>
+                        Selected: <span className="text-black font-semibold">${getSelectedPrice(service, idx)}</span>
                       </p>
                       <div className="flex gap-3">
                         <button
