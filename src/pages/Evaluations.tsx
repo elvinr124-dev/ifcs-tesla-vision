@@ -295,7 +295,7 @@ const Evaluations = () => {
                                   navigate("/application", { state: serviceData });
                                 }
                               }}
-                              className="relative rounded-2xl p-4 text-center transition-all duration-300 border bg-white/10 backdrop-blur-md border-white/20 hover:bg-accent hover:border-accent hover:shadow-lg hover:shadow-accent/30 hover:scale-[1.03] group"
+                              className="relative rounded-2xl p-4 text-center transition-all duration-300 border bg-black/5 backdrop-blur-md border-black/10 hover:bg-accent hover:border-accent hover:shadow-lg hover:shadow-accent/30 hover:scale-[1.03] group"
                             >
                               <p className="text-[10px] font-bold uppercase tracking-widest mb-1 text-white/60 group-hover:text-white">
                                 {opt.label}
