@@ -237,9 +237,9 @@ const Evaluations = () => {
                           {service.title}
                         </h3>
                       </div>
-                      <div className="flex-shrink-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-3 text-center">
-                        <p className="text-xs text-white/60 uppercase tracking-widest mb-1">From</p>
-                        <p className="text-3xl font-bold text-white">${service.price}</p>
+                      <div className="flex-shrink-0 bg-black/10 backdrop-blur-md border border-black/10 rounded-2xl px-5 py-3 text-center">
+                        <p className="text-xs text-black/50 uppercase tracking-widest mb-1">From</p>
+                        <p className="text-3xl font-bold text-black">${service.price}</p>
                       </div>
                     </div>
 
