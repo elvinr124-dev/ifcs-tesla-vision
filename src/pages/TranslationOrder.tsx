@@ -324,11 +324,19 @@ const TranslationOrder = () => {
     setFileAnalyses(prev => prev.filter((_, i) => i !== idx));
   };
 
-  // Calculate pricing per page
+  // Calculate pricing per page — exclude errored/blurry pages
   const pagePricing = fileAnalyses.map((fa, i) => calculatePagePrice(fa.analysis, i));
 
-  const subtotal = pagePricing.reduce((sum, p) => sum + p.price, 0);
-  const totalPages = pagePricing.reduce((sum, p) => sum + p.pageCount, 0);
+  const subtotal = pagePricing.reduce((sum, p, i) => {
+    const fa = fileAnalyses[i];
+    if (fa.error || fa.analysis?.isBlurry || fa.analyzing || !fa.analysis) return sum;
+    return sum + p.price;
+  }, 0);
+  const totalPages = pagePricing.reduce((sum, p, i) => {
+    const fa = fileAnalyses[i];
+    if (fa.error || fa.analysis?.isBlurry || fa.analyzing || !fa.analysis) return sum;
+    return sum + p.pageCount;
+  }, 0);
   const expeditedCost = addExpedited ? 25 : 0;
   const hardCopyCost = addHardCopy ? 25 : 0;
   const total = subtotal + expeditedCost + hardCopyCost;
