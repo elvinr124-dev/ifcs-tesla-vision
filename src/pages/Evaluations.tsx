@@ -260,10 +260,10 @@ const Evaluations = () => {
                           <p className="text-[15px] font-medium leading-relaxed text-black/90">{service.recommendedFor}</p>
                         </div>
                         <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
-                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
-                            <FileText size={11} /> Required Documents
+                          <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5">
+                            <FileText size={12} /> Required Documents
                           </p>
-                          <p className="text-sm leading-relaxed text-black/80">{service.documents}</p>
+                          <p className="text-[15px] font-medium leading-relaxed text-black/90">{service.documents}</p>
                         </div>
                       </div>
                     </div>
