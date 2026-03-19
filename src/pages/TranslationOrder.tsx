@@ -131,7 +131,9 @@ const TranslationOrder = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const [fileAnalyses, setFileAnalyses] = useState<FileAnalysis[]>([]);
+  const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounter = useRef(0);
 
   // Add-ons
   const [addExpedited, setAddExpedited] = useState(false);
