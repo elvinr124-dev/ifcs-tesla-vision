@@ -27,6 +27,8 @@ const evalPreviews = [
 const allLinks = [
   { label: "Evaluations", href: "/evaluations", icon: GraduationCap },
   { label: "Translations", href: "/translations", icon: Languages },
+  { label: "Duplicate Report", href: "/duplicate-reports", icon: Copy },
+  { label: "Pricing", href: "/pricing", icon: DollarSign },
   { label: "Consulting", href: "/consulting", icon: Briefcase },
   { label: "About Us", href: "/about", icon: Users },
   { label: "FAQ", href: "/faq", icon: HelpCircle },
