@@ -244,26 +244,26 @@ const Evaluations = () => {
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
-                        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                      <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
+                        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
                           <FileText size={11} /> Description
                         </p>
-                        <p className="text-sm leading-relaxed text-white/85">
+                        <p className="text-sm leading-relaxed text-black/80">
                           {service.description}
                         </p>
                       </div>
                       <div className="space-y-4">
-                        <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
-                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                        <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
+                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
                             <Award size={11} className="text-accent" /> Recommended For
                           </p>
-                          <p className="text-sm leading-relaxed text-white/85">{service.recommendedFor}</p>
+                          <p className="text-sm leading-relaxed text-black/80">{service.recommendedFor}</p>
                         </div>
-                        <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
-                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                        <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
+                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
                             <FileText size={11} /> Required Documents
                           </p>
-                          <p className="text-sm leading-relaxed text-white/85">{service.documents}</p>
+                          <p className="text-sm leading-relaxed text-black/80">{service.documents}</p>
                         </div>
                       </div>
                     </div>
