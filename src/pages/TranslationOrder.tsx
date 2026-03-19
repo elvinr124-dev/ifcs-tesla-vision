@@ -288,9 +288,7 @@ const TranslationOrder = () => {
     if (e.target) e.target.value = "";
   };
 
-  // Drag and drop
-  const [dragging, setDragging] = useState(false);
-  const dragCounter = useRef(0);
+  // Drag and drop handlers
 
   const handleDragEnter = useCallback((e: React.DragEvent) => {
     e.preventDefault();
