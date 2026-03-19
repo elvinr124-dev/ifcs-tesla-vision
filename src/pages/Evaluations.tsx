@@ -230,7 +230,7 @@ const Evaluations = () => {
 
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div>
-                        <p className="text-xs font-semibold tracking-[0.25em] uppercase text-accent mb-1">
+                        <p className="text-xs font-semibold tracking-[0.25em] uppercase text-black/60 mb-1">
                           Academic Evaluation
                         </p>
                         <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-black">
@@ -245,32 +245,32 @@ const Evaluations = () => {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
-                        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
-                          <FileText size={11} /> Description
+                         <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5">
+                          <FileText size={12} /> Description
                         </p>
-                        <p className="text-sm leading-relaxed text-black/80">
+                        <p className="text-[15px] font-medium leading-relaxed text-black/90">
                           {service.description}
                         </p>
                       </div>
                       <div className="space-y-4">
                         <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
-                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
-                            <Award size={11} className="text-accent" /> Recommended For
+                          <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5">
+                            <Award size={12} className="text-accent" /> Recommended For
                           </p>
-                          <p className="text-sm leading-relaxed text-black/80">{service.recommendedFor}</p>
+                          <p className="text-[15px] font-medium leading-relaxed text-black/90">{service.recommendedFor}</p>
                         </div>
                         <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
-                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
-                            <FileText size={11} /> Required Documents
+                          <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5">
+                            <FileText size={12} /> Required Documents
                           </p>
-                          <p className="text-sm leading-relaxed text-black/80">{service.documents}</p>
+                          <p className="text-[15px] font-medium leading-relaxed text-black/90">{service.documents}</p>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5 mb-3">
-                        <Clock size={11} /> Select Processing Speed
+                      <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5 mb-3">
+                        <Clock size={12} /> Select Processing Speed
                       </p>
                       <div className="grid grid-cols-3 gap-3">
                         {([
@@ -303,7 +303,7 @@ const Evaluations = () => {
                               <p className="text-xl font-bold text-black/80 group-hover:text-white">
                                 ${opt.price}
                               </p>
-                              <p className="text-[10px] mt-0.5 text-black/40 group-hover:text-white/80">
+                              <p className="text-xs font-semibold mt-0.5 text-black/70 group-hover:text-white/80">
                                 {opt.sub}
                               </p>
                             </button>
