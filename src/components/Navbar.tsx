@@ -84,6 +84,8 @@ const Navbar = () => {
         <NavSearchBar scrolled={useScrolledStyle} hasDarkHero={hasDarkHero} />
       </div>
 
+      <div className="flex-1" />
+
       {/* Desktop nav */}
       <div className="hidden md:flex items-center gap-2.5 shrink-0">
 
