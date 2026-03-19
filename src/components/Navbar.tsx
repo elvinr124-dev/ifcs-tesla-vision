@@ -79,10 +79,12 @@ const Navbar = () => {
         TFCS
       </Link>
 
-      {/* Search Bar - centered between logo and nav */}
-      <div className="hidden md:flex flex-1 justify-center px-4">
+      {/* Search Bar - right next to logo */}
+      <div className="hidden md:flex ml-3">
         <NavSearchBar scrolled={useScrolledStyle} hasDarkHero={hasDarkHero} />
       </div>
+
+      <div className="flex-1" />
 
       {/* Desktop nav */}
       <div className="hidden md:flex items-center gap-2.5 shrink-0">
