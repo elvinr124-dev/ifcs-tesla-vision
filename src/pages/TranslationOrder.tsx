@@ -144,6 +144,19 @@ const TranslationOrder = () => {
   const [cardZip, setCardZip] = useState("");
   const [cardName, setCardName] = useState("");
 
+  // Convert a single PDF page to a base64 image
+  const pdfPageToBase64 = async (pdfDoc: pdfjsLib.PDFDocumentProxy, pageNum: number): Promise<string> => {
+    const page = await pdfDoc.getPage(pageNum);
+    const scale = 2; // high res for AI analysis
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext("2d")!;
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    return canvas.toDataURL("image/jpeg", 0.85);
+  };
+
   const analyzeFile = async (file: File, index: number) => {
     const reader = new FileReader();
     reader.onload = async (e) => {
@@ -190,18 +203,122 @@ const TranslationOrder = () => {
     reader.readAsDataURL(file);
   };
 
+  // Process PDF: split into individual pages and analyze each
+  const processPdf = async (file: File) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const pageCount = pdfDoc.numPages;
+
+    // Create placeholder entries for all pages
+    const startIndex = fileAnalyses.length;
+    const placeholders: FileAnalysis[] = [];
+    for (let p = 1; p <= pageCount; p++) {
+      placeholders.push({
+        file: new File([], `${file.name} — Page ${p}`, { type: "image/jpeg" }),
+        analyzing: false,
+        analysis: null,
+      });
+    }
+    setFileAnalyses(prev => [...prev, ...placeholders]);
+
+    // Analyze each page
+    for (let p = 1; p <= pageCount; p++) {
+      const idx = startIndex + p - 1;
+      const dataUrl = await pdfPageToBase64(pdfDoc, p);
+      const base64 = dataUrl.split(",")[1];
+
+      setFileAnalyses(prev => prev.map((fa, i) =>
+        i === idx ? { ...fa, preview: dataUrl, analyzing: true } : fa
+      ));
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-document`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ imageBase64: base64, fileName: `${file.name} - Page ${p}` }),
+          }
+        );
+
+        if (!response.ok) throw new Error("Analysis failed");
+        const analysis = await response.json();
+
+        if (analysis.isBlurry) {
+          toast({
+            title: `Blurry Page Detected (Page ${p})`,
+            description: analysis.blurryReason || "Please re-upload a clearer version of this document.",
+            variant: "destructive",
+          });
+        }
+
+        setFileAnalyses(prev => prev.map((fa, i) =>
+          i === idx ? { ...fa, analyzing: false, analysis } : fa
+        ));
+      } catch {
+        setFileAnalyses(prev => prev.map((fa, i) =>
+          i === idx ? { ...fa, analyzing: false, error: "Could not analyze page. You can still submit for manual review." } : fa
+        ));
+      }
+    }
+  };
+
+  const processFiles = async (files: File[]) => {
+    for (const file of files) {
+      if (file.type === "application/pdf") {
+        await processPdf(file);
+      } else {
+        const startIndex = fileAnalyses.length;
+        const newAnalysis: FileAnalysis = { file, analyzing: false, analysis: null };
+        setFileAnalyses(prev => [...prev, newAnalysis]);
+        analyzeFile(file, startIndex);
+      }
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files);
-      const startIndex = fileAnalyses.length;
-      const newAnalyses: FileAnalysis[] = newFiles.map(f => ({
-        file: f, analyzing: false, analysis: null,
-      }));
-      setFileAnalyses(prev => [...prev, ...newAnalyses]);
-      newFiles.forEach((file, i) => analyzeFile(file, startIndex + i));
+      processFiles(Array.from(e.target.files));
     }
     if (e.target) e.target.value = "";
   };
+
+  // Drag and drop
+  const [dragging, setDragging] = useState(false);
+  const dragCounter = useRef(0);
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    setDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) setDragging(false);
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+    dragCounter.current = 0;
+    const files = Array.from(e.dataTransfer.files).filter(f =>
+      ["application/pdf", "image/jpeg", "image/png", "image/jpg"].includes(f.type)
+    );
+    if (files.length > 0) processFiles(files);
+  }, [fileAnalyses.length]);
 
   const removeFile = (idx: number) => {
     setFileAnalyses(prev => prev.filter((_, i) => i !== idx));
