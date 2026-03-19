@@ -485,7 +485,11 @@ const TranslationOrder = () => {
                 {fileAnalyses.length > 0 && (
                   <div className="space-y-3">
                     {fileAnalyses.map((fa, i) => (
-                      <div key={i} className={`rounded-2xl border p-4 ${fa.analysis?.isBlurry ? 'border-destructive/50 bg-destructive/5' : 'border-border bg-muted/30'}`}>
+                      <div key={i} className={`rounded-2xl border p-4 ${
+                        fa.error ? 'border-amber-500/50 bg-amber-500/5' :
+                        fa.analysis?.isBlurry ? 'border-destructive/50 bg-destructive/5' :
+                        'border-border bg-muted/30'
+                      }`}>
                         <div className="flex items-start justify-between gap-3">
                           <div className="flex items-start gap-3 flex-1 min-w-0">
                             {fa.preview && (
@@ -528,16 +532,55 @@ const TranslationOrder = () => {
                               )}
 
                               {fa.analysis?.isBlurry && (
-                                <div className="mt-1 flex items-start gap-2">
-                                  <AlertTriangle size={14} className="text-destructive shrink-0 mt-0.5" />
-                                  <div>
-                                    <p className="text-xs text-destructive font-medium">Blurry document detected</p>
-                                    <p className="text-xs text-destructive/70">{fa.analysis.blurryReason || "Please re-upload a clearer version."}</p>
+                                <div className="mt-2">
+                                  <div className="flex items-start gap-2">
+                                    <AlertTriangle size={14} className="text-destructive shrink-0 mt-0.5" />
+                                    <div>
+                                      <p className="text-xs text-destructive font-medium">Blurry document — not included in total</p>
+                                      <p className="text-xs text-destructive/70">{fa.analysis.blurryReason || "Please replace with a clearer version."}</p>
+                                    </div>
                                   </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => replaceInputRefs.current[i]?.click()}
+                                    className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-xs font-bold shadow-md hover:scale-105 transition-all duration-200"
+                                  >
+                                    <Upload size={12} /> Replace this page
+                                  </button>
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    ref={el => { replaceInputRefs.current[i] = el; }}
+                                    onChange={(e) => handleReplaceFile(i, e)}
+                                  />
                                 </div>
                               )}
 
-                              {fa.error && <p className="text-xs text-muted-foreground mt-1">{fa.error}</p>}
+                              {fa.error && (
+                                <div className="mt-2">
+                                  <div className="flex items-start gap-2">
+                                    <AlertTriangle size={14} className="text-amber-500 shrink-0 mt-0.5" />
+                                    <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                                      Could not analyze — not included in total
+                                    </p>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={() => replaceInputRefs.current[i]?.click()}
+                                    className="mt-2 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-xs font-bold shadow-md hover:scale-105 transition-all duration-200"
+                                  >
+                                    <Upload size={12} /> Replace this page
+                                  </button>
+                                  <input
+                                    type="file"
+                                    className="hidden"
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    ref={el => { replaceInputRefs.current[i] = el; }}
+                                    onChange={(e) => handleReplaceFile(i, e)}
+                                  />
+                                </div>
+                              )}
                             </div>
                           </div>
                           <button type="button" onClick={() => removeFile(i)} className="text-muted-foreground hover:text-destructive transition-colors shrink-0">
