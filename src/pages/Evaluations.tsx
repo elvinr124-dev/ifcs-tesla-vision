@@ -224,7 +224,7 @@ const Evaluations = () => {
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
                     style={{ backgroundImage: `url(${service.bgImage})` }} />
                   
-                  <div className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/60 to-black/40" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-stone-200/90 via-stone-100/80 to-stone-50/70" />
 
                   <div className="relative z-10 p-8 md:p-10 h-full flex flex-col gap-6">
 
@@ -233,43 +233,43 @@ const Evaluations = () => {
                         <p className="text-xs font-semibold tracking-[0.25em] uppercase text-accent mb-1">
                           Academic Evaluation
                         </p>
-                        <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+                        <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-black">
                           {service.title}
                         </h3>
                       </div>
-                      <div className="flex-shrink-0 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-5 py-3 text-center">
-                        <p className="text-xs text-white/60 uppercase tracking-widest mb-1">From</p>
-                        <p className="text-3xl font-bold text-white">${service.price}</p>
+                      <div className="flex-shrink-0 bg-black/10 backdrop-blur-md border border-black/10 rounded-2xl px-5 py-3 text-center">
+                        <p className="text-xs text-black/50 uppercase tracking-widest mb-1">From</p>
+                        <p className="text-3xl font-bold text-black">${service.price}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
-                        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                      <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
+                        <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
                           <FileText size={11} /> Description
                         </p>
-                        <p className="text-sm leading-relaxed text-white/85">
+                        <p className="text-sm leading-relaxed text-black/80">
                           {service.description}
                         </p>
                       </div>
                       <div className="space-y-4">
-                        <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
-                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                        <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
+                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
                             <Award size={11} className="text-accent" /> Recommended For
                           </p>
-                          <p className="text-sm leading-relaxed text-white/85">{service.recommendedFor}</p>
+                          <p className="text-sm leading-relaxed text-black/80">{service.recommendedFor}</p>
                         </div>
-                        <div className="bg-white/8 backdrop-blur-sm border border-white/15 rounded-2xl p-5 space-y-1">
-                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5">
+                        <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
+                          <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5">
                             <FileText size={11} /> Required Documents
                           </p>
-                          <p className="text-sm leading-relaxed text-white/85">{service.documents}</p>
+                          <p className="text-sm leading-relaxed text-black/80">{service.documents}</p>
                         </div>
                       </div>
                     </div>
 
                     <div>
-                      <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5 mb-3">
+                      <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5 mb-3">
                         <Clock size={11} /> Select Processing Speed
                       </p>
                       <div className="grid grid-cols-3 gap-3">
@@ -295,15 +295,15 @@ const Evaluations = () => {
                                   navigate("/application", { state: serviceData });
                                 }
                               }}
-                              className="relative rounded-2xl p-4 text-center transition-all duration-300 border bg-white/10 backdrop-blur-md border-white/20 hover:bg-accent hover:border-accent hover:shadow-lg hover:shadow-accent/30 hover:scale-[1.03] group"
+                              className="relative rounded-2xl p-4 text-center transition-all duration-300 border bg-black/5 backdrop-blur-md border-black/10 hover:bg-accent hover:border-accent hover:shadow-lg hover:shadow-accent/30 hover:scale-[1.03] group"
                             >
-                              <p className="text-[10px] font-bold uppercase tracking-widest mb-1 text-white/60 group-hover:text-white">
+                              <p className="text-[10px] font-bold uppercase tracking-widest mb-1 text-black/50 group-hover:text-white">
                                 {opt.label}
                               </p>
-                              <p className="text-xl font-bold text-white/90 group-hover:text-white">
+                              <p className="text-xl font-bold text-black/80 group-hover:text-white">
                                 ${opt.price}
                               </p>
-                              <p className="text-[10px] mt-0.5 text-white/50 group-hover:text-white/80">
+                              <p className="text-[10px] mt-0.5 text-black/40 group-hover:text-white/80">
                                 {opt.sub}
                               </p>
                             </button>
@@ -313,8 +313,8 @@ const Evaluations = () => {
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-auto pt-2">
-                      <p className="text-sm text-white/60">
-                        Selected: <span className="text-white font-semibold">${getSelectedPrice(service, idx)}</span>
+                      <p className="text-sm text-black/50">
+                        Selected: <span className="text-black font-semibold">${getSelectedPrice(service, idx)}</span>
                       </p>
                       <div className="flex gap-3">
                         <button
@@ -325,7 +325,7 @@ const Evaluations = () => {
                               alert("Sample report coming soon!");
                             }
                           }}
-                          className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/20 text-white font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-white/20 transition-all duration-200">
+                          className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
                           <Eye size={16} /> View Sample
                         </button>
                         <button
@@ -351,7 +351,7 @@ const Evaluations = () => {
                             });
                             showToast(`"${service.title} ${processingLabels[key]}" added to cart!`);
                           }}
-                          className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-md border border-white/30 text-white font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-white/25 transition-all duration-200 shadow-lg hover:scale-105">
+                          className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200 shadow-lg hover:scale-105">
                           🛒 Add to Cart
                         </button>
                         <button
@@ -375,7 +375,7 @@ const Evaluations = () => {
                               navigate("/application", { state: serviceData });
                             }
                           }}
-                          className="inline-flex items-center gap-2 bg-white text-black font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
+                          className="inline-flex items-center gap-2 bg-black text-white font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-black/80 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
                           Start Application →
                         </button>
                       </div>
