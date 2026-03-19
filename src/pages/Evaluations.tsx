@@ -278,28 +278,32 @@ const Evaluations = () => {
                           { key: "rush3" as ProcessingKey, label: "Rush 3-Day", price: service.rush3Day, sub: "3 Business Days" },
                           { key: "rush24" as ProcessingKey, label: "Rush 24hr", price: service.rush24Hr, sub: "24 Hours" }
                         ] as const).map((opt) => {
-                          const isActive = activeKey === opt.key;
                           return (
                             <button
                               key={opt.key}
-                              onClick={() =>
-                                setSelectedProcessing((prev) => ({ ...prev, [idx]: opt.key }))
-                              }
-                              className={`relative rounded-2xl p-4 text-center transition-all duration-300 border ${
-                                isActive ?
-                                "bg-accent border-accent shadow-lg shadow-accent/30 scale-[1.03]" :
-                                "bg-white/10 backdrop-blur-md border-white/20 hover:bg-white/20"}`
-                              }>
-                              {isActive &&
-                                <CheckCircle2 size={14} className="absolute top-2 right-2 text-white" />
-                              }
-                              <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${isActive ? "text-white" : "text-white/60"}`}>
+                              onClick={() => {
+                                const serviceData = {
+                                  serviceTitle: service.title,
+                                  processingKey: opt.key,
+                                  processingLabel: opt.label,
+                                  processingTime: opt.sub,
+                                  price: opt.price,
+                                };
+                                if (!user) {
+                                  navigate("/login", { state: { redirectTo: "/application", serviceData } });
+                                } else {
+                                  navigate("/application", { state: serviceData });
+                                }
+                              }}
+                              className="relative rounded-2xl p-4 text-center transition-all duration-300 border bg-white/10 backdrop-blur-md border-white/20 hover:bg-accent hover:border-accent hover:shadow-lg hover:shadow-accent/30 hover:scale-[1.03] group"
+                            >
+                              <p className="text-[10px] font-bold uppercase tracking-widest mb-1 text-white/60 group-hover:text-white">
                                 {opt.label}
                               </p>
-                              <p className={`text-xl font-bold ${isActive ? "text-white" : "text-white/90"}`}>
+                              <p className="text-xl font-bold text-white/90 group-hover:text-white">
                                 ${opt.price}
                               </p>
-                              <p className={`text-[10px] mt-0.5 ${isActive ? "text-white/80" : "text-white/50"}`}>
+                              <p className="text-[10px] mt-0.5 text-white/50 group-hover:text-white/80">
                                 {opt.sub}
                               </p>
                             </button>
