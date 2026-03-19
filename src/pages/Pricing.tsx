@@ -3,47 +3,52 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
 
-const toSlug = (title: string) => title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "");
-
 const evaluationPricing = [
   {
     title: "General Analysis",
+    slug: "general-analysis",
     standard: 100,
     rush3Day: 150,
     rush24Hr: 195,
   },
   {
-    title: "General Analysis + GPA",
+    title: "General Analysis plus GPA",
+    slug: "general-analysis-plus-gpa",
     standard: 150,
     rush3Day: 205,
     rush24Hr: 295,
   },
   {
     title: "Cosmetology Course-by-Course",
+    slug: "cosmetology-course-by-course",
     standard: 170,
     rush3Day: 275,
     rush24Hr: 375,
   },
   {
     title: "Course-by-Course",
+    slug: "course-by-course",
     standard: 190,
     rush3Day: 290,
     rush24Hr: 425,
   },
   {
     title: "Health Professions Course-by-Course",
+    slug: "health-professions-course-by-course",
     standard: 230,
     rush3Day: 355,
     rush24Hr: 490,
   },
   {
     title: "Comprehensive Course-by-Course",
+    slug: "comprehensive-course-by-course",
     standard: 290,
     rush3Day: 390,
     rush24Hr: 490,
   },
   {
-    title: "High School & University Course-by-Course",
+    title: "High School and University Course-by-Course",
+    slug: "high-school-and-university-course-by-course",
     standard: 295,
     rush3Day: 395,
     rush24Hr: 495,
@@ -104,7 +109,7 @@ const Pricing = () => {
                 >
                   <TableCell className="py-5 px-6">
                     <Link
-                      to={`/evaluations#${toSlug(item.title)}`}
+                      to={`/evaluations#${item.slug}`}
                       className="font-semibold text-sm text-foreground underline decoration-accent/40 underline-offset-2 hover:text-accent transition-colors"
                     >
                       {item.title}
