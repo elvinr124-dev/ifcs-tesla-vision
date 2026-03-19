@@ -269,7 +269,7 @@ const Evaluations = () => {
                     </div>
 
                     <div>
-                      <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-white/50 flex items-center gap-1.5 mb-3">
+                      <p className="text-[10px] font-semibold tracking-[0.2em] uppercase text-black/40 flex items-center gap-1.5 mb-3">
                         <Clock size={11} /> Select Processing Speed
                       </p>
                       <div className="grid grid-cols-3 gap-3">
