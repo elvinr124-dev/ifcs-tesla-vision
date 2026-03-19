@@ -210,11 +210,16 @@ const Navbar = () => {
           </div>
         ) : (
           <Link to="/login" className="group">
-            <div className={`${bubbleBase} ${location.pathname.startsWith("/login") || location.pathname === "/signup" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
-              <LogIn size={20} style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }} />
-              <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }}>
-                Login
-              </span>
+            <div
+              className={`flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 ${
+                location.pathname.startsWith("/login") || location.pathname === "/signup"
+                  ? "bg-accent shadow-accent/30"
+                  : useScrolledStyle
+                    ? "bg-foreground/10 hover:bg-accent/20"
+                    : "bg-white/15 backdrop-blur-md hover:bg-white/25"
+              }`}
+            >
+              <User size={20} style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }} />
             </div>
           </Link>
         )}
