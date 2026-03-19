@@ -39,6 +39,7 @@ import AddonRenewal from "./pages/AddonRenewal";
 import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TranscriptViewer from "./pages/TranscriptViewer";
+import Pricing from "./pages/Pricing";
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ const App = () => (
               <Route path="/terms" element={<TermsOfService />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/transcript" element={<TranscriptViewer />} />
+              <Route path="/pricing" element={<Pricing />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AIChatWidget />

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User } from "lucide-react";
+import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User, ChevronDown, DollarSign, Headphones } from "lucide-react";
 import NavSearchBar from "@/components/NavSearchBar";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -27,6 +27,8 @@ const evalPreviews = [
 const allLinks = [
   { label: "Evaluations", href: "/evaluations", icon: GraduationCap },
   { label: "Translations", href: "/translations", icon: Languages },
+  { label: "Duplicate Report", href: "/duplicate-reports", icon: Copy },
+  { label: "Pricing", href: "/pricing", icon: DollarSign },
   { label: "Consulting", href: "/consulting", icon: Briefcase },
   { label: "About Us", href: "/about", icon: Users },
   { label: "FAQ", href: "/faq", icon: HelpCircle },
@@ -39,14 +41,16 @@ const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [evalHover, setEvalHover] = useState(false);
+  const [supportHover, setSupportHover] = useState(false);
   const evalTimeout = useRef<ReturnType<typeof setTimeout>>();
+  const supportTimeout = useRef<ReturnType<typeof setTimeout>>();
   const location = useLocation();
   const navigate = useNavigate();
   const { totalItems } = useCart();
   const { user, logout } = useAuth();
 
   // Pages that have a dark hero where transparent bubbles look good
-  const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog"];
+  const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog", "/pricing"];
   const hasDarkHero = darkHeroPages.some(p => p === "/" ? location.pathname === "/" : location.pathname.startsWith(p));
 
   useEffect(() => {
@@ -64,6 +68,14 @@ const Navbar = () => {
   };
   const handleEvalLeave = () => {
     evalTimeout.current = setTimeout(() => setEvalHover(false), 200);
+  };
+
+  const handleSupportEnter = () => {
+    clearTimeout(supportTimeout.current);
+    setSupportHover(true);
+  };
+  const handleSupportLeave = () => {
+    supportTimeout.current = setTimeout(() => setSupportHover(false), 200);
   };
 
   const textColor = useScrolledStyle ? "hsl(var(--foreground))" : "white";
@@ -140,16 +152,6 @@ const Navbar = () => {
           )}
         </div>
 
-        {/* Duplicate Report */}
-        <Link to="/duplicate-reports" className="group">
-          <div className={`${bubbleBase} ${location.pathname === "/duplicate-reports" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
-            <Copy size={20} style={{ color: location.pathname === "/duplicate-reports" ? "white" : textColor }} />
-            <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/duplicate-reports" ? "white" : textColor }}>
-              Duplicate Report
-            </span>
-          </div>
-        </Link>
-
         {/* Translations */}
         <Link to="/translations" className="group">
           <div className={`${bubbleBase} ${location.pathname === "/translations" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
@@ -159,6 +161,65 @@ const Navbar = () => {
             </span>
           </div>
         </Link>
+
+        {/* Support dropdown */}
+        <div
+          className="relative"
+          onMouseEnter={handleSupportEnter}
+          onMouseLeave={handleSupportLeave}
+        >
+          <button
+            onClick={() => setSupportHover(!supportHover)}
+            className={`${bubbleBase} ${
+              ["/pricing", "/faq", "/contact"].includes(location.pathname)
+                ? bubbleActive
+                : useScrolledStyle ? bubbleScrolled : bubbleFloat
+            }`}
+          >
+            <Headphones size={20} style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }} />
+            <span className="text-sm font-semibold tracking-wide" style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }}>
+              Support
+            </span>
+            <ChevronDown size={14} style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }} className={`transition-transform duration-200 ${supportHover ? "rotate-180" : ""}`} />
+          </button>
+
+          {supportHover && (
+            <div
+              className="absolute top-full left-1/2 -translate-x-1/2 mt-3 z-50 animate-fade-in"
+              onMouseEnter={handleSupportEnter}
+              onMouseLeave={handleSupportLeave}
+            >
+              <div className="bg-background/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl p-5 min-w-[340px]">
+                <div className="flex flex-col gap-1">
+                  <Link
+                    to="/pricing"
+                    onClick={() => setSupportHover(false)}
+                    className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
+                  >
+                    <span className="text-sm font-bold text-foreground">Pricing</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">Check out TFCS's affordable pricing.</span>
+                  </Link>
+                  <Link
+                    to="/faq"
+                    onClick={() => setSupportHover(false)}
+                    className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
+                  >
+                    <span className="text-sm font-bold text-foreground">FAQs</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">Still have questions? Check out our Frequently Asked Questions page.</span>
+                  </Link>
+                  <Link
+                    to="/contact"
+                    onClick={() => setSupportHover(false)}
+                    className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
+                  >
+                    <span className="text-sm font-bold text-foreground">Contact Us</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">We are here to help.</span>
+                  </Link>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
 
         {/* My Dashboard (when logged in) */}
         {user && (
