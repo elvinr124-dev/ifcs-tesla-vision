@@ -230,7 +230,7 @@ const Evaluations = () => {
 
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div>
-                        <p className="text-xs font-semibold tracking-[0.25em] uppercase text-accent mb-1">
+                        <p className="text-xs font-semibold tracking-[0.25em] uppercase text-black/60 mb-1">
                           Academic Evaluation
                         </p>
                         <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-black">
