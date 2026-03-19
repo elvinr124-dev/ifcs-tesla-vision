@@ -297,13 +297,13 @@ const Evaluations = () => {
                               }}
                               className="relative rounded-2xl p-4 text-center transition-all duration-300 border bg-black/5 backdrop-blur-md border-black/10 hover:bg-accent hover:border-accent hover:shadow-lg hover:shadow-accent/30 hover:scale-[1.03] group"
                             >
-                              <p className="text-[10px] font-bold uppercase tracking-widest mb-1 text-white/60 group-hover:text-white">
+                              <p className="text-[10px] font-bold uppercase tracking-widest mb-1 text-black/50 group-hover:text-white">
                                 {opt.label}
                               </p>
-                              <p className="text-xl font-bold text-white/90 group-hover:text-white">
+                              <p className="text-xl font-bold text-black/80 group-hover:text-white">
                                 ${opt.price}
                               </p>
-                              <p className="text-[10px] mt-0.5 text-white/50 group-hover:text-white/80">
+                              <p className="text-[10px] mt-0.5 text-black/40 group-hover:text-white/80">
                                 {opt.sub}
                               </p>
                             </button>
