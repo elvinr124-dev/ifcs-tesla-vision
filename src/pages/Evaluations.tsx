@@ -224,7 +224,7 @@ const Evaluations = () => {
                     className="absolute inset-0 bg-cover bg-center transition-transform duration-700 hover:scale-105"
                     style={{ backgroundImage: `url(${service.bgImage})` }} />
                   
-                  <div className="absolute inset-0 bg-gradient-to-br from-black/85 via-black/60 to-black/40" />
+                  <div className="absolute inset-0 bg-gradient-to-br from-stone-200/90 via-stone-100/80 to-stone-50/70" />
 
                   <div className="relative z-10 p-8 md:p-10 h-full flex flex-col gap-6">
 
