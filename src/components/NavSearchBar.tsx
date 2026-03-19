@@ -104,7 +104,7 @@ const NavSearchBar = ({ scrolled, hasDarkHero }: NavSearchBarProps) => {
           onFocus={() => setFocused(true)}
           onKeyDown={handleKeyDown}
           placeholder="Search for Evaluations"
-          className="bg-transparent border-none outline-none text-sm font-semibold tracking-wide w-44 placeholder:opacity-70"
+          className="bg-transparent border-none outline-none text-sm font-semibold tracking-wide w-56 placeholder:opacity-70"
           style={{ color: textColor }}
         />
       </div>

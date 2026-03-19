@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy } from "lucide-react";
+import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User } from "lucide-react";
 import NavSearchBar from "@/components/NavSearchBar";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -75,15 +75,17 @@ const Navbar = () => {
 
   return (
     <nav className={`tesla-nav ${useScrolledStyle ? "tesla-nav-scrolled" : ""}`}>
-      <Link to="/" className="text-2xl font-bold tracking-widest" style={{ color: textColor }}>
+      <Link to="/" className="text-2xl font-bold tracking-widest shrink-0" style={{ color: textColor }}>
         TFCS
       </Link>
 
-      {/* Desktop nav */}
-      <div className="hidden md:flex items-center gap-2.5">
-
-        {/* Search Bar */}
+      {/* Search Bar - centered between logo and nav */}
+      <div className="hidden md:flex flex-1 justify-center px-4">
         <NavSearchBar scrolled={useScrolledStyle} hasDarkHero={hasDarkHero} />
+      </div>
+
+      {/* Desktop nav */}
+      <div className="hidden md:flex items-center gap-2.5 shrink-0">
 
         {/* Get an Evaluation - with hover dropdown */}
         <div
@@ -208,11 +210,16 @@ const Navbar = () => {
           </div>
         ) : (
           <Link to="/login" className="group">
-            <div className={`${bubbleBase} ${location.pathname.startsWith("/login") || location.pathname === "/signup" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
-              <LogIn size={20} style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }} />
-              <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }}>
-                Login
-              </span>
+            <div
+              className={`flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 ${
+                location.pathname.startsWith("/login") || location.pathname === "/signup"
+                  ? "bg-accent shadow-accent/30"
+                  : useScrolledStyle
+                    ? "bg-foreground/10 hover:bg-accent/20"
+                    : "bg-white/15 backdrop-blur-md hover:bg-white/25"
+              }`}
+            >
+              <User size={20} style={{ color: location.pathname.startsWith("/login") || location.pathname === "/signup" ? "white" : textColor }} />
             </div>
           </Link>
         )}
