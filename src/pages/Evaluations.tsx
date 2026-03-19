@@ -233,7 +233,7 @@ const Evaluations = () => {
                         <p className="text-xs font-semibold tracking-[0.25em] uppercase text-accent mb-1">
                           Academic Evaluation
                         </p>
-                        <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-white">
+                        <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-black">
                           {service.title}
                         </h3>
                       </div>
