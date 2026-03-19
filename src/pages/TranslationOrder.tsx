@@ -1,13 +1,14 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTriangle, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
+import * as pdfjsLib from "pdfjs-dist";
 
-
-
+// Set the worker source
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs`;
 
 interface FileAnalysis {
   file: File;
@@ -130,7 +131,9 @@ const TranslationOrder = () => {
   const [submitted, setSubmitted] = useState(false);
 
   const [fileAnalyses, setFileAnalyses] = useState<FileAnalysis[]>([]);
+  const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const dragCounter = useRef(0);
 
   // Add-ons
   const [addExpedited, setAddExpedited] = useState(false);
@@ -142,6 +145,19 @@ const TranslationOrder = () => {
   const [cardCvc, setCardCvc] = useState("");
   const [cardZip, setCardZip] = useState("");
   const [cardName, setCardName] = useState("");
+
+  // Convert a single PDF page to a base64 image
+  const pdfPageToBase64 = async (pdfDoc: pdfjsLib.PDFDocumentProxy, pageNum: number): Promise<string> => {
+    const page = await pdfDoc.getPage(pageNum);
+    const scale = 2; // high res for AI analysis
+    const viewport = page.getViewport({ scale });
+    const canvas = document.createElement("canvas");
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    const ctx = canvas.getContext("2d")!;
+    await page.render({ canvasContext: ctx, viewport }).promise;
+    return canvas.toDataURL("image/jpeg", 0.85);
+  };
 
   const analyzeFile = async (file: File, index: number) => {
     const reader = new FileReader();
@@ -189,18 +205,120 @@ const TranslationOrder = () => {
     reader.readAsDataURL(file);
   };
 
+  // Process PDF: split into individual pages and analyze each
+  const processPdf = async (file: File) => {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const pageCount = pdfDoc.numPages;
+
+    // Create placeholder entries for all pages
+    const startIndex = fileAnalyses.length;
+    const placeholders: FileAnalysis[] = [];
+    for (let p = 1; p <= pageCount; p++) {
+      placeholders.push({
+        file: new File([], `${file.name} — Page ${p}`, { type: "image/jpeg" }),
+        analyzing: false,
+        analysis: null,
+      });
+    }
+    setFileAnalyses(prev => [...prev, ...placeholders]);
+
+    // Analyze each page
+    for (let p = 1; p <= pageCount; p++) {
+      const idx = startIndex + p - 1;
+      const dataUrl = await pdfPageToBase64(pdfDoc, p);
+      const base64 = dataUrl.split(",")[1];
+
+      setFileAnalyses(prev => prev.map((fa, i) =>
+        i === idx ? { ...fa, preview: dataUrl, analyzing: true } : fa
+      ));
+
+      try {
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-document`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ imageBase64: base64, fileName: `${file.name} - Page ${p}` }),
+          }
+        );
+
+        if (!response.ok) throw new Error("Analysis failed");
+        const analysis = await response.json();
+
+        if (analysis.isBlurry) {
+          toast({
+            title: `Blurry Page Detected (Page ${p})`,
+            description: analysis.blurryReason || "Please re-upload a clearer version of this document.",
+            variant: "destructive",
+          });
+        }
+
+        setFileAnalyses(prev => prev.map((fa, i) =>
+          i === idx ? { ...fa, analyzing: false, analysis } : fa
+        ));
+      } catch {
+        setFileAnalyses(prev => prev.map((fa, i) =>
+          i === idx ? { ...fa, analyzing: false, error: "Could not analyze page. You can still submit for manual review." } : fa
+        ));
+      }
+    }
+  };
+
+  const processFiles = async (files: File[]) => {
+    for (const file of files) {
+      if (file.type === "application/pdf") {
+        await processPdf(file);
+      } else {
+        const startIndex = fileAnalyses.length;
+        const newAnalysis: FileAnalysis = { file, analyzing: false, analysis: null };
+        setFileAnalyses(prev => [...prev, newAnalysis]);
+        analyzeFile(file, startIndex);
+      }
+    }
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const newFiles = Array.from(e.target.files);
-      const startIndex = fileAnalyses.length;
-      const newAnalyses: FileAnalysis[] = newFiles.map(f => ({
-        file: f, analyzing: false, analysis: null,
-      }));
-      setFileAnalyses(prev => [...prev, ...newAnalyses]);
-      newFiles.forEach((file, i) => analyzeFile(file, startIndex + i));
+      processFiles(Array.from(e.target.files));
     }
     if (e.target) e.target.value = "";
   };
+
+  // Drag and drop handlers
+
+  const handleDragEnter = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current++;
+    setDragging(true);
+  }, []);
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dragCounter.current--;
+    if (dragCounter.current === 0) setDragging(false);
+  }, []);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragging(false);
+    dragCounter.current = 0;
+    const files = Array.from(e.dataTransfer.files).filter(f =>
+      ["application/pdf", "image/jpeg", "image/png", "image/jpg"].includes(f.type)
+    );
+    if (files.length > 0) processFiles(files);
+  }, [fileAnalyses.length]);
 
   const removeFile = (idx: number) => {
     setFileAnalyses(prev => prev.filter((_, i) => i !== idx));
@@ -319,16 +437,28 @@ const TranslationOrder = () => {
               </div>
 
               {/* Upload Documents */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
+              <div
+                className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5"
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+              >
                 <SectionHeading>Upload Your Documents</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
-                  Upload clear, legible images or PDFs. Our AI will automatically count words and calculate pricing.
+                  Upload clear, legible images or PDFs. Our AI will automatically count words per page and calculate pricing.
                 </p>
 
-                <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border rounded-2xl p-8 cursor-pointer hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 group">
-                  <Upload size={28} className="text-muted-foreground group-hover:text-accent transition-colors" />
-                  <span className="text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Click to browse files</span>
-                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · Max 4MB per file</span>
+                <label className={`flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all duration-200 group ${
+                  dragging
+                    ? "border-accent bg-accent/10 scale-[1.02]"
+                    : "border-border hover:border-accent/50 hover:bg-accent/5"
+                }`}>
+                  <Upload size={28} className={`transition-colors ${dragging ? "text-accent" : "text-muted-foreground group-hover:text-accent"}`} />
+                  <span className={`text-sm font-medium transition-colors ${dragging ? "text-accent" : "text-muted-foreground group-hover:text-accent"}`}>
+                    {dragging ? "Drop files here" : "Drag & drop or click to browse files"}
+                  </span>
+                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · PDFs are split into individual pages · Max 4MB per file</span>
                   <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                 </label>
 
