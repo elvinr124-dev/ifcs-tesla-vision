@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LogOut, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User, ChevronDown, DollarSign, Headphones } from "lucide-react";
+import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User, ChevronDown, DollarSign, Headphones } from "lucide-react";
 import NavSearchBar from "@/components/NavSearchBar";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -47,7 +47,7 @@ const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { totalItems } = useCart();
-  const { user, logout } = useAuth();
+  const { user } = useAuth();
 
   // Pages that have a dark hero where transparent bubbles look good
   const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog"];
@@ -248,7 +248,7 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* Login / Sign Out */}
+        {/* Profile / Login */}
         {user ? (
           <div className="flex items-center gap-2">
             {user.role === "staff" && (
@@ -261,15 +261,19 @@ const Navbar = () => {
                 </div>
               </Link>
             )}
-            <button
-              onClick={() => { logout(); navigate("/"); }}
-              className={`${bubbleBase} ${useScrolledStyle ? bubbleScrolled : bubbleFloat}`}
-            >
-              <LogOut size={20} style={{ color: textColor }} />
-              <span className="text-sm font-semibold tracking-wide" style={{ color: textColor }}>
-                Sign Out
-              </span>
-            </button>
+            <Link to="/account">
+              <div
+                className={`flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 ${
+                  location.pathname === "/account"
+                    ? "bg-accent shadow-accent/30"
+                    : useScrolledStyle
+                      ? "bg-foreground/10 hover:bg-accent/20"
+                      : "bg-white/15 backdrop-blur-md hover:bg-white/25"
+                }`}
+              >
+                <User size={20} style={{ color: location.pathname === "/account" ? "white" : textColor }} />
+              </div>
+            </Link>
           </div>
         ) : (
           <Link to="/login" className="group">
@@ -342,13 +346,18 @@ const Navbar = () => {
                     <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
                     <span className="text-sm font-semibold tracking-wide">My Dashboard</span>
                   </Link>
-                  <button
-                    onClick={() => { logout(); navigate("/"); setSidebarOpen(false); }}
-                    className="flex items-center gap-4 px-6 py-4 text-foreground hover:bg-muted transition-all duration-200"
+                  <Link
+                    to="/account"
+                    onClick={() => setSidebarOpen(false)}
+                    className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
+                      location.pathname === "/account"
+                        ? "bg-accent/10 text-accent border-r-4 border-accent"
+                        : "text-foreground hover:bg-muted"
+                    }`}
                   >
-                    <LogOut size={20} className="text-muted-foreground" />
-                    <span className="text-sm font-semibold tracking-wide">Sign Out</span>
-                  </button>
+                    <User size={20} className={location.pathname === "/account" ? "text-accent" : "text-muted-foreground"} />
+                    <span className="text-sm font-semibold tracking-wide">My Account</span>
+                  </Link>
                 </>
               )}
             </div>
@@ -406,13 +415,17 @@ const Navbar = () => {
                   <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
                   <span className="text-sm font-semibold tracking-wide">My Dashboard</span>
                 </Link>
-                <button
-                  onClick={() => { logout(); navigate("/"); }}
-                  className="flex items-center gap-4 px-6 py-4 text-foreground hover:bg-muted transition-all duration-200"
+                <Link
+                  to="/account"
+                  className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
+                    location.pathname === "/account"
+                      ? "bg-accent/10 text-accent border-r-4 border-accent"
+                      : "text-foreground hover:bg-muted"
+                  }`}
                 >
-                  <LogOut size={20} className="text-muted-foreground" />
-                  <span className="text-sm font-semibold tracking-wide">Sign Out</span>
-                </button>
+                  <User size={20} className={location.pathname === "/account" ? "text-accent" : "text-muted-foreground"} />
+                  <span className="text-sm font-semibold tracking-wide">My Account</span>
+                </Link>
               </>
             )}
           </div>

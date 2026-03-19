@@ -40,6 +40,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TranscriptViewer from "./pages/TranscriptViewer";
 import Pricing from "./pages/Pricing";
+import Account from "./pages/Account";
 
 const queryClient = new QueryClient();
 
@@ -85,6 +86,7 @@ const App = () => (
               <Route path="/privacy" element={<PrivacyPolicy />} />
               <Route path="/transcript" element={<TranscriptViewer />} />
               <Route path="/pricing" element={<Pricing />} />
+              <Route path="/account" element={<Account />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AIChatWidget />
