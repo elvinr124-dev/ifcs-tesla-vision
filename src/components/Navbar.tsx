@@ -248,7 +248,7 @@ const Navbar = () => {
           </div>
         </Link>
 
-        {/* Login / Sign Out */}
+        {/* Profile / Login */}
         {user ? (
           <div className="flex items-center gap-2">
             {user.role === "staff" && (
@@ -261,15 +261,19 @@ const Navbar = () => {
                 </div>
               </Link>
             )}
-            <button
-              onClick={() => { logout(); navigate("/"); }}
-              className={`${bubbleBase} ${useScrolledStyle ? bubbleScrolled : bubbleFloat}`}
-            >
-              <LogOut size={20} style={{ color: textColor }} />
-              <span className="text-sm font-semibold tracking-wide" style={{ color: textColor }}>
-                Sign Out
-              </span>
-            </button>
+            <Link to="/account">
+              <div
+                className={`flex items-center justify-center w-11 h-11 rounded-full transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105 ${
+                  location.pathname === "/account"
+                    ? "bg-accent shadow-accent/30"
+                    : useScrolledStyle
+                      ? "bg-foreground/10 hover:bg-accent/20"
+                      : "bg-white/15 backdrop-blur-md hover:bg-white/25"
+                }`}
+              >
+                <User size={20} style={{ color: location.pathname === "/account" ? "white" : textColor }} />
+              </div>
+            </Link>
           </div>
         ) : (
           <Link to="/login" className="group">

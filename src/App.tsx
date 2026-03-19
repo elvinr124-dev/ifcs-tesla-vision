@@ -40,6 +40,7 @@ import TermsOfService from "./pages/TermsOfService";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TranscriptViewer from "./pages/TranscriptViewer";
 import Pricing from "./pages/Pricing";
+import Account from "./pages/Account";
 
 const queryClient = new QueryClient();
 
