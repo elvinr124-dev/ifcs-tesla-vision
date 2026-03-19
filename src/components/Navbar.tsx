@@ -75,15 +75,17 @@ const Navbar = () => {
 
   return (
     <nav className={`tesla-nav ${useScrolledStyle ? "tesla-nav-scrolled" : ""}`}>
-      <Link to="/" className="text-2xl font-bold tracking-widest" style={{ color: textColor }}>
+      <Link to="/" className="text-2xl font-bold tracking-widest shrink-0" style={{ color: textColor }}>
         TFCS
       </Link>
 
-      {/* Desktop nav */}
-      <div className="hidden md:flex items-center gap-2.5">
-
-        {/* Search Bar */}
+      {/* Search Bar - centered between logo and nav */}
+      <div className="hidden md:flex flex-1 justify-center px-4">
         <NavSearchBar scrolled={useScrolledStyle} hasDarkHero={hasDarkHero} />
+      </div>
+
+      {/* Desktop nav */}
+      <div className="hidden md:flex items-center gap-2.5 shrink-0">
 
         {/* Get an Evaluation - with hover dropdown */}
         <div
