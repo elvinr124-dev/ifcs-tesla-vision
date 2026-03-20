@@ -63,10 +63,8 @@ const Payment = () => {
             Authorization: `Bearer ${SUPABASE_KEY}`,
           },
           body: JSON.stringify({
-            fileBase64: base64,
+            imageBase64: base64,
             fileName: file.name,
-            prompt:
-              "Extract the credit card information from this image. Return ONLY a JSON object with these fields: cardHolder (name on card), cardNumber (full number with spaces), expMonth (2-digit), expYear (4-digit). If you cannot read a field, set it to empty string.",
           }),
         });
 
