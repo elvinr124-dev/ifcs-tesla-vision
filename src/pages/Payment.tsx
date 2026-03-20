@@ -48,37 +48,27 @@ const Payment = () => {
     setCardPreview(url);
     setScanningCard(true);
 
-    try {
-      const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-      const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+    const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
-      const reader = new FileReader();
-      reader.onload = async () => {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
         const base64 = (reader.result as string).split(",")[1];
 
-        const res = await fetch(`${SUPABASE_URL}/functions/v1/analyze-document`, {
+        const res = await fetch(`${SUPABASE_URL}/functions/v1/scan-card`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${SUPABASE_KEY}`,
           },
-          body: JSON.stringify({
-            fileBase64: base64,
-            fileName: file.name,
-            prompt:
-              "Extract the credit card information from this image. Return ONLY a JSON object with these fields: cardHolder (name on card), cardNumber (full number with spaces), expMonth (2-digit), expYear (4-digit). If you cannot read a field, set it to empty string.",
-          }),
+          body: JSON.stringify({ imageBase64: base64 }),
         });
 
-        if (!res.ok) throw new Error("Failed to analyze card");
+        if (!res.ok) throw new Error("Failed to scan card");
 
-        const data = await res.json();
-        const text = data.result || data.text || "";
-
-        // Try to parse JSON from the response
-        const jsonMatch = text.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
+        const parsed = await res.json();
+        if (parsed.cardHolder || parsed.cardNumber) {
           setForm((p) => ({
             ...p,
             cardHolder: parsed.cardHolder || p.cardHolder,
@@ -90,13 +80,13 @@ const Payment = () => {
         } else {
           toast.error("Could not read card details. Please enter manually.");
         }
-      };
-      reader.readAsDataURL(file);
-    } catch {
-      toast.error("Could not read card details. Please enter manually.");
-    } finally {
-      setTimeout(() => setScanningCard(false), 1500);
-    }
+      } catch {
+        toast.error("Could not read card details. Please enter manually.");
+      } finally {
+        setScanningCard(false);
+      }
+    };
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
