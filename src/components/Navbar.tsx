@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User, ChevronDown, DollarSign, Headphones } from "lucide-react";
+import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User, ChevronDown, DollarSign, Headphones, CreditCard } from "lucide-react";
 import NavSearchBar from "@/components/NavSearchBar";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -33,6 +33,7 @@ const allLinks = [
   { label: "About Us", href: "/about", icon: Users },
   { label: "FAQ", href: "/faq", icon: HelpCircle },
   { label: "Contact", href: "/contact", icon: Mail },
+  { label: "Payment", href: "/payment", icon: CreditCard },
   { label: "Cart", href: "/cart", icon: ShoppingCart },
   { label: "Login", href: "/login", icon: LogIn },
 ];
