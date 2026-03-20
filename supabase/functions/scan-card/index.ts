@@ -32,7 +32,7 @@ serve(async (req) => {
         messages: [
           {
             role: "system",
-            content: "You are a credit card OCR assistant. Extract card details from the image. Use the extract_card tool to return results."
+            content: "You are a credit card OCR assistant. Extract card details from the image. For the front: extract cardholder name, card number, expiry month, expiry year. For the back: extract the CVV/CVC code. Use the extract_card tool to return results."
           },
           {
             role: "user",
