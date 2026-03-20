@@ -41,6 +41,7 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TranscriptViewer from "./pages/TranscriptViewer";
 import Pricing from "./pages/Pricing";
 import Account from "./pages/Account";
+import Payment from "./pages/Payment";
 
 const queryClient = new QueryClient();
 
