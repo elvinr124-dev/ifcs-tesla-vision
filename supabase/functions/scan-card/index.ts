@@ -51,10 +51,11 @@ serve(async (req) => {
               parameters: {
                 type: "object",
                 properties: {
-                  cardHolder: { type: "string", description: "Name on the card" },
-                  cardNumber: { type: "string", description: "Card number with spaces" },
-                  expMonth: { type: "string", description: "2-digit expiry month" },
-                  expYear: { type: "string", description: "4-digit expiry year" },
+                  cardHolder: { type: "string", description: "Name on the card (empty if back of card)" },
+                  cardNumber: { type: "string", description: "Card number with spaces (empty if back of card)" },
+                  expMonth: { type: "string", description: "2-digit expiry month (empty if back of card)" },
+                  expYear: { type: "string", description: "4-digit expiry year (empty if back of card)" },
+                  cvv: { type: "string", description: "3 or 4 digit CVV/CVC code from back of card (empty if front of card)" },
                 },
                 required: ["cardHolder", "cardNumber", "expMonth", "expYear"],
                 additionalProperties: false,
