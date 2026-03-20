@@ -5,7 +5,7 @@ const Footer = () => {
     { label: "Academic Evaluations", to: "/evaluations" },
     { label: "Translations", to: "/translations" },
     { label: "Consulting", to: "/consulting" },
-    { label: "Apply Now", to: "/application" },
+    { label: "Payment", to: "/payment" },
   ];
 
   const companyLinks = [
