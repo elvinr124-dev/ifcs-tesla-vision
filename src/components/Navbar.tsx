@@ -33,6 +33,7 @@ const allLinks = [
   { label: "About Us", href: "/about", icon: Users },
   { label: "FAQ", href: "/faq", icon: HelpCircle },
   { label: "Contact", href: "/contact", icon: Mail },
+  { label: "Payment", href: "/payment", icon: CreditCard },
   { label: "Cart", href: "/cart", icon: ShoppingCart },
   { label: "Login", href: "/login", icon: LogIn },
 ];

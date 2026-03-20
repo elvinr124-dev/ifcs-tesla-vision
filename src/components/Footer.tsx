@@ -74,11 +74,12 @@ const Footer = () => {
             © {new Date().getFullYear()} Institute of Foreign Credential Services. All rights reserved.
           </p>
           <div className="flex gap-6">
-            {["Privacy Policy", "Terms of Service"].map((item) => (
-              <a key={item} href="#" className="text-xs text-primary-foreground/40 hover:text-primary-foreground/70 transition-colors">
-                {item}
-              </a>
-            ))}
+            <Link to="/privacy" className="text-xs text-primary-foreground/40 hover:text-primary-foreground/70 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="text-xs text-primary-foreground/40 hover:text-primary-foreground/70 transition-colors">
+              Terms of Service
+            </Link>
           </div>
         </div>
       </div>
