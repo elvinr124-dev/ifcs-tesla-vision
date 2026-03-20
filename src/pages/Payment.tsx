@@ -7,8 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Camera, CreditCard, Upload } from "lucide-react";
+import { Camera, CheckCircle2, CreditCard } from "lucide-react";
 import paymentBg from "@/assets/payment-bg.jpg";
 
 const currentYear = new Date().getFullYear();
@@ -31,30 +32,67 @@ const Payment = () => {
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [submitting, setSubmitting] = useState(false);
-  const [cardPreview, setCardPreview] = useState<string | null>(null);
-  const [scanningCard, setScanningCard] = useState(false);
-  const cardInputRef = useRef<HTMLInputElement>(null);
+
+  // Card scan state
+  const [frontScanned, setFrontScanned] = useState(false);
+  const [backScanned, setBackScanned] = useState(false);
+  const [scanningFront, setScanningFront] = useState(false);
+  const [scanningBack, setScanningBack] = useState(false);
+  const frontInputRef = useRef<HTMLInputElement>(null);
+  const backInputRef = useRef<HTMLInputElement>(null);
+
+  // E-signature state
+  const [termsPopupOpen, setTermsPopupOpen] = useState(false);
+  const [privacyPopupOpen, setPrivacyPopupOpen] = useState(false);
+  const [termsSignature, setTermsSignature] = useState("");
+  const [privacySignature, setPrivacySignature] = useState("");
 
   const total = form.amount ? parseFloat(form.amount) || 0 : 0;
 
   const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement>) =>
     setForm((p) => ({ ...p, [k]: e.target.value }));
 
-  const handleCardUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const handleTermsCheck = (checked: boolean | "indeterminate") => {
+    if (checked === true) {
+      setTermsPopupOpen(true);
+    } else {
+      setAgreeTerms(false);
+      setTermsSignature("");
+    }
+  };
 
-    const url = URL.createObjectURL(file);
-    setCardPreview(url);
-    setScanningCard(true);
+  const handlePrivacyCheck = (checked: boolean | "indeterminate") => {
+    if (checked === true) {
+      setPrivacyPopupOpen(true);
+    } else {
+      setAgreePrivacy(false);
+      setPrivacySignature("");
+    }
+  };
 
-    const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-    const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  const confirmTermsSignature = () => {
+    if (!termsSignature.trim()) return;
+    setAgreeTerms(true);
+    setTermsPopupOpen(false);
+  };
+
+  const confirmPrivacySignature = () => {
+    if (!privacySignature.trim()) return;
+    setAgreePrivacy(true);
+    setPrivacyPopupOpen(false);
+  };
+
+  const scanCard = async (file: File, side: "front" | "back") => {
+    const setScan = side === "front" ? setScanningFront : setScanningBack;
+    const setDone = side === "front" ? setFrontScanned : setBackScanned;
+    setScan(true);
 
     const reader = new FileReader();
     reader.onload = async () => {
       try {
         const base64 = (reader.result as string).split(",")[1];
+        const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+        const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
         const res = await fetch(`${SUPABASE_URL}/functions/v1/scan-card`, {
           method: "POST",
@@ -68,25 +106,43 @@ const Payment = () => {
         if (!res.ok) throw new Error("Failed to scan card");
 
         const parsed = await res.json();
-        if (parsed.cardHolder || parsed.cardNumber) {
-          setForm((p) => ({
-            ...p,
-            cardHolder: parsed.cardHolder || p.cardHolder,
-            cardNumber: parsed.cardNumber || p.cardNumber,
-            expMonth: parsed.expMonth || p.expMonth,
-            expYear: parsed.expYear || p.expYear,
-          }));
-          toast.success("Card details extracted successfully!");
+
+        if (side === "front") {
+          if (parsed.cardHolder || parsed.cardNumber) {
+            setForm((p) => ({
+              ...p,
+              cardHolder: parsed.cardHolder || p.cardHolder,
+              cardNumber: parsed.cardNumber || p.cardNumber,
+              expMonth: parsed.expMonth || p.expMonth,
+              expYear: parsed.expYear || p.expYear,
+            }));
+          }
         } else {
-          toast.error("Could not read card details. Please enter manually.");
+          // Back of card — CVV
+          if (parsed.cvv) {
+            setForm((p) => ({ ...p, cvv: parsed.cvv || p.cvv }));
+          }
         }
+
+        setDone(true);
+        toast.success(`Card ${side} scanned successfully!`);
       } catch {
-        toast.error("Could not read card details. Please enter manually.");
+        toast.error(`Could not read card ${side}. Please enter manually.`);
       } finally {
-        setScanningCard(false);
+        setScan(false);
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleFrontCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) scanCard(file, "front");
+  };
+
+  const handleBackCapture = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) scanCard(file, "back");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -110,19 +166,19 @@ const Payment = () => {
     <div className="bg-background min-h-screen">
       <Navbar />
 
-      {/* Hero */}
-      <section className="relative h-[60vh] min-h-[420px] flex items-center justify-center overflow-hidden">
+      {/* Hero — matches Evaluations / DuplicateReports size */}
+      <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
         <img
           src={paymentBg}
           alt=""
           className="absolute inset-0 w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="relative z-10 text-center px-6">
+        <div className="video-overlay" />
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-6">
           <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight text-white leading-[0.95]">
             Payment
           </h1>
-          <p className="mt-4 text-lg md:text-xl text-white/70 max-w-xl mx-auto">
+          <p className="mt-4 text-lg md:text-xl text-white/70 max-w-xl">
             Complete your payment securely below.
           </p>
         </div>
@@ -184,59 +240,93 @@ const Payment = () => {
               </div>
             </div>
 
-            {/* Divider */}
             <div className="border-t border-border" />
 
             {/* Card Section */}
             <div className="space-y-1">
               <h2 className="text-xl font-bold text-foreground tracking-tight">Card Details</h2>
-              <p className="text-sm text-muted-foreground">Upload a card image to autofill or enter manually</p>
+              <p className="text-sm text-muted-foreground">Take photos of your card to autofill or enter manually</p>
             </div>
 
-            {/* Card Upload */}
-            <div
-              className="relative border-2 border-dashed border-border rounded-2xl p-6 flex flex-col items-center gap-4 cursor-pointer hover:border-accent/60 transition-colors group"
-              onClick={() => cardInputRef.current?.click()}
-            >
-              <input
-                ref={cardInputRef}
-                type="file"
-                accept="image/*"
-                capture="environment"
-                className="hidden"
-                onChange={handleCardUpload}
-              />
-              {cardPreview ? (
-                <div className="relative w-full max-w-sm">
-                  <img src={cardPreview} alt="Card preview" className="w-full rounded-xl shadow-lg" />
-                  {scanningCard && (
-                    <div className="absolute inset-0 bg-black/60 rounded-xl flex items-center justify-center">
-                      <div className="flex flex-col items-center gap-2">
-                        <div className="w-8 h-8 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        <span className="text-white text-sm font-medium">Scanning card…</span>
-                      </div>
+            {/* Camera-only card capture: Front & Back */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Front of card */}
+              <div
+                className={`relative border-2 border-dashed rounded-2xl p-5 flex flex-col items-center gap-3 cursor-pointer transition-colors ${
+                  frontScanned
+                    ? "border-accent/60 bg-accent/5"
+                    : "border-border hover:border-accent/40"
+                }`}
+                onClick={() => !scanningFront && frontInputRef.current?.click()}
+              >
+                <input
+                  ref={frontInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={handleFrontCapture}
+                />
+                {scanningFront ? (
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm text-muted-foreground">Scanning front…</span>
+                  </div>
+                ) : frontScanned ? (
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <CheckCircle2 size={32} className="text-accent" />
+                    <span className="text-sm font-semibold text-accent">Front scanned</span>
+                    <span className="text-xs text-muted-foreground">Tap to re-scan</span>
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center">
+                      <Camera size={24} className="text-muted-foreground" />
                     </div>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center group-hover:bg-accent/10 transition-colors">
-                    <CreditCard size={28} className="text-muted-foreground group-hover:text-accent transition-colors" />
+                    <span className="text-sm font-semibold text-foreground">Front of Card</span>
+                    <span className="text-xs text-muted-foreground">Tap to take photo</span>
                   </div>
-                  <div className="text-center">
-                    <p className="text-sm font-semibold text-foreground">Upload or take a photo of your card</p>
-                    <p className="text-xs text-muted-foreground mt-1">We'll extract the details automatically</p>
+                )}
+              </div>
+
+              {/* Back of card */}
+              <div
+                className={`relative border-2 border-dashed rounded-2xl p-5 flex flex-col items-center gap-3 cursor-pointer transition-colors ${
+                  backScanned
+                    ? "border-accent/60 bg-accent/5"
+                    : "border-border hover:border-accent/40"
+                }`}
+                onClick={() => !scanningBack && backInputRef.current?.click()}
+              >
+                <input
+                  ref={backInputRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  className="hidden"
+                  onChange={handleBackCapture}
+                />
+                {scanningBack ? (
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <div className="w-8 h-8 border-2 border-accent border-t-transparent rounded-full animate-spin" />
+                    <span className="text-sm text-muted-foreground">Scanning back…</span>
                   </div>
-                  <div className="flex gap-3">
-                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/40 px-3 py-1.5 rounded-full">
-                      <Upload size={12} /> Upload
-                    </span>
-                    <span className="inline-flex items-center gap-1.5 text-xs text-muted-foreground bg-muted/40 px-3 py-1.5 rounded-full">
-                      <Camera size={12} /> Camera
-                    </span>
+                ) : backScanned ? (
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <CheckCircle2 size={32} className="text-accent" />
+                    <span className="text-sm font-semibold text-accent">Back scanned</span>
+                    <span className="text-xs text-muted-foreground">Tap to re-scan</span>
                   </div>
-                </>
-              )}
+                ) : (
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <div className="w-14 h-14 rounded-2xl bg-muted/50 flex items-center justify-center">
+                      <CreditCard size={24} className="text-muted-foreground" />
+                    </div>
+                    <span className="text-sm font-semibold text-foreground">Back of Card</span>
+                    <span className="text-xs text-muted-foreground">Tap to take photo</span>
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Card Fields */}
@@ -283,30 +373,35 @@ const Payment = () => {
               </div>
             </div>
 
-            {/* Divider */}
             <div className="border-t border-border" />
 
-            {/* Terms & Privacy */}
+            {/* Terms & Privacy with e-signature */}
             <div className="space-y-4">
               <p className="text-xs uppercase tracking-wider text-muted-foreground font-medium">
                 Legal agreements
               </p>
               <div className="flex items-start gap-3">
-                <Checkbox id="terms" checked={agreeTerms} onCheckedChange={(v) => setAgreeTerms(v === true)} className="mt-0.5" />
+                <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} className="mt-0.5" />
                 <Label htmlFor="terms" className="text-sm text-foreground leading-snug">
                   I agree to the{" "}
                   <Link to="/terms" className="text-accent underline underline-offset-2 hover:text-accent/80">
                     terms and conditions
                   </Link>
+                  {agreeTerms && termsSignature && (
+                    <span className="ml-2 text-xs text-accent">✓ Signed: {termsSignature}</span>
+                  )}
                 </Label>
               </div>
               <div className="flex items-start gap-3">
-                <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={(v) => setAgreePrivacy(v === true)} className="mt-0.5" />
+                <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={handlePrivacyCheck} className="mt-0.5" />
                 <Label htmlFor="privacy" className="text-sm text-foreground leading-snug">
                   I agree to the{" "}
                   <Link to="/privacy" className="text-accent underline underline-offset-2 hover:text-accent/80">
                     privacy policy
                   </Link>
+                  {agreePrivacy && privacySignature && (
+                    <span className="ml-2 text-xs text-accent">✓ Signed: {privacySignature}</span>
+                  )}
                 </Label>
               </div>
             </div>
@@ -317,6 +412,59 @@ const Payment = () => {
           </form>
         </div>
       </section>
+
+      {/* Terms Signature Popup */}
+      <Dialog open={termsPopupOpen} onOpenChange={(open) => { if (!open) setTermsPopupOpen(false); }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-foreground">Terms and Conditions</DialogTitle>
+          </DialogHeader>
+          <div className="text-sm text-muted-foreground space-y-3 max-h-[40vh] overflow-y-auto pr-2">
+            <p>By using the services provided by The Foreign Credential Services (TFCS/IFCS), you agree to the following terms and conditions. Please read them carefully before proceeding.</p>
+            <p><strong>1. Service Agreement:</strong> TFCS provides credential evaluation, translation, and consulting services. All orders are subject to review and acceptance.</p>
+            <p><strong>2. Payment:</strong> All fees are due at the time of order submission. Prices are subject to change without notice.</p>
+            <p><strong>3. Processing Times:</strong> Estimated processing times begin after all required documents have been received and verified.</p>
+            <p><strong>4. Refund Policy:</strong> Refunds may be issued at the discretion of TFCS management. Processing fees are non-refundable once work has begun.</p>
+            <p><strong>5. Document Handling:</strong> TFCS takes reasonable care in handling submitted documents but is not liable for loss or damage during transit.</p>
+            <p><strong>6. Accuracy:</strong> Clients are responsible for ensuring all submitted information and documents are accurate and authentic.</p>
+          </div>
+          <div className="border-t border-border pt-4 mt-4 space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Type your full name as your signature</p>
+            <Input value={termsSignature} onChange={(e) => setTermsSignature(e.target.value)} placeholder="Type your full name" />
+            <p className="text-xs text-muted-foreground">Date: {new Date().toLocaleDateString()}</p>
+            <button onClick={confirmTermsSignature} disabled={!termsSignature.trim()}
+              className="w-full inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <CheckCircle2 size={16} /> I Agree & Sign
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Privacy Signature Popup */}
+      <Dialog open={privacyPopupOpen} onOpenChange={(open) => { if (!open) setPrivacyPopupOpen(false); }}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-foreground">Privacy Policy</DialogTitle>
+          </DialogHeader>
+          <div className="text-sm text-muted-foreground space-y-3 max-h-[40vh] overflow-y-auto pr-2">
+            <p>The Foreign Credential Services (TFCS/IFCS) is committed to protecting your privacy. This policy outlines how we collect, use, and safeguard your personal information.</p>
+            <p><strong>1. Information Collection:</strong> We collect personal information necessary to process your evaluation, translation, or consulting order.</p>
+            <p><strong>2. Use of Information:</strong> Your information is used solely for the purpose of providing our services and communicating with you about your order.</p>
+            <p><strong>3. Data Security:</strong> We implement appropriate security measures to protect your personal information from unauthorized access.</p>
+            <p><strong>4. Third Parties:</strong> We do not sell or share your personal information with third parties except as required to fulfill your order or comply with legal obligations.</p>
+            <p><strong>5. Data Retention:</strong> We retain your information for as long as necessary to provide our services and comply with legal requirements.</p>
+          </div>
+          <div className="border-t border-border pt-4 mt-4 space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Type your full name as your signature</p>
+            <Input value={privacySignature} onChange={(e) => setPrivacySignature(e.target.value)} placeholder="Type your full name" />
+            <p className="text-xs text-muted-foreground">Date: {new Date().toLocaleDateString()}</p>
+            <button onClick={confirmPrivacySignature} disabled={!privacySignature.trim()}
+              className="w-full inline-flex items-center justify-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
+              <CheckCircle2 size={16} /> I Agree & Sign
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Footer />
     </div>
