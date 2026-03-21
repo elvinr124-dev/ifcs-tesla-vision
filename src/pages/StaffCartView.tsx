@@ -128,11 +128,7 @@ const StaffCartView = () => {
             </div>
           )}
 
-          <div className="mt-10 text-center">
-            <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft size={16} /> Back to Home
-            </Link>
-          </div>
+          <BackToHome />
         </div>
       </section>
 

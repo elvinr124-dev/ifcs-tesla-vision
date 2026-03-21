@@ -104,6 +104,7 @@ const AddonElectronicSharing = () => {
           </form>
         </div>
       </div>
+      <BackToHome />
       <Footer />
     </div>
   );
