@@ -29,11 +29,11 @@ const Index = () => {
 
       <ServiceSection
         id="translations"
-        title="Translations"
+        title="Certified Translations"
         subtitle="Break Language Barriers"
         description="Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English."
         backgroundImage={translationsBg}
-        ctaLabel="Request Translation"
+        ctaLabel="Get a Certified Translation"
         ctaHref="/translations"
         secondaryLabel="View Languages"
         secondaryHref="/translations"

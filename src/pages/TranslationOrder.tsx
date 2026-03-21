@@ -58,7 +58,8 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
 
 /**
  * Pricing logic:
- * - Page 1: $50 base (300 words included) + $0.10/word over 300 + $20 formatting if 5+ boxes
+ * - Page 1 (≤300 words): $50 base (300 words included) + $0.10/word over 300 + $20 formatting if 5+ boxes
+ * - Page 1 (>300 words): NO flat fee, just wordCount × $0.10 + $20 formatting if 5+ boxes
  * - Pages 2+: $0.10/word for ALL words (no base) + $20 formatting if 5+ boxes
  * - Double page: $100 flat (600 words included) + $0.10/word over 600 + $20 formatting if 5+ boxes
  * - Birth certificate: always $75 per page + $0.10/word over 300
@@ -97,6 +98,18 @@ function calculatePagePrice(
 
   // First page
   if (pageIndex === 0) {
+    if (analysis.wordCount > 300) {
+      // Over 300 words: no flat fee, just word count × $0.10
+      const wordCost = analysis.wordCount * 0.10;
+      const price = wordCost + formattingFee;
+      return {
+        price, pageCount: 1,
+        label: formattingFee > 0 ? "Standard + Formatting" : "Standard",
+        breakdown: `$${wordCost.toFixed(2)} (${analysis.wordCount} words × $0.10)${formattingFee > 0 ? ` + $20 formatting` : ""}`,
+        formattingFee, baseFee: 0, wordCost,
+      };
+    }
+    // 300 words or fewer: $50 flat fee
     const extraWords = Math.max(0, analysis.wordCount - 300);
     const wordCost = extraWords * 0.10;
     const price = 50 + wordCost + formattingFee;
