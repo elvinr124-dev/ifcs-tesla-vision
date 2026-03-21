@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import blogBg from "@/assets/blog-bg.jpg";
 import peruImg from "@/assets/blog-peru-education.jpg";
