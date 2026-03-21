@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Award, Globe, ShieldCheck, Users, ChevronDown, ChevronUp } from "lucide-react";
 import aboutBg from "@/assets/about-bg.jpg";
 import agronImg from "@/assets/agron-matoshi.jpg";
