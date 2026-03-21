@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import BackToHome from "@/components/BackToHome";
+import { ChevronDown, ChevronUp } from "lucide-react";
 import faqBg from "@/assets/faq-bg.jpg";
 
 const faqs = [
