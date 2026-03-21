@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Calendar, User } from "lucide-react";
+import BackToHome from "@/components/BackToHome";
+import { Calendar, User } from "lucide-react";
 import blogBg from "@/assets/blog-bg.jpg";
 import peruImg from "@/assets/blog-peru-education.jpg";
 import argentinaImg from "@/assets/blog-argentina-vocational.jpg";
