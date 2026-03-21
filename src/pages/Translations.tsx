@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Globe, FileText, ShieldCheck, Clock, CheckCircle, ChevronDown, ChevronUp, Star, Award, Lock, Info, AlertTriangle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import translationsBg from "@/assets/translations-bg.jpg";
 
 const languages = [
