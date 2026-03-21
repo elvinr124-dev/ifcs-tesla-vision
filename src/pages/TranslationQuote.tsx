@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTriangle, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -455,6 +456,7 @@ const TranslationQuote = () => {
         </form>
       )}
 
+      <BackToHome />
       <Footer />
     </div>
   );

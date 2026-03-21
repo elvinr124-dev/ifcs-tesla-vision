@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import DocumentScanner from "@/components/DocumentScanner";
 import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard, Upload, X } from "lucide-react";
 import { Label } from "@/components/ui/label";
@@ -974,6 +975,7 @@ const Application = () => {
         </DialogContent>
       </Dialog>
 
+      <BackToHome />
       <Footer />
     </div>
   );

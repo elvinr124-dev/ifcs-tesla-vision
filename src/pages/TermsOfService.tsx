@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { ArrowLeft } from "lucide-react";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
@@ -46,6 +47,7 @@ const TermsOfService = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

@@ -1,6 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import blogBg from "@/assets/blog-bg.jpg";
 import peruImg from "@/assets/blog-peru-education.jpg";
@@ -200,11 +201,7 @@ const BlogPost = () => {
         </div>
       </section>
 
-      <div className="text-center pb-16 content-bg">
-        <Link to="/blog" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft size={16} /> Back to Blog
-        </Link>
-      </div>
+      <BackToHome label="Back to Blog" to="/blog" />
 
       <Footer />
     </div>

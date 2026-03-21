@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 import { CheckCircle, ArrowRight, Send, FileText } from "lucide-react";
 import logoIau from "@/assets/logo-iau.png";
@@ -313,6 +314,7 @@ const ForInstitutions = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

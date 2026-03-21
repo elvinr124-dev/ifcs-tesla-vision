@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Calendar, User } from "lucide-react";
+import BackToHome from "@/components/BackToHome";
+import { Calendar, User } from "lucide-react";
 import blogBg from "@/assets/blog-bg.jpg";
 import peruImg from "@/assets/blog-peru-education.jpg";
 import argentinaImg from "@/assets/blog-argentina-vocational.jpg";
@@ -86,11 +87,7 @@ const Blog = () => (
       </div>
     </section>
 
-    <div className="text-center pb-16 content-bg">
-      <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft size={16} /> Back to Home
-      </Link>
-    </div>
+    <BackToHome />
 
     <Footer />
   </div>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { ShoppingCart, Trash2, ArrowLeft, Shield, Clock, DollarSign } from "lucide-react";
@@ -127,11 +128,7 @@ const StaffCartView = () => {
             </div>
           )}
 
-          <div className="mt-10 text-center">
-            <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              <ArrowLeft size={16} /> Back to Home
-            </Link>
-          </div>
+          <BackToHome />
         </div>
       </section>
 

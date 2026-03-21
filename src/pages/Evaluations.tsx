@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
@@ -388,14 +389,7 @@ const Evaluations = () => {
         </div>
       </section>
 
-      <div className="text-center pb-16 content-bg">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm transition-colors text-muted-foreground hover:text-foreground">
-          <ArrowLeft size={16} />
-          Back to Home
-        </Link>
-      </div>
+      <BackToHome />
 
       <Footer />
     </div>
