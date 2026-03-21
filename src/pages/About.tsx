@@ -167,11 +167,7 @@ const About = () => (
     </section>
 
     {/* Back link */}
-    <div className="text-center py-16 content-bg">
-      <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-        <ArrowLeft size={16} /> Back to Home
-      </Link>
-    </div>
+    <BackToHome />
 
     <Footer />
   </div>

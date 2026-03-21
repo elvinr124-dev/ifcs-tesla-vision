@@ -79,11 +79,7 @@ const FAQ = () => {
         </div>
       </section>
 
-      <div className="text-center pb-16 content-bg">
-        <Link to="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft size={16} /> Back to Home
-        </Link>
-      </div>
+      <BackToHome />
 
       <Footer />
     </div>
