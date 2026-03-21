@@ -81,6 +81,7 @@ const AddonDomesticShipping = () => {
           </form>
         </div>
       </div>
+      <BackToHome />
       <Footer />
     </div>
   );

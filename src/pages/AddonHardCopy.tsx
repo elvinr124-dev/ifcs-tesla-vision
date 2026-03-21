@@ -94,6 +94,7 @@ const AddonHardCopy = () => {
           </form>
         </div>
       </div>
+      <BackToHome />
       <Footer />
     </div>
   );

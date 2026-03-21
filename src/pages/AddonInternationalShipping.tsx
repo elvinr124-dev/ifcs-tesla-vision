@@ -87,6 +87,7 @@ const AddonInternationalShipping = () => {
           </form>
         </div>
       </div>
+      <BackToHome />
       <Footer />
     </div>
   );

@@ -164,6 +164,7 @@ const AddonRenewal = () => {
         </DialogContent>
       </Dialog>
 
+      <BackToHome />
       <Footer />
     </div>
   );
