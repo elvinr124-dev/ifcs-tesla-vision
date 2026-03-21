@@ -495,6 +495,7 @@ const Translations = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>);
 };

@@ -47,6 +47,7 @@ const TermsOfService = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

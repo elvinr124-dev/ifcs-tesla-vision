@@ -117,6 +117,7 @@ const PrivacyPolicy = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );
