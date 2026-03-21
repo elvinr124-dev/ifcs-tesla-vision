@@ -104,7 +104,7 @@ const Translations = () => {
             Break Language Barriers
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight" style={{ color: "white" }}>
-            Translations
+            Certified Translations
           </h1>
           <p className="mt-6 text-base md:text-lg max-w-xl font-semibold" style={{ color: "white" }}>
             Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English.
@@ -251,7 +251,7 @@ const Translations = () => {
                   </div>
                   <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex justify-between">
-                      <span>Custom formatting (5+ boxes)</span>
+                      <span>Custom formatting</span>
                       <span className="font-semibold text-foreground">+$20/page</span>
                     </div>
                     <div className="flex justify-between">
