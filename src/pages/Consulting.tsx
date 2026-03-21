@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Briefcase } from "lucide-react";
+import BackToHome from "@/components/BackToHome";
+import { Briefcase } from "lucide-react";
 import consultingBg from "@/assets/consulting-bg.jpg";
 
 const services = [
