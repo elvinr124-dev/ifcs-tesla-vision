@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { ArrowLeft, Mail, MapPin, Phone, Clock } from "lucide-react";
+import BackToHome from "@/components/BackToHome";
+import { Mail, MapPin, Phone, Clock } from "lucide-react";
 import contactBg from "@/assets/contact-bg.jpg";
 
 const Contact = () => (
