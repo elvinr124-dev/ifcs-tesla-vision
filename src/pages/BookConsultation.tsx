@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Briefcase, Phone, Mail } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import consultingBg from "@/assets/consulting-bg.jpg";

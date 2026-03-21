@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Eye, EyeOff, Shield } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";

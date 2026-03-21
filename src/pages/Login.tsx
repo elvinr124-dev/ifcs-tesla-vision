@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import BackToHome from "@/components/BackToHome";
 import { User, Shield, ArrowRight, Mail } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
