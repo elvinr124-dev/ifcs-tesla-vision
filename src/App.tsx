@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { CartProvider } from "@/context/CartContext";
 import AIChatWidget from "@/components/AIChatWidget";
+import ScrollToTop from "@/components/ScrollToTop";
 import Index from "./pages/Index";
 import Translations from "./pages/Translations";
 import Evaluations from "./pages/Evaluations";
