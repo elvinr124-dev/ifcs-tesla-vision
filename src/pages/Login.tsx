@@ -172,6 +172,7 @@ const Login = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

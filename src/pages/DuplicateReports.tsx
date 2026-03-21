@@ -374,6 +374,7 @@ const DuplicateReports = () => {
         </DialogContent>
       </Dialog>
 
+      <BackToHome />
       <Footer />
     </div>
   );

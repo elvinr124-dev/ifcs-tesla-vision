@@ -181,6 +181,7 @@ const ForIndividuals = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

@@ -349,6 +349,7 @@ const ClientLogin = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

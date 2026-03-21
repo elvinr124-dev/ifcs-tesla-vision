@@ -974,6 +974,7 @@ const Application = () => {
         </DialogContent>
       </Dialog>
 
+      <BackToHome />
       <Footer />
     </div>
   );

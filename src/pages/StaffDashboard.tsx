@@ -575,6 +575,7 @@ const StaffDashboard = () => {
         </DialogContent>
       </Dialog>
 
+      <BackToHome />
       <Footer />
     </div>
   );

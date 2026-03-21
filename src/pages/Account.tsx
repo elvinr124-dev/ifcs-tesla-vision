@@ -143,6 +143,7 @@ const Account = () => {
           </div>
         </div>
       </main>
+      <BackToHome />
       <Footer />
     </div>
   );

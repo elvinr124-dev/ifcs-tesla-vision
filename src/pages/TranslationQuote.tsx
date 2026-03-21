@@ -455,6 +455,7 @@ const TranslationQuote = () => {
         </form>
       )}
 
+      <BackToHome />
       <Footer />
     </div>
   );

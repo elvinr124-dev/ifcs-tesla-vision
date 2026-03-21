@@ -313,6 +313,7 @@ const ForInstitutions = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

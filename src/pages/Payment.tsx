@@ -467,6 +467,7 @@ const Payment = () => {
         </DialogContent>
       </Dialog>
 
+      <BackToHome />
       <Footer />
     </div>
   );

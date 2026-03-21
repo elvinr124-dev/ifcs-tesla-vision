@@ -129,6 +129,7 @@ const StaffLogin = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

@@ -463,6 +463,7 @@ const ClientDashboard = () => {
       </Dialog>
 
       <LiveChatWidget />
+      <BackToHome />
       <Footer />
     </div>
   );

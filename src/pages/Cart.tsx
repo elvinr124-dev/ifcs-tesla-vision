@@ -178,6 +178,7 @@ const Cart = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

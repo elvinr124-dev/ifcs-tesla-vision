@@ -174,6 +174,7 @@ const Signup = () => {
         </div>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );

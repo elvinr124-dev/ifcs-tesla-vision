@@ -180,6 +180,7 @@ const BookConsultation = () => {
         </Link>
       </div>
 
+      <BackToHome />
       <Footer />
     </div>
   );

@@ -763,6 +763,7 @@ const TranslationOrder = () => {
         </form>
       )}
 
+      <BackToHome />
       <Footer />
     </div>
   );

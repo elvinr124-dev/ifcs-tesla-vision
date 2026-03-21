@@ -151,6 +151,7 @@ const Pricing = () => {
         </p>
       </section>
 
+      <BackToHome />
       <Footer />
     </div>
   );
