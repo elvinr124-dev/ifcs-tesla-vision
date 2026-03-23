@@ -1,19 +1,22 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
+  // Use useLayoutEffect to scroll before paint — page starts at top
+  useLayoutEffect(() => {
+    if (!hash) {
+      window.scrollTo(0, 0);
+    }
+  }, [pathname, hash]);
+
   useEffect(() => {
     if (hash) {
-      // If there's a hash, scroll to that element
       setTimeout(() => {
         const el = document.querySelector(hash);
         if (el) el.scrollIntoView({ behavior: "smooth" });
       }, 100);
-    } else {
-      // Otherwise scroll to top
-      window.scrollTo(0, 0);
     }
   }, [pathname, hash]);
 

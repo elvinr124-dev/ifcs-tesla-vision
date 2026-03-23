@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Clock, Download, FileText, Shield } from "lucide-react";
+import { ArrowLeft, Clock, Download, FileText, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ReportData {
@@ -19,6 +19,7 @@ interface ReportData {
 
 const TranscriptViewer = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const token = searchParams.get("token");
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -76,6 +77,9 @@ const TranscriptViewer = () => {
       {/* Top bar */}
       <div className="bg-[#333333] border-b border-[#444] px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="text-white hover:bg-white/10 gap-2">
+            <ArrowLeft size={16} /> Back
+          </Button>
           <FileText size={20} className="text-white" />
           <span className="text-white font-medium">Transcript</span>
         </div>

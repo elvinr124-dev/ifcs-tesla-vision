@@ -41,6 +41,7 @@ interface DBReport {
   expiry_date: string | null;
   status: string;
   access_token: string;
+  report_file_url: string | null;
 }
 
 const addOns = [
@@ -418,7 +419,7 @@ const ClientDashboard = () => {
                           <Link to={`/transcript?token=${r.access_token}`}>
                             <Button size="sm" variant="outline" className="gap-1"><Eye size={14} /> View</Button>
                           </Link>
-                          <Button size="sm" variant="outline" className="gap-1"><Download size={14} /> Download</Button>
+                          <Button size="sm" variant="outline" className="gap-1" onClick={() => r.report_file_url && window.open(r.report_file_url, "_blank")} disabled={!r.report_file_url}><Download size={14} /> Download</Button>
                         </>
                       )}
                       {isExpired && (

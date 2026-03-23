@@ -90,6 +90,7 @@ const StaffDashboard = () => {
   const [shareRef, setShareRef] = useState("");
   const [shareType, setShareType] = useState("");
   const [shareExpiry, setShareExpiry] = useState("");
+  const [shareFile, setShareFile] = useState<File | null>(null);
 
   // Requirement form
   const [newReqLabel, setNewReqLabel] = useState("");
@@ -236,12 +237,26 @@ const StaffDashboard = () => {
       health: "Health Professions Course-by-Course",
     };
 
+    // Upload PDF to storage if provided
+    let reportFileUrl: string | null = null;
+    if (shareFile) {
+      const filePath = `reports/${shareRef}-${Date.now()}.pdf`;
+      const { error: uploadErr } = await supabase.storage.from("evaluation-reports").upload(filePath, shareFile, { contentType: "application/pdf" });
+      if (uploadErr) {
+        toast({ title: "Upload Failed", description: "Could not upload the PDF file.", variant: "destructive" });
+        return;
+      }
+      const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+      reportFileUrl = urlData.publicUrl;
+    }
+
     const { data: report, error: insertErr } = await (supabase as any)
       .from("evaluation_reports")
       .insert({
         reference_id: shareRef, applicant_name: applicantName, applicant_email: applicantEmail,
         evaluation_type: typeLabels[shareType] || shareType, shared_to_email: shareEmail,
         shared_to_edu: isEdu, expiry_date: new Date(shareExpiry).toISOString(), status: "active",
+        report_file_url: reportFileUrl,
       })
       .select().single();
 
@@ -260,7 +275,7 @@ const StaffDashboard = () => {
       title: isEdu ? "Report Sent to Institution" : "Report Delivered",
       description: isEdu ? `Parchment-style email sent to ${shareEmail}.` : `Report added to client dashboard. Notification email sent to ${shareEmail}.`,
     });
-    setShareEmail(""); setShareRef(""); setShareType(""); setShareExpiry("");
+    setShareEmail(""); setShareRef(""); setShareType(""); setShareExpiry(""); setShareFile(null);
   };
 
   return (
@@ -548,8 +563,8 @@ const StaffDashboard = () => {
                   <Input type="date" value={shareExpiry} onChange={(e) => setShareExpiry(e.target.value)} required />
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-foreground">Upload Evaluation (PDF Only)</label>
-                  <Input type="file" accept=".pdf" />
+                  <label className="text-sm font-medium text-foreground">Upload Evaluation (PDF Only) *</label>
+                  <Input type="file" accept=".pdf" onChange={(e) => setShareFile(e.target.files?.[0] || null)} />
                 </div>
                 <div className="md:col-span-2">
                   <Button type="submit" className="gap-2 px-8"><Upload size={16} /> Upload & Share Report</Button>
