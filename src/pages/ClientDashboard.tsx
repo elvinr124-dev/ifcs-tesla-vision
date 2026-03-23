@@ -41,6 +41,7 @@ interface DBReport {
   expiry_date: string | null;
   status: string;
   access_token: string;
+  report_file_url: string | null;
 }
 
 const addOns = [
