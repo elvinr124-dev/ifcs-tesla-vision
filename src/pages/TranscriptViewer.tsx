@@ -77,6 +77,9 @@ const TranscriptViewer = () => {
       {/* Top bar */}
       <div className="bg-[#333333] border-b border-[#444] px-6 py-3 flex items-center justify-between">
         <div className="flex items-center gap-4">
+          <Button variant="ghost" onClick={() => navigate(-1)} className="text-white hover:bg-white/10 gap-2">
+            <ArrowLeft size={16} /> Back
+          </Button>
           <FileText size={20} className="text-white" />
           <span className="text-white font-medium">Transcript</span>
         </div>

@@ -192,7 +192,7 @@ const Payment = () => {
       </section>
 
       {/* Form */}
-      <section className="py-20 px-6">
+      <section id="payment-form" className="py-20 px-6">
         <div className="max-w-3xl mx-auto">
           {/* Total Display */}
           <div className="mb-12 text-center">

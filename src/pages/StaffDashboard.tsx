@@ -563,8 +563,8 @@ const StaffDashboard = () => {
                   <Input type="date" value={shareExpiry} onChange={(e) => setShareExpiry(e.target.value)} required />
                 </div>
                 <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-foreground">Upload Evaluation (PDF Only)</label>
-                  <Input type="file" accept=".pdf" />
+                  <label className="text-sm font-medium text-foreground">Upload Evaluation (PDF Only) *</label>
+                  <Input type="file" accept=".pdf" onChange={(e) => setShareFile(e.target.files?.[0] || null)} />
                 </div>
                 <div className="md:col-span-2">
                   <Button type="submit" className="gap-2 px-8"><Upload size={16} /> Upload & Share Report</Button>
