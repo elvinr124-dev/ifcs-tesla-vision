@@ -275,7 +275,7 @@ const StaffDashboard = () => {
       title: isEdu ? "Report Sent to Institution" : "Report Delivered",
       description: isEdu ? `Parchment-style email sent to ${shareEmail}.` : `Report added to client dashboard. Notification email sent to ${shareEmail}.`,
     });
-    setShareEmail(""); setShareRef(""); setShareType(""); setShareExpiry("");
+    setShareEmail(""); setShareRef(""); setShareType(""); setShareExpiry(""); setShareFile(null);
   };
 
   return (
