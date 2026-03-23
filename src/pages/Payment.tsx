@@ -182,6 +182,12 @@ const Payment = () => {
           <p className="mt-4 text-lg md:text-xl text-white/70 max-w-xl">
             Complete your payment securely below.
           </p>
+          <button
+            onClick={() => document.getElementById("payment-form")?.scrollIntoView({ behavior: "smooth" })}
+            className="mt-8 inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-accent text-accent-foreground font-bold text-lg shadow-xl hover:shadow-accent/40 hover:scale-105 transition-all duration-300"
+          >
+            Pay Now
+          </button>
         </div>
       </section>
 
