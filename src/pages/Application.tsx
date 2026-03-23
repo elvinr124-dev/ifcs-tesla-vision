@@ -141,6 +141,8 @@ const Application = () => {
   const [institutionEmail, setInstitutionEmail] = useState("");
   const [shippingAddress, setShippingAddress] = useState({ street: "", city: "", state: "", zip: "", country: "" });
   const [files, setFiles] = useState<File[]>([]);
+  const [hasDegree, setHasDegree] = useState<"yes" | "no" | null>(null);
+  const [degreeFiles, setDegreeFiles] = useState<File[]>([]);
 
   // Step 5
   const [paymentMethod, setPaymentMethod] = useState<"card" | "ach">("card");
