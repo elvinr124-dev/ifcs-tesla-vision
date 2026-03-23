@@ -94,57 +94,21 @@ const TranscriptViewer = () => {
       <div className="flex flex-col lg:flex-row">
         {/* Document preview area */}
         <div className="flex-1 p-8 flex items-start justify-center min-h-[80vh]">
-          <div className="bg-white rounded shadow-2xl w-full max-w-[700px] min-h-[900px] p-12">
-            {/* Mock document content styled like a transcript */}
-            <div className="text-center mb-8">
-              <p className="text-[10px] text-gray-400 uppercase tracking-wider mb-4">
-                OFFICIAL EVALUATION REPORT
-              </p>
-              <div className="border-b border-gray-300 pb-4">
-                <h2 className="text-lg font-bold text-gray-800">Institute of Foreign Credential Services (IFCS)</h2>
-                <p className="text-xs text-gray-500 mt-1">New York, NY · www.ifcsevals.com</p>
+          {report.report_file_url ? (
+            <iframe
+              src={report.report_file_url}
+              className="w-full max-w-[700px] min-h-[900px] rounded shadow-2xl bg-white"
+              title="Evaluation Report PDF"
+            />
+          ) : (
+            <div className="bg-white rounded shadow-2xl w-full max-w-[700px] min-h-[900px] p-12 flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <FileText size={48} className="mx-auto mb-4 opacity-50" />
+                <p className="text-lg font-medium">No PDF attached</p>
+                <p className="text-sm mt-1">The report file has not been uploaded yet.</p>
               </div>
             </div>
-
-            <div className="space-y-4 text-sm text-gray-700">
-              <h3 className="font-bold text-gray-800 text-base">Evaluation Report</h3>
-
-              <div className="grid grid-cols-2 gap-4 text-xs border-b border-gray-200 pb-4">
-                <div>
-                  <span className="text-gray-500">Name:</span>
-                  <span className="ml-2 font-medium">{report.applicant_name}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Reference #:</span>
-                  <span className="ml-2 font-medium">{report.reference_id}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Evaluation Type:</span>
-                  <span className="ml-2 font-medium">{report.evaluation_type}</span>
-                </div>
-                <div>
-                  <span className="text-gray-500">Date:</span>
-                  <span className="ml-2 font-medium">{new Date(report.created_at).toLocaleDateString()}</span>
-                </div>
-              </div>
-
-              <div className="pt-4 space-y-3">
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  This document certifies that the credentials of <strong>{report.applicant_name}</strong> have been evaluated
-                  by the Institute of Foreign Credential Services (IFCS) and found to be equivalent to United States academic standards.
-                </p>
-                <p className="text-xs text-gray-600 leading-relaxed">
-                  The evaluation was conducted in accordance with the guidelines established by NACES and AICE member organizations.
-                </p>
-              </div>
-
-              <div className="pt-8 border-t border-gray-200 mt-8">
-                <p className="text-xs text-gray-400">
-                  This report is valid for 5 years from the date of issuance. Verify at ifcsevals.com using reference #{report.reference_id}.
-                </p>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
 
         {/* Right sidebar */}
