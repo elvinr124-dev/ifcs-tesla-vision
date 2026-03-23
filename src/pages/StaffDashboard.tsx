@@ -237,12 +237,26 @@ const StaffDashboard = () => {
       health: "Health Professions Course-by-Course",
     };
 
+    // Upload PDF to storage if provided
+    let reportFileUrl: string | null = null;
+    if (shareFile) {
+      const filePath = `reports/${shareRef}-${Date.now()}.pdf`;
+      const { error: uploadErr } = await supabase.storage.from("evaluation-reports").upload(filePath, shareFile, { contentType: "application/pdf" });
+      if (uploadErr) {
+        toast({ title: "Upload Failed", description: "Could not upload the PDF file.", variant: "destructive" });
+        return;
+      }
+      const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+      reportFileUrl = urlData.publicUrl;
+    }
+
     const { data: report, error: insertErr } = await (supabase as any)
       .from("evaluation_reports")
       .insert({
         reference_id: shareRef, applicant_name: applicantName, applicant_email: applicantEmail,
         evaluation_type: typeLabels[shareType] || shareType, shared_to_email: shareEmail,
         shared_to_edu: isEdu, expiry_date: new Date(shareExpiry).toISOString(), status: "active",
+        report_file_url: reportFileUrl,
       })
       .select().single();
 
