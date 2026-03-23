@@ -90,6 +90,7 @@ const StaffDashboard = () => {
   const [shareRef, setShareRef] = useState("");
   const [shareType, setShareType] = useState("");
   const [shareExpiry, setShareExpiry] = useState("");
+  const [shareFile, setShareFile] = useState<File | null>(null);
 
   // Requirement form
   const [newReqLabel, setNewReqLabel] = useState("");
