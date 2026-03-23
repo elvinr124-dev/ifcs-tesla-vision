@@ -622,6 +622,48 @@ const Application = () => {
                     </p>
                     <DocumentScanner onFilesProcessed={handleFilesProcessed} existingFiles={files} />
 
+                    {/* Degree certificate question */}
+                    <div className="space-y-3 pt-4">
+                      <p className="text-sm font-semibold text-foreground">
+                        Have you obtained a degree certificate or diploma? <span className="text-accent">*</span>
+                      </p>
+                      <p className="text-[10px] text-muted-foreground italic">This is a mandatory field</p>
+                      <div className="flex gap-6">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <Checkbox
+                            checked={hasDegree === "yes"}
+                            onCheckedChange={(checked) => {
+                              setHasDegree(checked ? "yes" : null);
+                              if (!checked) setDegreeFiles([]);
+                            }}
+                          />
+                          <span className="text-sm text-foreground">Yes</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <Checkbox
+                            checked={hasDegree === "no"}
+                            onCheckedChange={(checked) => {
+                              setHasDegree(checked ? "no" : null);
+                              if (checked) setDegreeFiles([]);
+                            }}
+                          />
+                          <span className="text-sm text-foreground">No</span>
+                        </label>
+                      </div>
+
+                      {hasDegree === "yes" && (
+                        <div className="pt-2">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2">
+                            Upload Degree Certificate / Diploma <span className="text-accent">*</span>
+                          </p>
+                          <DocumentScanner
+                            onFilesProcessed={(processed) => setDegreeFiles(processed)}
+                            existingFiles={degreeFiles}
+                          />
+                        </div>
+                      )}
+                    </div>
+
                     <div className="space-y-2 pt-2">
                       <RadioCard value="arrange" selected={authOption === "arrange"} onSelect={() => setAuthOption("arrange")}>
                         I will arrange with the issuing institution(s) to send official documents to IFCS.
