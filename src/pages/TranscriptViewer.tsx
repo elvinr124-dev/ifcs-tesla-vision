@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Clock, Download, FileText, Shield } from "lucide-react";
+import { ArrowLeft, Clock, Download, FileText, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface ReportData {
