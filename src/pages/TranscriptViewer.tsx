@@ -19,6 +19,7 @@ interface ReportData {
 
 const TranscriptViewer = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const token = searchParams.get("token");
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
