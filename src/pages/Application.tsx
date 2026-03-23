@@ -213,6 +213,8 @@ const Application = () => {
       if (!purpose) return "Please select a purpose of evaluation.";
     }
     if (s === 4) {
+      if (hasDegree === null) return "Please indicate whether you have obtained a degree certificate or diploma.";
+      if (hasDegree === "yes" && degreeFiles.length === 0) return "Please upload your degree certificate or diploma.";
       if (deliveryOptions.length === 0) return "Please select at least one delivery option.";
       if (deliveryOptions.includes("email-inst") && !institutionEmail.trim()) return "Please enter the institution email address.";
       if (deliveryOptions.includes("email-inst") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(institutionEmail)) return "Please enter a valid institution email.";
