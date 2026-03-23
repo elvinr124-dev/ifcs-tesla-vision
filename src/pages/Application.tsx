@@ -141,6 +141,8 @@ const Application = () => {
   const [institutionEmail, setInstitutionEmail] = useState("");
   const [shippingAddress, setShippingAddress] = useState({ street: "", city: "", state: "", zip: "", country: "" });
   const [files, setFiles] = useState<File[]>([]);
+  const [hasDegree, setHasDegree] = useState<"yes" | "no" | null>(null);
+  const [degreeFiles, setDegreeFiles] = useState<File[]>([]);
 
   // Step 5
   const [paymentMethod, setPaymentMethod] = useState<"card" | "ach">("card");
@@ -211,6 +213,8 @@ const Application = () => {
       if (!purpose) return "Please select a purpose of evaluation.";
     }
     if (s === 4) {
+      if (hasDegree === null) return "Please indicate whether you have obtained a degree certificate or diploma.";
+      if (hasDegree === "yes" && degreeFiles.length === 0) return "Please upload your degree certificate or diploma.";
       if (deliveryOptions.length === 0) return "Please select at least one delivery option.";
       if (deliveryOptions.includes("email-inst") && !institutionEmail.trim()) return "Please enter the institution email address.";
       if (deliveryOptions.includes("email-inst") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(institutionEmail)) return "Please enter a valid institution email.";
@@ -619,6 +623,48 @@ const Application = () => {
                         : "You need to upload 2 documents: your Transcript/Marksheets and Diploma Certificate."}
                     </p>
                     <DocumentScanner onFilesProcessed={handleFilesProcessed} existingFiles={files} />
+
+                    {/* Degree certificate question */}
+                    <div className="space-y-3 pt-4">
+                      <p className="text-sm font-semibold text-foreground">
+                        Have you obtained a degree certificate or diploma? <span className="text-accent">*</span>
+                      </p>
+                      <p className="text-[10px] text-muted-foreground italic">This is a mandatory field</p>
+                      <div className="flex gap-6">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <Checkbox
+                            checked={hasDegree === "yes"}
+                            onCheckedChange={(checked) => {
+                              setHasDegree(checked ? "yes" : null);
+                              if (!checked) setDegreeFiles([]);
+                            }}
+                          />
+                          <span className="text-sm text-foreground">Yes</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <Checkbox
+                            checked={hasDegree === "no"}
+                            onCheckedChange={(checked) => {
+                              setHasDegree(checked ? "no" : null);
+                              if (checked) setDegreeFiles([]);
+                            }}
+                          />
+                          <span className="text-sm text-foreground">No</span>
+                        </label>
+                      </div>
+
+                      {hasDegree === "yes" && (
+                        <div className="pt-2">
+                          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest mb-2">
+                            Upload Degree Certificate / Diploma <span className="text-accent">*</span>
+                          </p>
+                          <DocumentScanner
+                            onFilesProcessed={(processed) => setDegreeFiles(processed)}
+                            existingFiles={degreeFiles}
+                          />
+                        </div>
+                      )}
+                    </div>
 
                     <div className="space-y-2 pt-2">
                       <RadioCard value="arrange" selected={authOption === "arrange"} onSelect={() => setAuthOption("arrange")}>
