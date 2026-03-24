@@ -13,6 +13,7 @@ import serviceEmployment from "@/assets/service-employment.jpg";
 import serviceGraduate from "@/assets/service-graduate.jpg";
 import serviceHealth from "@/assets/service-health.jpg";
 import serviceHsUni from "@/assets/service-highschool-uni.jpg";
+import serviceLicensure from "@/assets/service-licensure.jpg";
 import serviceCosmetology from "@/assets/service-cosmetology.jpg";
 
 const evaluationServices = [
