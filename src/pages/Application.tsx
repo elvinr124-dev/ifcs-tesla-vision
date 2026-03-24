@@ -190,7 +190,6 @@ const Application = () => {
   const [wantMoreEmails, setWantMoreEmails] = useState(false);
   
   // Multiple addresses per shipping method
-  type ShippingAddr = { firstName: string; mi: string; lastName: string; company: string; street: string; city: string; state: string; zip: string; country: string };
   const emptyAddr = (): ShippingAddr => ({ firstName: "", mi: "", lastName: "", company: "", street: "", city: "", state: "", zip: "", country: "" });
   const [usPostageAddresses, setUsPostageAddresses] = useState<ShippingAddr[]>([emptyAddr()]);
   const [domesticCourierAddresses, setDomesticCourierAddresses] = useState<ShippingAddr[]>([emptyAddr()]);
