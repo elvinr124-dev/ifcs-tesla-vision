@@ -90,6 +90,53 @@ const generateAppId = (first: string, last: string): string => {
   return `${f}${l}${num}`;
 };
 
+type ShippingAddr = { firstName: string; mi: string; lastName: string; company: string; street: string; city: string; state: string; zip: string; country: string };
+
+const AddressBlock = ({ label, priceEach, addresses, setAddresses, emptyAddr }: {
+  label: string; priceEach: number;
+  addresses: ShippingAddr[];
+  setAddresses: React.Dispatch<React.SetStateAction<ShippingAddr[]>>;
+  emptyAddr: () => ShippingAddr;
+}) => {
+  const updateAddr = (idx: number, field: keyof ShippingAddr, value: string) => {
+    setAddresses(prev => prev.map((a, i) => i === idx ? { ...a, [field]: value } : a));
+  };
+  return (
+    <div className="pl-8 pt-2 space-y-4">
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{label} — ${priceEach}/address × {addresses.length} = <span className="text-accent">${priceEach * addresses.length}</span></p>
+      {addresses.map((addr, idx) => (
+        <div key={idx} className="space-y-3 p-4 rounded-2xl border border-border bg-muted/30">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Address {idx + 1}</p>
+            {addresses.length > 1 && (
+              <button type="button" onClick={() => setAddresses(prev => prev.filter((_, i) => i !== idx))} className="text-xs text-destructive hover:underline">Remove</button>
+            )}
+          </div>
+          <p className="text-[10px] text-muted-foreground italic">Name of Receiver or Company (at least one required)</p>
+          <div className="grid grid-cols-3 gap-3">
+            <FieldGroup label="First Name"><GlassInput value={addr.firstName} onChange={(e) => updateAddr(idx, "firstName", e.target.value)} placeholder="First" /></FieldGroup>
+            <FieldGroup label="MI"><GlassInput value={addr.mi} onChange={(e) => updateAddr(idx, "mi", e.target.value)} placeholder="M" maxLength={1} /></FieldGroup>
+            <FieldGroup label="Last Name"><GlassInput value={addr.lastName} onChange={(e) => updateAddr(idx, "lastName", e.target.value)} placeholder="Last" /></FieldGroup>
+          </div>
+          <FieldGroup label="Company"><GlassInput value={addr.company} onChange={(e) => updateAddr(idx, "company", e.target.value)} placeholder="Company (optional)" /></FieldGroup>
+          <FieldGroup label="Street Address" required><GlassInput value={addr.street} onChange={(e) => updateAddr(idx, "street", e.target.value)} placeholder="123 Main St, Apt 4" /></FieldGroup>
+          <div className="grid grid-cols-2 gap-3">
+            <FieldGroup label="City" required><GlassInput value={addr.city} onChange={(e) => updateAddr(idx, "city", e.target.value)} placeholder="City" /></FieldGroup>
+            <FieldGroup label="State / Province" required><GlassInput value={addr.state} onChange={(e) => updateAddr(idx, "state", e.target.value)} placeholder="State" /></FieldGroup>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <FieldGroup label="ZIP / Postal Code" required><GlassInput value={addr.zip} onChange={(e) => updateAddr(idx, "zip", e.target.value)} placeholder="10001" /></FieldGroup>
+            <FieldGroup label="Country" required><GlassInput value={addr.country} onChange={(e) => updateAddr(idx, "country", e.target.value)} placeholder="United States" /></FieldGroup>
+          </div>
+        </div>
+      ))}
+      <button type="button" onClick={() => setAddresses(prev => [...prev, emptyAddr()])} className="text-xs text-accent font-semibold hover:underline">
+        + Add another address
+      </button>
+    </div>
+  );
+};
+
 const Application = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -139,7 +186,15 @@ const Application = () => {
   const [authOption, setAuthOption] = useState("arrange");
   const [deliveryOptions, setDeliveryOptions] = useState<string[]>(["email-self"]);
   const [institutionEmail, setInstitutionEmail] = useState("");
-  const [shippingAddress, setShippingAddress] = useState({ street: "", city: "", state: "", zip: "", country: "" });
+  const [additionalEmails, setAdditionalEmails] = useState<string[]>([]);
+  const [wantMoreEmails, setWantMoreEmails] = useState(false);
+  
+  // Multiple addresses per shipping method
+  const emptyAddr = (): ShippingAddr => ({ firstName: "", mi: "", lastName: "", company: "", street: "", city: "", state: "", zip: "", country: "" });
+  const [usPostageAddresses, setUsPostageAddresses] = useState<ShippingAddr[]>([emptyAddr()]);
+  const [domesticCourierAddresses, setDomesticCourierAddresses] = useState<ShippingAddr[]>([emptyAddr()]);
+  const [intlCourierAddresses, setIntlCourierAddresses] = useState<ShippingAddr[]>([emptyAddr()]);
+  
   const [files, setFiles] = useState<File[]>([]);
   const [hasDegree, setHasDegree] = useState<"yes" | "no" | null>(null);
   const [degreeFiles, setDegreeFiles] = useState<File[]>([]);
@@ -179,11 +234,11 @@ const Application = () => {
   const deliveryCosts = useMemo(() => {
     let cost = 0;
     if (deliveryOptions.includes("email-inst")) cost += 5;
-    if (deliveryOptions.includes("us-postage")) cost += 15;
-    if (deliveryOptions.includes("domestic-courier")) cost += 25;
-    if (deliveryOptions.includes("intl-courier")) cost += 75;
+    if (deliveryOptions.includes("us-postage")) cost += 15 * usPostageAddresses.length;
+    if (deliveryOptions.includes("domestic-courier")) cost += 25 * domesticCourierAddresses.length;
+    if (deliveryOptions.includes("intl-courier")) cost += 75 * intlCourierAddresses.length;
     return cost;
-  }, [deliveryOptions]);
+  }, [deliveryOptions, usPostageAddresses.length, domesticCourierAddresses.length, intlCourierAddresses.length]);
 
   const authCost = authOption === "authenticate" ? 140 : 0;
   const totalPrice = selectedPrice + deliveryCosts + authCost - discountAmount;
@@ -218,13 +273,24 @@ const Application = () => {
       if (deliveryOptions.length === 0) return "Please select at least one delivery option.";
       if (deliveryOptions.includes("email-inst") && !institutionEmail.trim()) return "Please enter the institution email address.";
       if (deliveryOptions.includes("email-inst") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(institutionEmail)) return "Please enter a valid institution email.";
-      if (needsAddress) {
-        if (!shippingAddress.street.trim()) return "Street address is required for shipping.";
-        if (!shippingAddress.city.trim()) return "City is required for shipping.";
-        if (!shippingAddress.state.trim()) return "State/Province is required for shipping.";
-        if (!shippingAddress.zip.trim()) return "ZIP/Postal code is required for shipping.";
-        if (!shippingAddress.country.trim()) return "Country is required for shipping.";
-      }
+      // Validate addresses for each selected shipping method
+      const validateAddrs = (addrs: ShippingAddr[], label: string): string => {
+        for (let i = 0; i < addrs.length; i++) {
+          const a = addrs[i];
+          const hasName = a.firstName.trim() || a.lastName.trim();
+          const hasCompany = a.company.trim();
+          if (!hasName && !hasCompany) return `Please enter the name or company for ${label} address ${addrs.length > 1 ? i + 1 : ""}.`;
+          if (!a.street.trim()) return `Street address is required for ${label}.`;
+          if (!a.city.trim()) return `City is required for ${label}.`;
+          if (!a.state.trim()) return `State/Province is required for ${label}.`;
+          if (!a.zip.trim()) return `ZIP/Postal code is required for ${label}.`;
+          if (!a.country.trim()) return `Country is required for ${label}.`;
+        }
+        return "";
+      };
+      if (deliveryOptions.includes("us-postage")) { const e = validateAddrs(usPostageAddresses, "US Postage"); if (e) return e; }
+      if (deliveryOptions.includes("domestic-courier")) { const e = validateAddrs(domesticCourierAddresses, "Domestic Courier"); if (e) return e; }
+      if (deliveryOptions.includes("intl-courier")) { const e = validateAddrs(intlCourierAddresses, "International Courier"); if (e) return e; }
     }
     return "";
   };
@@ -287,9 +353,19 @@ const Application = () => {
     lines.push(`Delivery: ${deliveryLabels.join(", ")}`);
     if (deliveryOptions.includes("email-inst")) {
       lines.push(`E-mail Address to send the evaluation: ${institutionEmail}`);
+      if (additionalEmails.length > 0) {
+        additionalEmails.forEach((em, i) => lines.push(`Additional Email ${i + 1}: ${em}`));
+      }
     }
-    if (needsAddress) {
-      lines.push(`Shipping Address: ${shippingAddress.street}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zip}, ${shippingAddress.country}`);
+    const fmtAddr = (a: ShippingAddr) => `${a.firstName} ${a.mi} ${a.lastName}${a.company ? ` / ${a.company}` : ""} — ${a.street}, ${a.city}, ${a.state} ${a.zip}, ${a.country}`;
+    if (deliveryOptions.includes("us-postage")) {
+      usPostageAddresses.forEach((a, i) => lines.push(`US Postage Address ${i + 1}: ${fmtAddr(a)}`));
+    }
+    if (deliveryOptions.includes("domestic-courier")) {
+      domesticCourierAddresses.forEach((a, i) => lines.push(`Domestic Courier Address ${i + 1}: ${fmtAddr(a)}`));
+    }
+    if (deliveryOptions.includes("intl-courier")) {
+      intlCourierAddresses.forEach((a, i) => lines.push(`International Courier Address ${i + 1}: ${fmtAddr(a)}`));
     }
     lines.push("");
     lines.push("Attachments");
@@ -675,9 +751,9 @@ const Application = () => {
                           Please perform document authentication <span className="font-bold text-accent">($140)</span>
                         </RadioCard>
                         {authOption === "authenticate" && selectedProcessingLabel !== "Standard" && (
-                          <div className="flex items-start gap-2.5 mt-2 ml-2 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
-                            <AlertTriangle size={18} className="text-yellow-500 flex-shrink-0 mt-0.5" />
-                            <p className="text-xs text-yellow-200 leading-relaxed">
+                          <div className="flex items-start gap-2.5 mt-2 ml-2 p-3 rounded-xl bg-red-800/80 border border-red-600/60">
+                            <AlertTriangle size={18} className="text-red-300 flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-black font-medium leading-relaxed">
                               This service may not be available for rush processing. Please contact IFCS during business hours at <strong>(914) 693-2840</strong> to confirm availability.
                             </p>
                           </div>
@@ -717,39 +793,70 @@ const Application = () => {
                       })}
                     </div>
 
-                    {/* Institution email input */}
+                    {/* Institution email + additional emails */}
                     {deliveryOptions.includes("email-inst") && (
-                      <div className="pl-8 pt-2">
-                        <FieldGroup label="Institution Email Address" required>
+                      <div className="pl-8 pt-2 space-y-3">
+                        <FieldGroup label="Email Address of the Institution" required>
                           <GlassInput value={institutionEmail} onChange={(e) => setInstitutionEmail(e.target.value)} type="email" placeholder="e.g. admissions@university.edu" />
                         </FieldGroup>
+                        
+                        {/* Additional emails */}
+                        {additionalEmails.map((em, i) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <div className="flex-1">
+                              <FieldGroup label={`Additional Email ${i + 1}`} required>
+                                <GlassInput value={em} onChange={(e) => {
+                                  const copy = [...additionalEmails];
+                                  copy[i] = e.target.value;
+                                  setAdditionalEmails(copy);
+                                }} type="email" placeholder="e.g. registrar@university.edu" />
+                              </FieldGroup>
+                            </div>
+                            <button type="button" onClick={() => setAdditionalEmails(prev => prev.filter((_, j) => j !== i))} className="mt-5 text-muted-foreground hover:text-destructive"><X size={16} /></button>
+                          </div>
+                        ))}
+
+                        {!wantMoreEmails && additionalEmails.length === 0 && (
+                          <button type="button" onClick={() => setWantMoreEmails(true)} className="text-xs text-accent font-semibold hover:underline">
+                            Do you have another email you'd like to send to?
+                          </button>
+                        )}
+                        {(wantMoreEmails || additionalEmails.length > 0) && (
+                          <button type="button" onClick={() => setAdditionalEmails(prev => [...prev, ""])} className="text-xs text-accent font-semibold hover:underline">
+                            + Add another email
+                          </button>
+                        )}
+                        <p className="text-[10px] text-muted-foreground">Total email delivery cost: <span className="font-bold text-accent">$5</span> (flat fee for all emails)</p>
                       </div>
                     )}
 
-                    {/* Shipping address */}
-                    {needsAddress && (
-                      <div className="pl-8 pt-2 space-y-3">
-                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Shipping Address</p>
-                        <FieldGroup label="Street Address" required>
-                          <GlassInput value={shippingAddress.street} onChange={(e) => setShippingAddress(p => ({ ...p, street: e.target.value }))} placeholder="123 Main St, Apt 4" />
-                        </FieldGroup>
-                        <div className="grid grid-cols-2 gap-3">
-                          <FieldGroup label="City" required>
-                            <GlassInput value={shippingAddress.city} onChange={(e) => setShippingAddress(p => ({ ...p, city: e.target.value }))} placeholder="City" />
-                          </FieldGroup>
-                          <FieldGroup label="State / Province" required>
-                            <GlassInput value={shippingAddress.state} onChange={(e) => setShippingAddress(p => ({ ...p, state: e.target.value }))} placeholder="State" />
-                          </FieldGroup>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <FieldGroup label="ZIP / Postal Code" required>
-                            <GlassInput value={shippingAddress.zip} onChange={(e) => setShippingAddress(p => ({ ...p, zip: e.target.value }))} placeholder="10001" />
-                          </FieldGroup>
-                          <FieldGroup label="Country" required>
-                            <GlassInput value={shippingAddress.country} onChange={(e) => setShippingAddress(p => ({ ...p, country: e.target.value }))} placeholder="United States" />
-                          </FieldGroup>
-                        </div>
-                      </div>
+                    {/* Per-method shipping addresses */}
+                    {deliveryOptions.includes("us-postage") && (
+                      <AddressBlock
+                        label="US Postage"
+                        priceEach={15}
+                        addresses={usPostageAddresses}
+                        setAddresses={setUsPostageAddresses}
+                        emptyAddr={emptyAddr}
+                      />
+                    )}
+                    {deliveryOptions.includes("domestic-courier") && (
+                      <AddressBlock
+                        label="Domestic Courier (USPS Priority Mail)"
+                        priceEach={25}
+                        addresses={domesticCourierAddresses}
+                        setAddresses={setDomesticCourierAddresses}
+                        emptyAddr={emptyAddr}
+                      />
+                    )}
+                    {deliveryOptions.includes("intl-courier") && (
+                      <AddressBlock
+                        label="International Courier"
+                        priceEach={75}
+                        addresses={intlCourierAddresses}
+                        setAddresses={setIntlCourierAddresses}
+                        emptyAddr={emptyAddr}
+                      />
                     )}
                   </div>
                 </div>
@@ -783,20 +890,20 @@ const Application = () => {
                       )}
                       {deliveryOptions.includes("us-postage") && (
                         <div className="flex items-start justify-between gap-4 text-sm">
-                          <span className="text-muted-foreground">US Postage:</span>
-                          <span className="text-right font-medium text-foreground">+$15</span>
+                          <span className="text-muted-foreground">US Postage ({usPostageAddresses.length} address{usPostageAddresses.length > 1 ? "es" : ""}):</span>
+                          <span className="text-right font-medium text-foreground">+${15 * usPostageAddresses.length}</span>
                         </div>
                       )}
                       {deliveryOptions.includes("domestic-courier") && (
                         <div className="flex items-start justify-between gap-4 text-sm">
-                          <span className="text-muted-foreground">Domestic Courier (USPS Priority Mail):</span>
-                          <span className="text-right font-medium text-foreground">+$25</span>
+                          <span className="text-muted-foreground">Domestic Courier ({domesticCourierAddresses.length} address{domesticCourierAddresses.length > 1 ? "es" : ""}):</span>
+                          <span className="text-right font-medium text-foreground">+${25 * domesticCourierAddresses.length}</span>
                         </div>
                       )}
                       {deliveryOptions.includes("intl-courier") && (
                         <div className="flex items-start justify-between gap-4 text-sm">
-                          <span className="text-muted-foreground">International Courier:</span>
-                          <span className="text-right font-medium text-foreground">+$75</span>
+                          <span className="text-muted-foreground">International Courier ({intlCourierAddresses.length} address{intlCourierAddresses.length > 1 ? "es" : ""}):</span>
+                          <span className="text-right font-medium text-foreground">+${75 * intlCourierAddresses.length}</span>
                         </div>
                       )}
                       {authOption === "authenticate" && (
