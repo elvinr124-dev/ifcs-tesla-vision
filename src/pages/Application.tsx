@@ -90,6 +90,53 @@ const generateAppId = (first: string, last: string): string => {
   return `${f}${l}${num}`;
 };
 
+type ShippingAddr = { firstName: string; mi: string; lastName: string; company: string; street: string; city: string; state: string; zip: string; country: string };
+
+const AddressBlock = ({ label, priceEach, addresses, setAddresses, emptyAddr }: {
+  label: string; priceEach: number;
+  addresses: ShippingAddr[];
+  setAddresses: React.Dispatch<React.SetStateAction<ShippingAddr[]>>;
+  emptyAddr: () => ShippingAddr;
+}) => {
+  const updateAddr = (idx: number, field: keyof ShippingAddr, value: string) => {
+    setAddresses(prev => prev.map((a, i) => i === idx ? { ...a, [field]: value } : a));
+  };
+  return (
+    <div className="pl-8 pt-2 space-y-4">
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">{label} — ${priceEach}/address × {addresses.length} = <span className="text-accent">${priceEach * addresses.length}</span></p>
+      {addresses.map((addr, idx) => (
+        <div key={idx} className="space-y-3 p-4 rounded-2xl border border-border bg-muted/30">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Address {idx + 1}</p>
+            {addresses.length > 1 && (
+              <button type="button" onClick={() => setAddresses(prev => prev.filter((_, i) => i !== idx))} className="text-xs text-destructive hover:underline">Remove</button>
+            )}
+          </div>
+          <p className="text-[10px] text-muted-foreground italic">Name of Receiver or Company (at least one required)</p>
+          <div className="grid grid-cols-3 gap-3">
+            <FieldGroup label="First Name"><GlassInput value={addr.firstName} onChange={(e) => updateAddr(idx, "firstName", e.target.value)} placeholder="First" /></FieldGroup>
+            <FieldGroup label="MI"><GlassInput value={addr.mi} onChange={(e) => updateAddr(idx, "mi", e.target.value)} placeholder="M" maxLength={1} /></FieldGroup>
+            <FieldGroup label="Last Name"><GlassInput value={addr.lastName} onChange={(e) => updateAddr(idx, "lastName", e.target.value)} placeholder="Last" /></FieldGroup>
+          </div>
+          <FieldGroup label="Company"><GlassInput value={addr.company} onChange={(e) => updateAddr(idx, "company", e.target.value)} placeholder="Company (optional)" /></FieldGroup>
+          <FieldGroup label="Street Address" required><GlassInput value={addr.street} onChange={(e) => updateAddr(idx, "street", e.target.value)} placeholder="123 Main St, Apt 4" /></FieldGroup>
+          <div className="grid grid-cols-2 gap-3">
+            <FieldGroup label="City" required><GlassInput value={addr.city} onChange={(e) => updateAddr(idx, "city", e.target.value)} placeholder="City" /></FieldGroup>
+            <FieldGroup label="State / Province" required><GlassInput value={addr.state} onChange={(e) => updateAddr(idx, "state", e.target.value)} placeholder="State" /></FieldGroup>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <FieldGroup label="ZIP / Postal Code" required><GlassInput value={addr.zip} onChange={(e) => updateAddr(idx, "zip", e.target.value)} placeholder="10001" /></FieldGroup>
+            <FieldGroup label="Country" required><GlassInput value={addr.country} onChange={(e) => updateAddr(idx, "country", e.target.value)} placeholder="United States" /></FieldGroup>
+          </div>
+        </div>
+      ))}
+      <button type="button" onClick={() => setAddresses(prev => [...prev, emptyAddr()])} className="text-xs text-accent font-semibold hover:underline">
+        + Add another address
+      </button>
+    </div>
+  );
+};
+
 const Application = () => {
   const location = useLocation();
   const navigate = useNavigate();
