@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import DocumentScanner from "@/components/DocumentScanner";
-import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard, Upload, X } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard, Upload, X, AlertTriangle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -670,9 +670,19 @@ const Application = () => {
                       <RadioCard value="arrange" selected={authOption === "arrange"} onSelect={() => setAuthOption("arrange")}>
                         I will arrange with the issuing institution(s) to send official documents to IFCS.
                       </RadioCard>
-                      <RadioCard value="authenticate" selected={authOption === "authenticate"} onSelect={() => setAuthOption("authenticate")}>
-                        Please perform document authentication <span className="font-bold text-accent">($140)</span>
-                      </RadioCard>
+                      <div>
+                        <RadioCard value="authenticate" selected={authOption === "authenticate"} onSelect={() => setAuthOption("authenticate")}>
+                          Please perform document authentication <span className="font-bold text-accent">($140)</span>
+                        </RadioCard>
+                        {authOption === "authenticate" && selectedProcessingLabel !== "Standard" && (
+                          <div className="flex items-start gap-2.5 mt-2 ml-2 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
+                            <AlertTriangle size={18} className="text-yellow-500 flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-yellow-200 leading-relaxed">
+                              This service may not be available for rush processing. Please contact IFCS during business hours at <strong>(914) 693-2840</strong> to confirm availability.
+                            </p>
+                          </div>
+                        )}
+                      </div>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Note: Your report can only be released once your studies have been verified. All records should be mailed to: <strong>6 Cedar St, Dobbs Ferry, NY 10522</strong>, or sent electronically to: <strong>docs@ifcsevals.com</strong>
