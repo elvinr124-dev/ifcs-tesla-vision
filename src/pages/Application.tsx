@@ -307,9 +307,19 @@ const Application = () => {
     lines.push(`Delivery: ${deliveryLabels.join(", ")}`);
     if (deliveryOptions.includes("email-inst")) {
       lines.push(`E-mail Address to send the evaluation: ${institutionEmail}`);
+      if (additionalEmails.length > 0) {
+        additionalEmails.forEach((em, i) => lines.push(`Additional Email ${i + 1}: ${em}`));
+      }
     }
-    if (needsAddress) {
-      lines.push(`Shipping Address: ${shippingAddress.street}, ${shippingAddress.city}, ${shippingAddress.state} ${shippingAddress.zip}, ${shippingAddress.country}`);
+    const fmtAddr = (a: ShippingAddr) => `${a.firstName} ${a.mi} ${a.lastName}${a.company ? ` / ${a.company}` : ""} — ${a.street}, ${a.city}, ${a.state} ${a.zip}, ${a.country}`;
+    if (deliveryOptions.includes("us-postage")) {
+      usPostageAddresses.forEach((a, i) => lines.push(`US Postage Address ${i + 1}: ${fmtAddr(a)}`));
+    }
+    if (deliveryOptions.includes("domestic-courier")) {
+      domesticCourierAddresses.forEach((a, i) => lines.push(`Domestic Courier Address ${i + 1}: ${fmtAddr(a)}`));
+    }
+    if (deliveryOptions.includes("intl-courier")) {
+      intlCourierAddresses.forEach((a, i) => lines.push(`International Courier Address ${i + 1}: ${fmtAddr(a)}`));
     }
     lines.push("");
     lines.push("Attachments");
