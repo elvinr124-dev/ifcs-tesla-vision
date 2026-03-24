@@ -675,9 +675,9 @@ const Application = () => {
                           Please perform document authentication <span className="font-bold text-accent">($140)</span>
                         </RadioCard>
                         {authOption === "authenticate" && selectedProcessingLabel !== "Standard" && (
-                          <div className="flex items-start gap-2.5 mt-2 ml-2 p-3 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
-                            <AlertTriangle size={18} className="text-yellow-500 flex-shrink-0 mt-0.5" />
-                            <p className="text-xs text-yellow-200 leading-relaxed">
+                          <div className="flex items-start gap-2.5 mt-2 ml-2 p-3 rounded-xl bg-red-800/80 border border-red-600/60">
+                            <AlertTriangle size={18} className="text-red-300 flex-shrink-0 mt-0.5" />
+                            <p className="text-xs text-black font-medium leading-relaxed">
                               This service may not be available for rush processing. Please contact IFCS during business hours at <strong>(914) 693-2840</strong> to confirm availability.
                             </p>
                           </div>

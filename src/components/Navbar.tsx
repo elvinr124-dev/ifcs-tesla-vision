@@ -13,6 +13,7 @@ import serviceEmployment from "@/assets/service-employment.jpg";
 import serviceHealth from "@/assets/service-health.jpg";
 import serviceGraduate from "@/assets/service-graduate.jpg";
 import serviceHsUni from "@/assets/service-highschool-uni.jpg";
+import serviceLicensure from "@/assets/service-licensure.jpg";
 
 const evalPreviews = [
   { title: "General Analysis", price: 100, image: serviceMilitary, slug: "general-analysis" },
@@ -22,6 +23,7 @@ const evalPreviews = [
   { title: "Health Professions CBC", price: 230, image: serviceHealth, slug: "health-professions-course-by-course" },
   { title: "Comprehensive CBC", price: 290, image: serviceGraduate, slug: "comprehensive-course-by-course" },
   { title: "HS & University CBC", price: 295, image: serviceHsUni, slug: "high-school-and-university-course-by-course" },
+  { title: "Prof. Licensure CBC", price: 400, image: serviceLicensure, slug: "professional-licensure-course-by-course" },
 ];
 
 const allLinks = [
