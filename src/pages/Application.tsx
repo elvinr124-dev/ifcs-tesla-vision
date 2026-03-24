@@ -747,39 +747,70 @@ const Application = () => {
                       })}
                     </div>
 
-                    {/* Institution email input */}
+                    {/* Institution email + additional emails */}
                     {deliveryOptions.includes("email-inst") && (
-                      <div className="pl-8 pt-2">
-                        <FieldGroup label="Institution Email Address" required>
+                      <div className="pl-8 pt-2 space-y-3">
+                        <FieldGroup label="Email Address of the Institution" required>
                           <GlassInput value={institutionEmail} onChange={(e) => setInstitutionEmail(e.target.value)} type="email" placeholder="e.g. admissions@university.edu" />
                         </FieldGroup>
+                        
+                        {/* Additional emails */}
+                        {additionalEmails.map((em, i) => (
+                          <div key={i} className="flex items-center gap-2">
+                            <div className="flex-1">
+                              <FieldGroup label={`Additional Email ${i + 1}`} required>
+                                <GlassInput value={em} onChange={(e) => {
+                                  const copy = [...additionalEmails];
+                                  copy[i] = e.target.value;
+                                  setAdditionalEmails(copy);
+                                }} type="email" placeholder="e.g. registrar@university.edu" />
+                              </FieldGroup>
+                            </div>
+                            <button type="button" onClick={() => setAdditionalEmails(prev => prev.filter((_, j) => j !== i))} className="mt-5 text-muted-foreground hover:text-destructive"><X size={16} /></button>
+                          </div>
+                        ))}
+
+                        {!wantMoreEmails && additionalEmails.length === 0 && (
+                          <button type="button" onClick={() => setWantMoreEmails(true)} className="text-xs text-accent font-semibold hover:underline">
+                            Do you have another email you'd like to send to?
+                          </button>
+                        )}
+                        {(wantMoreEmails || additionalEmails.length > 0) && (
+                          <button type="button" onClick={() => setAdditionalEmails(prev => [...prev, ""])} className="text-xs text-accent font-semibold hover:underline">
+                            + Add another email
+                          </button>
+                        )}
+                        <p className="text-[10px] text-muted-foreground">Total email delivery cost: <span className="font-bold text-accent">$5</span> (flat fee for all emails)</p>
                       </div>
                     )}
 
-                    {/* Shipping address */}
-                    {needsAddress && (
-                      <div className="pl-8 pt-2 space-y-3">
-                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Shipping Address</p>
-                        <FieldGroup label="Street Address" required>
-                          <GlassInput value={shippingAddress.street} onChange={(e) => setShippingAddress(p => ({ ...p, street: e.target.value }))} placeholder="123 Main St, Apt 4" />
-                        </FieldGroup>
-                        <div className="grid grid-cols-2 gap-3">
-                          <FieldGroup label="City" required>
-                            <GlassInput value={shippingAddress.city} onChange={(e) => setShippingAddress(p => ({ ...p, city: e.target.value }))} placeholder="City" />
-                          </FieldGroup>
-                          <FieldGroup label="State / Province" required>
-                            <GlassInput value={shippingAddress.state} onChange={(e) => setShippingAddress(p => ({ ...p, state: e.target.value }))} placeholder="State" />
-                          </FieldGroup>
-                        </div>
-                        <div className="grid grid-cols-2 gap-3">
-                          <FieldGroup label="ZIP / Postal Code" required>
-                            <GlassInput value={shippingAddress.zip} onChange={(e) => setShippingAddress(p => ({ ...p, zip: e.target.value }))} placeholder="10001" />
-                          </FieldGroup>
-                          <FieldGroup label="Country" required>
-                            <GlassInput value={shippingAddress.country} onChange={(e) => setShippingAddress(p => ({ ...p, country: e.target.value }))} placeholder="United States" />
-                          </FieldGroup>
-                        </div>
-                      </div>
+                    {/* Per-method shipping addresses */}
+                    {deliveryOptions.includes("us-postage") && (
+                      <AddressBlock
+                        label="US Postage"
+                        priceEach={15}
+                        addresses={usPostageAddresses}
+                        setAddresses={setUsPostageAddresses}
+                        emptyAddr={emptyAddr}
+                      />
+                    )}
+                    {deliveryOptions.includes("domestic-courier") && (
+                      <AddressBlock
+                        label="Domestic Courier (USPS Priority Mail)"
+                        priceEach={25}
+                        addresses={domesticCourierAddresses}
+                        setAddresses={setDomesticCourierAddresses}
+                        emptyAddr={emptyAddr}
+                      />
+                    )}
+                    {deliveryOptions.includes("intl-courier") && (
+                      <AddressBlock
+                        label="International Courier"
+                        priceEach={75}
+                        addresses={intlCourierAddresses}
+                        setAddresses={setIntlCourierAddresses}
+                        emptyAddr={emptyAddr}
+                      />
                     )}
                   </div>
                 </div>
