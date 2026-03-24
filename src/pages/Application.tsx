@@ -188,11 +188,11 @@ const Application = () => {
   const deliveryCosts = useMemo(() => {
     let cost = 0;
     if (deliveryOptions.includes("email-inst")) cost += 5;
-    if (deliveryOptions.includes("us-postage")) cost += 15;
-    if (deliveryOptions.includes("domestic-courier")) cost += 25;
-    if (deliveryOptions.includes("intl-courier")) cost += 75;
+    if (deliveryOptions.includes("us-postage")) cost += 15 * usPostageAddresses.length;
+    if (deliveryOptions.includes("domestic-courier")) cost += 25 * domesticCourierAddresses.length;
+    if (deliveryOptions.includes("intl-courier")) cost += 75 * intlCourierAddresses.length;
     return cost;
-  }, [deliveryOptions]);
+  }, [deliveryOptions, usPostageAddresses.length, domesticCourierAddresses.length, intlCourierAddresses.length]);
 
   const authCost = authOption === "authenticate" ? 140 : 0;
   const totalPrice = selectedPrice + deliveryCosts + authCost - discountAmount;
