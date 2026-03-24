@@ -139,7 +139,16 @@ const Application = () => {
   const [authOption, setAuthOption] = useState("arrange");
   const [deliveryOptions, setDeliveryOptions] = useState<string[]>(["email-self"]);
   const [institutionEmail, setInstitutionEmail] = useState("");
-  const [shippingAddress, setShippingAddress] = useState({ street: "", city: "", state: "", zip: "", country: "" });
+  const [additionalEmails, setAdditionalEmails] = useState<string[]>([]);
+  const [wantMoreEmails, setWantMoreEmails] = useState(false);
+  
+  // Multiple addresses per shipping method
+  type ShippingAddr = { firstName: string; mi: string; lastName: string; company: string; street: string; city: string; state: string; zip: string; country: string };
+  const emptyAddr = (): ShippingAddr => ({ firstName: "", mi: "", lastName: "", company: "", street: "", city: "", state: "", zip: "", country: "" });
+  const [usPostageAddresses, setUsPostageAddresses] = useState<ShippingAddr[]>([emptyAddr()]);
+  const [domesticCourierAddresses, setDomesticCourierAddresses] = useState<ShippingAddr[]>([emptyAddr()]);
+  const [intlCourierAddresses, setIntlCourierAddresses] = useState<ShippingAddr[]>([emptyAddr()]);
+  
   const [files, setFiles] = useState<File[]>([]);
   const [hasDegree, setHasDegree] = useState<"yes" | "no" | null>(null);
   const [degreeFiles, setDegreeFiles] = useState<File[]>([]);
