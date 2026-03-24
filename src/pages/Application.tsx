@@ -227,13 +227,24 @@ const Application = () => {
       if (deliveryOptions.length === 0) return "Please select at least one delivery option.";
       if (deliveryOptions.includes("email-inst") && !institutionEmail.trim()) return "Please enter the institution email address.";
       if (deliveryOptions.includes("email-inst") && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(institutionEmail)) return "Please enter a valid institution email.";
-      if (needsAddress) {
-        if (!shippingAddress.street.trim()) return "Street address is required for shipping.";
-        if (!shippingAddress.city.trim()) return "City is required for shipping.";
-        if (!shippingAddress.state.trim()) return "State/Province is required for shipping.";
-        if (!shippingAddress.zip.trim()) return "ZIP/Postal code is required for shipping.";
-        if (!shippingAddress.country.trim()) return "Country is required for shipping.";
-      }
+      // Validate addresses for each selected shipping method
+      const validateAddrs = (addrs: ShippingAddr[], label: string): string => {
+        for (let i = 0; i < addrs.length; i++) {
+          const a = addrs[i];
+          const hasName = a.firstName.trim() || a.lastName.trim();
+          const hasCompany = a.company.trim();
+          if (!hasName && !hasCompany) return `Please enter the name or company for ${label} address ${addrs.length > 1 ? i + 1 : ""}.`;
+          if (!a.street.trim()) return `Street address is required for ${label}.`;
+          if (!a.city.trim()) return `City is required for ${label}.`;
+          if (!a.state.trim()) return `State/Province is required for ${label}.`;
+          if (!a.zip.trim()) return `ZIP/Postal code is required for ${label}.`;
+          if (!a.country.trim()) return `Country is required for ${label}.`;
+        }
+        return "";
+      };
+      if (deliveryOptions.includes("us-postage")) { const e = validateAddrs(usPostageAddresses, "US Postage"); if (e) return e; }
+      if (deliveryOptions.includes("domestic-courier")) { const e = validateAddrs(domesticCourierAddresses, "Domestic Courier"); if (e) return e; }
+      if (deliveryOptions.includes("intl-courier")) { const e = validateAddrs(intlCourierAddresses, "International Courier"); if (e) return e; }
     }
     return "";
   };
