@@ -891,20 +891,20 @@ const Application = () => {
                       )}
                       {deliveryOptions.includes("us-postage") && (
                         <div className="flex items-start justify-between gap-4 text-sm">
-                          <span className="text-muted-foreground">US Postage:</span>
-                          <span className="text-right font-medium text-foreground">+$15</span>
+                          <span className="text-muted-foreground">US Postage ({usPostageAddresses.length} address{usPostageAddresses.length > 1 ? "es" : ""}):</span>
+                          <span className="text-right font-medium text-foreground">+${15 * usPostageAddresses.length}</span>
                         </div>
                       )}
                       {deliveryOptions.includes("domestic-courier") && (
                         <div className="flex items-start justify-between gap-4 text-sm">
-                          <span className="text-muted-foreground">Domestic Courier (USPS Priority Mail):</span>
-                          <span className="text-right font-medium text-foreground">+$25</span>
+                          <span className="text-muted-foreground">Domestic Courier ({domesticCourierAddresses.length} address{domesticCourierAddresses.length > 1 ? "es" : ""}):</span>
+                          <span className="text-right font-medium text-foreground">+${25 * domesticCourierAddresses.length}</span>
                         </div>
                       )}
                       {deliveryOptions.includes("intl-courier") && (
                         <div className="flex items-start justify-between gap-4 text-sm">
-                          <span className="text-muted-foreground">International Courier:</span>
-                          <span className="text-right font-medium text-foreground">+$75</span>
+                          <span className="text-muted-foreground">International Courier ({intlCourierAddresses.length} address{intlCourierAddresses.length > 1 ? "es" : ""}):</span>
+                          <span className="text-right font-medium text-foreground">+${75 * intlCourierAddresses.length}</span>
                         </div>
                       )}
                       {authOption === "authenticate" && (
