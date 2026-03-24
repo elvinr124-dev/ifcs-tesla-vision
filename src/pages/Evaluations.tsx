@@ -117,6 +117,20 @@ const evaluationServices = [
   docSlots: ["High School Diploma", "High School Transcript", "University Degree Certificate", "University Transcript"],
   bgImage: serviceHsUni,
   sampleUrl: ""
+},
+{
+  title: "Professional Licensure Course-by-Course",
+  price: 400,
+  rush3Day: 550,
+  rush24Hr: 650,
+  processing: "8–10 Business Days",
+  description:
+  "Provides a comprehensive course-by-course evaluation designed specifically for professional licensing boards and regulatory agencies. Covers secondary and post-secondary credentials with detailed U.S. equivalencies, credit-hour analysis, grading-scale conversion, course-level comparability, and professional credential validation. Ideal for applicants seeking licensure in regulated professions: Accounting (CPA), Engineering (PE), and Law (Bar Admission).",
+  recommendedFor: "CPA (Certified Public Accountant) Examination & Licensure, Professional Engineer (PE) Licensure, Attorney / Foreign Lawyer Bar Admission.",
+  documents: "High School diploma and transcript, University degree(s) and official transcripts, Professional license/registration (if applicable), and any additional documents required by the licensing board.",
+  docSlots: ["High School Diploma", "High School Transcript", "University Degree(s)", "Official Transcripts", "Professional License/Registration"],
+  bgImage: serviceLicensure,
+  sampleUrl: ""
 }];
 
 
