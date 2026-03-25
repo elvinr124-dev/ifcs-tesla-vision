@@ -402,9 +402,81 @@ const Application = () => {
 
     const emailBody = buildEmailBody();
     const subject = `Your IFCS Application ${applicationId}`;
+    const monthIdx = months.indexOf(dobMonth) + 1;
+    const dobFormatted = `${String(monthIdx).padStart(2, "0")}/${String(dobDay).padStart(2, "0")}/${String(dobYear).slice(-2)}`;
+
+    // Build full application data for "View Application"
+    const applicationData = {
+      firstName, lastName, middleName,
+      credFirstName, credLastName, credMiddleName,
+      dob: dobFormatted, dobMonth, dobDay, dobYear,
+      gender, cellPhone, homePhone, email, howHeard, ssn,
+      institutionName, country, attendance, degrees, purpose,
+      serviceTitle: selectedServiceTitle, processingLabel: selectedProcessingLabel,
+      processingTime: selectedProcessingTime, price: selectedPrice,
+      translationOption, authOption,
+      deliveryOptions, institutionEmail, additionalEmails,
+      usPostageAddresses, domesticCourierAddresses, intlCourierAddresses,
+      paymentMethod,
+      cardLastFour: paymentMethod === "card" ? cardNumber.slice(-4) : "",
+      cardType: paymentMethod === "card" ? (cardNumber.startsWith("4") ? "Visa" : cardNumber.startsWith("5") ? "Mastercard" : "Card") : "",
+      achRoutingLast4: paymentMethod === "ach" ? achRouting.slice(-4) : "",
+      achAccountLast4: paymentMethod === "ach" ? achAccount.slice(-4) : "",
+      totalPrice: Math.max(0, totalPrice),
+      discountCode: discountCode || "",
+      discountAmount,
+      authCost,
+      deliveryCosts,
+      filesCount: files.length,
+      fileNames: files.map(f => f.name),
+      termsSignature, privacySignature,
+      submittedAt: new Date().toISOString(),
+    };
 
     try {
       const { supabase } = await import("@/integrations/supabase/client");
+
+      // Save application to DB
+      await (supabase as any).from("applications").insert({
+        application_id: applicationId,
+        client_email: email,
+        first_name: firstName,
+        last_name: lastName,
+        middle_name: middleName,
+        dob: dobFormatted,
+        gender,
+        cell_phone: cellPhone,
+        home_phone: homePhone,
+        institution_name: institutionName,
+        country,
+        attendance,
+        degrees,
+        purpose,
+        service_title: selectedServiceTitle,
+        processing_label: selectedProcessingLabel,
+        processing_time: selectedProcessingTime,
+        price: selectedPrice,
+        total_price: Math.max(0, totalPrice),
+        translation_option: translationOption,
+        auth_option: authOption,
+        delivery_options: deliveryOptions,
+        payment_method: paymentMethod,
+        card_last_four: paymentMethod === "card" ? cardNumber.slice(-4) : "",
+        application_data: applicationData,
+        status: "requested",
+      });
+
+      // Also create a client_orders entry for tracking
+      await (supabase as any).from("client_orders").insert({
+        reference_id: applicationId,
+        client_email: email,
+        service: `${selectedServiceTitle} — ${selectedProcessingLabel}`,
+        status: "requested",
+        application_id: applicationId,
+        dob: dobFormatted,
+      });
+
+      // Send email
       const { error } = await supabase.functions.invoke("send-application-email", {
         body: { subject, body: emailBody, applicantEmail: email },
       });
@@ -413,10 +485,25 @@ const Application = () => {
         console.error("Email send error:", error);
       }
 
-      alert(`Application submitted successfully!\n\nYour Application ID: ${applicationId}\n\nA confirmation email has been sent to ${email} and to our intake team.`);
+      // Navigate to confirmation page
+      navigate("/order-confirmation", {
+        state: {
+          applicationId,
+          email,
+          serviceName: `${selectedServiceTitle} — ${selectedProcessingLabel}`,
+          totalPrice: Math.max(0, totalPrice),
+        },
+      });
     } catch (err) {
       console.error("Submit error:", err);
-      alert(`Application submitted!\n\nYour Application ID: ${applicationId}\n\nNote: There was an issue sending the confirmation email, but your application has been recorded.`);
+      navigate("/order-confirmation", {
+        state: {
+          applicationId,
+          email,
+          serviceName: `${selectedServiceTitle} — ${selectedProcessingLabel}`,
+          totalPrice: Math.max(0, totalPrice),
+        },
+      });
     } finally {
       setSubmitting(false);
     }
