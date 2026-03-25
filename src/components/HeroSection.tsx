@@ -40,7 +40,7 @@ const HeroSection = () => {
           </Link>
           <Link
             to="/translations"
-            className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl transition-all duration-200 hover:scale-105"
+            className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl transition-all duration-200 hover:scale-105 shadow-none text-sidebar-ring"
             style={{ background: "white", color: "hsl(217 91% 50%)" }}
           >
             Get a Certified Translation
