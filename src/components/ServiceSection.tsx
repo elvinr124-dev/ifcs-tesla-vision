@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 interface ServiceSectionProps {
   id: string;
-  title: string;
+  title: React.ReactNode;
   subtitle: string;
   description: string;
   backgroundImage: string;
