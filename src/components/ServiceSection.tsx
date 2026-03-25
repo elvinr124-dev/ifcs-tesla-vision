@@ -56,7 +56,7 @@ const ServiceSection = ({
           {subtitle}
         </p>
         <h2
-          className="text-5xl md:text-7xl lg:text-8xl tracking-tight font-semibold text-white"
+          className="text-5xl md:text-7xl tracking-tight font-semibold text-white lg:text-7xl"
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>
 
           {title}
