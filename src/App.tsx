@@ -43,6 +43,7 @@ import TranscriptViewer from "./pages/TranscriptViewer";
 import Pricing from "./pages/Pricing";
 import Account from "./pages/Account";
 import Payment from "./pages/Payment";
+import OrderConfirmation from "./pages/OrderConfirmation";
 
 const queryClient = new QueryClient();
 
@@ -91,6 +92,7 @@ const App = () => (
               <Route path="/pricing" element={<Pricing />} />
               <Route path="/account" element={<Account />} />
               <Route path="/payment" element={<Payment />} />
+              <Route path="/order-confirmation" element={<OrderConfirmation />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AIChatWidget />

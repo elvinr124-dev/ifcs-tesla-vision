@@ -5,20 +5,18 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import LiveChatWidget from "@/components/LiveChatWidget";
+import ViewApplicationDialog from "@/components/ViewApplicationDialog";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import {
-  FileText, Download, Share2, RefreshCw, Send, Clock, CheckCircle2, AlertCircle, Package,
-  MessageSquare, ShieldCheck, Plus, Languages, Upload, ChevronDown, ChevronUp, Eye, ThumbsUp, ThumbsDown,
+  FileText, Download, RefreshCw, Clock, CheckCircle2, AlertCircle, Package,
+  MessageSquare, ShieldCheck, Plus, Languages, Upload, ChevronDown, ChevronUp, Eye,
+  Search,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
-} from "@/components/ui/dialog";
 
 /* ---------- types ---------- */
 interface ClientOrder {
@@ -30,6 +28,8 @@ interface ClientOrder {
   staff_note: string;
   requirements: any[];
   submitted_at: string;
+  application_id?: string;
+  dob?: string;
 }
 
 interface DBReport {
@@ -42,6 +42,13 @@ interface DBReport {
   status: string;
   access_token: string;
   report_file_url: string | null;
+}
+
+interface ApplicationData {
+  id: string;
+  application_id: string;
+  application_data: any;
+  staff_notes: string;
 }
 
 const addOns = [
@@ -64,14 +71,38 @@ const reportStatusColor: Record<string, string> = {
   expired: "text-destructive",
 };
 
+const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+const days = Array.from({ length: 31 }, (_, i) => i + 1);
+const years = Array.from({ length: 116 }, (_, i) => 2015 - i);
+
+const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void; children: React.ReactNode }) => (
+  <select value={value} onChange={onChange}
+    className="w-full h-10 px-3 rounded-xl text-sm text-foreground bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 focus:border-accent transition-all duration-200 appearance-none backdrop-blur-sm">
+    {children}
+  </select>
+);
+
 const ClientDashboard = () => {
   const { user } = useAuth();
   const { toast } = useToast();
   const [orders, setOrders] = useState<ClientOrder[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [dbReports, setDbReports] = useState<DBReport[]>([]);
-  const [addRefInput, setAddRefInput] = useState("");
-  const [addingRef, setAddingRef] = useState(false);
+
+  // Track order inputs
+  const [trackId, setTrackId] = useState("");
+  const [trackDobMonth, setTrackDobMonth] = useState("");
+  const [trackDobDay, setTrackDobDay] = useState("");
+  const [trackDobYear, setTrackDobYear] = useState("");
+  const [tracking, setTracking] = useState(false);
+
+  // View application dialog
+  const [viewAppOpen, setViewAppOpen] = useState(false);
+  const [viewAppData, setViewAppData] = useState<any>(null);
+  const [viewAppId, setViewAppId] = useState("");
+
+  // Application data cache
+  const [appDataMap, setAppDataMap] = useState<Record<string, ApplicationData>>({});
 
   const clientEmail = user?.email || user?.username || "";
 
@@ -85,7 +116,22 @@ const ClientDashboard = () => {
         .select("*")
         .eq("client_email", clientEmail)
         .order("created_at", { ascending: false });
-      if (data) setOrders(data);
+      if (data) {
+        setOrders(data);
+        // Load application data for orders with application_id
+        const appIds = data.filter((o: any) => o.application_id).map((o: any) => o.application_id);
+        if (appIds.length > 0) {
+          const { data: apps } = await (supabase as any)
+            .from("applications")
+            .select("id, application_id, application_data, staff_notes")
+            .in("application_id", appIds);
+          if (apps) {
+            const map: Record<string, ApplicationData> = {};
+            apps.forEach((a: ApplicationData) => { map[a.application_id] = a; });
+            setAppDataMap(map);
+          }
+        }
+      }
     };
     loadOrders();
 
@@ -112,7 +158,26 @@ const ClientDashboard = () => {
       })
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    // Realtime for application staff_notes updates
+    const appChannel = supabase
+      .channel("client-app-notes")
+      .on("postgres_changes", {
+        event: "UPDATE",
+        schema: "public",
+        table: "applications",
+      }, (payload) => {
+        const updated = payload.new as any;
+        setAppDataMap(prev => ({
+          ...prev,
+          [updated.application_id]: { ...prev[updated.application_id], ...updated },
+        }));
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+      supabase.removeChannel(appChannel);
+    };
   }, [clientEmail]);
 
   // Load reports from database
@@ -147,60 +212,98 @@ const ClientDashboard = () => {
     return () => { supabase.removeChannel(channel); };
   }, [clientEmail]);
 
-  // Add reference number
-  const handleAddReference = async () => {
-    if (!addRefInput.trim() || !clientEmail) return;
-    setAddingRef(true);
-
-    // Check if already linked
-    const { data: existing } = await (supabase as any)
-      .from("client_orders")
-      .select("id")
-      .eq("reference_id", addRefInput.trim())
-      .eq("client_email", clientEmail)
-      .single();
-
-    if (existing) {
-      toast({ title: "Already Added", description: "This reference number is already in your dashboard.", variant: "destructive" });
-      setAddingRef(false);
+  // Track order handler
+  const handleTrackOrder = async () => {
+    if (!trackId.trim()) return;
+    if (!trackDobMonth || !trackDobDay || !trackDobYear) {
+      toast({ title: "Date of Birth Required", description: "Please enter your date of birth to verify your identity.", variant: "destructive" });
       return;
     }
+    setTracking(true);
 
-    // Insert the order reference
-    const { error } = await (supabase as any)
+    const monthIdx = months.indexOf(trackDobMonth) + 1;
+    const dobFormatted = `${String(monthIdx).padStart(2, "0")}/${String(trackDobDay).padStart(2, "0")}/${String(trackDobYear).slice(-2)}`;
+
+    // Search by either application_id or reference_id
+    const searchVal = trackId.trim();
+
+    // First try client_orders by reference_id
+    let { data: found } = await (supabase as any)
       .from("client_orders")
-      .insert({
-        reference_id: addRefInput.trim(),
-        client_email: clientEmail,
-        service: "",
-        status: "requested",
-      });
+      .select("*")
+      .or(`reference_id.eq.${searchVal},application_id.eq.${searchVal}`)
+      .eq("dob", dobFormatted)
+      .maybeSingle();
 
-    if (error) {
-      toast({ title: "Error", description: "Failed to add reference. Please try again.", variant: "destructive" });
+    // If not found, try applications table
+    if (!found) {
+      const { data: app } = await (supabase as any)
+        .from("applications")
+        .select("*")
+        .or(`application_id.eq.${searchVal}`)
+        .eq("dob", dobFormatted)
+        .maybeSingle();
+
+      if (app) {
+        // Check if already in orders
+        const existing = orders.find(o => o.application_id === app.application_id || o.reference_id === app.application_id);
+        if (existing) {
+          toast({ title: "Already Tracked", description: "This order is already in your dashboard.", variant: "destructive" });
+          setTracking(false);
+          return;
+        }
+
+        // Create a client_orders entry for this
+        const { data: newOrder } = await (supabase as any)
+          .from("client_orders")
+          .insert({
+            reference_id: app.application_id,
+            client_email: clientEmail,
+            service: `${app.service_title} — ${app.processing_label}`,
+            status: app.status || "requested",
+            application_id: app.application_id,
+            dob: dobFormatted,
+          })
+          .select()
+          .single();
+
+        if (newOrder) {
+          setOrders(prev => [newOrder, ...prev]);
+          setAppDataMap(prev => ({
+            ...prev,
+            [app.application_id]: { id: app.id, application_id: app.application_id, application_data: app.application_data, staff_notes: app.staff_notes },
+          }));
+          toast({ title: "Order Found", description: `Order #${searchVal} has been added to your dashboard.` });
+        }
+      } else {
+        toast({ title: "Order Not Found", description: "No order matches the provided ID and date of birth. Please check and try again.", variant: "destructive" });
+      }
     } else {
-      toast({ title: "Reference Added", description: `Order #${addRefInput.trim()} has been added to your dashboard.` });
-      setAddRefInput("");
+      // Already exists check
+      const existing = orders.find(o => o.id === found.id);
+      if (existing) {
+        toast({ title: "Already Tracked", description: "This order is already in your dashboard.", variant: "destructive" });
+      } else {
+        setOrders(prev => [found, ...prev]);
+        toast({ title: "Order Found", description: `Order #${searchVal} has been added to your dashboard.` });
+      }
     }
-    setAddingRef(false);
+
+    setTrackId("");
+    setTrackDobMonth("");
+    setTrackDobDay("");
+    setTrackDobYear("");
+    setTracking(false);
   };
 
-  // Delivery approval
-  const [rejectDialogOpen, setRejectDialogOpen] = useState(false);
-  const [rejectOrderId, setRejectOrderId] = useState<string | null>(null);
-  const [rejectReason, setRejectReason] = useState("");
-
-  const handleApproveDelivery = (orderId: string) => {
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, deliveryApproved: true } as any : o));
-    toast({ title: "Delivery Approved", description: "You have approved the delivery. You can now view your report." });
-  };
-
-  const handleRejectDelivery = () => {
-    if (!rejectReason.trim()) return;
-    toast({ title: "Feedback Sent", description: "Your feedback has been sent to IFCS staff." });
-    setRejectDialogOpen(false);
-    setRejectReason("");
-    setRejectOrderId(null);
+  // View application
+  const handleViewApplication = (appId: string) => {
+    const appData = appDataMap[appId];
+    if (appData) {
+      setViewAppData(appData.application_data);
+      setViewAppId(appId);
+      setViewAppOpen(true);
+    }
   };
 
   return (
@@ -217,54 +320,75 @@ const ClientDashboard = () => {
       <div className="content-bg">
         <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-10">
 
-          {/* ── Add Reference Number ── */}
+          {/* ── Track Order ── */}
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <Plus size={22} className="text-accent" /> Track an Order
+                <Search size={22} className="text-accent" /> Track Order
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Enter your IFCS reference number to add it to your dashboard and track its progress.
+                Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.
               </p>
-              <div className="flex gap-3">
-                <Input
-                  value={addRefInput}
-                  onChange={(e) => setAddRefInput(e.target.value)}
-                  placeholder="e.g. 44507"
-                  className="max-w-xs"
-                />
-                <Button onClick={handleAddReference} disabled={addingRef || !addRefInput.trim()} className="gap-2">
-                  <Plus size={16} /> {addingRef ? "Adding..." : "Add Reference"}
+              <div className="space-y-4">
+                <div className="flex gap-3">
+                  <Input
+                    value={trackId}
+                    onChange={(e) => setTrackId(e.target.value)}
+                    placeholder="IFCS ID (e.g. 44507) or App ID (e.g. EE0098)"
+                    className="max-w-sm"
+                  />
+                </div>
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Date of Birth</p>
+                  <div className="grid grid-cols-3 gap-3 max-w-sm">
+                    <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
+                      <option value="">Month</option>
+                      {months.map(m => <option key={m} value={m}>{m}</option>)}
+                    </GlassSelect>
+                    <GlassSelect value={trackDobDay} onChange={(e) => setTrackDobDay(e.target.value)}>
+                      <option value="">Day</option>
+                      {days.map(d => <option key={d} value={d}>{d}</option>)}
+                    </GlassSelect>
+                    <GlassSelect value={trackDobYear} onChange={(e) => setTrackDobYear(e.target.value)}>
+                      <option value="">Year</option>
+                      {years.map(y => <option key={y} value={y}>{y}</option>)}
+                    </GlassSelect>
+                  </div>
+                </div>
+                <Button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()} className="gap-2">
+                  <Search size={16} /> {tracking ? "Searching..." : "Track Order"}
                 </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* ── Order Tracking ── */}
+          {/* ── My Orders ── */}
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <Package size={22} className="text-accent" /> Your Orders
+                <Package size={22} className="text-accent" /> My Orders
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {orders.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  No orders yet. Add a reference number above to start tracking your evaluation.
+                  No orders yet. Use the Track Order section above to find your order.
                 </p>
               )}
               {orders.map((order) => {
                 const meta = statusMeta[order.status] ?? statusMeta.requested;
-                const isExpanded = expandedOrder === order.reference_id;
+                const isExpanded = expandedOrder === order.id;
                 const currentIdx = statusSteps.indexOf(order.status);
                 const requirements = Array.isArray(order.requirements) ? order.requirements : [];
+                const hasAppData = order.application_id && appDataMap[order.application_id];
+                const staffNotes = order.application_id ? appDataMap[order.application_id]?.staff_notes : null;
 
                 return (
                   <div key={order.id} className="rounded-xl border border-border overflow-hidden">
                     <button
-                      onClick={() => setExpandedOrder(isExpanded ? null : order.reference_id)}
+                      onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
                       className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left"
                     >
                       <div className="flex-1">
@@ -282,6 +406,17 @@ const ClientDashboard = () => {
 
                     {isExpanded && (
                       <div className="border-t border-border p-5 space-y-6">
+                        {/* View Application button */}
+                        {hasAppData && (
+                          <Button
+                            variant="outline"
+                            className="gap-2"
+                            onClick={() => handleViewApplication(order.application_id!)}
+                          >
+                            <Eye size={16} /> View Application
+                          </Button>
+                        )}
+
                         {/* Status timeline */}
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3">Track Order</p>
@@ -299,10 +434,20 @@ const ClientDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Staff note */}
+                        {/* Staff note from client_orders */}
                         {order.staff_note && (
                           <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
                             <p className="text-sm text-muted-foreground">{order.staff_note}</p>
+                          </div>
+                        )}
+
+                        {/* Staff Notes section (from applications table — live, read-only) */}
+                        {staffNotes && (
+                          <div className="rounded-xl border border-border p-5 bg-muted/20">
+                            <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
+                              <MessageSquare size={16} className="text-accent" /> Staff Notes
+                            </p>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{staffNotes}</p>
                           </div>
                         )}
 
@@ -450,19 +595,13 @@ const ClientDashboard = () => {
         </div>
       </div>
 
-      <Dialog open={rejectDialogOpen} onOpenChange={setRejectDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Tell us what's wrong</DialogTitle>
-            <DialogDescription>Please explain why you're not ready to approve this delivery.</DialogDescription>
-          </DialogHeader>
-          <Textarea placeholder="Describe the issue..." value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} className="min-h-[120px]" />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRejectDialogOpen(false)}>Cancel</Button>
-            <Button onClick={handleRejectDelivery} disabled={!rejectReason.trim()} className="gap-2"><Send size={16} /> Send Feedback</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {/* View Application Dialog */}
+      <ViewApplicationDialog
+        open={viewAppOpen}
+        onOpenChange={setViewAppOpen}
+        data={viewAppData}
+        applicationId={viewAppId}
+      />
 
       <LiveChatWidget />
       <BackToHome />
