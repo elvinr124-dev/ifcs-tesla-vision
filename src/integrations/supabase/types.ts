@@ -14,6 +14,102 @@ export type Database = {
   }
   public: {
     Tables: {
+      applications: {
+        Row: {
+          application_data: Json | null
+          application_id: string
+          attendance: string | null
+          auth_option: string | null
+          card_last_four: string | null
+          cell_phone: string | null
+          client_email: string
+          country: string | null
+          created_at: string
+          degrees: string | null
+          delivery_options: Json | null
+          dob: string
+          first_name: string
+          gender: string | null
+          home_phone: string | null
+          id: string
+          institution_name: string | null
+          last_name: string
+          middle_name: string | null
+          payment_method: string | null
+          price: number | null
+          processing_label: string | null
+          processing_time: string | null
+          purpose: string | null
+          service_title: string | null
+          staff_notes: string | null
+          status: string | null
+          total_price: number | null
+          translation_option: string | null
+        }
+        Insert: {
+          application_data?: Json | null
+          application_id: string
+          attendance?: string | null
+          auth_option?: string | null
+          card_last_four?: string | null
+          cell_phone?: string | null
+          client_email: string
+          country?: string | null
+          created_at?: string
+          degrees?: string | null
+          delivery_options?: Json | null
+          dob: string
+          first_name: string
+          gender?: string | null
+          home_phone?: string | null
+          id?: string
+          institution_name?: string | null
+          last_name: string
+          middle_name?: string | null
+          payment_method?: string | null
+          price?: number | null
+          processing_label?: string | null
+          processing_time?: string | null
+          purpose?: string | null
+          service_title?: string | null
+          staff_notes?: string | null
+          status?: string | null
+          total_price?: number | null
+          translation_option?: string | null
+        }
+        Update: {
+          application_data?: Json | null
+          application_id?: string
+          attendance?: string | null
+          auth_option?: string | null
+          card_last_four?: string | null
+          cell_phone?: string | null
+          client_email?: string
+          country?: string | null
+          created_at?: string
+          degrees?: string | null
+          delivery_options?: Json | null
+          dob?: string
+          first_name?: string
+          gender?: string | null
+          home_phone?: string | null
+          id?: string
+          institution_name?: string | null
+          last_name?: string
+          middle_name?: string | null
+          payment_method?: string | null
+          price?: number | null
+          processing_label?: string | null
+          processing_time?: string | null
+          purpose?: string | null
+          service_title?: string | null
+          staff_notes?: string | null
+          status?: string | null
+          total_price?: number | null
+          translation_option?: string | null
+        }
+        Relationships: []
+      }
       chat_conversations: {
         Row: {
           client_display_name: string
@@ -120,8 +216,10 @@ export type Database = {
       }
       client_orders: {
         Row: {
+          application_id: string | null
           client_email: string
           created_at: string
+          dob: string | null
           id: string
           reference_id: string
           requirements: Json | null
@@ -132,8 +230,10 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          application_id?: string | null
           client_email: string
           created_at?: string
+          dob?: string | null
           id?: string
           reference_id: string
           requirements?: Json | null
@@ -144,8 +244,10 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          application_id?: string | null
           client_email?: string
           created_at?: string
+          dob?: string | null
           id?: string
           reference_id?: string
           requirements?: Json | null
