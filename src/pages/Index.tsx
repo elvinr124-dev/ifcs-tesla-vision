@@ -42,6 +42,19 @@ const Index = () => {
       />
 
       <ServiceSection
+        id="credential-clarity"
+        title="Credential Clarity for Your Global Journey"
+        subtitle=""
+        description=""
+        backgroundImage={credentialClarityBg}
+        ctaLabel="For Individuals"
+        ctaHref="/for-individuals"
+        secondaryLabel="For Institutions"
+        secondaryHref="/for-institutions"
+        dark
+      />
+
+      <ServiceSection
         id="consulting"
         title="Consulting"
         subtitle="Expert Guidance"
