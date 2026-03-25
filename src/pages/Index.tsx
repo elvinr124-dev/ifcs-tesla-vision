@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 
 import evaluationsBg from "@/assets/evaluations-bg.jpg";
 import translationsBg from "@/assets/translations-bg.jpg";
+import credentialClarityBg from "@/assets/credential-clarity-bg.jpg";
 import consultingBg from "@/assets/consulting-bg.jpg";
 
 const Index = () => {
@@ -38,6 +39,19 @@ const Index = () => {
         secondaryLabel="View Languages"
         secondaryHref="/translations"
         dark={false}
+      />
+
+      <ServiceSection
+        id="credential-clarity"
+        title="Credential Clarity for Your Global Journey"
+        subtitle=""
+        description=""
+        backgroundImage={credentialClarityBg}
+        ctaLabel="For Individuals"
+        ctaHref="/for-individuals"
+        secondaryLabel="For Institutions"
+        secondaryHref="/for-institutions"
+        dark
       />
 
       <ServiceSection

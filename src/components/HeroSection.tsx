@@ -32,18 +32,18 @@ const HeroSection = () => {
 
         <div className="flex flex-col sm:flex-row gap-4 mt-12 justify-center">
           <Link
-            to="/for-individuals"
+            to="/evaluations"
             className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl transition-all duration-200 shadow-2xl hover:scale-105"
             style={{ background: "hsl(217 91% 50%)", color: "white", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.5)" }}
           >
-            For Individuals
+            Get an Evaluation
           </Link>
           <Link
-            to="/for-institutions"
-            className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl border-2 transition-all duration-200 hover:scale-105"
-            style={{ borderColor: "rgba(255,255,255,0.6)", color: "white", background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}
+            to="/translations"
+            className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl transition-all duration-200 shadow-2xl hover:scale-105"
+            style={{ background: "white", color: "hsl(217 91% 50%)", boxShadow: "0 8px 32px rgba(255,255,255,0.3)" }}
           >
-            For Institutions
+            Get a Certified Translation
           </Link>
         </div>
       </div>
