@@ -13,8 +13,8 @@ const HeroSection = () => {
         loop
         playsInline
         poster={nycPoster}
-        className="absolute inset-0 w-full h-full object-cover">
-        
+        className="absolute inset-0 w-full h-full object-cover"
+      >
         <source src={nycVideo} type="video/mp4" />
       </video>
 
@@ -34,15 +34,15 @@ const HeroSection = () => {
           <Link
             to="/evaluations"
             className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl transition-all duration-200 shadow-2xl hover:scale-105"
-            style={{ background: "hsl(217 91% 50%)", color: "white", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.5)" }}>
-            
+            style={{ background: "hsl(217 91% 50%)", color: "white", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.5)" }}
+          >
             Get an Evaluation
           </Link>
           <Link
             to="/translations"
-            className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide transition-all duration-200 hover:scale-105 shadow-none text-ring rounded"
-            style={{ background: "white", color: "hsl(217 91% 50%)" }}>
-            
+            className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl transition-all duration-200 hover:scale-105 shadow-none text-ring"
+            style={{ background: "white", color: "hsl(217 91% 50%)" }}
+          >
             Get a Certified Translation
           </Link>
         </div>
@@ -52,8 +52,8 @@ const HeroSection = () => {
       <div className="absolute bottom-8 z-10 animate-scroll-indicator">
         <ChevronDown size={34} style={{ color: "white" }} />
       </div>
-    </section>);
-
+    </section>
+  );
 };
 
 export default HeroSection;
