@@ -45,7 +45,7 @@ const Index = () => {
         id="credential-clarity"
         title={<>Credential Clarity for{<br />}Your Global Journey</>}
         subtitle="Your Path Forward"
-        description="Continue your journey to educational and professional enlightenment with IFCS. We will help you get your foreign credentials recognized by universities, employers, and governmental institutions. IFCS is trusted by: universities, federal and state government agencies, employers, and licensure boards across the U.S., for their timely and accurate foreign credential evaluations."
+        description="Continue your journey to educational and professional enlightenment with IFCS. We will help you get your foreign credentials recognized by universities, employers, and governmental institutions."
         backgroundImage={credentialClarityBg}
         ctaLabel="For Individuals"
         ctaHref="/for-individuals"
