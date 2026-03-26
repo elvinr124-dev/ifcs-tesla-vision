@@ -414,16 +414,27 @@ const ClientDashboard = () => {
 
                     {isExpanded && (
                       <div className="border-t border-border p-5 space-y-6">
-                        {/* View Application button */}
-                        {hasAppData && (
-                          <Button
-                            variant="outline"
-                            className="gap-2"
-                            onClick={() => handleViewApplication(order.application_id!)}
-                          >
-                            <Eye size={16} /> View Application
-                          </Button>
-                        )}
+                        {/* Action buttons */}
+                        <div className="flex flex-wrap gap-2">
+                          {hasAppData && (
+                            <Button
+                              variant="outline"
+                              className="gap-2 rounded-full"
+                              onClick={() => handleViewApplication(order.application_id!)}
+                            >
+                              <Eye size={16} /> View Application
+                            </Button>
+                          )}
+                          {receiptUrl && (
+                            <Button
+                              variant="outline"
+                              className="gap-2 rounded-full"
+                              onClick={() => window.open(receiptUrl, "_blank")}
+                            >
+                              <FileText size={16} /> View Receipt
+                            </Button>
+                          )}
+                        </div>
 
                         {/* Status timeline */}
                         <div>
@@ -442,20 +453,15 @@ const ClientDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Staff note from client_orders */}
-                        {order.staff_note && (
-                          <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
-                            <p className="text-sm text-muted-foreground">{order.staff_note}</p>
-                          </div>
-                        )}
-
-                        {/* Staff Notes section (from applications table — live, read-only) */}
-                        {staffNotes && (
+                        {/* Staff Notes — combined view */}
+                        {(order.staff_note || staffNotes) && (
                           <div className="rounded-xl border border-border p-5 bg-muted/20">
                             <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                               <MessageSquare size={16} className="text-accent" /> Staff Notes
                             </p>
-                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{staffNotes}</p>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                              {staffNotes || order.staff_note}
+                            </p>
                           </div>
                         )}
 
