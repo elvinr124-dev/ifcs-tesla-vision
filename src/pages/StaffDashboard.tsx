@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
@@ -13,6 +13,7 @@ import {
 import {
   Upload, Send, Users, Clock, AlertCircle, CheckCircle2, Package, FileText, Star,
   Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones, Trash2, UserX,
+  Paperclip, Receipt,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,6 +41,8 @@ interface DBOrder {
   submitted_at: string;
   created_at: string;
   updated_at: string;
+  application_id?: string;
+  ifcs_id?: string;
 }
 
 interface ClientAccount {
@@ -60,10 +63,13 @@ interface PendingChat {
 }
 
 const statusMeta: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  requested:  { label: "Requested",  color: "bg-muted text-muted-foreground",    icon: <Clock size={14} /> },
-  in_review:  { label: "In Review",  color: "bg-accent/20 text-accent",          icon: <Package size={14} /> },
-  on_hold:    { label: "On Hold",    color: "bg-destructive/20 text-destructive", icon: <AlertCircle size={14} /> },
-  delivered:  { label: "Delivered",  color: "bg-emerald-500/20 text-emerald-600", icon: <CheckCircle2 size={14} /> },
+  requested:    { label: "Requested",              color: "bg-muted text-muted-foreground",    icon: <Clock size={14} /> },
+  in_process:   { label: "In Process",             color: "bg-blue-500/20 text-blue-600",      icon: <Package size={14} /> },
+  in_review:    { label: "In Review",              color: "bg-accent/20 text-accent",          icon: <Package size={14} /> },
+  need_info:    { label: "Need Additional Info",   color: "bg-amber-500/20 text-amber-600",    icon: <AlertCircle size={14} /> },
+  on_hold:      { label: "On Hold",                color: "bg-destructive/20 text-destructive", icon: <AlertCircle size={14} /> },
+  completed:    { label: "Completed",              color: "bg-emerald-500/20 text-emerald-600", icon: <CheckCircle2 size={14} /> },
+  delivered:    { label: "Delivered",               color: "bg-emerald-500/20 text-emerald-600", icon: <CheckCircle2 size={14} /> },
 };
 
 const requirementTemplates = [
@@ -73,6 +79,24 @@ const requirementTemplates = [
   { label: "Document Translation", type: "translation" as const },
   { label: "Proof of Payment", type: "document" as const },
   { label: "Additional Information", type: "info" as const },
+];
+
+const quickNotes = [
+  "Needs translations",
+  "Needs degree certificate",
+  "Needs transcript",
+  "Need to find the University",
+  "Need to know accreditation",
+  "Not accredited",
+  "Under review",
+];
+
+const evaluators = ["Vera", "Agron", "Enver", "Ritvan", "Fadil", "Bia", "Linda", "IFCS Team"];
+
+const verificationSources = [
+  "IFCS is performing document authentication",
+  "Applicant will arrange to send with Institution",
+  "Original Documents Required to be mailed to IFCS",
 ];
 
 const StaffDashboard = () => {
@@ -104,6 +128,19 @@ const StaffDashboard = () => {
   // Delete confirmation
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; type: "client" | "order"; id: string; label: string }>({ open: false, type: "client", id: "", label: "" });
 
+  // New Application Entry dialog
+  const [newAppOpen, setNewAppOpen] = useState(false);
+  const [newAppIfcsId, setNewAppIfcsId] = useState("IFCS-");
+  const [newAppEmail, setNewAppEmail] = useState("");
+  const [newAppVerification, setNewAppVerification] = useState("");
+  const [newAppStatus, setNewAppStatus] = useState("in_process");
+  const [newAppEvaluator, setNewAppEvaluator] = useState("");
+  const [newAppRush, setNewAppRush] = useState("standard");
+  const [newAppNotes, setNewAppNotes] = useState("");
+  const [newAppSendTo, setNewAppSendTo] = useState("applicant");
+  const [newAppAttachment, setNewAppAttachment] = useState<File | null>(null);
+  const [newAppReceipt, setNewAppReceipt] = useState<File | null>(null);
+
   // Load all data
   useEffect(() => {
     const loadAll = async () => {
@@ -118,7 +155,6 @@ const StaffDashboard = () => {
     };
     loadAll();
 
-    // Realtime for orders, clients, and chats
     const channel = supabase
       .channel("staff-all-rt")
       .on("postgres_changes", { event: "*", schema: "public", table: "client_orders" }, () => {
@@ -155,7 +191,7 @@ const StaffDashboard = () => {
     const matchesFilter = filter === "all" || o.status === filter;
     if (!searchQuery.trim()) return matchesFilter;
     const q = searchQuery.toLowerCase().trim();
-    const matchesSearch = o.reference_id.toLowerCase().includes(q) || o.client_email.toLowerCase().includes(q);
+    const matchesSearch = o.reference_id.toLowerCase().includes(q) || o.client_email.toLowerCase().includes(q) || (o.ifcs_id || "").toLowerCase().includes(q) || (o.application_id || "").toLowerCase().includes(q);
     return matchesFilter && matchesSearch;
   });
 
@@ -163,7 +199,12 @@ const StaffDashboard = () => {
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     await (supabase as any).from("client_orders").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", orderId);
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-    toast({ title: "Status Updated", description: `Order → ${statusMeta[newStatus]?.label}` });
+    // Also update applications table if linked
+    const order = orders.find(o => o.id === orderId);
+    if (order?.application_id) {
+      await (supabase as any).from("applications").update({ status: newStatus }).eq("application_id", order.application_id);
+    }
+    toast({ title: "Status Updated", description: `Order → ${statusMeta[newStatus]?.label || newStatus}` });
   };
 
   // Add requirement
@@ -197,11 +238,35 @@ const StaffDashboard = () => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, requirements: updatedReqs } : o));
   };
 
-  // Staff note
-  const handleUpdateNote = async (orderId: string, note: string) => {
+  // Staff note update with email notification
+  const handleUpdateNote = async (orderId: string, note: string, sendTo: string = "applicant") => {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+
     await (supabase as any).from("client_orders").update({ staff_note: note, updated_at: new Date().toISOString() }).eq("id", orderId);
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, staff_note: note } : o));
-    toast({ title: "Note Updated" });
+
+    // Also update applications table
+    if (order.application_id) {
+      await (supabase as any).from("applications").update({ staff_notes: note, note_send_to: sendTo }).eq("application_id", order.application_id);
+    }
+
+    // Send email notification to client
+    const client = clients.find(c => c.email === order.client_email);
+    const applicantName = client ? `${client.first_name} ${client.last_name}` : "Applicant";
+
+    try {
+      await supabase.functions.invoke("send-application-email", {
+        body: {
+          type: "staff_note",
+          recipientEmail: order.client_email,
+          applicantName,
+          noteContent: note,
+        },
+      });
+    } catch {}
+
+    toast({ title: "Note Saved & Sent", description: `Note sent to ${sendTo === "applicant" ? order.client_email : "institution"}.` });
   };
 
   // Delete client or order
@@ -216,6 +281,149 @@ const StaffDashboard = () => {
       toast({ title: "Order Deleted" });
     }
     setDeleteDialog({ open: false, type: "client", id: "", label: "" });
+  };
+
+  // New Application Entry handler
+  const handleNewApplication = async () => {
+    if (!newAppEmail.trim() || !newAppIfcsId.trim()) {
+      toast({ title: "Missing Fields", description: "Please enter Client Email and IFCS ID.", variant: "destructive" });
+      return;
+    }
+
+    // Find the application by client email
+    const { data: apps } = await (supabase as any)
+      .from("applications")
+      .select("*")
+      .eq("client_email", newAppEmail.trim())
+      .order("created_at", { ascending: false });
+
+    if (!apps || apps.length === 0) {
+      toast({ title: "No Application Found", description: `No application found for ${newAppEmail.trim()}.`, variant: "destructive" });
+      return;
+    }
+
+    const app = apps[0]; // Most recent application
+
+    // Upload attachment if provided
+    let attachmentUrl = "";
+    if (newAppAttachment) {
+      const filePath = `notes/${app.application_id}-${Date.now()}-${newAppAttachment.name}`;
+      const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, newAppAttachment);
+      if (!upErr) {
+        const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+        attachmentUrl = urlData.publicUrl;
+      }
+    }
+
+    // Upload receipt if provided
+    let receiptUrl = "";
+    if (newAppReceipt) {
+      const filePath = `receipts/${app.application_id}-${Date.now()}-${newAppReceipt.name}`;
+      const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, newAppReceipt);
+      if (!upErr) {
+        const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+        receiptUrl = urlData.publicUrl;
+      }
+    }
+
+    const ifcsId = newAppIfcsId.trim();
+
+    // Update the application with IFCS ID and other fields
+    await (supabase as any).from("applications").update({
+      ifcs_id: ifcsId,
+      verification_source: newAppVerification,
+      evaluator: newAppEvaluator,
+      status: newAppStatus,
+      staff_notes: newAppNotes,
+      note_send_to: newAppSendTo,
+      receipt_url: receiptUrl || undefined,
+    }).eq("application_id", app.application_id);
+
+    // Update client_orders too
+    await (supabase as any).from("client_orders").update({
+      ifcs_id: ifcsId,
+      status: newAppStatus,
+      staff_note: newAppNotes,
+    }).eq("application_id", app.application_id);
+
+    // If no client_order exists, find by email
+    const { data: existingOrder } = await (supabase as any)
+      .from("client_orders")
+      .select("id")
+      .eq("application_id", app.application_id)
+      .maybeSingle();
+
+    if (!existingOrder) {
+      // Create a client_order entry
+      await (supabase as any).from("client_orders").insert({
+        reference_id: ifcsId,
+        client_email: newAppEmail.trim(),
+        service: `${app.service_title || ""} — ${app.processing_label || ""}`,
+        status: newAppStatus,
+        application_id: app.application_id,
+        ifcs_id: ifcsId,
+        dob: app.dob,
+        staff_note: newAppNotes,
+      });
+    }
+
+    // Send note email if notes exist
+    if (newAppNotes.trim()) {
+      const client = clients.find(c => c.email === newAppEmail.trim());
+      const applicantName = client ? `${client.first_name} ${client.last_name}` : app.first_name ? `${app.first_name} ${app.last_name}` : "Applicant";
+      try {
+        await supabase.functions.invoke("send-application-email", {
+          body: {
+            type: "staff_note",
+            recipientEmail: newAppEmail.trim(),
+            applicantName,
+            noteContent: newAppNotes,
+          },
+        });
+      } catch {}
+    }
+
+    toast({ title: "Application Entry Added", description: `IFCS ID ${ifcsId} linked to ${app.application_id}.` });
+
+    // Reset form
+    setNewAppOpen(false);
+    setNewAppIfcsId("IFCS-");
+    setNewAppEmail("");
+    setNewAppVerification("");
+    setNewAppStatus("in_process");
+    setNewAppEvaluator("");
+    setNewAppRush("standard");
+    setNewAppNotes("");
+    setNewAppSendTo("applicant");
+    setNewAppAttachment(null);
+    setNewAppReceipt(null);
+
+    // Reload orders
+    const { data: refreshed } = await (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false });
+    if (refreshed) setOrders(refreshed);
+  };
+
+  // Upload attachment on existing order note
+  const handleNoteAttachment = async (orderId: string, file: File, type: "attachment" | "receipt") => {
+    const order = orders.find(o => o.id === orderId);
+    if (!order) return;
+    const folder = type === "receipt" ? "receipts" : "notes";
+    const filePath = `${folder}/${order.reference_id}-${Date.now()}-${file.name}`;
+    const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, file);
+    if (upErr) {
+      toast({ title: "Upload Failed", variant: "destructive" });
+      return;
+    }
+    const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+    
+    if (type === "receipt" && order.application_id) {
+      await (supabase as any).from("applications").update({ receipt_url: urlData.publicUrl }).eq("application_id", order.application_id);
+      toast({ title: "Receipt Uploaded", description: "Client can now view the receipt." });
+    } else {
+      // Add attachment URL to staff_note
+      const noteWithAttachment = `${order.staff_note || ""}\n📎 Attachment: ${file.name} - ${urlData.publicUrl}`;
+      await handleUpdateNote(orderId, noteWithAttachment);
+    }
   };
 
   // Share report
@@ -237,7 +445,6 @@ const StaffDashboard = () => {
       health: "Health Professions Course-by-Course",
     };
 
-    // Upload PDF to storage if provided
     let reportFileUrl: string | null = null;
     if (shareFile) {
       const filePath = `reports/${shareRef}-${Date.now()}.pdf`;
@@ -362,7 +569,7 @@ const StaffDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* ── Order Queue ── */}
+          {/* ── Application Queue ── */}
           <Card className="border-border bg-card">
             <CardHeader className="flex flex-col gap-4">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -370,21 +577,29 @@ const StaffDashboard = () => {
                   <Package size={22} className="text-accent" /> Application Queue
                   <Badge variant="secondary" className="ml-2">{orders.length}</Badge>
                 </CardTitle>
-                <Select value={filter} onValueChange={setFilter}>
-                  <SelectTrigger className="w-48"><SelectValue placeholder="Filter by status" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All</SelectItem>
-                    <SelectItem value="requested">Requested</SelectItem>
-                    <SelectItem value="in_review">In Review</SelectItem>
-                    <SelectItem value="on_hold">On Hold</SelectItem>
-                    <SelectItem value="delivered">Delivered</SelectItem>
-                  </SelectContent>
-                </Select>
+                <div className="flex gap-2">
+                  <Button onClick={() => setNewAppOpen(true)} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                    <Plus size={16} /> New Application Entry
+                  </Button>
+                  <Select value={filter} onValueChange={setFilter}>
+                    <SelectTrigger className="w-48"><SelectValue placeholder="Filter by status" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="requested">Requested</SelectItem>
+                      <SelectItem value="in_process">In Process</SelectItem>
+                      <SelectItem value="in_review">In Review</SelectItem>
+                      <SelectItem value="need_info">Need Additional Info</SelectItem>
+                      <SelectItem value="on_hold">On Hold</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="delivered">Delivered</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
               <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
                 <div className="relative flex-1">
                   <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by IFCS reference # or email..." className="pl-9" />
+                  <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by IFCS ID, App ID, reference # or email..." className="pl-9" />
                 </div>
               </form>
             </CardHeader>
@@ -407,7 +622,9 @@ const StaffDashboard = () => {
                       className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <p className="font-semibold text-foreground">#{o.reference_id}</p>
+                          {o.application_id && <p className="font-semibold text-foreground">App ID {o.application_id}</p>}
+                          {o.ifcs_id && <p className="font-semibold text-accent">IFCS ID {o.ifcs_id}</p>}
+                          {!o.application_id && !o.ifcs_id && <p className="font-semibold text-foreground">#{o.reference_id}</p>}
                           <Badge variant="secondary" className={`${meta.color} gap-1`}>{meta.icon} {meta.label}</Badge>
                         </div>
                         <p className="text-sm text-foreground mt-1">{applicantName} <span className="text-muted-foreground">— {o.client_email}</span></p>
@@ -422,7 +639,7 @@ const StaffDashboard = () => {
                           <p className="text-sm font-medium text-foreground mb-2">Update Status</p>
                           <div className="flex flex-wrap gap-2">
                             {Object.entries(statusMeta).map(([key, val]) => (
-                              <Button key={key} size="sm" variant={o.status === key ? "default" : "outline"} className="gap-1"
+                              <Button key={key} size="sm" variant={o.status === key ? "default" : "outline"} className="gap-1 rounded-full"
                                 onClick={() => handleStatusChange(o.id, key)}>
                                 {val.icon} {val.label}
                               </Button>
@@ -446,12 +663,60 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Staff note */}
+                        {/* Notes section with send-to dropdown */}
                         <div>
-                          <p className="text-sm font-medium text-foreground mb-2">Staff Note (visible to client)</p>
-                          <Textarea defaultValue={o.staff_note} placeholder="Add a note for the client..."
+                          <div className="flex items-center gap-3 mb-2">
+                            <p className="text-sm font-medium text-foreground">Notes</p>
+                            <Select defaultValue="applicant" onValueChange={(v) => {
+                              // Store for when note is saved
+                            }}>
+                              <SelectTrigger className="w-48 h-8"><SelectValue placeholder="Send to..." /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="applicant">Send to Applicant</SelectItem>
+                                <SelectItem value="institution">Send to Institution</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+
+                          {/* Quick note tags */}
+                          <div className="flex flex-wrap gap-2 mb-3">
+                            {quickNotes.map((qn) => (
+                              <Button key={qn} size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
+                                onClick={() => {
+                                  const currentNote = o.staff_note || "";
+                                  const newNote = currentNote ? `${currentNote}\n${qn}` : qn;
+                                  handleUpdateNote(o.id, newNote);
+                                }}>
+                                <Plus size={10} /> {qn}
+                              </Button>
+                            ))}
+                          </div>
+
+                          <Textarea defaultValue={o.staff_note} placeholder="Add any notes about this application..."
                             onBlur={(e) => { if (e.target.value !== o.staff_note) handleUpdateNote(o.id, e.target.value); }}
                           />
+
+                          {/* Attachment buttons */}
+                          <div className="flex gap-2 mt-2">
+                            <label className="cursor-pointer">
+                              <input type="file" className="hidden" onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleNoteAttachment(o.id, file, "attachment");
+                              }} />
+                              <Button type="button" size="sm" variant="outline" className="gap-1 rounded-full pointer-events-none">
+                                <Paperclip size={14} /> Attach File
+                              </Button>
+                            </label>
+                            <label className="cursor-pointer">
+                              <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => {
+                                const file = e.target.files?.[0];
+                                if (file) handleNoteAttachment(o.id, file, "receipt");
+                              }} />
+                              <Button type="button" size="sm" variant="outline" className="gap-1 rounded-full pointer-events-none">
+                                <Receipt size={14} /> Upload Receipt
+                              </Button>
+                            </label>
+                          </div>
                         </div>
 
                         {/* Requirements */}
@@ -486,7 +751,7 @@ const StaffDashboard = () => {
                           <p className="text-sm font-medium text-foreground mb-2">Quick Add Requirement</p>
                           <div className="flex flex-wrap gap-2">
                             {requirementTemplates.map((tpl) => (
-                              <Button key={tpl.label} size="sm" variant="outline" className="gap-1 text-xs"
+                              <Button key={tpl.label} size="sm" variant="outline" className="gap-1 text-xs rounded-full"
                                 onClick={() => handleQuickReq(o.id, tpl)}>
                                 <Plus size={12} /> {tpl.label}
                               </Button>
@@ -514,10 +779,10 @@ const StaffDashboard = () => {
 
                         {/* Chat & Delete */}
                         <div className="flex gap-3 flex-wrap">
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
+                          <Button size="sm" variant="outline" className="gap-1 rounded-full" onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
                           </Button>
-                          <Button size="sm" variant="destructive" className="gap-1"
+                          <Button size="sm" variant="destructive" className="gap-1 rounded-full"
                             onClick={() => setDeleteDialog({ open: true, type: "order", id: o.id, label: `#${o.reference_id}` })}>
                             <Trash2 size={14} /> Delete Order
                           </Button>
@@ -574,6 +839,148 @@ const StaffDashboard = () => {
           </Card>
         </div>
       </div>
+
+      {/* ── New Application Entry Dialog ── */}
+      <Dialog open={newAppOpen} onOpenChange={setNewAppOpen}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">New Application Entry</DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6 pt-2">
+            {/* IFCS ID & Client Email */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Application Number *</label>
+                <Input value={newAppIfcsId} onChange={(e) => setNewAppIfcsId(e.target.value)} placeholder="IFCS-45001" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
+                <Input type="email" value={newAppEmail} onChange={(e) => setNewAppEmail(e.target.value)} placeholder="client@email.com" />
+              </div>
+            </div>
+
+            {/* Date Entered (auto) */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Date Entered</label>
+                <Input value={new Date().toLocaleDateString()} disabled className="bg-muted/40" />
+              </div>
+            </div>
+
+            {/* Verification Source & Status */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Verification Source</label>
+                <Select value={newAppVerification} onValueChange={setNewAppVerification}>
+                  <SelectTrigger><SelectValue placeholder="Select source..." /></SelectTrigger>
+                  <SelectContent>
+                    {verificationSources.map((v) => (
+                      <SelectItem key={v} value={v}>{v}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Status</label>
+                <Select value={newAppStatus} onValueChange={setNewAppStatus}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="in_process">In Process</SelectItem>
+                    <SelectItem value="in_review">In Review</SelectItem>
+                    <SelectItem value="need_info">Need Additional Information</SelectItem>
+                    <SelectItem value="completed">Completed</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Evaluator */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Assign Evaluator</label>
+              <Select value={newAppEvaluator} onValueChange={setNewAppEvaluator}>
+                <SelectTrigger><SelectValue placeholder="Select evaluator..." /></SelectTrigger>
+                <SelectContent>
+                  {evaluators.map((ev) => (
+                    <SelectItem key={ev} value={ev}>{ev}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Rush Service */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Rush Service</label>
+              <div className="grid grid-cols-3 gap-3">
+                {[
+                  { value: "standard", label: "Standard", desc: "Regular processing", icon: null, border: "border-foreground" },
+                  { value: "3day", label: "🔥 3-Day Rush", desc: "Priority processing", icon: null, border: "border-amber-500/40" },
+                  { value: "24hour", label: "⚡ 24-Hour Rush", desc: "Urgent processing", icon: null, border: "border-red-500/40" },
+                ].map((r) => (
+                  <button
+                    key={r.value}
+                    type="button"
+                    onClick={() => setNewAppRush(r.value)}
+                    className={`rounded-xl border-2 p-4 text-left transition-all ${
+                      newAppRush === r.value ? `${r.border} bg-muted/30` : "border-border hover:border-muted-foreground/30"
+                    }`}
+                  >
+                    <p className="font-semibold text-sm text-foreground">{r.label}</p>
+                    <p className="text-xs text-muted-foreground">{r.desc}</p>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Send To dropdown */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Send Notes To</label>
+              <Select value={newAppSendTo} onValueChange={setNewAppSendTo}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="applicant">Send to Applicant</SelectItem>
+                  <SelectItem value="institution">Send to Institution</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Notes with quick tags */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Notes</label>
+              <div className="flex flex-wrap gap-2 mb-2">
+                {quickNotes.map((qn) => (
+                  <Button key={qn} type="button" size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
+                    onClick={() => {
+                      setNewAppNotes(prev => prev ? `${prev}\n${qn}` : qn);
+                    }}>
+                    <Plus size={10} /> {qn}
+                  </Button>
+                ))}
+              </div>
+              <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Add any notes about this application..." rows={4} />
+            </div>
+
+            {/* Attachments */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Attach File</label>
+                <Input type="file" onChange={(e) => setNewAppAttachment(e.target.files?.[0] || null)} />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Upload Receipt</label>
+                <Input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setNewAppReceipt(e.target.files?.[0] || null)} />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="mt-6">
+            <Button variant="outline" onClick={() => setNewAppOpen(false)}>Cancel</Button>
+            <Button onClick={handleNewApplication} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+              <Plus size={16} /> Add Application
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Delete confirmation dialog */}
       <Dialog open={deleteDialog.open} onOpenChange={(open) => setDeleteDialog(prev => ({ ...prev, open }))}>
