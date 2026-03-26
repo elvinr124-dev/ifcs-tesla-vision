@@ -50,6 +50,8 @@ interface ApplicationData {
   application_id: string;
   application_data: any;
   staff_notes: string;
+  receipt_url?: string;
+  ifcs_id?: string;
 }
 
 const addOns = [
