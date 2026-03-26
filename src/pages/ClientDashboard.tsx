@@ -29,6 +29,7 @@ interface ClientOrder {
   requirements: any[];
   submitted_at: string;
   application_id?: string;
+  ifcs_id?: string;
   dob?: string;
 }
 
