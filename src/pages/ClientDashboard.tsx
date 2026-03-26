@@ -29,6 +29,7 @@ interface ClientOrder {
   requirements: any[];
   submitted_at: string;
   application_id?: string;
+  ifcs_id?: string;
   dob?: string;
 }
 
@@ -49,6 +50,8 @@ interface ApplicationData {
   application_id: string;
   application_data: any;
   staff_notes: string;
+  receipt_url?: string;
+  ifcs_id?: string;
 }
 
 const addOns = [
@@ -123,7 +126,7 @@ const ClientDashboard = () => {
         if (appIds.length > 0) {
           const { data: apps } = await (supabase as any)
             .from("applications")
-            .select("id, application_id, application_data, staff_notes")
+            .select("id, application_id, application_data, staff_notes, receipt_url, ifcs_id")
             .in("application_id", appIds);
           if (apps) {
             const map: Record<string, ApplicationData> = {};
@@ -382,8 +385,9 @@ const ClientDashboard = () => {
                 const isExpanded = expandedOrder === order.id;
                 const currentIdx = statusSteps.indexOf(order.status);
                 const requirements = Array.isArray(order.requirements) ? order.requirements : [];
-                const hasAppData = order.application_id && appDataMap[order.application_id];
+                const hasAppData = order.application_id ? appDataMap[order.application_id] : null;
                 const staffNotes = order.application_id ? appDataMap[order.application_id]?.staff_notes : null;
+                const receiptUrl = order.application_id ? appDataMap[order.application_id]?.receipt_url : null;
 
                 return (
                   <div key={order.id} className="rounded-xl border border-border overflow-hidden">
@@ -393,7 +397,11 @@ const ClientDashboard = () => {
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <p className="font-semibold text-foreground">#{order.reference_id}</p>
+                          {order.application_id && <p className="font-semibold text-foreground">App ID {order.application_id}</p>}
+                          {(order.ifcs_id || hasAppData?.ifcs_id) && (
+                            <p className="font-semibold text-accent">— IFCS ID {order.ifcs_id || hasAppData?.ifcs_id}</p>
+                          )}
+                          {!order.application_id && <p className="font-semibold text-foreground">#{order.reference_id}</p>}
                           <Badge variant="secondary" className={`${meta.color} gap-1`}>
                             {meta.icon} {meta.label}
                           </Badge>
@@ -406,16 +414,27 @@ const ClientDashboard = () => {
 
                     {isExpanded && (
                       <div className="border-t border-border p-5 space-y-6">
-                        {/* View Application button */}
-                        {hasAppData && (
-                          <Button
-                            variant="outline"
-                            className="gap-2"
-                            onClick={() => handleViewApplication(order.application_id!)}
-                          >
-                            <Eye size={16} /> View Application
-                          </Button>
-                        )}
+                        {/* Action buttons */}
+                        <div className="flex flex-wrap gap-2">
+                          {hasAppData && (
+                            <Button
+                              variant="outline"
+                              className="gap-2 rounded-full"
+                              onClick={() => handleViewApplication(order.application_id!)}
+                            >
+                              <Eye size={16} /> View Application
+                            </Button>
+                          )}
+                          {receiptUrl && (
+                            <Button
+                              variant="outline"
+                              className="gap-2 rounded-full"
+                              onClick={() => window.open(receiptUrl, "_blank")}
+                            >
+                              <FileText size={16} /> View Receipt
+                            </Button>
+                          )}
+                        </div>
 
                         {/* Status timeline */}
                         <div>
@@ -434,20 +453,15 @@ const ClientDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Staff note from client_orders */}
-                        {order.staff_note && (
-                          <div className="bg-destructive/5 border border-destructive/20 rounded-lg p-4">
-                            <p className="text-sm text-muted-foreground">{order.staff_note}</p>
-                          </div>
-                        )}
-
-                        {/* Staff Notes section (from applications table — live, read-only) */}
-                        {staffNotes && (
+                        {/* Staff Notes — combined view */}
+                        {(order.staff_note || staffNotes) && (
                           <div className="rounded-xl border border-border p-5 bg-muted/20">
                             <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                               <MessageSquare size={16} className="text-accent" /> Staff Notes
                             </p>
-                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">{staffNotes}</p>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                              {staffNotes || order.staff_note}
+                            </p>
                           </div>
                         )}
 
