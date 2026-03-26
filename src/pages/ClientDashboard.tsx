@@ -126,7 +126,7 @@ const ClientDashboard = () => {
         if (appIds.length > 0) {
           const { data: apps } = await (supabase as any)
             .from("applications")
-            .select("id, application_id, application_data, staff_notes")
+            .select("id, application_id, application_data, staff_notes, receipt_url, ifcs_id")
             .in("application_id", appIds);
           if (apps) {
             const map: Record<string, ApplicationData> = {};
