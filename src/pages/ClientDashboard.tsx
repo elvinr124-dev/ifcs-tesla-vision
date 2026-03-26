@@ -396,7 +396,11 @@ const ClientDashboard = () => {
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
-                          <p className="font-semibold text-foreground">#{order.reference_id}</p>
+                          {order.application_id && <p className="font-semibold text-foreground">App ID {order.application_id}</p>}
+                          {(order.ifcs_id || hasAppData?.ifcs_id) && (
+                            <p className="font-semibold text-accent">— IFCS ID {order.ifcs_id || hasAppData?.ifcs_id}</p>
+                          )}
+                          {!order.application_id && <p className="font-semibold text-foreground">#{order.reference_id}</p>}
                           <Badge variant="secondary" className={`${meta.color} gap-1`}>
                             {meta.icon} {meta.label}
                           </Badge>
