@@ -385,8 +385,9 @@ const ClientDashboard = () => {
                 const isExpanded = expandedOrder === order.id;
                 const currentIdx = statusSteps.indexOf(order.status);
                 const requirements = Array.isArray(order.requirements) ? order.requirements : [];
-                const hasAppData = order.application_id && appDataMap[order.application_id];
+                const hasAppData = order.application_id ? appDataMap[order.application_id] : null;
                 const staffNotes = order.application_id ? appDataMap[order.application_id]?.staff_notes : null;
+                const receiptUrl = order.application_id ? appDataMap[order.application_id]?.receipt_url : null;
 
                 return (
                   <div key={order.id} className="rounded-xl border border-border overflow-hidden">
