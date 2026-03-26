@@ -28,23 +28,28 @@ export type Database = {
           degrees: string | null
           delivery_options: Json | null
           dob: string
+          evaluator: string | null
           first_name: string
           gender: string | null
           home_phone: string | null
           id: string
+          ifcs_id: string | null
           institution_name: string | null
           last_name: string
           middle_name: string | null
+          note_send_to: string | null
           payment_method: string | null
           price: number | null
           processing_label: string | null
           processing_time: string | null
           purpose: string | null
+          receipt_url: string | null
           service_title: string | null
           staff_notes: string | null
           status: string | null
           total_price: number | null
           translation_option: string | null
+          verification_source: string | null
         }
         Insert: {
           application_data?: Json | null
@@ -59,23 +64,28 @@ export type Database = {
           degrees?: string | null
           delivery_options?: Json | null
           dob: string
+          evaluator?: string | null
           first_name: string
           gender?: string | null
           home_phone?: string | null
           id?: string
+          ifcs_id?: string | null
           institution_name?: string | null
           last_name: string
           middle_name?: string | null
+          note_send_to?: string | null
           payment_method?: string | null
           price?: number | null
           processing_label?: string | null
           processing_time?: string | null
           purpose?: string | null
+          receipt_url?: string | null
           service_title?: string | null
           staff_notes?: string | null
           status?: string | null
           total_price?: number | null
           translation_option?: string | null
+          verification_source?: string | null
         }
         Update: {
           application_data?: Json | null
@@ -90,23 +100,28 @@ export type Database = {
           degrees?: string | null
           delivery_options?: Json | null
           dob?: string
+          evaluator?: string | null
           first_name?: string
           gender?: string | null
           home_phone?: string | null
           id?: string
+          ifcs_id?: string | null
           institution_name?: string | null
           last_name?: string
           middle_name?: string | null
+          note_send_to?: string | null
           payment_method?: string | null
           price?: number | null
           processing_label?: string | null
           processing_time?: string | null
           purpose?: string | null
+          receipt_url?: string | null
           service_title?: string | null
           staff_notes?: string | null
           status?: string | null
           total_price?: number | null
           translation_option?: string | null
+          verification_source?: string | null
         }
         Relationships: []
       }
@@ -221,6 +236,7 @@ export type Database = {
           created_at: string
           dob: string | null
           id: string
+          ifcs_id: string | null
           reference_id: string
           requirements: Json | null
           service: string
@@ -235,6 +251,7 @@ export type Database = {
           created_at?: string
           dob?: string | null
           id?: string
+          ifcs_id?: string | null
           reference_id: string
           requirements?: Json | null
           service?: string
@@ -249,6 +266,7 @@ export type Database = {
           created_at?: string
           dob?: string | null
           id?: string
+          ifcs_id?: string | null
           reference_id?: string
           requirements?: Json | null
           service?: string
