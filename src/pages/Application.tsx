@@ -724,7 +724,7 @@ const Application = () => {
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <FieldGroup label="Name of Institution" required><GlassInput value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} placeholder="e.g. University of Eldoria" /></FieldGroup>
-                    <FieldGroup label="Country" required><GlassInput value={country} onChange={(e) => setCountry(e.target.value)} placeholder="e.g. Nigeria" /></FieldGroup>
+                    <FieldGroup label="Country" required><GlassInput value={country} onChange={(e) => setCountry(e.target.value)} placeholder="e.g. Republic of Eldoria" /></FieldGroup>
                     <FieldGroup label="Dates of Attendance" required><GlassInput value={attendance} onChange={(e) => setAttendance(e.target.value)} placeholder="e.g. 2015–2019" /></FieldGroup>
                     <FieldGroup label="Degree(s) Earned" required><GlassInput value={degrees} onChange={(e) => setDegrees(e.target.value)} placeholder="e.g. B.Sc. Computer Science" /></FieldGroup>
                   </div>
