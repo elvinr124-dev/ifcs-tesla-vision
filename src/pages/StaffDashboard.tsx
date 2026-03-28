@@ -72,15 +72,6 @@ const statusMeta: Record<string, { label: string; color: string; icon: React.Rea
   delivered:    { label: "Delivered",               color: "bg-emerald-500/20 text-emerald-600", icon: <CheckCircle2 size={14} /> },
 };
 
-const requirementTemplates = [
-  { label: "Official Transcripts", type: "document" as const },
-  { label: "Certified Diploma Copy", type: "document" as const },
-  { label: "Passport Copy", type: "document" as const },
-  { label: "Document Translation", type: "translation" as const },
-  { label: "Proof of Payment", type: "document" as const },
-  { label: "Additional Information", type: "info" as const },
-];
-
 const quickNotes = [
   "Needs translations",
   "Needs degree certificate",
@@ -90,6 +81,21 @@ const quickNotes = [
   "Not accredited",
   "Under review",
 ];
+
+const institutionQuickNote = `Greetings,
+Attached please find the credential evaluation report and supporting academic documents of 
+
+Thank you for choosing IFCS. 
+Best regards, 
+IFCS Team. 
+
+ 
+Institute of Foreign Credential Services 
+6 Cedar St, Dobbs Ferry, NY 10522 
+Phone: 914.693.2840 
+Fax: 914. 231-7782
+E-mail: apps@ifcsevals.com 
+www.ifcsevals.com`;
 
 const evaluators = ["Vera", "Agron", "Enver", "Ritvan", "Fadil", "Bia", "Linda", "IFCS Team"];
 
@@ -116,20 +122,18 @@ const StaffDashboard = () => {
   const [shareExpiry, setShareExpiry] = useState("");
   const [shareFile, setShareFile] = useState<File | null>(null);
 
-  // Requirement form
-  const [newReqLabel, setNewReqLabel] = useState("");
-  const [newReqDesc, setNewReqDesc] = useState("");
-  const [newReqType, setNewReqType] = useState<"document" | "translation" | "info">("document");
-
   // Live chat
   const [pendingChats, setPendingChats] = useState<PendingChat[]>([]);
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
 
   // Delete confirmation
-  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; type: "client" | "order"; id: string; label: string }>({ open: false, type: "client", id: "", label: "" });
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; type: "client" | "order"; id: string; label: string; email?: string }>({ open: false, type: "client", id: "", label: "" });
 
   // New Application Entry dialog
   const [newAppOpen, setNewAppOpen] = useState(false);
+  const [newAppSendTo, setNewAppSendTo] = useState("applicant");
+
+  // Applicant fields
   const [newAppIfcsId, setNewAppIfcsId] = useState("IFCS-");
   const [newAppEmail, setNewAppEmail] = useState("");
   const [newAppVerification, setNewAppVerification] = useState("");
@@ -137,9 +141,17 @@ const StaffDashboard = () => {
   const [newAppEvaluator, setNewAppEvaluator] = useState("");
   const [newAppRush, setNewAppRush] = useState("standard");
   const [newAppNotes, setNewAppNotes] = useState("");
-  const [newAppSendTo, setNewAppSendTo] = useState("applicant");
   const [newAppAttachment, setNewAppAttachment] = useState<File | null>(null);
   const [newAppReceipt, setNewAppReceipt] = useState<File | null>(null);
+
+  // Institution fields
+  const [instAppNumber, setInstAppNumber] = useState("");
+  const [instApplicantEmail, setInstApplicantEmail] = useState("");
+  const [instInstitutionEmail, setInstInstitutionEmail] = useState("");
+  const [instCcEmails, setInstCcEmails] = useState<string[]>([]);
+  const [instCcInput, setInstCcInput] = useState("");
+  const [instNotes, setInstNotes] = useState("");
+  const [instAttachments, setInstAttachments] = useState<File[]>([]);
 
   // Load all data
   useEffect(() => {
@@ -199,7 +211,6 @@ const StaffDashboard = () => {
   const handleStatusChange = async (orderId: string, newStatus: string) => {
     await (supabase as any).from("client_orders").update({ status: newStatus, updated_at: new Date().toISOString() }).eq("id", orderId);
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
-    // Also update applications table if linked
     const order = orders.find(o => o.id === orderId);
     if (order?.application_id) {
       await (supabase as any).from("applications").update({ status: newStatus }).eq("application_id", order.application_id);
@@ -207,51 +218,18 @@ const StaffDashboard = () => {
     toast({ title: "Status Updated", description: `Order → ${statusMeta[newStatus]?.label || newStatus}` });
   };
 
-  // Add requirement
-  const handleAddRequirement = async (orderId: string) => {
-    if (!newReqLabel.trim()) return;
-    const order = orders.find(o => o.id === orderId);
-    if (!order) return;
-    const req = { id: `req-${Date.now()}`, label: newReqLabel, description: newReqDesc || `Please provide: ${newReqLabel}`, type: newReqType };
-    const updatedReqs = [...(Array.isArray(order.requirements) ? order.requirements : []), req];
-    await (supabase as any).from("client_orders").update({ requirements: updatedReqs, updated_at: new Date().toISOString() }).eq("id", orderId);
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, requirements: updatedReqs } : o));
-    setNewReqLabel(""); setNewReqDesc("");
-    toast({ title: "Requirement Added", description: `"${req.label}" sent to applicant.` });
-  };
-
-  const handleQuickReq = async (orderId: string, tpl: typeof requirementTemplates[0]) => {
-    const order = orders.find(o => o.id === orderId);
-    if (!order) return;
-    const req = { id: `req-${Date.now()}`, label: tpl.label, description: `Please provide: ${tpl.label}`, type: tpl.type };
-    const updatedReqs = [...(Array.isArray(order.requirements) ? order.requirements : []), req];
-    await (supabase as any).from("client_orders").update({ requirements: updatedReqs, updated_at: new Date().toISOString() }).eq("id", orderId);
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, requirements: updatedReqs } : o));
-    toast({ title: "Requirement Added", description: `"${tpl.label}" sent to applicant.` });
-  };
-
-  const handleRemoveRequirement = async (orderId: string, reqId: string) => {
-    const order = orders.find(o => o.id === orderId);
-    if (!order) return;
-    const updatedReqs = (Array.isArray(order.requirements) ? order.requirements : []).filter((r: any) => r.id !== reqId);
-    await (supabase as any).from("client_orders").update({ requirements: updatedReqs, updated_at: new Date().toISOString() }).eq("id", orderId);
-    setOrders(prev => prev.map(o => o.id === orderId ? { ...o, requirements: updatedReqs } : o));
-  };
-
-  // Staff note update with email notification
-  const handleUpdateNote = async (orderId: string, note: string, sendTo: string = "applicant") => {
+  // Staff note update with email notification (always sends to applicant)
+  const handleUpdateNote = async (orderId: string, note: string) => {
     const order = orders.find(o => o.id === orderId);
     if (!order) return;
 
     await (supabase as any).from("client_orders").update({ staff_note: note, updated_at: new Date().toISOString() }).eq("id", orderId);
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, staff_note: note } : o));
 
-    // Also update applications table
     if (order.application_id) {
-      await (supabase as any).from("applications").update({ staff_notes: note, note_send_to: sendTo }).eq("application_id", order.application_id);
+      await (supabase as any).from("applications").update({ staff_notes: note, note_send_to: "applicant" }).eq("application_id", order.application_id);
     }
 
-    // Send email notification to client
     const client = clients.find(c => c.email === order.client_email);
     const applicantName = client ? `${client.first_name} ${client.last_name}` : "Applicant";
 
@@ -266,141 +244,33 @@ const StaffDashboard = () => {
       });
     } catch {}
 
-    toast({ title: "Note Saved & Sent", description: `Note sent to ${sendTo === "applicant" ? order.client_email : "institution"}.` });
+    toast({ title: "Note Saved & Sent", description: `Note sent to ${order.client_email}.` });
   };
 
-  // Delete client or order
+  // Delete client or order (with associated data)
   const handleDelete = async () => {
-    if (deleteDialog.type === "client") {
-      await (supabase as any).from("client_accounts").delete().eq("id", deleteDialog.id);
-      setClients(prev => prev.filter(c => c.id !== deleteDialog.id));
-      toast({ title: "Client Deleted", description: `Account removed.` });
-    } else {
+    if (deleteDialog.type === "order") {
+      // Also delete associated application
+      const order = orders.find(o => o.id === deleteDialog.id);
+      if (order?.application_id) {
+        await (supabase as any).from("applications").delete().eq("application_id", order.application_id);
+      }
       await (supabase as any).from("client_orders").delete().eq("id", deleteDialog.id);
       setOrders(prev => prev.filter(o => o.id !== deleteDialog.id));
-      toast({ title: "Order Deleted" });
+
+      // Also delete the client account if requested
+      if (deleteDialog.email) {
+        await (supabase as any).from("client_accounts").delete().eq("email", deleteDialog.email);
+        setClients(prev => prev.filter(c => c.email !== deleteDialog.email));
+      }
+
+      toast({ title: "Deleted", description: "Application and associated data removed." });
+    } else {
+      await (supabase as any).from("client_accounts").delete().eq("id", deleteDialog.id);
+      setClients(prev => prev.filter(c => c.id !== deleteDialog.id));
+      toast({ title: "Client Deleted" });
     }
     setDeleteDialog({ open: false, type: "client", id: "", label: "" });
-  };
-
-  // New Application Entry handler
-  const handleNewApplication = async () => {
-    if (!newAppEmail.trim() || !newAppIfcsId.trim()) {
-      toast({ title: "Missing Fields", description: "Please enter Client Email and IFCS ID.", variant: "destructive" });
-      return;
-    }
-
-    // Find the application by client email
-    const { data: apps } = await (supabase as any)
-      .from("applications")
-      .select("*")
-      .eq("client_email", newAppEmail.trim())
-      .order("created_at", { ascending: false });
-
-    if (!apps || apps.length === 0) {
-      toast({ title: "No Application Found", description: `No application found for ${newAppEmail.trim()}.`, variant: "destructive" });
-      return;
-    }
-
-    const app = apps[0]; // Most recent application
-
-    // Upload attachment if provided
-    let attachmentUrl = "";
-    if (newAppAttachment) {
-      const filePath = `notes/${app.application_id}-${Date.now()}-${newAppAttachment.name}`;
-      const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, newAppAttachment);
-      if (!upErr) {
-        const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
-        attachmentUrl = urlData.publicUrl;
-      }
-    }
-
-    // Upload receipt if provided
-    let receiptUrl = "";
-    if (newAppReceipt) {
-      const filePath = `receipts/${app.application_id}-${Date.now()}-${newAppReceipt.name}`;
-      const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, newAppReceipt);
-      if (!upErr) {
-        const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
-        receiptUrl = urlData.publicUrl;
-      }
-    }
-
-    const ifcsId = newAppIfcsId.trim();
-
-    // Update the application with IFCS ID and other fields
-    await (supabase as any).from("applications").update({
-      ifcs_id: ifcsId,
-      verification_source: newAppVerification,
-      evaluator: newAppEvaluator,
-      status: newAppStatus,
-      staff_notes: newAppNotes,
-      note_send_to: newAppSendTo,
-      receipt_url: receiptUrl || undefined,
-    }).eq("application_id", app.application_id);
-
-    // Update client_orders too
-    await (supabase as any).from("client_orders").update({
-      ifcs_id: ifcsId,
-      status: newAppStatus,
-      staff_note: newAppNotes,
-    }).eq("application_id", app.application_id);
-
-    // If no client_order exists, find by email
-    const { data: existingOrder } = await (supabase as any)
-      .from("client_orders")
-      .select("id")
-      .eq("application_id", app.application_id)
-      .maybeSingle();
-
-    if (!existingOrder) {
-      // Create a client_order entry
-      await (supabase as any).from("client_orders").insert({
-        reference_id: ifcsId,
-        client_email: newAppEmail.trim(),
-        service: `${app.service_title || ""} — ${app.processing_label || ""}`,
-        status: newAppStatus,
-        application_id: app.application_id,
-        ifcs_id: ifcsId,
-        dob: app.dob,
-        staff_note: newAppNotes,
-      });
-    }
-
-    // Send note email if notes exist
-    if (newAppNotes.trim()) {
-      const client = clients.find(c => c.email === newAppEmail.trim());
-      const applicantName = client ? `${client.first_name} ${client.last_name}` : app.first_name ? `${app.first_name} ${app.last_name}` : "Applicant";
-      try {
-        await supabase.functions.invoke("send-application-email", {
-          body: {
-            type: "staff_note",
-            recipientEmail: newAppEmail.trim(),
-            applicantName,
-            noteContent: newAppNotes,
-          },
-        });
-      } catch {}
-    }
-
-    toast({ title: "Application Entry Added", description: `IFCS ID ${ifcsId} linked to ${app.application_id}.` });
-
-    // Reset form
-    setNewAppOpen(false);
-    setNewAppIfcsId("IFCS-");
-    setNewAppEmail("");
-    setNewAppVerification("");
-    setNewAppStatus("in_process");
-    setNewAppEvaluator("");
-    setNewAppRush("standard");
-    setNewAppNotes("");
-    setNewAppSendTo("applicant");
-    setNewAppAttachment(null);
-    setNewAppReceipt(null);
-
-    // Reload orders
-    const { data: refreshed } = await (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false });
-    if (refreshed) setOrders(refreshed);
   };
 
   // Upload attachment on existing order note
@@ -415,14 +285,182 @@ const StaffDashboard = () => {
       return;
     }
     const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
-    
+
     if (type === "receipt" && order.application_id) {
       await (supabase as any).from("applications").update({ receipt_url: urlData.publicUrl }).eq("application_id", order.application_id);
       toast({ title: "Receipt Uploaded", description: "Client can now view the receipt." });
     } else {
-      // Add attachment URL to staff_note
       const noteWithAttachment = `${order.staff_note || ""}\n📎 Attachment: ${file.name} - ${urlData.publicUrl}`;
       await handleUpdateNote(orderId, noteWithAttachment);
+    }
+  };
+
+  // New Application Entry handler (Applicant mode)
+  const handleNewApplication = async () => {
+    if (!newAppEmail.trim() || !newAppIfcsId.trim()) {
+      toast({ title: "Missing Fields", description: "Please enter Client Email and IFCS ID.", variant: "destructive" });
+      return;
+    }
+
+    const { data: apps } = await (supabase as any)
+      .from("applications")
+      .select("*")
+      .eq("client_email", newAppEmail.trim())
+      .order("created_at", { ascending: false });
+
+    if (!apps || apps.length === 0) {
+      toast({ title: "No Application Found", description: `No application found for ${newAppEmail.trim()}.`, variant: "destructive" });
+      return;
+    }
+
+    const app = apps[0];
+
+    let attachmentUrl = "";
+    if (newAppAttachment) {
+      const filePath = `notes/${app.application_id}-${Date.now()}-${newAppAttachment.name}`;
+      const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, newAppAttachment);
+      if (!upErr) {
+        const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+        attachmentUrl = urlData.publicUrl;
+      }
+    }
+
+    let receiptUrl = "";
+    if (newAppReceipt) {
+      const filePath = `receipts/${app.application_id}-${Date.now()}-${newAppReceipt.name}`;
+      const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, newAppReceipt);
+      if (!upErr) {
+        const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+        receiptUrl = urlData.publicUrl;
+      }
+    }
+
+    const ifcsId = newAppIfcsId.trim();
+
+    await (supabase as any).from("applications").update({
+      ifcs_id: ifcsId,
+      verification_source: newAppVerification,
+      evaluator: newAppEvaluator,
+      status: newAppStatus,
+      staff_notes: newAppNotes,
+      note_send_to: "applicant",
+      receipt_url: receiptUrl || undefined,
+    }).eq("application_id", app.application_id);
+
+    await (supabase as any).from("client_orders").update({
+      ifcs_id: ifcsId,
+      status: newAppStatus,
+      staff_note: newAppNotes,
+    }).eq("application_id", app.application_id);
+
+    const { data: existingOrder } = await (supabase as any)
+      .from("client_orders")
+      .select("id")
+      .eq("application_id", app.application_id)
+      .maybeSingle();
+
+    if (!existingOrder) {
+      await (supabase as any).from("client_orders").insert({
+        reference_id: ifcsId,
+        client_email: newAppEmail.trim(),
+        service: `${app.service_title || ""} — ${app.processing_label || ""}`,
+        status: newAppStatus,
+        application_id: app.application_id,
+        ifcs_id: ifcsId,
+        dob: app.dob,
+        staff_note: newAppNotes,
+      });
+    }
+
+    if (newAppNotes.trim()) {
+      const client = clients.find(c => c.email === newAppEmail.trim());
+      const applicantName = client ? `${client.first_name} ${client.last_name}` : app.first_name ? `${app.first_name} ${app.last_name}` : "Applicant";
+      try {
+        await supabase.functions.invoke("send-application-email", {
+          body: { type: "staff_note", recipientEmail: newAppEmail.trim(), applicantName, noteContent: newAppNotes },
+        });
+      } catch {}
+    }
+
+    toast({ title: "Application Entry Added", description: `IFCS ID ${ifcsId} linked to ${app.application_id}.` });
+    resetNewAppForm();
+
+    const { data: refreshed } = await (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false });
+    if (refreshed) setOrders(refreshed);
+  };
+
+  // Institution send report handler
+  const handleInstitutionSend = async () => {
+    if (!instInstitutionEmail.trim() || !instApplicantEmail.trim()) {
+      toast({ title: "Missing Fields", description: "Please enter Institution Email and Applicant Email.", variant: "destructive" });
+      return;
+    }
+
+    // Upload all attachments
+    const attachmentUrls: string[] = [];
+    for (const file of instAttachments) {
+      const filePath = `institution/${instAppNumber || "general"}-${Date.now()}-${file.name}`;
+      const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, file);
+      if (!upErr) {
+        const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+        attachmentUrls.push(urlData.publicUrl);
+      }
+    }
+
+    // Build email body
+    const attachmentLinks = attachmentUrls.length > 0 
+      ? `\n\nAttached files:\n${attachmentUrls.map((url, i) => `${i + 1}. ${url}`).join("\n")}`
+      : "";
+
+    const emailBody = `${instNotes}${attachmentLinks}`;
+
+    // All CC recipients
+    const allRecipients = [instApplicantEmail.trim(), ...instCcEmails.filter(e => e.trim())];
+
+    try {
+      // Send to institution
+      await supabase.functions.invoke("send-application-email", {
+        body: {
+          subject: `IFCS Credential Evaluation Report${instAppNumber ? ` — Application #${instAppNumber}` : ""}`,
+          body: emailBody,
+          recipientEmail: instInstitutionEmail.trim(),
+          applicantEmail: allRecipients.join(","),
+        },
+      });
+
+      toast({ title: "Report Sent", description: `Email sent to ${instInstitutionEmail.trim()} with CC to ${allRecipients.join(", ")}.` });
+    } catch {
+      toast({ title: "Send Failed", variant: "destructive" });
+    }
+
+    resetNewAppForm();
+  };
+
+  const resetNewAppForm = () => {
+    setNewAppOpen(false);
+    setNewAppSendTo("applicant");
+    setNewAppIfcsId("IFCS-");
+    setNewAppEmail("");
+    setNewAppVerification("");
+    setNewAppStatus("in_process");
+    setNewAppEvaluator("");
+    setNewAppRush("standard");
+    setNewAppNotes("");
+    setNewAppAttachment(null);
+    setNewAppReceipt(null);
+    setInstAppNumber("");
+    setInstApplicantEmail("");
+    setInstInstitutionEmail("");
+    setInstCcEmails([]);
+    setInstCcInput("");
+    setInstNotes("");
+    setInstAttachments([]);
+  };
+
+  const handleAddCc = () => {
+    if (instCcInput.trim() && instCcInput.includes("@")) {
+      setInstCcEmails(prev => [...prev, instCcInput.trim()]);
+      setInstCcInput("");
     }
   };
 
@@ -535,40 +573,6 @@ const StaffDashboard = () => {
             </Card>
           )}
 
-          {/* ── Registered Clients ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Users size={22} className="text-accent" /> Registered Clients
-                <Badge variant="secondary" className="ml-2">{clients.length}</Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              {clients.length === 0 ? (
-                <p className="text-sm text-muted-foreground text-center py-4">No registered clients yet.</p>
-              ) : (
-                <div className="space-y-3">
-                  {clients.map((c) => (
-                    <div key={c.id} className="flex items-center justify-between rounded-xl border border-border p-4">
-                      <div>
-                        <p className="font-medium text-foreground">{c.first_name} {c.last_name}</p>
-                        <p className="text-xs text-muted-foreground">{c.email} · Joined {new Date(c.created_at).toLocaleDateString()}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button size="sm" variant="outline" className="gap-1" onClick={() => handleStartChatWithApplicant(`${c.first_name} ${c.last_name}`, c.email)}>
-                          <MessageCircle size={14} /> Chat
-                        </Button>
-                        <Button size="sm" variant="destructive" className="gap-1" onClick={() => setDeleteDialog({ open: true, type: "client", id: c.id, label: `${c.first_name} ${c.last_name}` })}>
-                          <UserX size={14} /> Delete
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
           {/* ── Application Queue ── */}
           <Card className="border-border bg-card">
             <CardHeader className="flex flex-col gap-4">
@@ -614,7 +618,6 @@ const StaffDashboard = () => {
                 const isSelected = selectedOrder === o.id;
                 const client = clients.find(c => c.email === o.client_email);
                 const applicantName = client ? `${client.first_name} ${client.last_name}` : o.client_email;
-                const requirements = Array.isArray(o.requirements) ? o.requirements : [];
 
                 return (
                   <div key={o.id} className="rounded-xl border border-border overflow-hidden">
@@ -647,36 +650,9 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Service update */}
+                        {/* Notes section - no dropdown, always sends to applicant */}
                         <div>
-                          <p className="text-sm font-medium text-foreground mb-2">Service</p>
-                          <div className="flex gap-2">
-                            <Input defaultValue={o.service} placeholder="e.g. Course-by-Course — Rush 3-Day"
-                              onBlur={async (e) => {
-                                if (e.target.value !== o.service) {
-                                  await (supabase as any).from("client_orders").update({ service: e.target.value, updated_at: new Date().toISOString() }).eq("id", o.id);
-                                  setOrders(prev => prev.map(x => x.id === o.id ? { ...x, service: e.target.value } : x));
-                                  toast({ title: "Service Updated" });
-                                }
-                              }}
-                            />
-                          </div>
-                        </div>
-
-                        {/* Notes section with send-to dropdown */}
-                        <div>
-                          <div className="flex items-center gap-3 mb-2">
-                            <p className="text-sm font-medium text-foreground">Notes</p>
-                            <Select defaultValue="applicant" onValueChange={(v) => {
-                              // Store for when note is saved
-                            }}>
-                              <SelectTrigger className="w-48 h-8"><SelectValue placeholder="Send to..." /></SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="applicant">Send to Applicant</SelectItem>
-                                <SelectItem value="institution">Send to Institution</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
+                          <p className="text-sm font-medium text-foreground mb-2">Notes</p>
 
                           {/* Quick note tags */}
                           <div className="flex flex-wrap gap-2 mb-3">
@@ -719,72 +695,14 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Requirements */}
-                        <div>
-                          <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                            <AlertCircle size={16} className="text-accent" /> Requirements Sent to Applicant
-                          </p>
-                          {requirements.length === 0 ? (
-                            <p className="text-xs text-muted-foreground">No requirements sent yet.</p>
-                          ) : (
-                            <div className="space-y-2">
-                              {requirements.map((req: any) => (
-                                <div key={req.id} className="rounded-lg border border-border p-3 flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    {req.type === "translation" ? <Languages size={16} className="text-accent" /> :
-                                     req.type === "document" ? <FileUp size={16} className="text-accent" /> :
-                                     <Info size={16} className="text-accent" />}
-                                    <div>
-                                      <p className="text-sm font-medium text-foreground">{req.label}</p>
-                                      <p className="text-xs text-muted-foreground">{req.description}</p>
-                                    </div>
-                                  </div>
-                                  <Button size="sm" variant="ghost" onClick={() => handleRemoveRequirement(o.id, req.id)}><X size={14} /></Button>
-                                </div>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Quick-add requirements */}
-                        <div>
-                          <p className="text-sm font-medium text-foreground mb-2">Quick Add Requirement</p>
-                          <div className="flex flex-wrap gap-2">
-                            {requirementTemplates.map((tpl) => (
-                              <Button key={tpl.label} size="sm" variant="outline" className="gap-1 text-xs rounded-full"
-                                onClick={() => handleQuickReq(o.id, tpl)}>
-                                <Plus size={12} /> {tpl.label}
-                              </Button>
-                            ))}
-                          </div>
-                        </div>
-
-                        {/* Custom requirement */}
-                        <div className="bg-muted/30 rounded-lg p-4 space-y-3">
-                          <p className="text-sm font-medium text-foreground">Custom Requirement</p>
-                          <div className="grid sm:grid-cols-3 gap-3">
-                            <Input placeholder="Requirement label" value={newReqLabel} onChange={(e) => setNewReqLabel(e.target.value)} />
-                            <Input placeholder="Description (optional)" value={newReqDesc} onChange={(e) => setNewReqDesc(e.target.value)} />
-                            <Select value={newReqType} onValueChange={(v: "document" | "translation" | "info") => setNewReqType(v)}>
-                              <SelectTrigger><SelectValue /></SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="document">Document Upload</SelectItem>
-                                <SelectItem value="translation">Translation Needed</SelectItem>
-                                <SelectItem value="info">Information Needed</SelectItem>
-                              </SelectContent>
-                            </Select>
-                          </div>
-                          <Button size="sm" onClick={() => handleAddRequirement(o.id)} className="gap-1"><Send size={14} /> Send Requirement</Button>
-                        </div>
-
                         {/* Chat & Delete */}
                         <div className="flex gap-3 flex-wrap">
                           <Button size="sm" variant="outline" className="gap-1 rounded-full" onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
                           </Button>
                           <Button size="sm" variant="destructive" className="gap-1 rounded-full"
-                            onClick={() => setDeleteDialog({ open: true, type: "order", id: o.id, label: `#${o.reference_id}` })}>
-                            <Trash2 size={14} /> Delete Order
+                            onClick={() => setDeleteDialog({ open: true, type: "order", id: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                            <Trash2 size={14} /> Delete Application & Client
                           </Button>
                         </div>
                       </div>
@@ -847,138 +765,217 @@ const StaffDashboard = () => {
             <DialogTitle className="text-2xl font-bold">New Application Entry</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-6 pt-2">
-            {/* IFCS ID & Client Email */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Application Number *</label>
-                <Input value={newAppIfcsId} onChange={(e) => setNewAppIfcsId(e.target.value)} placeholder="IFCS-45001" />
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
-                <Input type="email" value={newAppEmail} onChange={(e) => setNewAppEmail(e.target.value)} placeholder="client@email.com" />
-              </div>
-            </div>
+          {/* Send To selector at top */}
+          <div className="space-y-1.5 pb-2 border-b border-border">
+            <label className="text-xs font-semibold uppercase tracking-widest text-accent">Send To</label>
+            <Select value={newAppSendTo} onValueChange={setNewAppSendTo}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="applicant">Applicant</SelectItem>
+                <SelectItem value="institution">Institution</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            {/* Date Entered (auto) */}
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Date Entered</label>
-                <Input value={new Date().toLocaleDateString()} disabled className="bg-muted/40" />
+          {/* ── APPLICANT MODE ── */}
+          {newAppSendTo === "applicant" && (
+            <div className="space-y-6 pt-2">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Application Number *</label>
+                  <Input value={newAppIfcsId} onChange={(e) => setNewAppIfcsId(e.target.value)} placeholder="IFCS-45001" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
+                  <Input type="email" value={newAppEmail} onChange={(e) => setNewAppEmail(e.target.value)} placeholder="client@email.com" />
+                </div>
               </div>
-            </div>
 
-            {/* Verification Source & Status */}
-            <div className="grid md:grid-cols-2 gap-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Date Entered</label>
+                  <Input value={new Date().toLocaleDateString()} disabled className="bg-muted/40" />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Verification Source</label>
+                  <Select value={newAppVerification} onValueChange={setNewAppVerification}>
+                    <SelectTrigger><SelectValue placeholder="Select source..." /></SelectTrigger>
+                    <SelectContent>
+                      {verificationSources.map((v) => (
+                        <SelectItem key={v} value={v}>{v}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Status</label>
+                  <Select value={newAppStatus} onValueChange={setNewAppStatus}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="in_process">In Process</SelectItem>
+                      <SelectItem value="in_review">In Review</SelectItem>
+                      <SelectItem value="need_info">Need Additional Information</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Verification Source</label>
-                <Select value={newAppVerification} onValueChange={setNewAppVerification}>
-                  <SelectTrigger><SelectValue placeholder="Select source..." /></SelectTrigger>
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Assign Evaluator</label>
+                <Select value={newAppEvaluator} onValueChange={setNewAppEvaluator}>
+                  <SelectTrigger><SelectValue placeholder="Select evaluator..." /></SelectTrigger>
                   <SelectContent>
-                    {verificationSources.map((v) => (
-                      <SelectItem key={v} value={v}>{v}</SelectItem>
+                    {evaluators.map((ev) => (
+                      <SelectItem key={ev} value={ev}>{ev}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Status</label>
-                <Select value={newAppStatus} onValueChange={setNewAppStatus}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="in_process">In Process</SelectItem>
-                    <SelectItem value="in_review">In Review</SelectItem>
-                    <SelectItem value="need_info">Need Additional Information</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
 
-            {/* Evaluator */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Assign Evaluator</label>
-              <Select value={newAppEvaluator} onValueChange={setNewAppEvaluator}>
-                <SelectTrigger><SelectValue placeholder="Select evaluator..." /></SelectTrigger>
-                <SelectContent>
-                  {evaluators.map((ev) => (
-                    <SelectItem key={ev} value={ev}>{ev}</SelectItem>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Rush Service</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {[
+                    { value: "standard", label: "Standard", desc: "Regular processing", border: "border-foreground" },
+                    { value: "3day", label: "🔥 3-Day Rush", desc: "Priority processing", border: "border-amber-500/40" },
+                    { value: "24hour", label: "⚡ 24-Hour Rush", desc: "Urgent processing", border: "border-red-500/40" },
+                  ].map((r) => (
+                    <button key={r.value} type="button" onClick={() => setNewAppRush(r.value)}
+                      className={`rounded-xl border-2 p-4 text-left transition-all ${newAppRush === r.value ? `${r.border} bg-muted/30` : "border-border hover:border-muted-foreground/30"}`}>
+                      <p className="font-semibold text-sm text-foreground">{r.label}</p>
+                      <p className="text-xs text-muted-foreground">{r.desc}</p>
+                    </button>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* Rush Service */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Rush Service</label>
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { value: "standard", label: "Standard", desc: "Regular processing", icon: null, border: "border-foreground" },
-                  { value: "3day", label: "🔥 3-Day Rush", desc: "Priority processing", icon: null, border: "border-amber-500/40" },
-                  { value: "24hour", label: "⚡ 24-Hour Rush", desc: "Urgent processing", icon: null, border: "border-red-500/40" },
-                ].map((r) => (
-                  <button
-                    key={r.value}
-                    type="button"
-                    onClick={() => setNewAppRush(r.value)}
-                    className={`rounded-xl border-2 p-4 text-left transition-all ${
-                      newAppRush === r.value ? `${r.border} bg-muted/30` : "border-border hover:border-muted-foreground/30"
-                    }`}
-                  >
-                    <p className="font-semibold text-sm text-foreground">{r.label}</p>
-                    <p className="text-xs text-muted-foreground">{r.desc}</p>
-                  </button>
-                ))}
+                </div>
               </div>
-            </div>
 
-            {/* Send To dropdown */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Send Notes To</label>
-              <Select value={newAppSendTo} onValueChange={setNewAppSendTo}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="applicant">Send to Applicant</SelectItem>
-                  <SelectItem value="institution">Send to Institution</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Notes</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  {quickNotes.map((qn) => (
+                    <Button key={qn} type="button" size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
+                      onClick={() => setNewAppNotes(prev => prev ? `${prev}\n${qn}` : qn)}>
+                      <Plus size={10} /> {qn}
+                    </Button>
+                  ))}
+                </div>
+                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Add any notes about this application..." rows={4} />
+              </div>
 
-            {/* Notes with quick tags */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Notes</label>
-              <div className="flex flex-wrap gap-2 mb-2">
-                {quickNotes.map((qn) => (
-                  <Button key={qn} type="button" size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
-                    onClick={() => {
-                      setNewAppNotes(prev => prev ? `${prev}\n${qn}` : qn);
-                    }}>
-                    <Plus size={10} /> {qn}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Attach File</label>
+                  <Input type="file" onChange={(e) => setNewAppAttachment(e.target.files?.[0] || null)} />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Upload Receipt</label>
+                  <Input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setNewAppReceipt(e.target.files?.[0] || null)} />
+                </div>
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setNewAppOpen(false)}>Cancel</Button>
+                <Button onClick={handleNewApplication} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                  <Plus size={16} /> Add Application
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
+
+          {/* ── INSTITUTION MODE ── */}
+          {newAppSendTo === "institution" && (
+            <div className="space-y-6 pt-2">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Application Number</label>
+                  <Input value={instAppNumber} onChange={(e) => setInstAppNumber(e.target.value)} placeholder="e.g. EE2323" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Date Entered</label>
+                  <Input value={new Date().toLocaleDateString()} disabled className="bg-muted/40" />
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Applicant Email *</label>
+                  <Input type="email" value={instApplicantEmail} onChange={(e) => setInstApplicantEmail(e.target.value)} placeholder="applicant@email.com" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Institution Email *</label>
+                  <Input type="email" value={instInstitutionEmail} onChange={(e) => setInstInstitutionEmail(e.target.value)} placeholder="admissions@university.edu" />
+                </div>
+              </div>
+
+              {/* CC Emails */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">CC Emails</label>
+                <div className="flex gap-2">
+                  <Input value={instCcInput} onChange={(e) => setInstCcInput(e.target.value)} placeholder="additional@email.com"
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCc(); } }} />
+                  <Button type="button" size="sm" variant="outline" onClick={handleAddCc} className="shrink-0">
+                    <Plus size={14} /> Add
                   </Button>
-                ))}
+                </div>
+                {instCcEmails.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {instCcEmails.map((email, i) => (
+                      <Badge key={i} variant="secondary" className="gap-1 pr-1">
+                        {email}
+                        <button onClick={() => setInstCcEmails(prev => prev.filter((_, idx) => idx !== i))} className="ml-1 hover:text-destructive">
+                          <X size={12} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
-              <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Add any notes about this application..." rows={4} />
-            </div>
 
-            {/* Attachments */}
-            <div className="grid md:grid-cols-2 gap-4">
+              {/* Notes with institution quick add */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Attach File</label>
-                <Input type="file" onChange={(e) => setNewAppAttachment(e.target.files?.[0] || null)} />
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Notes</label>
+                <div className="flex flex-wrap gap-2 mb-2">
+                  <Button type="button" size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
+                    onClick={() => setInstNotes(institutionQuickNote)}>
+                    <Plus size={10} /> IFCS Report Template
+                  </Button>
+                </div>
+                <Textarea value={instNotes} onChange={(e) => setInstNotes(e.target.value)} placeholder="Add email body..." rows={8} />
               </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Upload Receipt</label>
-                <Input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setNewAppReceipt(e.target.files?.[0] || null)} />
-              </div>
-            </div>
-          </div>
 
-          <DialogFooter className="mt-6">
-            <Button variant="outline" onClick={() => setNewAppOpen(false)}>Cancel</Button>
-            <Button onClick={handleNewApplication} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
-              <Plus size={16} /> Add Application
-            </Button>
-          </DialogFooter>
+              {/* Multiple attachments */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Attach Files</label>
+                <Input type="file" multiple onChange={(e) => {
+                  const files = e.target.files;
+                  if (files) setInstAttachments(prev => [...prev, ...Array.from(files)]);
+                }} />
+                {instAttachments.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {instAttachments.map((file, i) => (
+                      <Badge key={i} variant="secondary" className="gap-1 pr-1">
+                        <Paperclip size={12} /> {file.name}
+                        <button onClick={() => setInstAttachments(prev => prev.filter((_, idx) => idx !== i))} className="ml-1 hover:text-destructive">
+                          <X size={12} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setNewAppOpen(false)}>Cancel</Button>
+                <Button onClick={handleInstitutionSend} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                  <Send size={16} /> Send Report
+                </Button>
+              </DialogFooter>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
@@ -988,7 +985,7 @@ const StaffDashboard = () => {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete {deleteDialog.type === "client" ? "client" : "order"} <strong>{deleteDialog.label}</strong>? This action cannot be undone.
+              Are you sure you want to delete application <strong>{deleteDialog.label}</strong> and the associated client account? This action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
