@@ -43,16 +43,16 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
 
 const FieldGroup = ({ label, required, children, note }: { label: string; required?: boolean; children: React.ReactNode; note?: string }) => (
   <div className="space-y-1.5">
-    <Label className="text-xs font-semibold tracking-[0.12em] uppercase text-muted-foreground">
+    <Label className="text-xs font-semibold tracking-[0.12em] uppercase text-black">
       {label} {required && <span className="text-accent">*</span>}
-      {note && <span className="text-[10px] font-normal normal-case tracking-normal ml-2 text-muted-foreground/60">({note})</span>}
+      {note && <span className="text-[10px] font-normal normal-case tracking-normal ml-2 text-muted-foreground/60">{note}</span>}
     </Label>
     {children}
   </div>
 );
 
 const SectionHeading = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground border-b border-border pb-2 mb-4">
+  <p className="text-[10px] font-bold tracking-[0.25em] uppercase border-b border-border pb-2 mb-4 text-black">
     {children}
   </p>
 );
@@ -626,7 +626,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-6">
-                    <SectionHeading>Full Name</SectionHeading>
+                    <SectionHeading>FULL NAME</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FieldGroup label="Last" required><GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
                       <FieldGroup label="First" required><GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
@@ -635,7 +635,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-6">
-                    <SectionHeading>Name on Educational Credentials (if different)</SectionHeading>
+                    <SectionHeading>NAME ON EDUCATIONAL CREDENTIALS (IF DIFFERENT)</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FieldGroup label="Last"><GlassInput value={credLastName} onChange={(e) => setCredLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
                       <FieldGroup label="First"><GlassInput value={credFirstName} onChange={(e) => setCredFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
@@ -644,7 +644,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>Date of Birth</SectionHeading>
+                    <SectionHeading>DATE OF BIRTH</SectionHeading>
                     <div className="grid grid-cols-3 gap-4">
                       <FieldGroup label="Month" required>
                         <GlassSelect value={dobMonth} onChange={(e) => setDobMonth(e.target.value)}>
@@ -668,7 +668,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>Gender</SectionHeading>
+                    <SectionHeading>GENDER</SectionHeading>
                     <div className="flex gap-4">
                       {["male", "female"].map((g) => (
                         <button key={g} type="button" onClick={() => setGender(g)}
@@ -682,7 +682,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>Contact Information</SectionHeading>
+                    <SectionHeading>CONTACT INFORMATION</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FieldGroup label="Home Phone"><GlassInput value={homePhone} onChange={(e) => setHomePhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
                       <FieldGroup label="Cell Phone" required><GlassInput value={cellPhone} onChange={(e) => setCellPhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
@@ -692,11 +692,11 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>Identification (Optional)</SectionHeading>
-                    <FieldGroup label="Social Security Number (SSN)" note="Not required">
+                    <SectionHeading>IDENTIFICATION (OPTIONAL)</SectionHeading>
+                    <FieldGroup label="Social Security Number (SSN)" note="​(List only if required)">
                       <GlassInput value={ssn} onChange={(e) => setSsn(e.target.value)} placeholder="XXX-XX-XXXX" maxLength={11} />
                     </FieldGroup>
-                    <FieldGroup label="Government-Issued ID" note="Not required">
+                    <FieldGroup label="Government-Issued ID" note="(Required for verification purposes)">
                       <div className="flex items-center gap-3">
                         {idFile ? (
                           <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-muted/60 border border-border text-sm text-foreground">
