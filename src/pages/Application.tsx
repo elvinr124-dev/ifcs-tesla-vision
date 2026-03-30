@@ -644,7 +644,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>Date of Birth</SectionHeading>
+                    <SectionHeading>DATE OF BIRTH</SectionHeading>
                     <div className="grid grid-cols-3 gap-4">
                       <FieldGroup label="Month" required>
                         <GlassSelect value={dobMonth} onChange={(e) => setDobMonth(e.target.value)}>
