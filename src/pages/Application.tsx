@@ -682,7 +682,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>Contact Information</SectionHeading>
+                    <SectionHeading>CONTACT INFORMATION</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <FieldGroup label="Home Phone"><GlassInput value={homePhone} onChange={(e) => setHomePhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
                       <FieldGroup label="Cell Phone" required><GlassInput value={cellPhone} onChange={(e) => setCellPhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
