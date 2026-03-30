@@ -692,8 +692,8 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>Identification (Optional)</SectionHeading>
-                    <FieldGroup label="Social Security Number (SSN)" note="Not required">
+                    <SectionHeading>IDENTIFICATION (OPTIONAL)</SectionHeading>
+                    <FieldGroup label="Social Security Number (SSN)" note="​(List only if required)">
                       <GlassInput value={ssn} onChange={(e) => setSsn(e.target.value)} placeholder="XXX-XX-XXXX" maxLength={11} />
                     </FieldGroup>
                     <FieldGroup label="Government-Issued ID" note="Not required">
