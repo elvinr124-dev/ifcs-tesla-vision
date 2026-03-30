@@ -174,7 +174,7 @@ const Navbar = () => {
           <button
             onClick={() => setSupportHover(!supportHover)}
             className={`${bubbleBase} ${
-              ["/pricing", "/faq", "/contact"].includes(location.pathname)
+              ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname)
                 ? bubbleActive
                 : useScrolledStyle ? bubbleScrolled : bubbleFloat
             }`}
