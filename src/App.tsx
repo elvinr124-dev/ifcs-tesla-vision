@@ -44,6 +44,7 @@ import Pricing from "./pages/Pricing";
 import Account from "./pages/Account";
 import Payment from "./pages/Payment";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import LearnMoreEvaluations from "./pages/LearnMoreEvaluations";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ const App = () => (
               <Route path="/account" element={<Account />} />
               <Route path="/payment" element={<Payment />} />
               <Route path="/order-confirmation" element={<OrderConfirmation />} />
+              <Route path="/learn-more-evaluations" element={<LearnMoreEvaluations />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
             <AIChatWidget />

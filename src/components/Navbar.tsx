@@ -53,7 +53,7 @@ const Navbar = () => {
   const { user } = useAuth();
 
   // Pages that have a dark hero where transparent bubbles look good
-  const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog"];
+  const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog", "/learn-more-evaluations"];
   const hasDarkHero = darkHeroPages.some(p => p === "/" ? location.pathname === "/" : location.pathname.startsWith(p));
 
   useEffect(() => {
@@ -174,16 +174,16 @@ const Navbar = () => {
           <button
             onClick={() => setSupportHover(!supportHover)}
             className={`${bubbleBase} ${
-              ["/pricing", "/faq", "/contact"].includes(location.pathname)
+              ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname)
                 ? bubbleActive
                 : useScrolledStyle ? bubbleScrolled : bubbleFloat
             }`}
           >
-            <Headphones size={20} style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }} />
-            <span className="text-sm font-semibold tracking-wide" style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }}>
+            <Headphones size={20} style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }} />
+            <span className="text-sm font-semibold tracking-wide" style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }}>
               Support
             </span>
-            <ChevronDown size={14} style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }} className={`transition-transform duration-200 ${supportHover ? "rotate-180" : ""}`} />
+            <ChevronDown size={14} style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }} className={`transition-transform duration-200 ${supportHover ? "rotate-180" : ""}`} />
           </button>
 
           {supportHover && (
@@ -193,7 +193,7 @@ const Navbar = () => {
               onMouseLeave={handleSupportLeave}
             >
               <div className="bg-background/95 backdrop-blur-xl border border-border rounded-2xl shadow-2xl p-5 min-w-[340px]">
-                <div className="flex flex-col gap-1">
+              <div className="flex flex-col gap-1">
                   <Link
                     to="/pricing"
                     onClick={() => setSupportHover(false)}
@@ -201,6 +201,14 @@ const Navbar = () => {
                   >
                     <span className="text-sm font-bold text-foreground">Pricing</span>
                     <span className="text-xs text-muted-foreground mt-0.5">Check out TFCS's affordable pricing.</span>
+                  </Link>
+                  <Link
+                    to="/learn-more-evaluations"
+                    onClick={() => setSupportHover(false)}
+                    className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
+                  >
+                    <span className="text-sm font-bold text-foreground">Learn More About Our Evaluations</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">Understand each evaluation type and find the right one for you.</span>
                   </Link>
                   <Link
                     to="/faq"

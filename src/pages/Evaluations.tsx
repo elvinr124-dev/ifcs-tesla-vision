@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
-import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye } from "lucide-react";
+import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye, BookOpen } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
@@ -209,6 +209,9 @@ const Evaluations = () => {
             <a href="#services" className="tesla-btn-primary !min-w-0 !px-10 text-center">
               View Services
             </a>
+            <Link to="/learn-more-evaluations" className="tesla-btn-outline !min-w-0 !px-10 text-center">
+              Learn More
+            </Link>
           </div>
         </div>
       </section>
@@ -344,6 +347,11 @@ const Evaluations = () => {
                           className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
                           <Eye size={16} /> View Sample
                         </button>
+                        <Link
+                          to="/learn-more-evaluations"
+                          className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
+                          <BookOpen size={16} /> Learn More
+                        </Link>
                         <button
                           onClick={() => {
                             const processingLabels: Record<ProcessingKey, string> = {

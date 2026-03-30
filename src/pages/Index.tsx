@@ -24,7 +24,7 @@ const Index = () => {
         ctaLabel="Start Evaluation"
         ctaHref="/evaluations"
         secondaryLabel="Learn More"
-        secondaryHref="/evaluations"
+        secondaryHref="/learn-more-evaluations"
         dark
       />
 
