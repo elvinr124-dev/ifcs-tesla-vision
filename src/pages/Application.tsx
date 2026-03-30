@@ -43,9 +43,9 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
 
 const FieldGroup = ({ label, required, children, note }: { label: string; required?: boolean; children: React.ReactNode; note?: string }) => (
   <div className="space-y-1.5">
-    <Label className="text-xs font-semibold tracking-[0.12em] uppercase text-muted-foreground">
+    <Label className="text-xs font-semibold tracking-[0.12em] uppercase text-black">
       {label} {required && <span className="text-accent">*</span>}
-      {note && <span className="text-[10px] font-normal normal-case tracking-normal ml-2 text-muted-foreground/60">({note})</span>}
+      {note && <span className="text-[10px] font-normal normal-case tracking-normal ml-2 text-muted-foreground/60">{note}</span>}
     </Label>
     {children}
   </div>
