@@ -53,56 +53,59 @@ const queryClient = new QueryClient();
 const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
-      <AuthProvider>
-        <CartProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-            <ScrollToTop />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/translations" element={<Translations />} />
-              <Route path="/evaluations" element={<Evaluations />} />
-              <Route path="/application" element={<Application />} />
-              <Route path="/consulting" element={<Consulting />} />
-              <Route path="/consulting/book" element={<BookConsultation />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/faq" element={<FAQ />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/login/client" element={<ClientLogin />} />
-              <Route path="/login/staff" element={<StaffLogin />} />
-              <Route path="/signup" element={<Signup />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/staff/cart" element={<StaffCartView />} />
-              <Route path="/for-individuals" element={<ForIndividuals />} />
-              <Route path="/for-institutions" element={<ForInstitutions />} />
-              <Route path="/translations/order" element={<TranslationOrder />} />
-              <Route path="/translations/quote" element={<TranslationQuote />} />
-              <Route path="/dashboard/client" element={<ClientDashboard />} />
-              <Route path="/dashboard/staff" element={<StaffDashboard />} />
-              <Route path="/duplicate-reports" element={<DuplicateReports />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:slug" element={<BlogPost />} />
-              <Route path="/addon/electronic-sharing" element={<AddonElectronicSharing />} />
-              <Route path="/addon/hard-copy" element={<AddonHardCopy />} />
-              <Route path="/addon/domestic-shipping" element={<AddonDomesticShipping />} />
-              <Route path="/addon/international-shipping" element={<AddonInternationalShipping />} />
-              <Route path="/addon/renewal" element={<AddonRenewal />} />
-              <Route path="/terms" element={<TermsOfService />} />
-              <Route path="/privacy" element={<PrivacyPolicy />} />
-              <Route path="/transcript" element={<TranscriptViewer />} />
-              <Route path="/pricing" element={<Pricing />} />
-              <Route path="/account" element={<Account />} />
-              <Route path="/payment" element={<Payment />} />
-              <Route path="/order-confirmation" element={<OrderConfirmation />} />
-              <Route path="/learn-more-evaluations" element={<LearnMoreEvaluations />} />
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-            <AIChatWidget />
-          </BrowserRouter>
-        </CartProvider>
-      </AuthProvider>
+      <LocaleProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
+              <ScrollToTop />
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/translations" element={<Translations />} />
+                <Route path="/evaluations" element={<Evaluations />} />
+                <Route path="/application" element={<Application />} />
+                <Route path="/consulting" element={<Consulting />} />
+                <Route path="/consulting/book" element={<BookConsultation />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/login/client" element={<ClientLogin />} />
+                <Route path="/login/staff" element={<StaffLogin />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/staff/cart" element={<StaffCartView />} />
+                <Route path="/for-individuals" element={<ForIndividuals />} />
+                <Route path="/for-institutions" element={<ForInstitutions />} />
+                <Route path="/translations/order" element={<TranslationOrder />} />
+                <Route path="/translations/quote" element={<TranslationQuote />} />
+                <Route path="/dashboard/client" element={<ClientDashboard />} />
+                <Route path="/dashboard/staff" element={<StaffDashboard />} />
+                <Route path="/duplicate-reports" element={<DuplicateReports />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
+                <Route path="/addon/electronic-sharing" element={<AddonElectronicSharing />} />
+                <Route path="/addon/hard-copy" element={<AddonHardCopy />} />
+                <Route path="/addon/domestic-shipping" element={<AddonDomesticShipping />} />
+                <Route path="/addon/international-shipping" element={<AddonInternationalShipping />} />
+                <Route path="/addon/renewal" element={<AddonRenewal />} />
+                <Route path="/terms" element={<TermsOfService />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/transcript" element={<TranscriptViewer />} />
+                <Route path="/pricing" element={<Pricing />} />
+                <Route path="/account" element={<Account />} />
+                <Route path="/payment" element={<Payment />} />
+                <Route path="/order-confirmation" element={<OrderConfirmation />} />
+                <Route path="/learn-more-evaluations" element={<LearnMoreEvaluations />} />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <AIChatWidget />
+              <CookieConsent />
+            </BrowserRouter>
+          </CartProvider>
+        </AuthProvider>
+      </LocaleProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );
