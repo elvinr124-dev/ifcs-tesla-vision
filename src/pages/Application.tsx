@@ -52,7 +52,7 @@ const FieldGroup = ({ label, required, children, note }: { label: string; requir
 );
 
 const SectionHeading = ({ children }: { children: React.ReactNode }) => (
-  <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-muted-foreground border-b border-border pb-2 mb-4">
+  <p className="text-[10px] font-bold tracking-[0.25em] uppercase border-b border-border pb-2 mb-4 text-black">
     {children}
   </p>
 );
