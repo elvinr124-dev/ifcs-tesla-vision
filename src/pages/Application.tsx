@@ -626,7 +626,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-6">
-                    <SectionHeading>Full Name</SectionHeading>
+                    <SectionHeading>FULL NAME</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <FieldGroup label="Last" required><GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
                       <FieldGroup label="First" required><GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
