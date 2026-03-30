@@ -53,7 +53,7 @@ const Navbar = () => {
   const { user } = useAuth();
 
   // Pages that have a dark hero where transparent bubbles look good
-  const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog"];
+  const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog", "/learn-more-evaluations"];
   const hasDarkHero = darkHeroPages.some(p => p === "/" ? location.pathname === "/" : location.pathname.startsWith(p));
 
   useEffect(() => {
