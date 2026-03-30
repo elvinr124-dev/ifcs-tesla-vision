@@ -44,6 +44,7 @@ import Pricing from "./pages/Pricing";
 import Account from "./pages/Account";
 import Payment from "./pages/Payment";
 import OrderConfirmation from "./pages/OrderConfirmation";
+import LearnMoreEvaluations from "./pages/LearnMoreEvaluations";
 
 const queryClient = new QueryClient();
 
