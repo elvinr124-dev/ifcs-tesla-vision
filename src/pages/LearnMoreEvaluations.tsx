@@ -79,11 +79,11 @@ const LearnMoreEvaluations = () => {
             What's an Evaluation?
           </h2>
           <h3 className="text-lg md:text-xl font-semibold text-accent mb-4">
-            IFCS Evaluation in USA: Features, Cost, Process & More
+            Institute of Foreign Credential Services (IFCS) Evaluation in USA: Features, Cost, Process & More
           </h3>
           <div className="space-y-4 text-[15px] leading-relaxed text-muted-foreground">
             <p>
-              IFCS (Institute of Foreign Credential Services) evaluations are
+              Institute of Foreign Credential Services (IFCS) evaluations are
               essential for international students and professionals seeking to
               study or work in the USA. They help universities, employers, and
               immigration officials accurately assess international
