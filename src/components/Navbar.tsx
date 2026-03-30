@@ -260,6 +260,9 @@ const Navbar = () => {
           </div>
         </Link>
 
+        {/* Language Selector */}
+        <LanguageSelector scrolled={useScrolledStyle} hasDarkHero={hasDarkHero} />
+
         {/* Profile / Login */}
         {user ? (
           <div className="flex items-center gap-2">
