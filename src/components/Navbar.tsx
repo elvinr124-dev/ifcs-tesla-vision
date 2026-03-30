@@ -179,11 +179,11 @@ const Navbar = () => {
                 : useScrolledStyle ? bubbleScrolled : bubbleFloat
             }`}
           >
-            <Headphones size={20} style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }} />
-            <span className="text-sm font-semibold tracking-wide" style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }}>
+            <Headphones size={20} style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }} />
+            <span className="text-sm font-semibold tracking-wide" style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }}>
               Support
             </span>
-            <ChevronDown size={14} style={{ color: ["/pricing", "/faq", "/contact"].includes(location.pathname) ? "white" : textColor }} className={`transition-transform duration-200 ${supportHover ? "rotate-180" : ""}`} />
+            <ChevronDown size={14} style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }} className={`transition-transform duration-200 ${supportHover ? "rotate-180" : ""}`} />
           </button>
 
           {supportHover && (
