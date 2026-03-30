@@ -209,6 +209,9 @@ const Evaluations = () => {
             <a href="#services" className="tesla-btn-primary !min-w-0 !px-10 text-center">
               View Services
             </a>
+            <Link to="/learn-more-evaluations" className="tesla-btn-outline !min-w-0 !px-10 text-center">
+              Learn More
+            </Link>
           </div>
         </div>
       </section>
