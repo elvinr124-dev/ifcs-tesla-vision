@@ -58,8 +58,8 @@ const ForIndividuals = () => {
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-center mb-12">
-            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">How It Works</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Application Steps</h2>
+            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">{translate("How It Works")}</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">{translate("Application Steps")}</h2>
           </div>
 
           {steps.map((step, i) => {
