@@ -218,8 +218,8 @@ const Navbar = () => {
                     onClick={() => setSupportHover(false)}
                     className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
                   >
-                    <span className="text-sm font-bold text-foreground">FAQs</span>
-                    <span className="text-xs text-muted-foreground mt-0.5">Still have questions? Check out our Frequently Asked Questions page.</span>
+                    <span className="text-sm font-bold text-foreground">{translate("FAQs")}</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">{translate("Still have questions? Check out our Frequently Asked Questions page.")}</span>
                   </Link>
                   <Link
                     to="/contact"
