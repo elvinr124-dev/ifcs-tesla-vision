@@ -135,6 +135,7 @@ function calculatePagePrice(
 }
 
 const TranslationOrder = () => {
+  const { translateDual, translate } = useLocale();
   const [fullName, setFullName] = useState("");
   const [emailVal, setEmail] = useState("");
   const [phone, setPhone] = useState("");
