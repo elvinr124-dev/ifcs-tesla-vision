@@ -4,6 +4,7 @@ import { ArrowLeft, Globe, FileText, ShieldCheck, Clock, CheckCircle, ChevronDow
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
+import { useLocale } from "@/context/LocaleContext";
 import translationsBg from "@/assets/translations-bg.jpg";
 
 const languages = [
