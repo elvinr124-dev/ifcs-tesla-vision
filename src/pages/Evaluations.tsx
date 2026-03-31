@@ -6,6 +6,7 @@ import BackToHome from "@/components/BackToHome";
 import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye, BookOpen } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 import serviceMilitary from "@/assets/service-military.jpg";
 import serviceEducation from "@/assets/service-education.jpg";
