@@ -34,6 +34,7 @@ const steps = [
 ];
 
 const ForIndividuals = () => {
+  const { translate } = useLocale();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
