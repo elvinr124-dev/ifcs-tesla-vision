@@ -53,6 +53,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { totalItems } = useCart();
   const { user } = useAuth();
+  const { translate } = useLocale();
 
   // Pages that have a dark hero where transparent bubbles look good
   const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog", "/learn-more-evaluations"];
