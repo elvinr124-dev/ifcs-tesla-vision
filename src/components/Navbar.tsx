@@ -136,7 +136,7 @@ const Navbar = () => {
               onMouseLeave={handleEvalLeave}
             >
               <div className="bg-background/95 backdrop-blur-xl border border-border rounded-3xl shadow-2xl p-6 min-w-[800px]">
-                <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-accent mb-4">Our Evaluation Services</p>
+                <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-accent mb-4">{translate("Our Evaluation Services")}</p>
                 <div className="flex gap-3 overflow-x-auto pb-2">
                   {evalPreviews.map((ev) => (
                     <Link
