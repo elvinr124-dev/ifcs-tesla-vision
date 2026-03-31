@@ -241,7 +241,7 @@ const Navbar = () => {
             <div className={`${bubbleBase} ${location.pathname.startsWith("/dashboard") ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
               <LayoutDashboard size={20} style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }} />
               <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }}>
-                My Dashboard
+                {translate("My Dashboard")}
               </span>
             </div>
           </Link>
