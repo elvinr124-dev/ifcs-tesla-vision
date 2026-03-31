@@ -83,10 +83,10 @@ const ForIndividuals = () => {
 
                   <div className="flex-1 rounded-3xl border border-border bg-card shadow-lg hover:shadow-xl hover:border-accent/30 transition-all duration-300 p-8 md:p-10 group">
                     <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-4 group-hover:text-accent transition-colors duration-200">
-                      {step.title}
+                      {translate(step.title)}
                     </h2>
                     <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                      {step.body}
+                      {translate(step.body)}
                     </p>
                   </div>
                 </div>
