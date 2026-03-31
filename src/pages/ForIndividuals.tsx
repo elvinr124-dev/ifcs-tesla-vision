@@ -178,7 +178,7 @@ const ForIndividuals = () => {
 
           <div className="rounded-3xl border border-border bg-card shadow-lg p-8 md:p-12">
             <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed">
-              Foreign credential standards vary among universities, employers, state and government institutions. Knowing exactly how the educational accomplishments you have achieved abroad align with U.S. admissions departments and corporate employers is a task best left to a resource that knows the game inside out. The Institute of Foreign Credential Services (IFCS) can provide the insight you need to get your academic credentials recognized and determine exactly what you may need to do in order to make your next transition successful professionally or academically speaking.
+              {translate("Foreign credential standards vary among universities, employers, state and government institutions. Knowing exactly how the educational accomplishments you have achieved abroad align with U.S. admissions departments and corporate employers is a task best left to a resource that knows the game inside out. The Institute of Foreign Credential Services (IFCS) can provide the insight you need to get your academic credentials recognized and determine exactly what you may need to do in order to make your next transition successful professionally or academically speaking.")}
             </p>
           </div>
         </div>
