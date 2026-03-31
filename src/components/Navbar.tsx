@@ -184,7 +184,7 @@ const Navbar = () => {
           >
             <Headphones size={20} style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }}>
-              Support
+              {translate("Support")}
             </span>
             <ChevronDown size={14} style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }} className={`transition-transform duration-200 ${supportHover ? "rotate-180" : ""}`} />
           </button>
