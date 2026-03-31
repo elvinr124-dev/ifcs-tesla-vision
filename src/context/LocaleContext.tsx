@@ -17,6 +17,7 @@ interface LocaleContextType {
   locale: LocaleInfo;
   setLanguage: (langCode: string) => void;
   translate: (text: string) => string;
+  translateDual: (text: string) => string;
   isTranslating: boolean;
   availableLanguages: { code: string; name: string; nativeName: string }[];
   isEU: boolean;
@@ -54,6 +55,82 @@ const SUPPORTED_LANGUAGES = [
   { code: "hu", name: "Hungarian", nativeName: "Magyar" },
   { code: "el", name: "Greek", nativeName: "Ελληνικά" },
   { code: "cs", name: "Czech", nativeName: "Čeština" },
+  { code: "da", name: "Danish", nativeName: "Dansk" },
+  { code: "fi", name: "Finnish", nativeName: "Suomi" },
+  { code: "no", name: "Norwegian", nativeName: "Norsk" },
+  { code: "sk", name: "Slovak", nativeName: "Slovenčina" },
+  { code: "bg", name: "Bulgarian", nativeName: "Български" },
+  { code: "hr", name: "Croatian", nativeName: "Hrvatski" },
+  { code: "sr", name: "Serbian", nativeName: "Српски" },
+  { code: "sl", name: "Slovenian", nativeName: "Slovenščina" },
+  { code: "lt", name: "Lithuanian", nativeName: "Lietuvių" },
+  { code: "lv", name: "Latvian", nativeName: "Latviešu" },
+  { code: "et", name: "Estonian", nativeName: "Eesti" },
+  { code: "ka", name: "Georgian", nativeName: "ქართული" },
+  { code: "hy", name: "Armenian", nativeName: "Հայերեն" },
+  { code: "az", name: "Azerbaijani", nativeName: "Azərbaycan" },
+  { code: "kk", name: "Kazakh", nativeName: "Қазақша" },
+  { code: "uz", name: "Uzbek", nativeName: "Oʻzbekcha" },
+  { code: "ps", name: "Pashto", nativeName: "پښتو" },
+  { code: "ne", name: "Nepali", nativeName: "नेपाली" },
+  { code: "si", name: "Sinhala", nativeName: "සිංහල" },
+  { code: "my", name: "Burmese", nativeName: "မြန်မာ" },
+  { code: "km", name: "Khmer", nativeName: "ខ្មែរ" },
+  { code: "lo", name: "Lao", nativeName: "ລາວ" },
+  { code: "am", name: "Amharic", nativeName: "አማርኛ" },
+  { code: "so", name: "Somali", nativeName: "Soomaali" },
+  { code: "ms", name: "Malay", nativeName: "Bahasa Melayu" },
+  { code: "id", name: "Indonesian", nativeName: "Bahasa Indonesia" },
+  { code: "ta", name: "Tamil", nativeName: "தமிழ்" },
+  { code: "te", name: "Telugu", nativeName: "తెలుగు" },
+  { code: "kn", name: "Kannada", nativeName: "ಕನ್ನಡ" },
+  { code: "ml", name: "Malayalam", nativeName: "മലയാളം" },
+  { code: "mr", name: "Marathi", nativeName: "मराठी" },
+  { code: "gu", name: "Gujarati", nativeName: "ગુજરાતી" },
+  { code: "pa", name: "Punjabi", nativeName: "ਪੰਜਾਬੀ" },
+  { code: "or", name: "Odia", nativeName: "ଓଡ଼ିଆ" },
+  { code: "as", name: "Assamese", nativeName: "অসমীয়া" },
+  { code: "mn", name: "Mongolian", nativeName: "Монгол" },
+  { code: "sq", name: "Albanian", nativeName: "Shqip" },
+  { code: "mk", name: "Macedonian", nativeName: "Македонски" },
+  { code: "bs", name: "Bosnian", nativeName: "Bosanski" },
+  { code: "mt", name: "Maltese", nativeName: "Malti" },
+  { code: "is", name: "Icelandic", nativeName: "Íslenska" },
+  { code: "ga", name: "Irish", nativeName: "Gaeilge" },
+  { code: "cy", name: "Welsh", nativeName: "Cymraeg" },
+  { code: "eu", name: "Basque", nativeName: "Euskara" },
+  { code: "ca", name: "Catalan", nativeName: "Català" },
+  { code: "gl", name: "Galician", nativeName: "Galego" },
+  { code: "af", name: "Afrikaans", nativeName: "Afrikaans" },
+  { code: "zu", name: "Zulu", nativeName: "isiZulu" },
+  { code: "xh", name: "Xhosa", nativeName: "isiXhosa" },
+  { code: "yo", name: "Yoruba", nativeName: "Yorùbá" },
+  { code: "ig", name: "Igbo", nativeName: "Igbo" },
+  { code: "ha", name: "Hausa", nativeName: "Hausa" },
+  { code: "rw", name: "Kinyarwanda", nativeName: "Ikinyarwanda" },
+  { code: "mg", name: "Malagasy", nativeName: "Malagasy" },
+  { code: "ht", name: "Haitian Creole", nativeName: "Kreyòl Ayisyen" },
+  { code: "ku", name: "Kurdish", nativeName: "Kurdî" },
+  { code: "sd", name: "Sindhi", nativeName: "سنڌي" },
+  { code: "ky", name: "Kyrgyz", nativeName: "Кыргызча" },
+  { code: "tk", name: "Turkmen", nativeName: "Türkmençe" },
+  { code: "tg", name: "Tajik", nativeName: "Тоҷикӣ" },
+  { code: "tt", name: "Tatar", nativeName: "Татарча" },
+  { code: "eo", name: "Esperanto", nativeName: "Esperanto" },
+  { code: "la", name: "Latin", nativeName: "Latina" },
+  { code: "jv", name: "Javanese", nativeName: "Basa Jawa" },
+  { code: "su", name: "Sundanese", nativeName: "Basa Sunda" },
+  { code: "ceb", name: "Cebuano", nativeName: "Cebuano" },
+  { code: "ny", name: "Chichewa", nativeName: "Chichewa" },
+  { code: "sn", name: "Shona", nativeName: "chiShona" },
+  { code: "st", name: "Sesotho", nativeName: "Sesotho" },
+  { code: "sm", name: "Samoan", nativeName: "Gagana Samoa" },
+  { code: "mi", name: "Maori", nativeName: "Te Reo Māori" },
+  { code: "haw", name: "Hawaiian", nativeName: "ʻŌlelo Hawaiʻi" },
+  { code: "co", name: "Corsican", nativeName: "Corsu" },
+  { code: "fy", name: "Frisian", nativeName: "Frysk" },
+  { code: "lb", name: "Luxembourgish", nativeName: "Lëtzebuergesch" },
+  { code: "yi", name: "Yiddish", nativeName: "ייִדיש" },
 ];
 
 const EU_COUNTRIES = [
@@ -70,6 +147,8 @@ const COUNTRY_TO_LANG: Record<string, string> = {
   SA: "ar", EG: "ar", IQ: "ar", MA: "ar", DZ: "ar", SD: "ar", SY: "ar", YE: "ar", TN: "ar", JO: "ar", LY: "ar", LB: "ar", AE: "ar", OM: "ar", KW: "ar", QA: "ar", BH: "ar",
   IN: "hi", RU: "ru", JP: "ja", KR: "ko", DE: "de", AT: "de", IT: "it", TR: "tr", VN: "vi", TH: "th", PL: "pl", UA: "uk", NL: "nl", SE: "sv", BD: "bn", IL: "he", IR: "fa", PK: "ur", PH: "tl",
   KE: "sw", TZ: "sw", RO: "ro", HU: "hu", GR: "el", CZ: "cs",
+  DK: "da", FI: "fi", NO: "no", SK: "sk", BG: "bg", HR: "hr", RS: "sr", SI: "sl", LT: "lt", LV: "lv", EE: "et", GE: "ka", AM: "hy", AZ: "az", KZ: "kk", UZ: "uz", AF: "ps", NP: "ne", LK: "si", MM: "my", KH: "km", LA: "lo", ET: "am", SO: "so", MY: "ms", ID: "id",
+  AL: "sq", MK: "mk", BA: "bs", MT: "mt", IS: "is", MN: "mn",
 };
 
 const DEFAULT_LOCALE: LocaleInfo = {
@@ -84,6 +163,7 @@ const LocaleContext = createContext<LocaleContextType>({
   locale: DEFAULT_LOCALE,
   setLanguage: () => {},
   translate: (t) => t,
+  translateDual: (t) => t,
   isTranslating: false,
   availableLanguages: SUPPORTED_LANGUAGES,
   isEU: false,
@@ -107,7 +187,7 @@ function saveCache(cache: TranslationCache) {
     const trimmed: TranslationCache = {};
     for (const lang of Object.keys(cache)) {
       const entries = Object.entries(cache[lang]);
-      trimmed[lang] = Object.fromEntries(entries.slice(-500));
+      trimmed[lang] = Object.fromEntries(entries.slice(-800));
     }
     localStorage.setItem(CACHE_KEY, JSON.stringify(trimmed));
   } catch { }
@@ -175,8 +255,8 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const processBatch = useCallback(async () => {
     if (locale.languageCode === "en" || pendingTexts.current.size === 0) return;
     
-    const textsToTranslate = Array.from(pendingTexts.current).slice(0, 20);
-    pendingTexts.current.clear();
+    const textsToTranslate = Array.from(pendingTexts.current).slice(0, 25);
+    pendingTexts.current = new Set(Array.from(pendingTexts.current).slice(25));
     
     setIsTranslating(true);
     try {
@@ -200,6 +280,11 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         saveCache(translationCache.current);
         forceUpdate(n => n + 1);
       }
+
+      // If there are still pending texts, process another batch
+      if (pendingTexts.current.size > 0) {
+        batchTimer.current = setTimeout(processBatch, 200);
+      }
     } catch (e) {
       console.error("Translation error:", e);
     } finally {
@@ -222,6 +307,22 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     return text;
   }, [locale.languageCode, processBatch]);
 
+  // Dual-language: returns "English (Translation)" for form pages
+  const translateDual = useCallback((text: string): string => {
+    if (!text || locale.languageCode === "en") return text;
+    
+    const cached = translationCache.current[locale.languageCode]?.[text];
+    if (cached) return `${text} (${cached})`;
+    
+    if (!pendingTexts.current.has(text)) {
+      pendingTexts.current.add(text);
+      clearTimeout(batchTimer.current);
+      batchTimer.current = setTimeout(processBatch, 300);
+    }
+    
+    return text;
+  }, [locale.languageCode, processBatch]);
+
   const isEU = EU_COUNTRIES.includes(locale.countryCode);
   const isCA = locale.countryCode === "US" && locale.region === "NA";
 
@@ -230,6 +331,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       locale,
       setLanguage,
       translate,
+      translateDual,
       isTranslating,
       availableLanguages: SUPPORTED_LANGUAGES,
       isEU,
