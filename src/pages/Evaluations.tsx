@@ -222,10 +222,10 @@ const Evaluations = () => {
         <div className="max-w-[1600px] mx-auto w-full">
           <div className="text-center mb-16">
             <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
-              Choose Your Evaluation
+              {translate("Choose Your Evaluation")}
             </p>
             <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
-              Service Tiers
+              {translate("Service Tiers")}
             </h2>
           </div>
 
