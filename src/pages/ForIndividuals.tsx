@@ -77,7 +77,7 @@ const ForIndividuals = () => {
                       <Icon size={30} className="text-white" />
                     </div>
                     <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted-foreground">
-                      Step {step.num}
+                      {translate("Step")} {step.num}
                     </span>
                   </div>
 
