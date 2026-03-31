@@ -100,7 +100,7 @@ const ForIndividuals = () => {
               to="/evaluations"
               className="group inline-flex items-center gap-4 px-10 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300"
             >
-              <span>Online Application</span>
+              <span>{translate("Online Application")}</span>
               <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
                 <ArrowRight size={20} />
               </div>
