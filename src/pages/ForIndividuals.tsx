@@ -173,8 +173,8 @@ const ForIndividuals = () => {
       {/* How We Help You */}
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-5xl mx-auto">
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">Individuals</p>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">How We Help You</h2>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">{translate("Individuals")}</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">{translate("How We Help You")}</h2>
 
           <div className="rounded-3xl border border-border bg-card shadow-lg p-8 md:p-12">
             <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed">
