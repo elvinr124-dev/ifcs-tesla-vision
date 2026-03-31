@@ -441,7 +441,7 @@ const Navbar = () => {
                   }`}
                 >
                   <User size={20} className={location.pathname === "/account" ? "text-accent" : "text-muted-foreground"} />
-                  <span className="text-sm font-semibold tracking-wide">My Account</span>
+                  <span className="text-sm font-semibold tracking-wide">{translate("My Account")}</span>
                 </Link>
               </>
             )}
