@@ -58,6 +58,7 @@ const evaluationPricing = [
 ];
 
 const Pricing = () => {
+  const { translate } = useLocale();
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
