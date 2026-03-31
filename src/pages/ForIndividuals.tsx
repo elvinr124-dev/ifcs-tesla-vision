@@ -44,12 +44,12 @@ const ForIndividuals = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brooklynBridge})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-4">Application Instructions</p>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-4">{translate("Application Instructions")}</p>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight">
-            For Individuals
+            {translate("For Individuals")}
           </h1>
           <p className="text-xl md:text-2xl text-white/80 font-light mt-5 max-w-2xl mx-auto">
-            Your step-by-step guide to getting your credentials evaluated.
+            {translate("Your step-by-step guide to getting your credentials evaluated.")}
           </p>
         </div>
       </section>
