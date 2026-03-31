@@ -140,7 +140,7 @@ const Pricing = () => {
                   </Link>
                 </TableCell>
                 <TableCell className="text-center py-5 px-4 text-accent font-bold text-base" colSpan={3}>
-                  $25 per copy
+                  $25 {translate("per copy")}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -148,8 +148,7 @@ const Pricing = () => {
         </div>
 
         <p className="text-center text-muted-foreground text-sm mt-8 max-w-xl mx-auto">
-          All prices are in USD. Rush processing is subject to availability. 
-          Contact us for questions about pricing or custom evaluation needs.
+          {translate("All prices are in USD. Rush processing is subject to availability. Contact us for questions about pricing or custom evaluation needs.")}
         </p>
       </section>
 
