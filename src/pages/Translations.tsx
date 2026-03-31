@@ -144,7 +144,7 @@ const Translations = () => {
           map(({ icon: Icon, text }) =>
           <div key={text} className="flex items-center gap-3">
               <Icon size={24} className="text-accent shrink-0" />
-              <span className="text-sm font-medium text-foreground">{text}</span>
+              <span className="text-sm font-medium text-foreground">{translate(text)}</span>
             </div>
           )}
         </div>
