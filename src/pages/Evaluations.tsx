@@ -145,6 +145,7 @@ const Evaluations = () => {
   const [selectedProcessing, setSelectedProcessing] = useState<Record<number, ProcessingKey>>({});
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();
+  const { translate } = useLocale();
   const navigate = useNavigate();
   const location = useLocation();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
