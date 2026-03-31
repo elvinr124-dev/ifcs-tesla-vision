@@ -101,23 +101,23 @@ const Translations = () => {
             className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity"
             style={{ color: "white" }}>
             <ArrowLeft size={16} />
-            Back to Home
+            {translate("Back to Home")}
           </Link>
           <p className="text-sm font-semibold tracking-[0.2em] uppercase mb-3" style={{ color: "white" }}>
-            Break Language Barriers
+            {translate("Break Language Barriers")}
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight" style={{ color: "white" }}>
-            Certified Translations
+            {translate("Certified Translations")}
           </h1>
           <p className="mt-6 text-base md:text-lg max-w-xl font-semibold" style={{ color: "white" }}>
-            Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English.
+            {translate("Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English.")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
             <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
-              Start Your Order
+              {translate("Start Your Order")}
             </Link>
             <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-white/30 text-white font-semibold text-sm hover:bg-white/10 transition-all duration-300">
-              Get a Quote
+              {translate("Get a Quote")}
             </Link>
           </div>
           <div className="flex items-center gap-2 mt-8">
@@ -127,7 +127,7 @@ const Translations = () => {
               )}
             </div>
             <span className="text-sm font-medium opacity-90" style={{ color: "white" }}>
-              4.9 · Trusted by thousands of clients
+              {translate("4.9 · Trusted by thousands of clients")}
             </span>
           </div>
         </div>
