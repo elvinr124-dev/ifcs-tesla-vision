@@ -123,7 +123,7 @@ const Navbar = () => {
             >
               <GraduationCap size={20} className="text-white" />
               <span className="text-sm font-semibold tracking-wide text-white">
-                Get an Evaluation
+                {translate("Get an Evaluation")}
               </span>
             </div>
           </Link>
