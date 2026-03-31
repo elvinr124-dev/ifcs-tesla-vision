@@ -252,7 +252,7 @@ const Navbar = () => {
           <div className={`${bubbleBase} relative ${location.pathname === "/cart" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
             <ShoppingCart size={20} style={{ color: location.pathname === "/cart" ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/cart" ? "white" : textColor }}>
-              Cart
+              {translate("Cart")}
             </span>
             {totalItems > 0 && (
               <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center shadow-md">
