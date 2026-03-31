@@ -163,7 +163,7 @@ const Navbar = () => {
           <div className={`${bubbleBase} ${location.pathname === "/translations" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
             <Languages size={20} style={{ color: location.pathname === "/translations" ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/translations" ? "white" : textColor }}>
-              Translations
+              {translate("Translations")}
             </span>
           </div>
         </Link>
