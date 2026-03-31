@@ -79,24 +79,24 @@ const Pricing = () => {
             <TableHeader>
               <TableRow className="bg-muted/50 border-b border-border">
                 <TableHead className="text-foreground font-bold text-sm tracking-wide py-5 px-6 w-[280px]">
-                  Evaluation Type
+                  {translate("Evaluation Type")}
                 </TableHead>
                 <TableHead className="text-center text-foreground font-bold text-sm tracking-wide py-5 px-4">
-                  Standard
+                  {translate("Standard")}
                   <span className="block text-[10px] font-medium text-muted-foreground mt-0.5">
-                    8–10 Business Days
+                    {translate("8–10 Business Days")}
                   </span>
                 </TableHead>
                 <TableHead className="text-center text-foreground font-bold text-sm tracking-wide py-5 px-4">
-                  3-Day Rush
+                  {translate("3-Day Rush")}
                   <span className="block text-[10px] font-medium text-muted-foreground mt-0.5">
-                    3 Business Days
+                    {translate("3 Business Days")}
                   </span>
                 </TableHead>
                 <TableHead className="text-center text-foreground font-bold text-sm tracking-wide py-5 px-4">
-                  24-Hour Rush
+                  {translate("24-Hour Rush")}
                   <span className="block text-[10px] font-medium text-muted-foreground mt-0.5">
-                    Next Business Day
+                    {translate("Next Business Day")}
                   </span>
                 </TableHead>
               </TableRow>
