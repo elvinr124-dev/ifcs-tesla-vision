@@ -81,6 +81,7 @@ const faqs = [
 const Translations = () => {
   const [showAllLangs, setShowAllLangs] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const { translate } = useLocale();
 
   const displayedLangs = showAllLangs ? languages : languages.slice(0, 10);
 
