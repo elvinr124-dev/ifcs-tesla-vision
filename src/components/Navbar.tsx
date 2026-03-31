@@ -272,8 +272,8 @@ const Navbar = () => {
               <Link to="/staff/cart" className="group">
                 <div className={`${bubbleBase} ${useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
                   <Shield size={20} style={{ color: textColor }} />
-                  <span className="text-sm font-semibold tracking-wide" style={{ color: textColor }}>
-                    Staff View
+                    <span className="text-sm font-semibold tracking-wide" style={{ color: textColor }}>
+                    {translate("Staff View")}
                   </span>
                 </div>
               </Link>
