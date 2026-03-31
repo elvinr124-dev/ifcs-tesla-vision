@@ -5,6 +5,7 @@ import NavSearchBar from "@/components/NavSearchBar";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 import serviceMilitary from "@/assets/service-military.jpg";
