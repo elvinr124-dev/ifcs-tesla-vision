@@ -4,6 +4,7 @@ import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTria
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
+import { useLocale } from "@/context/LocaleContext";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
 import * as pdfjsLib from "pdfjs-dist";
@@ -134,6 +135,7 @@ function calculatePagePrice(
 }
 
 const TranslationOrder = () => {
+  const { translateDual, translate } = useLocale();
   const [fullName, setFullName] = useState("");
   const [emailVal, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -402,14 +404,14 @@ const TranslationOrder = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12">
           <Link to="/translations" className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Translations
+            <ArrowLeft size={16} /> {translate("Back to Translations")}
           </Link>
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">Place Your Order</p>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">{translate("Place Your Order")}</p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white">
-            Translation Order
+            {translate("Translation Order")}
           </h1>
           <p className="mt-4 text-base md:text-lg text-white/80 font-light max-w-xl">
-            Upload your documents, our AI calculates pricing, and pay securely. Certified translations starting at $50/page.
+            {translate("Upload your documents, our AI calculates pricing, and pay securely. Certified translations starting at $50/page.")}
           </p>
         </div>
       </section>
@@ -440,27 +442,27 @@ const TranslationOrder = () => {
 
               {/* Your Information */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Your Information</SectionHeading>
+                <SectionHeading>{translateDual("Your Information")}</SectionHeading>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FieldGroup label="Full Name" required>
+                  <FieldGroup label={translateDual("Full Name")} required>
                     <GlassInput value={fullName} onChange={e => setFullName(e.target.value)} placeholder="Full name" required />
                   </FieldGroup>
-                  <FieldGroup label="E-mail" required>
+                  <FieldGroup label={translateDual("E-mail")} required>
                     <GlassInput value={emailVal} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" type="email" required />
                   </FieldGroup>
                 </div>
-                <FieldGroup label="Phone">
+                <FieldGroup label={translateDual("Phone")}>
                   <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
                 </FieldGroup>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FieldGroup label="Translating From" required>
+                  <FieldGroup label={translateDual("Translating From")} required>
                     <GlassInput value={transFrom} onChange={e => setTransFrom(e.target.value)} placeholder="e.g. Spanish" required />
                   </FieldGroup>
-                  <FieldGroup label="Translating Into" required>
+                  <FieldGroup label={translateDual("Translating Into")} required>
                     <GlassInput value={transTo} onChange={e => setTransTo(e.target.value)} placeholder="e.g. English" required />
                   </FieldGroup>
                 </div>
-                <FieldGroup label="Additional Notes">
+                <FieldGroup label={translateDual("Additional Notes")}>
                   <textarea
                     value={notes} onChange={e => setNotes(e.target.value)}
                     placeholder="Any special instructions or details about your documents..."
@@ -478,9 +480,9 @@ const TranslationOrder = () => {
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
               >
-                <SectionHeading>Upload Your Documents</SectionHeading>
+                <SectionHeading>{translateDual("Upload Your Documents")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
-                  Upload clear, legible images or PDFs. Our AI will automatically count words per page and calculate pricing.
+                  {translate("Upload clear, legible images or PDFs. Our AI will automatically count words per page and calculate pricing.")}
                 </p>
 
                 <label className={`flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all duration-200 group ${
@@ -490,9 +492,9 @@ const TranslationOrder = () => {
                 }`}>
                   <Upload size={28} className={`transition-colors ${dragging ? "text-accent" : "text-muted-foreground group-hover:text-accent"}`} />
                   <span className={`text-sm font-medium transition-colors ${dragging ? "text-accent" : "text-muted-foreground group-hover:text-accent"}`}>
-                    {dragging ? "Drop files here" : "Drag & drop or click to browse files"}
+                    {dragging ? translate("Drop files here") : translate("Drag & drop or click to browse files")}
                   </span>
-                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · PDFs are split into individual pages · Max 4MB per file</span>
+                  <span className="text-xs text-muted-foreground/60">{translate("PDF, JPG, PNG supported · PDFs are split into individual pages · Max 4MB per file")}</span>
                   <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                 </label>
 

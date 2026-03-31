@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
+import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 import { ArrowRight, Search, FileText, Upload, Send, GraduationCap, MessageSquare, Languages } from "lucide-react";
 
@@ -33,6 +34,7 @@ const steps = [
 ];
 
 const ForIndividuals = () => {
+  const { translate } = useLocale();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -42,12 +44,12 @@ const ForIndividuals = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brooklynBridge})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center">
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-4">Application Instructions</p>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-4">{translate("Application Instructions")}</p>
           <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-white leading-tight">
-            For Individuals
+            {translate("For Individuals")}
           </h1>
           <p className="text-xl md:text-2xl text-white/80 font-light mt-5 max-w-2xl mx-auto">
-            Your step-by-step guide to getting your credentials evaluated.
+            {translate("Your step-by-step guide to getting your credentials evaluated.")}
           </p>
         </div>
       </section>
@@ -56,8 +58,8 @@ const ForIndividuals = () => {
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-5xl mx-auto space-y-8">
           <div className="text-center mb-12">
-            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">How It Works</p>
-            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Application Steps</h2>
+            <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">{translate("How It Works")}</p>
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">{translate("Application Steps")}</h2>
           </div>
 
           {steps.map((step, i) => {
@@ -75,16 +77,16 @@ const ForIndividuals = () => {
                       <Icon size={30} className="text-white" />
                     </div>
                     <span className="text-[10px] font-bold tracking-[0.2em] uppercase text-muted-foreground">
-                      Step {step.num}
+                      {translate("Step")} {step.num}
                     </span>
                   </div>
 
                   <div className="flex-1 rounded-3xl border border-border bg-card shadow-lg hover:shadow-xl hover:border-accent/30 transition-all duration-300 p-8 md:p-10 group">
                     <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-4 group-hover:text-accent transition-colors duration-200">
-                      {step.title}
+                      {translate(step.title)}
                     </h2>
                     <p className="text-base md:text-lg text-muted-foreground leading-relaxed">
-                      {step.body}
+                      {translate(step.body)}
                     </p>
                   </div>
                 </div>
@@ -98,7 +100,7 @@ const ForIndividuals = () => {
               to="/evaluations"
               className="group inline-flex items-center gap-4 px-10 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300"
             >
-              <span>Online Application</span>
+              <span>{translate("Online Application")}</span>
               <div className="w-10 h-10 rounded-2xl bg-white/20 flex items-center justify-center group-hover:bg-white/30 transition-colors">
                 <ArrowRight size={20} />
               </div>
@@ -171,12 +173,12 @@ const ForIndividuals = () => {
       {/* How We Help You */}
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-5xl mx-auto">
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">Individuals</p>
-          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">How We Help You</h2>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3 text-center">{translate("Individuals")}</p>
+          <h2 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground text-center mb-10">{translate("How We Help You")}</h2>
 
           <div className="rounded-3xl border border-border bg-card shadow-lg p-8 md:p-12">
             <p className="text-base md:text-lg text-muted-foreground font-light leading-relaxed">
-              Foreign credential standards vary among universities, employers, state and government institutions. Knowing exactly how the educational accomplishments you have achieved abroad align with U.S. admissions departments and corporate employers is a task best left to a resource that knows the game inside out. The Institute of Foreign Credential Services (IFCS) can provide the insight you need to get your academic credentials recognized and determine exactly what you may need to do in order to make your next transition successful professionally or academically speaking.
+              {translate("Foreign credential standards vary among universities, employers, state and government institutions. Knowing exactly how the educational accomplishments you have achieved abroad align with U.S. admissions departments and corporate employers is a task best left to a resource that knows the game inside out. The Institute of Foreign Credential Services (IFCS) can provide the insight you need to get your academic credentials recognized and determine exactly what you may need to do in order to make your next transition successful professionally or academically speaking.")}
             </p>
           </div>
         </div>

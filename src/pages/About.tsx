@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Award, Globe, ShieldCheck, Users, ChevronDown, ChevronUp } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
 import aboutBg from "@/assets/about-bg.jpg";
 import agronImg from "@/assets/agron-matoshi.jpg";
 import veraImg from "@/assets/vera-memaci.jpg";
@@ -57,6 +58,7 @@ Vera holds a Master of Arts in Mathematics and a B.A. in Mathematics (Magna Cum 
 
 const FounderCard = ({ founder }: { founder: typeof founders[0] }) => {
   const [expanded, setExpanded] = useState(false);
+  const { translate } = useLocale();
 
   return (
     <div className="flex flex-col items-center text-center">
@@ -64,114 +66,105 @@ const FounderCard = ({ founder }: { founder: typeof founders[0] }) => {
         <img src={founder.image} alt={founder.name} className="w-full h-full object-cover" />
       </div>
       <h3 className="text-xl font-semibold text-foreground">{founder.name}</h3>
-      <p className="text-sm font-medium text-accent mb-3">{founder.role}</p>
+      <p className="text-sm font-medium text-accent mb-3">{translate(founder.role)}</p>
       <p className="text-sm text-muted-foreground leading-relaxed max-w-md">
         {expanded ? founder.full.split("\n\n").map((p, i) => (
-          <span key={i} className="block mb-3">{p}</span>
-        )) : founder.short}
+          <span key={i} className="block mb-3">{translate(p)}</span>
+        )) : translate(founder.short)}
       </p>
       <button
         onClick={() => setExpanded(!expanded)}
         className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-accent hover:text-accent/80 transition-colors"
       >
-        {expanded ? "Show Less" : "Read More"}
+        {expanded ? translate("Show Less") : translate("Read More")}
         {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
       </button>
     </div>
   );
 };
 
-const About = () => (
-  <div className="min-h-screen">
-    <Navbar />
+const About = () => {
+  const { translate } = useLocale();
 
-    {/* Hero */}
-    <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
-      <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${aboutBg})` }} />
-      <div className="video-overlay" />
-      <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up hero-text-shadow">
-        <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Our Story</p>
-        <h1 className="tesla-hero-title text-white">About TFCS</h1>
-        <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/90">
-          The Institute of Foreign Credential Services has been helping international students and professionals get their credentials recognized since its founding.
-        </p>
-      </div>
-    </section>
+  return (
+    <div className="min-h-screen">
+      <Navbar />
 
-    {/* About Text */}
-    <section className="py-24 px-6 md:px-12 content-bg">
-      <div className="max-w-4xl mx-auto">
-        <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3 text-center">Who We Are</p>
-        <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground mb-10 text-center">
-          Trusted by Universities & Employers
-        </h2>
-        <div className="space-y-5 text-base text-muted-foreground leading-relaxed">
-          <p>
-            With IFCS, you have direct access to a group of the industry's most experienced professionals with extensive success in international education, foreign credential evaluations, university admission, academic advising, and university teaching. We help individuals educated abroad get their education recognized by universities, employers, immigration and certification boards in the United States.
-          </p>
-          <p>
-            With more than 50 years of accumulated comprehensive professional experience from our senior staff, our company provides best in-class evaluations that are accepted by institutions across the United States.
-          </p>
-          <p>
-            Our service excellence is immediately noticeable in the level of individual attention to each of our clients and it is further evidenced in the accurate evaluations delivered in accordance with industry standards and guidelines set by the National Council on the Evaluation of Foreign Educational Credentials.
+      <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
+        <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${aboutBg})` }} />
+        <div className="video-overlay" />
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up hero-text-shadow">
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Our Story")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("About TFCS")}</h1>
+          <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/90">
+            {translate("The Institute of Foreign Credential Services has been helping international students and professionals get their credentials recognized since its founding.")}
           </p>
         </div>
-      </div>
-    </section>
+      </section>
 
-    {/* Values */}
-    <section className="py-20 px-6 md:px-12 content-bg-alt">
-      <div className="max-w-6xl mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {values.map((v) => (
-            <div key={v.title} className="text-center p-8 rounded-3xl border border-border bg-card shadow-lg hover:shadow-xl hover:border-accent/30 transition-all duration-300">
-              <v.icon size={32} className="text-accent mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-foreground mb-2">{v.title}</h3>
-              <p className="text-sm text-muted-foreground">{v.desc}</p>
-            </div>
-          ))}
+      <section className="py-24 px-6 md:px-12 content-bg">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3 text-center">{translate("Who We Are")}</p>
+          <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground mb-10 text-center">
+            {translate("Trusted by Universities & Employers")}
+          </h2>
+          <div className="space-y-5 text-base text-muted-foreground leading-relaxed">
+            <p>{translate("With IFCS, you have direct access to a group of the industry's most experienced professionals with extensive success in international education, foreign credential evaluations, university admission, academic advising, and university teaching. We help individuals educated abroad get their education recognized by universities, employers, immigration and certification boards in the United States.")}</p>
+            <p>{translate("With more than 50 years of accumulated comprehensive professional experience from our senior staff, our company provides best in-class evaluations that are accepted by institutions across the United States.")}</p>
+            <p>{translate("Our service excellence is immediately noticeable in the level of individual attention to each of our clients and it is further evidenced in the accurate evaluations delivered in accordance with industry standards and guidelines set by the National Council on the Evaluation of Foreign Educational Credentials.")}</p>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    {/* Co-Founders */}
-    <section className="py-24 px-6 md:px-12 content-bg">
-      <div className="max-w-5xl mx-auto">
-        <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3 text-center">Leadership</p>
-        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground mb-16 text-center">
-          Meet Our Founders
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
-          {founders.map((f) => (
-            <FounderCard key={f.name} founder={f} />
-          ))}
+      <section className="py-20 px-6 md:px-12 content-bg-alt">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {values.map((v) => (
+              <div key={v.title} className="text-center p-8 rounded-3xl border border-border bg-card shadow-lg hover:shadow-xl hover:border-accent/30 transition-all duration-300">
+                <v.icon size={32} className="text-accent mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-foreground mb-2">{translate(v.title)}</h3>
+                <p className="text-sm text-muted-foreground">{translate(v.desc)}</p>
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    {/* Professional Affiliations */}
-    <section className="py-20 px-6 md:px-12 content-bg-alt">
-      <div className="max-w-4xl mx-auto">
-        <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3 text-center">Memberships</p>
-        <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground mb-12 text-center">
-          Professional Affiliations
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {affiliations.map((a) => (
-            <div key={a.name} className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card hover:border-accent/30 transition-all duration-300">
-              <span className="text-lg font-bold text-accent tracking-tight shrink-0">{a.name}</span>
-              <p className="text-xs text-muted-foreground leading-snug">{a.full}</p>
-            </div>
-          ))}
+      <section className="py-24 px-6 md:px-12 content-bg">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3 text-center">{translate("Leadership")}</p>
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground mb-16 text-center">
+            {translate("Meet Our Founders")}
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
+            {founders.map((f) => (
+              <FounderCard key={f.name} founder={f} />
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    {/* Back link */}
-    <BackToHome />
+      <section className="py-20 px-6 md:px-12 content-bg-alt">
+        <div className="max-w-4xl mx-auto">
+          <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3 text-center">{translate("Memberships")}</p>
+          <h2 className="text-3xl md:text-4xl font-semibold tracking-tight text-foreground mb-12 text-center">
+            {translate("Professional Affiliations")}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {affiliations.map((a) => (
+              <div key={a.name} className="flex items-center gap-4 p-5 rounded-2xl border border-border bg-card hover:border-accent/30 transition-all duration-300">
+                <span className="text-lg font-bold text-accent tracking-tight shrink-0">{a.name}</span>
+                <p className="text-xs text-muted-foreground leading-snug">{translate(a.full)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-    <Footer />
-  </div>
-);
+      <BackToHome />
+      <Footer />
+    </div>
+  );
+};
 
 export default About;

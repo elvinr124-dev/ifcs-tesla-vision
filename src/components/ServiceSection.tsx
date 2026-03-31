@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useLocale } from "@/context/LocaleContext";
 
 interface ServiceSectionProps {
   id: string;
@@ -25,6 +26,7 @@ const ServiceSection = ({
   secondaryHref,
   dark = true
 }: ServiceSectionProps) => {
+  const { translate } = useLocale();
   const isExternal = (href: string) => href.startsWith("http");
 
   const LinkOrA = ({ href, className, style, children }: {href: string;className: string;style?: React.CSSProperties;children: React.ReactNode;}) =>
@@ -32,11 +34,12 @@ const ServiceSection = ({
   <a href={href} target="_blank" rel="noopener noreferrer" className={className} style={style}>
         {children}
       </a> :
-
   <Link to={href} className={className} style={style}>
         {children}
       </Link>;
 
+  // Translate string titles, leave JSX as-is
+  const translatedTitle = typeof title === "string" ? translate(title) : title;
 
   return (
     <section id={id} className="tesla-section">
@@ -52,38 +55,33 @@ const ServiceSection = ({
         <p
           className="text-base tracking-[0.25em] uppercase mb-4 opacity-100 text-white font-semibold "
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>
-
-          {subtitle}
+          {translate(subtitle)}
         </p>
         <h2
           className="text-5xl md:text-7xl tracking-tight font-semibold text-white lg:text-7xl"
           style={{ color: dark ? "white" : "hsl(var(--foreground))" }}>
-
-          {title}
+          {translatedTitle}
         </h2>
         <p
           className="mt-6 text-xl md:text-2xl max-w-2xl mx-auto opacity-90 text-center font-semibold text-white"
           style={{ color: dark ? "rgba(255,255,255,0.9)" : "hsl(var(--muted-foreground))", textShadow: dark ? "0 2px 8px rgba(0,0,0,0.6)" : "none" }}>
-
-          {description}
+          {translate(description)}
         </p>
         <div className="tesla-cta-group mt-12">
           <LinkOrA href={ctaHref} className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl transition-all duration-200 shadow-2xl hover:scale-105" style={{ background: "hsl(217 91% 50%)", color: "white", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.5)" }}>
-            {ctaLabel}
+            {translate(ctaLabel)}
           </LinkOrA>
           {secondaryLabel && secondaryHref &&
           <LinkOrA
             href={secondaryHref}
             className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-2xl border-2 transition-all duration-200 hover:scale-105"
             style={{ borderColor: "rgba(255,255,255,0.6)", color: "white", background: "rgba(255,255,255,0.12)", backdropFilter: "blur(8px)" }}>
-            
-              {secondaryLabel}
+              {translate(secondaryLabel)}
             </LinkOrA>
           }
         </div>
       </div>
     </section>);
-
 };
 
 export default ServiceSection;

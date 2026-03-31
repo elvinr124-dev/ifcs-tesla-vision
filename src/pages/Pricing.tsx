@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { Table, TableHeader, TableBody, TableHead, TableRow, TableCell } from "@/components/ui/table";
+import { useLocale } from "@/context/LocaleContext";
 
 const evaluationPricing = [
   {
@@ -57,6 +58,7 @@ const evaluationPricing = [
 ];
 
 const Pricing = () => {
+  const { translate } = useLocale();
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -78,24 +80,24 @@ const Pricing = () => {
             <TableHeader>
               <TableRow className="bg-muted/50 border-b border-border">
                 <TableHead className="text-foreground font-bold text-sm tracking-wide py-5 px-6 w-[280px]">
-                  Evaluation Type
+                  {translate("Evaluation Type")}
                 </TableHead>
                 <TableHead className="text-center text-foreground font-bold text-sm tracking-wide py-5 px-4">
-                  Standard
+                  {translate("Standard")}
                   <span className="block text-[10px] font-medium text-muted-foreground mt-0.5">
-                    8–10 Business Days
+                    {translate("8–10 Business Days")}
                   </span>
                 </TableHead>
                 <TableHead className="text-center text-foreground font-bold text-sm tracking-wide py-5 px-4">
-                  3-Day Rush
+                  {translate("3-Day Rush")}
                   <span className="block text-[10px] font-medium text-muted-foreground mt-0.5">
-                    3 Business Days
+                    {translate("3 Business Days")}
                   </span>
                 </TableHead>
                 <TableHead className="text-center text-foreground font-bold text-sm tracking-wide py-5 px-4">
-                  24-Hour Rush
+                  {translate("24-Hour Rush")}
                   <span className="block text-[10px] font-medium text-muted-foreground mt-0.5">
-                    Next Business Day
+                    {translate("Next Business Day")}
                   </span>
                 </TableHead>
               </TableRow>
@@ -139,7 +141,7 @@ const Pricing = () => {
                   </Link>
                 </TableCell>
                 <TableCell className="text-center py-5 px-4 text-accent font-bold text-base" colSpan={3}>
-                  $25 per copy
+                  $25 {translate("per copy")}
                 </TableCell>
               </TableRow>
             </TableBody>
@@ -147,8 +149,7 @@ const Pricing = () => {
         </div>
 
         <p className="text-center text-muted-foreground text-sm mt-8 max-w-xl mx-auto">
-          All prices are in USD. Rush processing is subject to availability. 
-          Contact us for questions about pricing or custom evaluation needs.
+          {translate("All prices are in USD. Rush processing is subject to availability. Contact us for questions about pricing or custom evaluation needs.")}
         </p>
       </section>
 

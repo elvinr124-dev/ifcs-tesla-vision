@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
 import faqBg from "@/assets/faq-bg.jpg";
 
 const faqs = [
@@ -39,6 +40,7 @@ const faqs = [
 
 const FAQ = () => {
   const [open, setOpen] = useState<number | null>(null);
+  const { translate } = useLocale();
 
   return (
     <div className="min-h-screen">
@@ -48,10 +50,10 @@ const FAQ = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${faqBg})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center animate-fade-in-up hero-text-shadow">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Help Center</p>
-          <h1 className="tesla-hero-title text-white">Frequently Asked Questions</h1>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Help Center")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Frequently Asked Questions")}</h1>
           <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/90">
-            Have questions? We're here to help with your credential evaluation and translation needs.
+            {translate("Have questions? We're here to help with your credential evaluation and translation needs.")}
           </p>
         </div>
       </section>
@@ -64,7 +66,7 @@ const FAQ = () => {
                 onClick={() => setOpen(open === i ? null : i)}
                 className="w-full flex items-center justify-between py-6 text-left"
               >
-                <span className="text-base font-medium text-foreground pr-4">{q}</span>
+                <span className="text-base font-medium text-foreground pr-4">{translate(q)}</span>
                 {open === i ? (
                   <ChevronUp size={20} className="text-muted-foreground shrink-0" />
                 ) : (
@@ -72,7 +74,7 @@ const FAQ = () => {
                 )}
               </button>
               {open === i && (
-                <p className="pb-6 text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{a}</p>
+                <p className="pb-6 text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{translate(a)}</p>
               )}
             </div>
           ))}
@@ -80,7 +82,6 @@ const FAQ = () => {
       </section>
 
       <BackToHome />
-
       <Footer />
     </div>
   );

@@ -5,6 +5,7 @@ import NavSearchBar from "@/components/NavSearchBar";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
 import serviceMilitary from "@/assets/service-military.jpg";
@@ -52,6 +53,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { totalItems } = useCart();
   const { user } = useAuth();
+  const { translate } = useLocale();
 
   // Pages that have a dark hero where transparent bubbles look good
   const darkHeroPages = ["/", "/evaluations", "/translations", "/about", "/faq", "/contact", "/consulting", "/duplicate-reports", "/cart", "/blog", "/learn-more-evaluations"];
@@ -121,7 +123,7 @@ const Navbar = () => {
             >
               <GraduationCap size={20} className="text-white" />
               <span className="text-sm font-semibold tracking-wide text-white">
-                Get an Evaluation
+                {translate("Get an Evaluation")}
               </span>
             </div>
           </Link>
@@ -134,7 +136,7 @@ const Navbar = () => {
               onMouseLeave={handleEvalLeave}
             >
               <div className="bg-background/95 backdrop-blur-xl border border-border rounded-3xl shadow-2xl p-6 min-w-[800px]">
-                <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-accent mb-4">Our Evaluation Services</p>
+                <p className="text-[10px] font-bold tracking-[0.25em] uppercase text-accent mb-4">{translate("Our Evaluation Services")}</p>
                 <div className="flex gap-3 overflow-x-auto pb-2">
                   {evalPreviews.map((ev) => (
                     <Link
@@ -161,7 +163,7 @@ const Navbar = () => {
           <div className={`${bubbleBase} ${location.pathname === "/translations" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
             <Languages size={20} style={{ color: location.pathname === "/translations" ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/translations" ? "white" : textColor }}>
-              Translations
+              {translate("Translations")}
             </span>
           </div>
         </Link>
@@ -182,7 +184,7 @@ const Navbar = () => {
           >
             <Headphones size={20} style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }}>
-              Support
+              {translate("Support")}
             </span>
             <ChevronDown size={14} style={{ color: ["/pricing", "/faq", "/contact", "/learn-more-evaluations"].includes(location.pathname) ? "white" : textColor }} className={`transition-transform duration-200 ${supportHover ? "rotate-180" : ""}`} />
           </button>
@@ -200,32 +202,32 @@ const Navbar = () => {
                     onClick={() => setSupportHover(false)}
                     className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
                   >
-                    <span className="text-sm font-bold text-foreground">Pricing</span>
-                    <span className="text-xs text-muted-foreground mt-0.5">Check out TFCS's affordable pricing.</span>
+                    <span className="text-sm font-bold text-foreground">{translate("Pricing")}</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">{translate("Check out TFCS's affordable pricing.")}</span>
                   </Link>
                   <Link
                     to="/learn-more-evaluations"
                     onClick={() => setSupportHover(false)}
                     className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
                   >
-                    <span className="text-sm font-bold text-foreground">Learn More About Our Evaluations</span>
-                    <span className="text-xs text-muted-foreground mt-0.5">Understand each evaluation type and find the right one for you.</span>
+                    <span className="text-sm font-bold text-foreground">{translate("Learn More About Our Evaluations")}</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">{translate("Understand each evaluation type and find the right one for you.")}</span>
                   </Link>
                   <Link
                     to="/faq"
                     onClick={() => setSupportHover(false)}
                     className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
                   >
-                    <span className="text-sm font-bold text-foreground">FAQs</span>
-                    <span className="text-xs text-muted-foreground mt-0.5">Still have questions? Check out our Frequently Asked Questions page.</span>
+                    <span className="text-sm font-bold text-foreground">{translate("FAQs")}</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">{translate("Still have questions? Check out our Frequently Asked Questions page.")}</span>
                   </Link>
                   <Link
                     to="/contact"
                     onClick={() => setSupportHover(false)}
                     className="flex flex-col px-4 py-3 rounded-xl hover:bg-muted/60 transition-colors"
                   >
-                    <span className="text-sm font-bold text-foreground">Contact Us</span>
-                    <span className="text-xs text-muted-foreground mt-0.5">We are here to help.</span>
+                    <span className="text-sm font-bold text-foreground">{translate("Contact Us")}</span>
+                    <span className="text-xs text-muted-foreground mt-0.5">{translate("We are here to help.")}</span>
                   </Link>
                 </div>
               </div>
@@ -239,7 +241,7 @@ const Navbar = () => {
             <div className={`${bubbleBase} ${location.pathname.startsWith("/dashboard") ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
               <LayoutDashboard size={20} style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }} />
               <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname.startsWith("/dashboard") ? "white" : textColor }}>
-                My Dashboard
+                {translate("My Dashboard")}
               </span>
             </div>
           </Link>
@@ -250,7 +252,7 @@ const Navbar = () => {
           <div className={`${bubbleBase} relative ${location.pathname === "/cart" ? bubbleActive : useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
             <ShoppingCart size={20} style={{ color: location.pathname === "/cart" ? "white" : textColor }} />
             <span className="text-sm font-semibold tracking-wide" style={{ color: location.pathname === "/cart" ? "white" : textColor }}>
-              Cart
+              {translate("Cart")}
             </span>
             {totalItems > 0 && (
               <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center shadow-md">
@@ -270,8 +272,8 @@ const Navbar = () => {
               <Link to="/staff/cart" className="group">
                 <div className={`${bubbleBase} ${useScrolledStyle ? bubbleScrolled : bubbleFloat}`}>
                   <Shield size={20} style={{ color: textColor }} />
-                  <span className="text-sm font-semibold tracking-wide" style={{ color: textColor }}>
-                    Staff View
+                    <span className="text-sm font-semibold tracking-wide" style={{ color: textColor }}>
+                    {translate("Staff View")}
                   </span>
                 </div>
               </Link>
@@ -337,7 +339,7 @@ const Navbar = () => {
                     }`}
                   >
                     <Icon size={20} className={isActive ? "text-accent" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold tracking-wide">{link.label}</span>
+                    <span className="text-sm font-semibold tracking-wide">{translate(link.label)}</span>
                     {link.href === "/cart" && totalItems > 0 && (
                       <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
                         {totalItems}
@@ -359,7 +361,7 @@ const Navbar = () => {
                     }`}
                   >
                     <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold tracking-wide">My Dashboard</span>
+                    <span className="text-sm font-semibold tracking-wide">{translate("My Dashboard")}</span>
                   </Link>
                   <Link
                     to="/account"
@@ -371,7 +373,7 @@ const Navbar = () => {
                     }`}
                   >
                     <User size={20} className={location.pathname === "/account" ? "text-accent" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold tracking-wide">My Account</span>
+                    <span className="text-sm font-semibold tracking-wide">{translate("My Account")}</span>
                   </Link>
                 </>
               )}
@@ -407,7 +409,7 @@ const Navbar = () => {
                   }`}
                 >
                   <Icon size={20} className={isActive ? "text-accent" : "text-muted-foreground"} />
-                  <span className="text-sm font-semibold tracking-wide">{link.label}</span>
+                  <span className="text-sm font-semibold tracking-wide">{translate(link.label)}</span>
                   {link.href === "/cart" && totalItems > 0 && (
                     <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
                       {totalItems}
@@ -428,7 +430,7 @@ const Navbar = () => {
                   }`}
                 >
                   <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
-                  <span className="text-sm font-semibold tracking-wide">My Dashboard</span>
+                  <span className="text-sm font-semibold tracking-wide">{translate("My Dashboard")}</span>
                 </Link>
                 <Link
                   to="/account"
@@ -439,7 +441,7 @@ const Navbar = () => {
                   }`}
                 >
                   <User size={20} className={location.pathname === "/account" ? "text-accent" : "text-muted-foreground"} />
-                  <span className="text-sm font-semibold tracking-wide">My Account</span>
+                  <span className="text-sm font-semibold tracking-wide">{translate("My Account")}</span>
                 </Link>
               </>
             )}

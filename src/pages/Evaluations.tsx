@@ -6,6 +6,7 @@ import BackToHome from "@/components/BackToHome";
 import { FileText, Clock, Award, ArrowLeft, CheckCircle2, Eye, BookOpen } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 import serviceMilitary from "@/assets/service-military.jpg";
 import serviceEducation from "@/assets/service-education.jpg";
@@ -144,6 +145,7 @@ const Evaluations = () => {
   const [selectedProcessing, setSelectedProcessing] = useState<Record<number, ProcessingKey>>({});
   const { addItem: addToCart } = useCart();
   const { user } = useAuth();
+  const { translate } = useLocale();
   const navigate = useNavigate();
   const location = useLocation();
   const [toastMsg, setToastMsg] = useState<string | null>(null);
@@ -195,22 +197,21 @@ const Evaluations = () => {
             className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity text-white/70 hover:text-white">
             
             <ArrowLeft size={16} />
-            Back to Home
+            {translate("Back to Home")}
           </Link>
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">
-            Credentials Recognized
+            {translate("Credentials Recognized")}
           </p>
-          <h1 className="tesla-hero-title text-white">Academic Evaluations</h1>
+          <h1 className="tesla-hero-title text-white">{translate("Academic Evaluations")}</h1>
           <p className="tesla-hero-subtitle max-w-2xl mt-4 text-white/80">
-            Get your well-earned academic credentials recognized by U.S.
-            universities, employers, and state governmental institutions.
+            {translate("Get your well-earned academic credentials recognized by U.S. universities, employers, and state governmental institutions.")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8">
             <a href="#services" className="tesla-btn-primary !min-w-0 !px-10 text-center">
-              View Services
+              {translate("View Services")}
             </a>
             <Link to="/learn-more-evaluations" className="tesla-btn-outline !min-w-0 !px-10 text-center">
-              Learn More
+              {translate("Learn More")}
             </Link>
           </div>
         </div>
@@ -221,10 +222,10 @@ const Evaluations = () => {
         <div className="max-w-[1600px] mx-auto w-full">
           <div className="text-center mb-16">
             <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
-              Choose Your Evaluation
+              {translate("Choose Your Evaluation")}
             </p>
             <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
-              Service Tiers
+              {translate("Service Tiers")}
             </h2>
           </div>
 
