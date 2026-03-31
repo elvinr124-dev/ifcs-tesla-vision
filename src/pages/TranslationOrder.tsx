@@ -4,6 +4,7 @@ import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTria
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
+import { useLocale } from "@/context/LocaleContext";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
 import * as pdfjsLib from "pdfjs-dist";
