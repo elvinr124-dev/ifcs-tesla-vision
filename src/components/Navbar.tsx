@@ -361,7 +361,7 @@ const Navbar = () => {
                     }`}
                   >
                     <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold tracking-wide">My Dashboard</span>
+                    <span className="text-sm font-semibold tracking-wide">{translate("My Dashboard")}</span>
                   </Link>
                   <Link
                     to="/account"
