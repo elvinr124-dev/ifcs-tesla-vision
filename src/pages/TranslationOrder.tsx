@@ -480,9 +480,9 @@ const TranslationOrder = () => {
                 onDragOver={handleDragOver}
                 onDrop={handleDrop}
               >
-                <SectionHeading>Upload Your Documents</SectionHeading>
+                <SectionHeading>{translateDual("Upload Your Documents")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
-                  Upload clear, legible images or PDFs. Our AI will automatically count words per page and calculate pricing.
+                  {translate("Upload clear, legible images or PDFs. Our AI will automatically count words per page and calculate pricing.")}
                 </p>
 
                 <label className={`flex flex-col items-center justify-center gap-3 border-2 border-dashed rounded-2xl p-8 cursor-pointer transition-all duration-200 group ${
@@ -492,9 +492,9 @@ const TranslationOrder = () => {
                 }`}>
                   <Upload size={28} className={`transition-colors ${dragging ? "text-accent" : "text-muted-foreground group-hover:text-accent"}`} />
                   <span className={`text-sm font-medium transition-colors ${dragging ? "text-accent" : "text-muted-foreground group-hover:text-accent"}`}>
-                    {dragging ? "Drop files here" : "Drag & drop or click to browse files"}
+                    {dragging ? translate("Drop files here") : translate("Drag & drop or click to browse files")}
                   </span>
-                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · PDFs are split into individual pages · Max 4MB per file</span>
+                  <span className="text-xs text-muted-foreground/60">{translate("PDF, JPG, PNG supported · PDFs are split into individual pages · Max 4MB per file")}</span>
                   <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                 </label>
 
