@@ -339,7 +339,7 @@ const Navbar = () => {
                     }`}
                   >
                     <Icon size={20} className={isActive ? "text-accent" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold tracking-wide">{link.label}</span>
+                    <span className="text-sm font-semibold tracking-wide">{translate(link.label)}</span>
                     {link.href === "/cart" && totalItems > 0 && (
                       <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
                         {totalItems}
