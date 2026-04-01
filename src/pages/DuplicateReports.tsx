@@ -252,7 +252,7 @@ const DuplicateReports = () => {
               </CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Name on Documents *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Name on Documents")} *</label>
                   <Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} />
                 </div>
                 <div className="space-y-1">
