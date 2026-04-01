@@ -260,7 +260,7 @@ const DuplicateReports = () => {
                   <Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Email Address *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Email Address")} *</label>
                   <Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} />
                 </div>
                 <div className="space-y-1">
