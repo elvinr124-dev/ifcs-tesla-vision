@@ -145,7 +145,7 @@ const Signup = () => {
                 <FieldGroup label={translate("Email Address")} required>
                   <GlassInput value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" maxLength={255} />
                 </FieldGroup>
-                <FieldGroup label="Password" required>
+                <FieldGroup label={translate("Password")} required>
                   <div className="relative">
                     <GlassInput value={password} onChange={(e) => setPassword(e.target.value)} type={showPass ? "text" : "password"} placeholder="Min. 6 characters" />
                     <button type="button" onClick={() => setShowPass((p) => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
