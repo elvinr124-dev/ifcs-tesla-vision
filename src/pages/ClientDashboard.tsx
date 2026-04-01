@@ -424,7 +424,7 @@ const ClientDashboard = () => {
                               className="gap-2 rounded-full"
                               onClick={() => handleViewApplication(order.application_id!)}
                             >
-                              <Eye size={16} /> View Application
+                              <Eye size={16} /> {translate("View Application")}
                             </Button>
                           )}
                           {receiptUrl && (
