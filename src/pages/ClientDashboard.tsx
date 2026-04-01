@@ -474,10 +474,10 @@ const ClientDashboard = () => {
                               <div className="flex items-center gap-3">
                                 <Package size={24} className="text-accent" />
                                 <div>
-                                  <p className="font-semibold text-foreground text-lg">Your report is ready!</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    Check the Shared Evaluation Reports section below for your report.
-                                  </p>
+                                   <p className="font-semibold text-foreground text-lg">{translate("Your report is ready!")}</p>
+                                   <p className="text-sm text-muted-foreground">
+                                     {translate("Check the Shared Evaluation Reports section below for your report.")}
+                                   </p>
                                 </div>
                               </div>
                             </div>
