@@ -670,7 +670,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>GENDER</SectionHeading>
+                    <SectionHeading>{translateDual("GENDER")}</SectionHeading>
                     <div className="flex gap-4">
                       {["male", "female"].map((g) => (
                         <button key={g} type="button" onClick={() => setGender(g)}
