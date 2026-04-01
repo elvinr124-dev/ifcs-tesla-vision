@@ -248,7 +248,7 @@ const DuplicateReports = () => {
             {/* Payment */}
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> Payment</CardTitle>
+                <CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Payment")}</CardTitle>
               </CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
