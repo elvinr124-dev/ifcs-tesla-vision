@@ -235,7 +235,7 @@ const DuplicateReports = () => {
                     <Input required value={address.zip} onChange={(e) => setAddress({ ...address, zip: e.target.value })} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Country *</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("Country")} *</label>
                     <Select value={address.country} onValueChange={(v) => setAddress({ ...address, country: v })}>
                       <SelectTrigger><SelectValue placeholder="Please Select..." /></SelectTrigger>
                       <SelectContent>{COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
