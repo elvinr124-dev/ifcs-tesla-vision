@@ -346,7 +346,7 @@ const ClientDashboard = () => {
                   />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Date of Birth</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
                   <div className="grid grid-cols-3 gap-3 max-w-sm">
                     <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
                       <option value="">Month</option>
