@@ -39,6 +39,8 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
 const Signup = () => {
   const { signupClient } = useAuth();
   const navigate = useNavigate();
+  const { translate } = useLocale();
+  const navigate = useNavigate();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
