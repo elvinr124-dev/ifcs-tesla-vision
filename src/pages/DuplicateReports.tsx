@@ -116,9 +116,9 @@ const DuplicateReports = () => {
         <img src={duplicateReportsBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Additional Copies</p>
-          <h1 className="tesla-hero-title text-white">Duplicate Reports</h1>
-          <p className="tesla-hero-subtitle text-white/90 max-w-lg">Request additional copies of your IFCS evaluation</p>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Additional Copies")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Duplicate Reports")}</h1>
+          <p className="tesla-hero-subtitle text-white/90 max-w-lg">{translate("Request additional copies of your IFCS evaluation")}</p>
         </div>
       </section>
 
