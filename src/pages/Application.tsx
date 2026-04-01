@@ -961,7 +961,7 @@ const Application = () => {
 
                   {/* Order summary */}
                   <div className="rounded-2xl border border-border bg-muted/40 p-6 space-y-3">
-                    <SectionHeading>Your Order Summary</SectionHeading>
+                    <SectionHeading>{translateDual("Your Order Summary")}</SectionHeading>
                     <div className="space-y-2">
                       <div className="flex items-start justify-between gap-4 text-sm">
                         <span className="text-muted-foreground">Credential Evaluation:</span>
