@@ -759,8 +759,8 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <SectionHeading>Application Code (optional)</SectionHeading>
-                    <p className="text-xs text-muted-foreground -mt-2">If you were given an application code by a referring institution, enter it here.</p>
+                    <SectionHeading>{translateDual("Application Code (optional)")}</SectionHeading>
+                    <p className="text-xs text-muted-foreground -mt-2">{translateDual("If you were given an application code by a referring institution, enter it here.")}</p>
                     <GlassInput value={appCode} onChange={(e) => setAppCode(e.target.value)} placeholder="Enter code" />
                   </div>
 
