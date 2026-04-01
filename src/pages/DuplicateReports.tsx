@@ -151,9 +151,9 @@ const DuplicateReports = () => {
                   </button>
                   <button type="button" onClick={() => { setDelivery("hardcopy"); setElectronicEmail(""); }}
                     className={`rounded-xl border-2 p-6 text-left transition-all ${delivery === "hardcopy" ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}>
-                    <p className="font-semibold text-foreground">Hard Copy</p>
-                    <p className="text-2xl font-bold text-accent mt-1">$25 <span className="text-sm font-normal text-muted-foreground">each</span></p>
-                    <p className="text-xs text-muted-foreground mt-1">Mailed to the address of your choice</p>
+                    <p className="font-semibold text-foreground">{translateDual("Hard Copy")}</p>
+                    <p className="text-2xl font-bold text-accent mt-1">$25 <span className="text-sm font-normal text-muted-foreground">{translateDual("each")}</span></p>
+                    <p className="text-xs text-muted-foreground mt-1">{translateDual("Mailed to the address of your choice")}</p>
                   </button>
                 </div>
 
