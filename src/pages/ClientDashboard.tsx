@@ -488,7 +488,7 @@ const ClientDashboard = () => {
                         {requirements.length > 0 && (
                           <div>
                             <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                              <AlertCircle size={16} className="text-destructive" /> Requirements from IFCS Staff
+                              <AlertCircle size={16} className="text-destructive" /> {translate("Requirements from IFCS Staff")}
                             </p>
                             <div className="space-y-3">
                               {requirements.map((req: any) => (
