@@ -29,6 +29,7 @@ const DuplicateReports = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { translateDual, translate } = useLocale();
 
   const [delivery, setDelivery] = useState<"electronic" | "hardcopy" | null>(null);
   const [hardCopyQty, setHardCopyQty] = useState(1);
