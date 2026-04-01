@@ -855,7 +855,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <SectionHeading>Delivery Services</SectionHeading>
+                    <SectionHeading>{translateDual("Delivery Services")}</SectionHeading>
                     <div className="space-y-2">
                       {[
                         { value: "email-self", label: "E-Mail to the address provided in part one", price: "Free" },
@@ -874,7 +874,7 @@ const Application = () => {
                               <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${active ? "border-accent bg-accent" : "border-muted-foreground"}`}>
                                 {active && <CheckCircle2 size={12} className="text-white" />}
                               </div>
-                              <span className="text-sm text-foreground/90">{opt.label}</span>
+                              <span className="text-sm text-foreground/90">{translateDual(opt.label)}</span>
                             </div>
                             <span className={`text-xs font-bold flex-shrink-0 ${active ? "text-accent" : "text-muted-foreground"}`}>{opt.price}</span>
                           </button>
