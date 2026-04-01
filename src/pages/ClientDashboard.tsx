@@ -329,7 +329,7 @@ const ClientDashboard = () => {
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <Search size={22} className="text-accent" /> Track Order
+                <Search size={22} className="text-accent" /> {translate("Track Order")}
               </CardTitle>
             </CardHeader>
             <CardContent>
