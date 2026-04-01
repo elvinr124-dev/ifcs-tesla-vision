@@ -373,7 +373,7 @@ const ClientDashboard = () => {
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <Package size={22} className="text-accent" /> My Orders
+                <Package size={22} className="text-accent" /> {translate("My Orders")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
