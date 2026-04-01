@@ -765,17 +765,17 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <SectionHeading>Translation</SectionHeading>
-                    <p className="text-xs text-muted-foreground -mt-2">If your documents are in a foreign language and you do not have a certified translation, we can provide a translation quote.</p>
+                    <SectionHeading>{translateDual("Translation")}</SectionHeading>
+                    <p className="text-xs text-muted-foreground -mt-2">{translateDual("If your documents are in a foreign language and you do not have a certified translation, we can provide a translation quote.")}</p>
                     <div className="space-y-2">
                       <RadioCard value="english" selected={translationOption === "english"} onSelect={() => setTranslationOption("english")}>
-                        All my documents are in English and I do not need translation
+                        {translateDual("All my documents are in English and I do not need translation")}
                       </RadioCard>
                       <RadioCard value="own-translation" selected={translationOption === "own-translation"} onSelect={() => setTranslationOption("own-translation")}>
-                        My documents are in a foreign language but I will provide a certified translation with copies of original documents
+                        {translateDual("My documents are in a foreign language but I will provide a certified translation with copies of original documents")}
                       </RadioCard>
                       <RadioCard value="need-quote" selected={translationOption === "need-quote"} onSelect={() => setTranslationOption("need-quote")}>
-                        My documents are in a foreign language and I need a quote for translation services
+                        {translateDual("My documents are in a foreign language and I need a quote for translation services")}
                       </RadioCard>
                     </div>
                   </div>
