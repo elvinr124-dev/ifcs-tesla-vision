@@ -126,7 +126,7 @@ const Signup = () => {
                     <GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" maxLength={50} />
                   </FieldGroup>
                 </div>
-                <FieldGroup label="Gender" required>
+                <FieldGroup label={translate("Gender")} required>
                   <div className="flex gap-3">
                     {["Male", "Female"].map((g) => (
                       <button key={g} type="button" onClick={() => setGender(g.toLowerCase())}
