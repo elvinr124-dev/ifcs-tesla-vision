@@ -628,11 +628,11 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-6">
-                    <SectionHeading>FULL NAME</SectionHeading>
+                    <SectionHeading>{translateDual("FULL NAME")}</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FieldGroup label="Last" required><GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
-                      <FieldGroup label="First" required><GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
-                      <FieldGroup label="Middle"><GlassInput value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" /></FieldGroup>
+                      <FieldGroup label={translateDual("Last")} required><GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
+                      <FieldGroup label={translateDual("First")} required><GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
+                      <FieldGroup label={translateDual("Middle")}><GlassInput value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" /></FieldGroup>
                     </div>
                   </div>
 
