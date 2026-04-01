@@ -694,11 +694,11 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>IDENTIFICATION (OPTIONAL)</SectionHeading>
-                    <FieldGroup label="Social Security Number (SSN)" note="​(List only if required)">
+                    <SectionHeading>{translateDual("IDENTIFICATION (OPTIONAL)")}</SectionHeading>
+                    <FieldGroup label={translateDual("Social Security Number (SSN)")} note="​(List only if required)">
                       <GlassInput value={ssn} onChange={(e) => setSsn(e.target.value)} placeholder="XXX-XX-XXXX" maxLength={11} />
                     </FieldGroup>
-                    <FieldGroup label="Government-Issued ID" note="(Required for verification purposes)">
+                    <FieldGroup label={translateDual("Government-Issued ID")} note="(Required for verification purposes)">
                       <div className="flex items-center gap-3">
                         {idFile ? (
                           <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-muted/60 border border-border text-sm text-foreground">
