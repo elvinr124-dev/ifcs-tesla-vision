@@ -737,13 +737,13 @@ const Application = () => {
               {step === 3 && (
                 <div className="space-y-8 animate-fade-in">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Purpose of Evaluation</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 3 of 5 — Select the primary purpose for your evaluation.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Purpose of Evaluation")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 3 of 5 — Select the primary purpose for your evaluation.")}</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {["Further Education", "Immigration", "Licensing Boards", "Employment", "Military", "Other"].map((p) => (
                       <RadioCard key={p} value={p} selected={purpose === p} onSelect={() => setPurpose(p)}>
-                        <span className="font-medium">{p}</span>
+                        <span className="font-medium">{translateDual(p)}</span>
                       </RadioCard>
                     ))}
                   </div>
