@@ -117,7 +117,7 @@ const Signup = () => {
               )}
 
               <div className="space-y-4">
-                <SectionHeading>Personal Information</SectionHeading>
+                <SectionHeading>{translate("Personal Information")}</SectionHeading>
                 <div className="grid grid-cols-2 gap-4">
                   <FieldGroup label="First Name" required>
                     <GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" maxLength={50} />
