@@ -95,9 +95,9 @@ const Login = () => {
                 <User size={36} className="text-accent" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Client Login</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Client Login")}</h2>
                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  Access your evaluation orders, track status, and manage your applications.
+                  {translate("Access your evaluation orders, track status, and manage your applications.")}
                 </p>
               </div>
               <Link
