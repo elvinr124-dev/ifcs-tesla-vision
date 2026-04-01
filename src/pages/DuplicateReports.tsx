@@ -268,7 +268,7 @@ const DuplicateReports = () => {
                   <Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
-                  <label className="text-sm font-medium text-foreground">Name of the Credit Card Holder *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Name of the Credit Card Holder")} *</label>
                   <Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
