@@ -6,6 +6,7 @@ import BackToHome from "@/components/BackToHome";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Eye, EyeOff, UserPlus } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const GlassInput = ({
