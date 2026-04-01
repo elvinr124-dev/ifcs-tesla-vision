@@ -111,7 +111,7 @@ const Login = () => {
                 to="/signup"
                 className="text-sm text-muted-foreground hover:text-accent transition-colors"
               >
-                Don't have an account? <span className="font-semibold text-accent underline underline-offset-2">Sign Up</span>
+                {translate("Don't have an account?")} <span className="font-semibold text-accent underline underline-offset-2">{translate("Sign Up")}</span>
               </Link>
             </div>
           </div>
