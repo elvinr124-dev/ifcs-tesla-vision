@@ -219,7 +219,7 @@ const DuplicateReports = () => {
                     <Input required value={address.line1} onChange={(e) => setAddress({ ...address, line1: e.target.value })} />
                   </div>
                   <div className="sm:col-span-2 space-y-1">
-                    <label className="text-sm font-medium text-foreground">Address Line Two</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("Address Line Two")}</label>
                     <Input value={address.line2} onChange={(e) => setAddress({ ...address, line2: e.target.value })} />
                   </div>
                   <div className="space-y-1">
