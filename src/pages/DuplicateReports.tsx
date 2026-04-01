@@ -145,9 +145,9 @@ const DuplicateReports = () => {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <button type="button" onClick={() => { setDelivery("electronic"); setShippingMethod(""); }}
                     className={`rounded-xl border-2 p-6 text-left transition-all ${delivery === "electronic" ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}>
-                    <p className="font-semibold text-foreground">Electronic Report</p>
+                    <p className="font-semibold text-foreground">{translateDual("Electronic Report")}</p>
                     <p className="text-2xl font-bold text-accent mt-1">$25</p>
-                    <p className="text-xs text-muted-foreground mt-1">Sent via secure email link</p>
+                    <p className="text-xs text-muted-foreground mt-1">{translateDual("Sent via secure email link")}</p>
                   </button>
                   <button type="button" onClick={() => { setDelivery("hardcopy"); setElectronicEmail(""); }}
                     className={`rounded-xl border-2 p-6 text-left transition-all ${delivery === "hardcopy" ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}>
