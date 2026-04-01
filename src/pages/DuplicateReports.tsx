@@ -227,7 +227,7 @@ const DuplicateReports = () => {
                     <Input required value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">State *</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("State")} *</label>
                     <Input required value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} />
                   </div>
                   <div className="space-y-1">
