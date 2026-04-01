@@ -33,6 +33,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { loginGuest } = useAuth();
+  const { translate } = useLocale();
   const [guestEmail, setGuestEmail] = useState("");
   const [guestError, setGuestError] = useState("");
 
