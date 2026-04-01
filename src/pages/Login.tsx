@@ -105,7 +105,7 @@ const Login = () => {
                 state={locationState}
                 className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-accent/50 transition-all duration-200 hover:scale-105"
               >
-                Client Login <ArrowRight size={16} />
+                {translate("Client Login")} <ArrowRight size={16} />
               </Link>
               <Link
                 to="/signup"
