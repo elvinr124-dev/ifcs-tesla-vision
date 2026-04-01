@@ -124,9 +124,9 @@ const Login = () => {
                 <Mail size={36} className="text-accent/70" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Continue as Guest</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Continue as Guest")}</h2>
                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  Start an application without creating an account. Just provide your email.
+                  {translate("Start an application without creating an account. Just provide your email.")}
                 </p>
               </div>
               <div className="w-full space-y-3">
