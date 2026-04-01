@@ -215,7 +215,7 @@ const DuplicateReports = () => {
                 </CardHeader>
                 <CardContent className="grid sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2 space-y-1">
-                    <label className="text-sm font-medium text-foreground">Address Line One *</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("Address Line One")} *</label>
                     <Input required value={address.line1} onChange={(e) => setAddress({ ...address, line1: e.target.value })} />
                   </div>
                   <div className="sm:col-span-2 space-y-1">
