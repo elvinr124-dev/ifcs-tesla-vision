@@ -569,11 +569,11 @@ const Application = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12">
           <Link to="/evaluations" className="inline-flex items-center gap-2 text-sm font-medium mb-6 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Evaluations
+            <ArrowLeft size={16} /> {translate("Back to Evaluations")}
           </Link>
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Get Started</p>
-          <h1 className="tesla-hero-title text-white">Online Application</h1>
-          <p className="tesla-hero-subtitle max-w-xl text-white/80">Complete the steps below to submit your credentials for evaluation.</p>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">{translate("Get Started")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Online Application")}</h1>
+          <p className="tesla-hero-subtitle max-w-xl text-white/80">{translate("Complete the steps below to submit your credentials for evaluation.")}</p>
         </div>
       </section>
 
