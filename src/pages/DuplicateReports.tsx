@@ -211,7 +211,7 @@ const DuplicateReports = () => {
             {delivery === "hardcopy" && (
               <Card className="border-border bg-card animate-fade-in">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><MapPin size={20} className="text-accent" /> Delivery Address</CardTitle>
+                  <CardTitle className="flex items-center gap-2"><MapPin size={20} className="text-accent" /> {translateDual("Delivery Address")}</CardTitle>
                 </CardHeader>
                 <CardContent className="grid sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2 space-y-1">
