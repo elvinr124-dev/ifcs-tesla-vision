@@ -334,7 +334,7 @@ const ClientDashboard = () => {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.
+                {translate("Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.")}
               </p>
               <div className="space-y-4">
                 <div className="flex gap-3">
