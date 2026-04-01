@@ -363,7 +363,7 @@ const ClientDashboard = () => {
                   </div>
                 </div>
                 <Button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()} className="gap-2">
-                  <Search size={16} /> {tracking ? "Searching..." : "Track Order"}
+                  <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
                 </Button>
               </div>
             </CardContent>
