@@ -75,10 +75,10 @@ const Login = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brooklynBridge})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Welcome Back</p>
-          <h1 className="tesla-hero-title text-white">Sign In to TFCS</h1>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Welcome Back")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Sign In to TFCS")}</h1>
           <p className="tesla-hero-subtitle text-white/80 max-w-lg">
-            Select your account type to continue.
+            {translate("Select your account type to continue.")}
           </p>
         </div>
       </section>
