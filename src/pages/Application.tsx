@@ -781,20 +781,20 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-3">
-                    <SectionHeading>Submission of Academic Records</SectionHeading>
+                    <SectionHeading>{translateDual("Submission of Academic Records")}</SectionHeading>
                     <p className="text-xs text-muted-foreground -mt-2">
-                      Upload clear, legible copies of your documents. {selectedServiceTitle === "High School and University Course-by-Course"
-                        ? "You need to upload 4 documents: High School Diploma, High School Transcript, University Degree Certificate, and University Transcript."
-                        : "You need to upload 2 documents: your Transcript/Marksheets and Diploma Certificate."}
+                      {translateDual("Upload clear, legible copies of your documents.")} {selectedServiceTitle === "High School and University Course-by-Course"
+                        ? translateDual("You need to upload 4 documents: High School Diploma, High School Transcript, University Degree Certificate, and University Transcript.")
+                        : translateDual("You need to upload 2 documents: your Transcript/Marksheets and Diploma Certificate.")}
                     </p>
                     <DocumentScanner onFilesProcessed={handleFilesProcessed} existingFiles={files} />
 
                     {/* Degree certificate question */}
                     <div className="space-y-3 pt-4">
                       <p className="text-sm font-semibold text-foreground">
-                        Have you obtained a degree certificate or diploma? <span className="text-accent">*</span>
+                        {translateDual("Have you obtained a degree certificate or diploma?")} <span className="text-accent">*</span>
                       </p>
-                      <p className="text-[10px] text-muted-foreground italic">This is a mandatory field</p>
+                      <p className="text-[10px] text-muted-foreground italic">{translateDual("This is a mandatory field")}</p>
                       <div className="flex gap-6">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <Checkbox
