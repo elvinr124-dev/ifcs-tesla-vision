@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
@@ -87,6 +88,7 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
 
 const ClientDashboard = () => {
   const { user } = useAuth();
+  const { translate } = useLocale();
   const { toast } = useToast();
   const [orders, setOrders] = useState<ClientOrder[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
@@ -315,9 +317,9 @@ const ClientDashboard = () => {
 
       <section className="pt-28 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
-          Welcome{user?.firstName ? `, ${user.firstName}` : ""}
+          {translate("Welcome")}{user?.firstName ? `, ${user.firstName}` : ""}
         </h1>
-        <p className="text-muted-foreground mt-2 text-lg">Applicant Dashboard</p>
+        <p className="text-muted-foreground mt-2 text-lg">{translate("Applicant Dashboard")}</p>
       </section>
 
       <div className="content-bg">
@@ -327,12 +329,12 @@ const ClientDashboard = () => {
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <Search size={22} className="text-accent" /> Track Order
+                <Search size={22} className="text-accent" /> {translate("Track Order")}
               </CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.
+                {translate("Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.")}
               </p>
               <div className="space-y-4">
                 <div className="flex gap-3">
@@ -344,7 +346,7 @@ const ClientDashboard = () => {
                   />
                 </div>
                 <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Date of Birth</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
                   <div className="grid grid-cols-3 gap-3 max-w-sm">
                     <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
                       <option value="">Month</option>
@@ -361,7 +363,7 @@ const ClientDashboard = () => {
                   </div>
                 </div>
                 <Button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()} className="gap-2">
-                  <Search size={16} /> {tracking ? "Searching..." : "Track Order"}
+                  <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
                 </Button>
               </div>
             </CardContent>
@@ -371,13 +373,13 @@ const ClientDashboard = () => {
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <Package size={22} className="text-accent" /> My Orders
+                <Package size={22} className="text-accent" /> {translate("My Orders")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               {orders.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  No orders yet. Use the Track Order section above to find your order.
+                  {translate("No orders yet. Use the Track Order section above to find your order.")}
                 </p>
               )}
               {orders.map((order) => {
@@ -422,7 +424,7 @@ const ClientDashboard = () => {
                               className="gap-2 rounded-full"
                               onClick={() => handleViewApplication(order.application_id!)}
                             >
-                              <Eye size={16} /> View Application
+                              <Eye size={16} /> {translate("View Application")}
                             </Button>
                           )}
                           {receiptUrl && (
@@ -431,14 +433,14 @@ const ClientDashboard = () => {
                               className="gap-2 rounded-full"
                               onClick={() => window.open(receiptUrl, "_blank")}
                             >
-                              <FileText size={16} /> View Receipt
+                              <FileText size={16} /> {translate("View Receipt")}
                             </Button>
                           )}
                         </div>
 
                         {/* Status timeline */}
                         <div>
-                          <p className="text-sm font-medium text-foreground mb-3">Track Order</p>
+                          <p className="text-sm font-medium text-foreground mb-3">{translate("Track Order")}</p>
                           <div className="flex items-center gap-2">
                             {statusSteps.map((s, i) => {
                               const filled = i <= currentIdx;
@@ -457,7 +459,7 @@ const ClientDashboard = () => {
                         {(order.staff_note || staffNotes) && (
                           <div className="rounded-xl border border-border p-5 bg-muted/20">
                             <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
-                              <MessageSquare size={16} className="text-accent" /> Staff Notes
+                              <MessageSquare size={16} className="text-accent" /> {translate("Staff Notes")}
                             </p>
                             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                               {staffNotes || order.staff_note}
@@ -472,10 +474,10 @@ const ClientDashboard = () => {
                               <div className="flex items-center gap-3">
                                 <Package size={24} className="text-accent" />
                                 <div>
-                                  <p className="font-semibold text-foreground text-lg">Your report is ready!</p>
-                                  <p className="text-sm text-muted-foreground">
-                                    Check the Shared Evaluation Reports section below for your report.
-                                  </p>
+                                   <p className="font-semibold text-foreground text-lg">{translate("Your report is ready!")}</p>
+                                   <p className="text-sm text-muted-foreground">
+                                     {translate("Check the Shared Evaluation Reports section below for your report.")}
+                                   </p>
                                 </div>
                               </div>
                             </div>
@@ -486,7 +488,7 @@ const ClientDashboard = () => {
                         {requirements.length > 0 && (
                           <div>
                             <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                              <AlertCircle size={16} className="text-destructive" /> Requirements from IFCS Staff
+                              <AlertCircle size={16} className="text-destructive" /> {translate("Requirements from IFCS Staff")}
                             </p>
                             <div className="space-y-3">
                               {requirements.map((req: any) => (
@@ -521,7 +523,7 @@ const ClientDashboard = () => {
                         {/* Add-Ons */}
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                            <Plus size={16} className="text-accent" /> Add-Ons
+                            <Plus size={16} className="text-accent" /> {translate("Add-Ons")}
                           </p>
                           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {addOns.map((addon) => (
@@ -529,7 +531,7 @@ const ClientDashboard = () => {
                                 <div className="rounded-lg border border-border p-4 hover:border-accent/40 hover:bg-accent/5 transition-all cursor-pointer group">
                                   <div className="flex items-center justify-between">
                                     <div>
-                                      <p className="text-sm font-medium text-foreground">{addon.label}</p>
+                                      <p className="text-sm font-medium text-foreground">{translate(addon.label)}</p>
                                       <p className="text-lg font-bold text-accent">${addon.price}</p>
                                     </div>
                                     <Plus size={18} className="text-muted-foreground group-hover:text-accent transition-colors" />
@@ -551,7 +553,7 @@ const ClientDashboard = () => {
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <ShieldCheck size={22} className="text-accent" /> Shared Evaluation Reports
+                <ShieldCheck size={22} className="text-accent" /> {translate("Shared Evaluation Reports")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">

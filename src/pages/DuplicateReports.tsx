@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CreditCard, FileText, MapPin, Mail, Truck, ShoppingCart, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
+import { useLocale } from "@/context/LocaleContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import duplicateReportsBg from "@/assets/duplicate-reports-bg.jpg";
 
@@ -28,6 +29,7 @@ const DuplicateReports = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { translateDual, translate } = useLocale();
 
   const [delivery, setDelivery] = useState<"electronic" | "hardcopy" | null>(null);
   const [hardCopyQty, setHardCopyQty] = useState(1);
@@ -114,9 +116,9 @@ const DuplicateReports = () => {
         <img src={duplicateReportsBg} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Additional Copies</p>
-          <h1 className="tesla-hero-title text-white">Duplicate Reports</h1>
-          <p className="tesla-hero-subtitle text-white/90 max-w-lg">Request additional copies of your IFCS evaluation</p>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Additional Copies")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Duplicate Reports")}</h1>
+          <p className="tesla-hero-subtitle text-white/90 max-w-lg">{translate("Request additional copies of your IFCS evaluation")}</p>
         </div>
       </section>
 
@@ -124,12 +126,12 @@ const DuplicateReports = () => {
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
 
           <p className="text-muted-foreground text-center">
-            If you have received an evaluation from IFCS within the past five years, you can request additional hard copies or electronic copies here.
+            {translate("If you have received an evaluation from IFCS within the past five years, you can request additional hard copies or electronic copies here.")}
           </p>
 
           {/* Total */}
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Your total</p>
+            <p className="text-sm text-muted-foreground">{translateDual("Your total")}</p>
             <p className="text-4xl font-bold text-foreground">${total.toFixed(2)}</p>
           </div>
 
@@ -137,21 +139,21 @@ const DuplicateReports = () => {
             {/* Delivery Options */}
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><FileText size={20} className="text-accent" /> Report Delivery Options *</CardTitle>
+                <CardTitle className="flex items-center gap-2"><FileText size={20} className="text-accent" /> {translateDual("Report Delivery Options")} *</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <button type="button" onClick={() => { setDelivery("electronic"); setShippingMethod(""); }}
                     className={`rounded-xl border-2 p-6 text-left transition-all ${delivery === "electronic" ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}>
-                    <p className="font-semibold text-foreground">Electronic Report</p>
+                    <p className="font-semibold text-foreground">{translateDual("Electronic Report")}</p>
                     <p className="text-2xl font-bold text-accent mt-1">$25</p>
-                    <p className="text-xs text-muted-foreground mt-1">Sent via secure email link</p>
+                    <p className="text-xs text-muted-foreground mt-1">{translateDual("Sent via secure email link")}</p>
                   </button>
                   <button type="button" onClick={() => { setDelivery("hardcopy"); setElectronicEmail(""); }}
                     className={`rounded-xl border-2 p-6 text-left transition-all ${delivery === "hardcopy" ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}>
-                    <p className="font-semibold text-foreground">Hard Copy</p>
-                    <p className="text-2xl font-bold text-accent mt-1">$25 <span className="text-sm font-normal text-muted-foreground">each</span></p>
-                    <p className="text-xs text-muted-foreground mt-1">Mailed to the address of your choice</p>
+                    <p className="font-semibold text-foreground">{translateDual("Hard Copy")}</p>
+                    <p className="text-2xl font-bold text-accent mt-1">$25 <span className="text-sm font-normal text-muted-foreground">{translateDual("each")}</span></p>
+                    <p className="text-xs text-muted-foreground mt-1">{translateDual("Mailed to the address of your choice")}</p>
                   </button>
                 </div>
 
@@ -160,7 +162,7 @@ const DuplicateReports = () => {
                   <div className="rounded-xl border border-border bg-muted/30 p-5 space-y-3 animate-fade-in">
                     <div className="flex items-center gap-2 text-foreground font-medium">
                       <Mail size={18} className="text-accent" />
-                      Send my Electronic Report to the following email address:
+                      {translateDual("Send my Electronic Report to the following email address:")}
                     </div>
                     <Input
                       type="email"
@@ -176,7 +178,7 @@ const DuplicateReports = () => {
                 {delivery === "hardcopy" && (
                   <div className="space-y-4 animate-fade-in">
                     <div className="flex items-center gap-3">
-                      <label className="text-sm font-medium text-foreground">Quantity:</label>
+                      <label className="text-sm font-medium text-foreground">{translateDual("Quantity")}:</label>
                       <Input type="number" min={1} max={10} value={hardCopyQty} onChange={(e) => setHardCopyQty(Number(e.target.value))} className="w-20" />
                     </div>
 
@@ -184,7 +186,7 @@ const DuplicateReports = () => {
                     <div className="rounded-xl border border-border bg-muted/30 p-5 space-y-3">
                       <div className="flex items-center gap-2 text-foreground font-medium">
                         <Truck size={18} className="text-accent" />
-                        Shipping Method *
+                        {translateDual("Shipping Method")} *
                       </div>
                       <div className="grid gap-2">
                         {SHIPPING_OPTIONS.map((opt) => (
@@ -209,31 +211,31 @@ const DuplicateReports = () => {
             {delivery === "hardcopy" && (
               <Card className="border-border bg-card animate-fade-in">
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><MapPin size={20} className="text-accent" /> Delivery Address</CardTitle>
+                  <CardTitle className="flex items-center gap-2"><MapPin size={20} className="text-accent" /> {translateDual("Delivery Address")}</CardTitle>
                 </CardHeader>
                 <CardContent className="grid sm:grid-cols-2 gap-4">
                   <div className="sm:col-span-2 space-y-1">
-                    <label className="text-sm font-medium text-foreground">Address Line One *</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("Address Line One")} *</label>
                     <Input required value={address.line1} onChange={(e) => setAddress({ ...address, line1: e.target.value })} />
                   </div>
                   <div className="sm:col-span-2 space-y-1">
-                    <label className="text-sm font-medium text-foreground">Address Line Two</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("Address Line Two")}</label>
                     <Input value={address.line2} onChange={(e) => setAddress({ ...address, line2: e.target.value })} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">City *</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("City")} *</label>
                     <Input required value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">State *</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("State")} *</label>
                     <Input required value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Zip *</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("Zip")} *</label>
                     <Input required value={address.zip} onChange={(e) => setAddress({ ...address, zip: e.target.value })} />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">Country *</label>
+                    <label className="text-sm font-medium text-foreground">{translateDual("Country")} *</label>
                     <Select value={address.country} onValueChange={(v) => setAddress({ ...address, country: v })}>
                       <SelectTrigger><SelectValue placeholder="Please Select..." /></SelectTrigger>
                       <SelectContent>{COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
@@ -246,31 +248,31 @@ const DuplicateReports = () => {
             {/* Payment */}
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> Payment</CardTitle>
+                <CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Payment")}</CardTitle>
               </CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Name on Documents *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Name on Documents")} *</label>
                   <Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">IFCS ID *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("IFCS ID")} *</label>
                   <Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Email Address *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Email Address")} *</label>
                   <Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Phone Number *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Phone Number")} *</label>
                   <Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
-                  <label className="text-sm font-medium text-foreground">Name of the Credit Card Holder *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Name of the Credit Card Holder")} *</label>
                   <Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
-                  <label className="text-sm font-medium text-foreground">Card Number *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Card Number")} *</label>
                   <Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" />
                 </div>
                 <div className="space-y-1">

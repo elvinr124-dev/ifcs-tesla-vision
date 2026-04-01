@@ -7,8 +7,11 @@ import evaluationsBg from "@/assets/evaluations-bg.jpg";
 import translationsBg from "@/assets/translations-bg.jpg";
 import credentialClarityBg from "@/assets/credential-clarity-bg.jpg";
 import consultingBg from "@/assets/consulting-bg.jpg";
+import { useLocale } from "@/context/LocaleContext";
 
 const Index = () => {
+  const { translate } = useLocale();
+
   return (
     <div className="bg-background">
       <Navbar />
@@ -43,7 +46,7 @@ const Index = () => {
 
       <ServiceSection
         id="credential-clarity"
-        title={<>Credential Clarity for{<br />}Your Global Journey</>}
+        title={<>{translate("Credential Clarity for")}<br />{translate("Your Global Journey")}</>}
         subtitle="Your Path Forward"
         description="Continue your journey to educational and professional enlightenment with IFCS. We will help you get your foreign credentials recognized by universities, employers, and governmental institutions."
         backgroundImage={credentialClarityBg}

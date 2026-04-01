@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { BookOpen, ArrowRight } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
 
 const evaluationTypes = [
   {
@@ -56,6 +57,8 @@ const evaluationTypes = [
 ];
 
 const LearnMoreEvaluations = () => {
+  const { translate } = useLocale();
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -64,10 +67,10 @@ const LearnMoreEvaluations = () => {
       <section className="relative pt-32 pb-20 px-6 content-bg">
         <div className="max-w-4xl mx-auto text-center">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
-            Understanding Our Services
+            {translate("Understanding Our Services")}
           </p>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-            Learn More About Our Evaluations
+            {translate("Learn More About Our Evaluations")}
           </h1>
         </div>
       </section>
@@ -76,28 +79,17 @@ const LearnMoreEvaluations = () => {
       <section className="py-16 px-6 content-bg-alt">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6">
-            What's an Evaluation?
+            {translate("What's an Evaluation?")}
           </h2>
           <h3 className="text-lg md:text-xl font-semibold text-accent mb-4">
-            Institute of Foreign Credential Services (IFCS) Evaluation in USA: Features, Cost, Process & More
+            {translate("Institute of Foreign Credential Services (IFCS) Evaluation in USA: Features, Cost, Process & More")}
           </h3>
           <div className="space-y-4 text-[15px] leading-relaxed text-muted-foreground">
             <p>
-              Institute of Foreign Credential Services (IFCS) evaluations are
-              essential for international students and professionals seeking to
-              study or work in the USA. They help universities, employers, and
-              immigration officials accurately assess international
-              qualifications through a personalized, expert-led approach. The
-              process involves verifying academic records, converting them into
-              U.S. educational equivalents, and providing a detailed report that
-              meets industry standards.
+              {translate("Institute of Foreign Credential Services (IFCS) evaluations are essential for international students and professionals seeking to study or work in the USA. They help universities, employers, and immigration officials accurately assess international qualifications through a personalized, expert-led approach. The process involves verifying academic records, converting them into U.S. educational equivalents, and providing a detailed report that meets industry standards.")}
             </p>
             <p>
-              IFCS evaluations are widely accepted by hundreds of institutions
-              and are crucial for university admissions, professional licensing,
-              employment verification, and immigration support. Unlike larger
-              automated services, IFCS is known for its high level of individual
-              attention and direct access to experienced evaluators.
+              {translate("IFCS evaluations are widely accepted by hundreds of institutions and are crucial for university admissions, professional licensing, employment verification, and immigration support. Unlike larger automated services, IFCS is known for its high level of individual attention and direct access to experienced evaluators.")}
             </p>
           </div>
         </div>
@@ -108,10 +100,10 @@ const LearnMoreEvaluations = () => {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
-              Our Evaluation Types
+              {translate("Our Evaluation Types")}
             </p>
             <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
-              Explore Each Service
+              {translate("Explore Each Service")}
             </h2>
           </div>
 
@@ -126,17 +118,17 @@ const LearnMoreEvaluations = () => {
                     <BookOpen size={18} className="text-accent" />
                   </div>
                   <h3 className="text-lg font-bold text-foreground leading-snug pt-1.5">
-                    {ev.title}
+                    {translate(ev.title)}
                   </h3>
                 </div>
                 <p className="text-sm leading-relaxed text-muted-foreground mb-5 flex-1">
-                  {ev.explanation}
+                  {translate(ev.explanation)}
                 </p>
                 <Link
                   to={`/evaluations#${ev.slug}`}
                   className="inline-flex items-center gap-2 self-start text-sm font-semibold text-accent hover:text-accent/80 transition-colors group"
                 >
-                  View Service
+                  {translate("View Service")}
                   <ArrowRight
                     size={14}
                     className="group-hover:translate-x-1 transition-transform"
@@ -147,8 +139,7 @@ const LearnMoreEvaluations = () => {
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-10 italic">
-            Additional degrees can be added for additional fees — please inquire
-            within.
+            {translate("Additional degrees can be added for additional fees — please inquire within.")}
           </p>
         </div>
       </section>

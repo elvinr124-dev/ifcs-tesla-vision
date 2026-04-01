@@ -252,11 +252,28 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     forceUpdate(n => n + 1);
   }, [locale]);
 
+  // Track in-flight texts to prevent duplicate requests
+  const inFlightTexts = useRef<Set<string>>(new Set());
+
   const processBatch = useCallback(async () => {
     if (locale.languageCode === "en" || pendingTexts.current.size === 0) return;
     
-    const textsToTranslate = Array.from(pendingTexts.current).slice(0, 25);
-    pendingTexts.current = new Set(Array.from(pendingTexts.current).slice(25));
+    // Filter out texts already cached or in-flight
+    const candidates = Array.from(pendingTexts.current).filter(
+      t => !translationCache.current[locale.languageCode]?.[t] && !inFlightTexts.current.has(t)
+    );
+    pendingTexts.current = new Set();
+    
+    if (candidates.length === 0) return;
+    
+    const textsToTranslate = candidates.slice(0, 25);
+    const remaining = candidates.slice(25);
+    if (remaining.length > 0) {
+      remaining.forEach(t => pendingTexts.current.add(t));
+    }
+    
+    // Mark as in-flight
+    textsToTranslate.forEach(t => inFlightTexts.current.add(t));
     
     setIsTranslating(true);
     try {
@@ -281,12 +298,16 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         forceUpdate(n => n + 1);
       }
 
+      // Remove from in-flight
+      textsToTranslate.forEach(t => inFlightTexts.current.delete(t));
+
       // If there are still pending texts, process another batch
       if (pendingTexts.current.size > 0) {
         batchTimer.current = setTimeout(processBatch, 200);
       }
     } catch (e) {
       console.error("Translation error:", e);
+      textsToTranslate.forEach(t => inFlightTexts.current.delete(t));
     } finally {
       setIsTranslating(false);
     }
@@ -298,7 +319,8 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const cached = translationCache.current[locale.languageCode]?.[text];
     if (cached) return cached;
     
-    if (!pendingTexts.current.has(text)) {
+    // Don't re-queue if already in-flight or pending
+    if (!pendingTexts.current.has(text) && !inFlightTexts.current.has(text)) {
       pendingTexts.current.add(text);
       clearTimeout(batchTimer.current);
       batchTimer.current = setTimeout(processBatch, 300);
@@ -314,7 +336,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const cached = translationCache.current[locale.languageCode]?.[text];
     if (cached) return `${text} (${cached})`;
     
-    if (!pendingTexts.current.has(text)) {
+    if (!pendingTexts.current.has(text) && !inFlightTexts.current.has(text)) {
       pendingTexts.current.add(text);
       clearTimeout(batchTimer.current);
       batchTimer.current = setTimeout(processBatch, 300);

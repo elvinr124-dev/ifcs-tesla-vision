@@ -6,6 +6,7 @@ import BackToHome from "@/components/BackToHome";
 import { User, Shield, ArrowRight, Mail } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const GlassInput = ({
@@ -32,6 +33,7 @@ const Login = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { loginGuest } = useAuth();
+  const { translate } = useLocale();
   const [guestEmail, setGuestEmail] = useState("");
   const [guestError, setGuestError] = useState("");
 
@@ -73,10 +75,10 @@ const Login = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${brooklynBridge})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Welcome Back</p>
-          <h1 className="tesla-hero-title text-white">Sign In to TFCS</h1>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Welcome Back")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Sign In to TFCS")}</h1>
           <p className="tesla-hero-subtitle text-white/80 max-w-lg">
-            Select your account type to continue.
+            {translate("Select your account type to continue.")}
           </p>
         </div>
       </section>
@@ -93,9 +95,9 @@ const Login = () => {
                 <User size={36} className="text-accent" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Client Login</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Client Login")}</h2>
                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  Access your evaluation orders, track status, and manage your applications.
+                  {translate("Access your evaluation orders, track status, and manage your applications.")}
                 </p>
               </div>
               <Link
@@ -103,13 +105,13 @@ const Login = () => {
                 state={locationState}
                 className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-accent/50 transition-all duration-200 hover:scale-105"
               >
-                Client Login <ArrowRight size={16} />
+                {translate("Client Login")} <ArrowRight size={16} />
               </Link>
               <Link
                 to="/signup"
                 className="text-sm text-muted-foreground hover:text-accent transition-colors"
               >
-                Don't have an account? <span className="font-semibold text-accent underline underline-offset-2">Sign Up</span>
+                {translate("Don't have an account?")} <span className="font-semibold text-accent underline underline-offset-2">{translate("Sign Up")}</span>
               </Link>
             </div>
           </div>
@@ -122,9 +124,9 @@ const Login = () => {
                 <Mail size={36} className="text-accent/70" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Continue as Guest</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Continue as Guest")}</h2>
                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  Start an application without creating an account. Just provide your email.
+                  {translate("Start an application without creating an account. Just provide your email.")}
                 </p>
               </div>
               <div className="w-full space-y-3">
@@ -141,7 +143,7 @@ const Login = () => {
                   onClick={handleGuestContinue}
                   className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent/80 text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/70 transition-all duration-200 hover:scale-105"
                 >
-                  Continue as Guest <ArrowRight size={16} />
+                  {translate("Continue as Guest")} <ArrowRight size={16} />
                 </button>
               </div>
             </div>
@@ -155,16 +157,16 @@ const Login = () => {
                 <Shield size={36} className="text-foreground/60" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Staff Login</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Staff Login")}</h2>
                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  TFCS staff members can view client carts, orders, and manage applications.
+                  {translate("TFCS staff members can view client carts, orders, and manage applications.")}
                 </p>
               </div>
               <Link
                 to="/login/staff"
                 className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl border border-border bg-muted/50 text-foreground text-sm font-semibold hover:bg-muted transition-all duration-200 hover:scale-105"
               >
-                Staff Login <ArrowRight size={16} />
+                {translate("Staff Login")} <ArrowRight size={16} />
               </Link>
               <p className="text-xs text-muted-foreground/60">TFCS internal access only</p>
             </div>

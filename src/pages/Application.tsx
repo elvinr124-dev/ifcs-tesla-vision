@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/context/AuthContext";
 import { useCart } from "@/context/CartContext";
+import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
@@ -142,6 +143,7 @@ const Application = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { discountCode, setDiscountCode, discountAmount } = useCart();
+  const { translateDual, translate } = useLocale();
   const routeState = location.state as {
     serviceTitle?: string; processingKey?: string; processingLabel?: string; processingTime?: string; price?: number;
   } | null;
@@ -567,11 +569,11 @@ const Application = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12">
           <Link to="/evaluations" className="inline-flex items-center gap-2 text-sm font-medium mb-6 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Evaluations
+            <ArrowLeft size={16} /> {translate("Back to Evaluations")}
           </Link>
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Get Started</p>
-          <h1 className="tesla-hero-title text-white">Online Application</h1>
-          <p className="tesla-hero-subtitle max-w-xl text-white/80">Complete the steps below to submit your credentials for evaluation.</p>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">{translate("Get Started")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Online Application")}</h1>
+          <p className="tesla-hero-subtitle max-w-xl text-white/80">{translate("Complete the steps below to submit your credentials for evaluation.")}</p>
         </div>
       </section>
 
@@ -618,49 +620,49 @@ const Application = () => {
                   <div>
                     <div className="mb-4 px-4 py-3 rounded-2xl bg-accent/10 border border-accent/20">
                       <p className="text-sm font-semibold text-accent">
-                        You're Applying For: <span className="text-foreground">{selectedServiceTitle}</span> · <span className="text-foreground">{selectedProcessingTime}</span> · <span className="text-foreground">{selectedProcessingLabel}</span>
+                        {translateDual("You're Applying For")}: <span className="text-foreground">{selectedServiceTitle}</span> · <span className="text-foreground">{selectedProcessingTime}</span> · <span className="text-foreground">{selectedProcessingLabel}</span>
                       </p>
                     </div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Personal Information</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 1 of 5 — Tell us about yourself</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Personal Information")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 1 of 5 — Tell us about yourself")}</p>
                   </div>
 
                   <div className="space-y-6">
-                    <SectionHeading>FULL NAME</SectionHeading>
+                    <SectionHeading>{translateDual("FULL NAME")}</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FieldGroup label="Last" required><GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
-                      <FieldGroup label="First" required><GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
-                      <FieldGroup label="Middle"><GlassInput value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" /></FieldGroup>
+                      <FieldGroup label={translateDual("Last")} required><GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
+                      <FieldGroup label={translateDual("First")} required><GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
+                      <FieldGroup label={translateDual("Middle")}><GlassInput value={middleName} onChange={(e) => setMiddleName(e.target.value)} placeholder="Middle name" /></FieldGroup>
                     </div>
                   </div>
 
                   <div className="space-y-6">
-                    <SectionHeading>NAME ON EDUCATIONAL CREDENTIALS (IF DIFFERENT)</SectionHeading>
+                    <SectionHeading>{translateDual("NAME ON EDUCATIONAL CREDENTIALS (IF DIFFERENT)")}</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FieldGroup label="Last"><GlassInput value={credLastName} onChange={(e) => setCredLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
-                      <FieldGroup label="First"><GlassInput value={credFirstName} onChange={(e) => setCredFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
-                      <FieldGroup label="Middle"><GlassInput value={credMiddleName} onChange={(e) => setCredMiddleName(e.target.value)} placeholder="Middle name" /></FieldGroup>
+                      <FieldGroup label={translateDual("Last")}><GlassInput value={credLastName} onChange={(e) => setCredLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
+                      <FieldGroup label={translateDual("First")}><GlassInput value={credFirstName} onChange={(e) => setCredFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
+                      <FieldGroup label={translateDual("Middle")}><GlassInput value={credMiddleName} onChange={(e) => setCredMiddleName(e.target.value)} placeholder="Middle name" /></FieldGroup>
                     </div>
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>DATE OF BIRTH</SectionHeading>
+                    <SectionHeading>{translateDual("DATE OF BIRTH")}</SectionHeading>
                     <div className="grid grid-cols-3 gap-4">
-                      <FieldGroup label="Month" required>
+                      <FieldGroup label={translateDual("Month")} required>
                         <GlassSelect value={dobMonth} onChange={(e) => setDobMonth(e.target.value)}>
-                          <option value="">Month</option>
+                          <option value="">{translateDual("Month")}</option>
                           {months.map((m) => <option key={m} value={m}>{m}</option>)}
                         </GlassSelect>
                       </FieldGroup>
-                      <FieldGroup label="Day" required>
+                      <FieldGroup label={translateDual("Day")} required>
                         <GlassSelect value={dobDay} onChange={(e) => setDobDay(e.target.value)}>
-                          <option value="">Day</option>
+                          <option value="">{translateDual("Day")}</option>
                           {days.map((d) => <option key={d} value={d}>{d}</option>)}
                         </GlassSelect>
                       </FieldGroup>
-                      <FieldGroup label="Year" required>
+                      <FieldGroup label={translateDual("Year")} required>
                         <GlassSelect value={dobYear} onChange={(e) => setDobYear(e.target.value)}>
-                          <option value="">Year</option>
+                          <option value="">{translateDual("Year")}</option>
                           {years.map((y) => <option key={y} value={y}>{y}</option>)}
                         </GlassSelect>
                       </FieldGroup>
@@ -668,7 +670,7 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>GENDER</SectionHeading>
+                    <SectionHeading>{translateDual("GENDER")}</SectionHeading>
                     <div className="flex gap-4">
                       {["male", "female"].map((g) => (
                         <button key={g} type="button" onClick={() => setGender(g)}
@@ -682,21 +684,21 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>CONTACT INFORMATION</SectionHeading>
+                    <SectionHeading>{translateDual("CONTACT INFORMATION")}</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <FieldGroup label="Home Phone"><GlassInput value={homePhone} onChange={(e) => setHomePhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
-                      <FieldGroup label="Cell Phone" required><GlassInput value={cellPhone} onChange={(e) => setCellPhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
+                      <FieldGroup label={translateDual("Home Phone")}><GlassInput value={homePhone} onChange={(e) => setHomePhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
+                      <FieldGroup label={translateDual("Cell Phone")} required><GlassInput value={cellPhone} onChange={(e) => setCellPhone(e.target.value)} type="tel" placeholder="(555) 000-0000" /></FieldGroup>
                     </div>
-                    <FieldGroup label="E-mail Address" required><GlassInput value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" /></FieldGroup>
-                    <FieldGroup label="How did you hear about IFCS?" required><GlassInput value={howHeard} onChange={(e) => setHowHeard(e.target.value)} placeholder="Google, referral, etc." /></FieldGroup>
+                    <FieldGroup label={translateDual("E-mail Address")} required><GlassInput value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" /></FieldGroup>
+                    <FieldGroup label={translateDual("How did you hear about IFCS?")} required><GlassInput value={howHeard} onChange={(e) => setHowHeard(e.target.value)} placeholder="Google, referral, etc." /></FieldGroup>
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>IDENTIFICATION (OPTIONAL)</SectionHeading>
-                    <FieldGroup label="Social Security Number (SSN)" note="​(List only if required)">
+                    <SectionHeading>{translateDual("IDENTIFICATION (OPTIONAL)")}</SectionHeading>
+                    <FieldGroup label={translateDual("Social Security Number (SSN)")} note="​(List only if required)">
                       <GlassInput value={ssn} onChange={(e) => setSsn(e.target.value)} placeholder="XXX-XX-XXXX" maxLength={11} />
                     </FieldGroup>
-                    <FieldGroup label="Government-Issued ID" note="(Required for verification purposes)">
+                    <FieldGroup label={translateDual("Government-Issued ID")} note="(Required for verification purposes)">
                       <div className="flex items-center gap-3">
                         {idFile ? (
                           <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-muted/60 border border-border text-sm text-foreground">
@@ -719,14 +721,14 @@ const Application = () => {
               {step === 2 && (
                 <div className="space-y-8 animate-fade-in">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Academic History</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 2 of 5 — List the institutions you attended for the credentials you need evaluated.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Academic History")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 2 of 5 — List the institutions you attended for the credentials you need evaluated.")}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FieldGroup label="Name of Institution" required><GlassInput value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} placeholder="e.g. University of Eldoria" /></FieldGroup>
-                    <FieldGroup label="Country" required><GlassInput value={country} onChange={(e) => setCountry(e.target.value)} placeholder="e.g. Republic of Eldoria" /></FieldGroup>
-                    <FieldGroup label="Dates of Attendance" required><GlassInput value={attendance} onChange={(e) => setAttendance(e.target.value)} placeholder="e.g. 2015–2019" /></FieldGroup>
-                    <FieldGroup label="Degree(s) Earned" required><GlassInput value={degrees} onChange={(e) => setDegrees(e.target.value)} placeholder="e.g. B.Sc. Computer Science" /></FieldGroup>
+                    <FieldGroup label={translateDual("Name of Institution")} required><GlassInput value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} placeholder="e.g. University of Eldoria" /></FieldGroup>
+                    <FieldGroup label={translateDual("Country")} required><GlassInput value={country} onChange={(e) => setCountry(e.target.value)} placeholder="e.g. Republic of Eldoria" /></FieldGroup>
+                    <FieldGroup label={translateDual("Dates of Attendance")} required><GlassInput value={attendance} onChange={(e) => setAttendance(e.target.value)} placeholder="e.g. 2015–2019" /></FieldGroup>
+                    <FieldGroup label={translateDual("Degree(s) Earned")} required><GlassInput value={degrees} onChange={(e) => setDegrees(e.target.value)} placeholder="e.g. B.Sc. Computer Science" /></FieldGroup>
                   </div>
                 </div>
               )}
@@ -735,13 +737,13 @@ const Application = () => {
               {step === 3 && (
                 <div className="space-y-8 animate-fade-in">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Purpose of Evaluation</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 3 of 5 — Select the primary purpose for your evaluation.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Purpose of Evaluation")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 3 of 5 — Select the primary purpose for your evaluation.")}</p>
                   </div>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {["Further Education", "Immigration", "Licensing Boards", "Employment", "Military", "Other"].map((p) => (
                       <RadioCard key={p} value={p} selected={purpose === p} onSelect={() => setPurpose(p)}>
-                        <span className="font-medium">{p}</span>
+                        <span className="font-medium">{translateDual(p)}</span>
                       </RadioCard>
                     ))}
                   </div>
@@ -752,47 +754,47 @@ const Application = () => {
               {step === 4 && (
                 <div className="space-y-8 animate-fade-in">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Additional Services</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 4 of 5 — Translation, documents, and delivery preferences.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Additional Services")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 4 of 5 — Translation, documents, and delivery preferences.")}</p>
                   </div>
 
                   <div className="space-y-3">
-                    <SectionHeading>Application Code (optional)</SectionHeading>
-                    <p className="text-xs text-muted-foreground -mt-2">If you were given an application code by a referring institution, enter it here.</p>
+                    <SectionHeading>{translateDual("Application Code (optional)")}</SectionHeading>
+                    <p className="text-xs text-muted-foreground -mt-2">{translateDual("If you were given an application code by a referring institution, enter it here.")}</p>
                     <GlassInput value={appCode} onChange={(e) => setAppCode(e.target.value)} placeholder="Enter code" />
                   </div>
 
                   <div className="space-y-3">
-                    <SectionHeading>Translation</SectionHeading>
-                    <p className="text-xs text-muted-foreground -mt-2">If your documents are in a foreign language and you do not have a certified translation, we can provide a translation quote.</p>
+                    <SectionHeading>{translateDual("Translation")}</SectionHeading>
+                    <p className="text-xs text-muted-foreground -mt-2">{translateDual("If your documents are in a foreign language and you do not have a certified translation, we can provide a translation quote.")}</p>
                     <div className="space-y-2">
                       <RadioCard value="english" selected={translationOption === "english"} onSelect={() => setTranslationOption("english")}>
-                        All my documents are in English and I do not need translation
+                        {translateDual("All my documents are in English and I do not need translation")}
                       </RadioCard>
                       <RadioCard value="own-translation" selected={translationOption === "own-translation"} onSelect={() => setTranslationOption("own-translation")}>
-                        My documents are in a foreign language but I will provide a certified translation with copies of original documents
+                        {translateDual("My documents are in a foreign language but I will provide a certified translation with copies of original documents")}
                       </RadioCard>
                       <RadioCard value="need-quote" selected={translationOption === "need-quote"} onSelect={() => setTranslationOption("need-quote")}>
-                        My documents are in a foreign language and I need a quote for translation services
+                        {translateDual("My documents are in a foreign language and I need a quote for translation services")}
                       </RadioCard>
                     </div>
                   </div>
 
                   <div className="space-y-3">
-                    <SectionHeading>Submission of Academic Records</SectionHeading>
+                    <SectionHeading>{translateDual("Submission of Academic Records")}</SectionHeading>
                     <p className="text-xs text-muted-foreground -mt-2">
-                      Upload clear, legible copies of your documents. {selectedServiceTitle === "High School and University Course-by-Course"
-                        ? "You need to upload 4 documents: High School Diploma, High School Transcript, University Degree Certificate, and University Transcript."
-                        : "You need to upload 2 documents: your Transcript/Marksheets and Diploma Certificate."}
+                      {translateDual("Upload clear, legible copies of your documents.")} {selectedServiceTitle === "High School and University Course-by-Course"
+                        ? translateDual("You need to upload 4 documents: High School Diploma, High School Transcript, University Degree Certificate, and University Transcript.")
+                        : translateDual("You need to upload 2 documents: your Transcript/Marksheets and Diploma Certificate.")}
                     </p>
                     <DocumentScanner onFilesProcessed={handleFilesProcessed} existingFiles={files} />
 
                     {/* Degree certificate question */}
                     <div className="space-y-3 pt-4">
                       <p className="text-sm font-semibold text-foreground">
-                        Have you obtained a degree certificate or diploma? <span className="text-accent">*</span>
+                        {translateDual("Have you obtained a degree certificate or diploma?")} <span className="text-accent">*</span>
                       </p>
-                      <p className="text-[10px] text-muted-foreground italic">This is a mandatory field</p>
+                      <p className="text-[10px] text-muted-foreground italic">{translateDual("This is a mandatory field")}</p>
                       <div className="flex gap-6">
                         <label className="flex items-center gap-2 cursor-pointer">
                           <Checkbox
@@ -831,29 +833,29 @@ const Application = () => {
 
                     <div className="space-y-2 pt-2">
                       <RadioCard value="arrange" selected={authOption === "arrange"} onSelect={() => setAuthOption("arrange")}>
-                        I will arrange with the issuing institution(s) to send official documents to IFCS.
+                        {translateDual("I will arrange with the issuing institution(s) to send official documents to IFCS.")}
                       </RadioCard>
                       <div>
                         <RadioCard value="authenticate" selected={authOption === "authenticate"} onSelect={() => setAuthOption("authenticate")}>
-                          Please perform document authentication <span className="font-bold text-accent">($140)</span>
+                          {translateDual("Please perform document authentication")} <span className="font-bold text-accent">($140)</span>
                         </RadioCard>
                         {authOption === "authenticate" && selectedProcessingLabel !== "Standard" && (
                           <div className="flex items-start gap-2.5 mt-2 ml-2 p-3 rounded-xl bg-red-800/80 border border-red-600/60">
                             <AlertTriangle size={18} className="text-red-300 flex-shrink-0 mt-0.5" />
                             <p className="text-xs text-black font-medium leading-relaxed">
-                              This service may not be available for rush processing. Please contact IFCS during business hours at <strong>(914) 693-2840</strong> to confirm availability.
+                              {translateDual("This service may not be available for rush processing. Please contact IFCS during business hours at (914) 693-2840 to confirm availability.")}
                             </p>
                           </div>
                         )}
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Note: Your report can only be released once your studies have been verified. All records should be mailed to: <strong>6 Cedar St, Dobbs Ferry, NY 10522</strong>, or sent electronically to: <strong>docs@ifcsevals.com</strong>
+                      {translateDual("Note: Your report can only be released once your studies have been verified. All records should be mailed to: 6 Cedar St, Dobbs Ferry, NY 10522, or sent electronically to: docs@ifcsevals.com")}
                     </p>
                   </div>
 
                   <div className="space-y-3">
-                    <SectionHeading>Delivery Services</SectionHeading>
+                    <SectionHeading>{translateDual("Delivery Services")}</SectionHeading>
                     <div className="space-y-2">
                       {[
                         { value: "email-self", label: "E-Mail to the address provided in part one", price: "Free" },
@@ -872,7 +874,7 @@ const Application = () => {
                               <div className={`w-5 h-5 rounded-md border-2 flex items-center justify-center flex-shrink-0 transition-colors ${active ? "border-accent bg-accent" : "border-muted-foreground"}`}>
                                 {active && <CheckCircle2 size={12} className="text-white" />}
                               </div>
-                              <span className="text-sm text-foreground/90">{opt.label}</span>
+                              <span className="text-sm text-foreground/90">{translateDual(opt.label)}</span>
                             </div>
                             <span className={`text-xs font-bold flex-shrink-0 ${active ? "text-accent" : "text-muted-foreground"}`}>{opt.price}</span>
                           </button>
@@ -883,7 +885,7 @@ const Application = () => {
                     {/* Institution email + additional emails */}
                     {deliveryOptions.includes("email-inst") && (
                       <div className="pl-8 pt-2 space-y-3">
-                        <FieldGroup label="Email Address of the Institution" required>
+                        <FieldGroup label={translateDual("Email Address of the Institution")} required>
                           <GlassInput value={institutionEmail} onChange={(e) => setInstitutionEmail(e.target.value)} type="email" placeholder="e.g. admissions@university.edu" />
                         </FieldGroup>
                         
@@ -953,13 +955,13 @@ const Application = () => {
               {step === 5 && (
                 <div className="space-y-8 animate-fade-in">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Review & Payment</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 5 of 5 — Confirm your order and complete payment.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Review & Payment")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 5 of 5 — Confirm your order and complete payment.")}</p>
                   </div>
 
                   {/* Order summary */}
                   <div className="rounded-2xl border border-border bg-muted/40 p-6 space-y-3">
-                    <SectionHeading>Your Order Summary</SectionHeading>
+                    <SectionHeading>{translateDual("Your Order Summary")}</SectionHeading>
                     <div className="space-y-2">
                       <div className="flex items-start justify-between gap-4 text-sm">
                         <span className="text-muted-foreground">Credential Evaluation:</span>
@@ -1021,7 +1023,7 @@ const Application = () => {
 
                     {/* Discount code input */}
                     <div className="pt-3 border-t border-border">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Discount Code</p>
+                      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translateDual("Discount Code")}</p>
                       <div className="flex gap-3">
                         <input
                           value={discountCode}
@@ -1041,7 +1043,7 @@ const Application = () => {
 
                   <div className="rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-3">
                     <p className="text-xs text-destructive font-semibold">
-                      ⚠ Please note your application is NOT complete. You must click "Submit Application" to complete your transaction. A confirmation email will be sent after successful payment.
+                      {translateDual("⚠ Please note your application is NOT complete. You must click \"Submit Application\" to complete your transaction. A confirmation email will be sent after successful payment.")}
                     </p>
                   </div>
 

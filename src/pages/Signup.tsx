@@ -6,6 +6,7 @@ import BackToHome from "@/components/BackToHome";
 import { Label } from "@/components/ui/label";
 import { ArrowLeft, Eye, EyeOff, UserPlus } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const GlassInput = ({
@@ -38,6 +39,7 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
 const Signup = () => {
   const { signupClient } = useAuth();
   const navigate = useNavigate();
+  const { translate } = useLocale();
 
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -90,10 +92,10 @@ const Signup = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12">
           <Link to="/login" className="inline-flex items-center gap-2 text-sm font-medium mb-6 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Login
+            <ArrowLeft size={16} /> {translate("Back to Login")}
           </Link>
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">New Account</p>
-          <h1 className="tesla-hero-title text-white">Create Your Account</h1>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">{translate("New Account")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Create Your Account")}</h1>
         </div>
       </section>
 
@@ -103,8 +105,8 @@ const Signup = () => {
             <div className="h-1 bg-gradient-to-r from-accent via-accent/60 to-transparent" />
             <div className="p-8 md:p-10 space-y-8">
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Join IFCS</h2>
-                <p className="text-sm text-muted-foreground mt-1">Create your client account to start an evaluation</p>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Join IFCS")}</h2>
+                <p className="text-sm text-muted-foreground mt-1">{translate("Create your client account to start an evaluation")}</p>
               </div>
 
               {error && (
@@ -114,16 +116,16 @@ const Signup = () => {
               )}
 
               <div className="space-y-4">
-                <SectionHeading>Personal Information</SectionHeading>
+                <SectionHeading>{translate("Personal Information")}</SectionHeading>
                 <div className="grid grid-cols-2 gap-4">
-                  <FieldGroup label="First Name" required>
+                  <FieldGroup label={translate("First Name")} required>
                     <GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" maxLength={50} />
                   </FieldGroup>
-                  <FieldGroup label="Last Name" required>
+                  <FieldGroup label={translate("Last Name")} required>
                     <GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" maxLength={50} />
                   </FieldGroup>
                 </div>
-                <FieldGroup label="Gender" required>
+                <FieldGroup label={translate("Gender")} required>
                   <div className="flex gap-3">
                     {["Male", "Female"].map((g) => (
                       <button key={g} type="button" onClick={() => setGender(g.toLowerCase())}
@@ -138,11 +140,11 @@ const Signup = () => {
               </div>
 
               <div className="space-y-4">
-                <SectionHeading>Account Details</SectionHeading>
-                <FieldGroup label="Email Address" required>
+                <SectionHeading>{translate("Account Details")}</SectionHeading>
+                <FieldGroup label={translate("Email Address")} required>
                   <GlassInput value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" maxLength={255} />
                 </FieldGroup>
-                <FieldGroup label="Password" required>
+                <FieldGroup label={translate("Password")} required>
                   <div className="relative">
                     <GlassInput value={password} onChange={(e) => setPassword(e.target.value)} type={showPass ? "text" : "password"} placeholder="Min. 6 characters" />
                     <button type="button" onClick={() => setShowPass((p) => !p)} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors">
@@ -150,7 +152,7 @@ const Signup = () => {
                     </button>
                   </div>
                 </FieldGroup>
-                <FieldGroup label="Confirm Password" required>
+                <FieldGroup label={translate("Confirm Password")} required>
                   <GlassInput value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password" placeholder="Re-enter password" />
                 </FieldGroup>
               </div>
@@ -163,12 +165,12 @@ const Signup = () => {
 
               <button onClick={handleSignup} disabled={loading}
                 className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:pointer-events-none">
-                <UserPlus size={16} /> {loading ? "Creating Account..." : "Create Account"}
+                <UserPlus size={16} /> {loading ? translate("Creating Account...") : translate("Create Account")}
               </button>
 
               <p className="text-center text-sm text-muted-foreground">
-                Already have an account?{" "}
-                <Link to="/login/client" className="font-semibold text-accent hover:underline underline-offset-2">Sign In</Link>
+                {translate("Already have an account?")}{" "}
+                <Link to="/login/client" className="font-semibold text-accent hover:underline underline-offset-2">{translate("Sign In")}</Link>
               </p>
             </div>
           </div>
