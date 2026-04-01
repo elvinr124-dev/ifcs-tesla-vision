@@ -440,7 +440,7 @@ const ClientDashboard = () => {
 
                         {/* Status timeline */}
                         <div>
-                          <p className="text-sm font-medium text-foreground mb-3">Track Order</p>
+                          <p className="text-sm font-medium text-foreground mb-3">{translate("Track Order")}</p>
                           <div className="flex items-center gap-2">
                             {statusSteps.map((s, i) => {
                               const filled = i <= currentIdx;
