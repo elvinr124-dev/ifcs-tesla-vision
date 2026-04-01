@@ -119,10 +119,10 @@ const Signup = () => {
               <div className="space-y-4">
                 <SectionHeading>{translate("Personal Information")}</SectionHeading>
                 <div className="grid grid-cols-2 gap-4">
-                  <FieldGroup label="First Name" required>
+                  <FieldGroup label={translate("First Name")} required>
                     <GlassInput value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" maxLength={50} />
                   </FieldGroup>
-                  <FieldGroup label="Last Name" required>
+                  <FieldGroup label={translate("Last Name")} required>
                     <GlassInput value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" maxLength={50} />
                   </FieldGroup>
                 </div>
