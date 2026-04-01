@@ -162,7 +162,7 @@ const DuplicateReports = () => {
                   <div className="rounded-xl border border-border bg-muted/30 p-5 space-y-3 animate-fade-in">
                     <div className="flex items-center gap-2 text-foreground font-medium">
                       <Mail size={18} className="text-accent" />
-                      Send my Electronic Report to the following email address:
+                      {translateDual("Send my Electronic Report to the following email address:")}
                     </div>
                     <Input
                       type="email"
