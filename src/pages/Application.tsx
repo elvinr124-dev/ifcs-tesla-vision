@@ -885,7 +885,7 @@ const Application = () => {
                     {/* Institution email + additional emails */}
                     {deliveryOptions.includes("email-inst") && (
                       <div className="pl-8 pt-2 space-y-3">
-                        <FieldGroup label="Email Address of the Institution" required>
+                        <FieldGroup label={translateDual("Email Address of the Institution")} required>
                           <GlassInput value={institutionEmail} onChange={(e) => setInstitutionEmail(e.target.value)} type="email" placeholder="e.g. admissions@university.edu" />
                         </FieldGroup>
                         
