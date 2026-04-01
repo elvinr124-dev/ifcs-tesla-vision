@@ -11,6 +11,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CreditCard, FileText, MapPin, Mail, Truck, ShoppingCart, CheckCircle2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
+import { useLocale } from "@/context/LocaleContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import duplicateReportsBg from "@/assets/duplicate-reports-bg.jpg";
 
