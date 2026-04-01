@@ -153,7 +153,7 @@ const Signup = () => {
                     </button>
                   </div>
                 </FieldGroup>
-                <FieldGroup label="Confirm Password" required>
+                <FieldGroup label={translate("Confirm Password")} required>
                   <GlassInput value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} type="password" placeholder="Re-enter password" />
                 </FieldGroup>
               </div>
