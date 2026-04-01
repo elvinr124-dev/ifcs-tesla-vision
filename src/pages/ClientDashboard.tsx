@@ -88,6 +88,7 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
 
 const ClientDashboard = () => {
   const { user } = useAuth();
+  const { translate } = useLocale();
   const { toast } = useToast();
   const [orders, setOrders] = useState<ClientOrder[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
