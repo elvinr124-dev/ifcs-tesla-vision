@@ -833,24 +833,24 @@ const Application = () => {
 
                     <div className="space-y-2 pt-2">
                       <RadioCard value="arrange" selected={authOption === "arrange"} onSelect={() => setAuthOption("arrange")}>
-                        I will arrange with the issuing institution(s) to send official documents to IFCS.
+                        {translateDual("I will arrange with the issuing institution(s) to send official documents to IFCS.")}
                       </RadioCard>
                       <div>
                         <RadioCard value="authenticate" selected={authOption === "authenticate"} onSelect={() => setAuthOption("authenticate")}>
-                          Please perform document authentication <span className="font-bold text-accent">($140)</span>
+                          {translateDual("Please perform document authentication")} <span className="font-bold text-accent">($140)</span>
                         </RadioCard>
                         {authOption === "authenticate" && selectedProcessingLabel !== "Standard" && (
                           <div className="flex items-start gap-2.5 mt-2 ml-2 p-3 rounded-xl bg-red-800/80 border border-red-600/60">
                             <AlertTriangle size={18} className="text-red-300 flex-shrink-0 mt-0.5" />
                             <p className="text-xs text-black font-medium leading-relaxed">
-                              This service may not be available for rush processing. Please contact IFCS during business hours at <strong>(914) 693-2840</strong> to confirm availability.
+                              {translateDual("This service may not be available for rush processing. Please contact IFCS during business hours at (914) 693-2840 to confirm availability.")}
                             </p>
                           </div>
                         )}
                       </div>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Note: Your report can only be released once your studies have been verified. All records should be mailed to: <strong>6 Cedar St, Dobbs Ferry, NY 10522</strong>, or sent electronically to: <strong>docs@ifcsevals.com</strong>
+                      {translateDual("Note: Your report can only be released once your studies have been verified. All records should be mailed to: 6 Cedar St, Dobbs Ferry, NY 10522, or sent electronically to: docs@ifcsevals.com")}
                     </p>
                   </div>
 
