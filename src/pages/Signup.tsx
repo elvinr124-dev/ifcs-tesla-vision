@@ -170,8 +170,8 @@ const Signup = () => {
               </button>
 
               <p className="text-center text-sm text-muted-foreground">
-                Already have an account?{" "}
-                <Link to="/login/client" className="font-semibold text-accent hover:underline underline-offset-2">Sign In</Link>
+                {translate("Already have an account?")}{" "}
+                <Link to="/login/client" className="font-semibold text-accent hover:underline underline-offset-2">{translate("Sign In")}</Link>
               </p>
             </div>
           </div>
