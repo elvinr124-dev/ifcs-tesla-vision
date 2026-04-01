@@ -126,7 +126,7 @@ const DuplicateReports = () => {
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
 
           <p className="text-muted-foreground text-center">
-            If you have received an evaluation from IFCS within the past five years, you can request additional hard copies or electronic copies here.
+            {translate("If you have received an evaluation from IFCS within the past five years, you can request additional hard copies or electronic copies here.")}
           </p>
 
           {/* Total */}
