@@ -620,11 +620,11 @@ const Application = () => {
                   <div>
                     <div className="mb-4 px-4 py-3 rounded-2xl bg-accent/10 border border-accent/20">
                       <p className="text-sm font-semibold text-accent">
-                        You're Applying For: <span className="text-foreground">{selectedServiceTitle}</span> · <span className="text-foreground">{selectedProcessingTime}</span> · <span className="text-foreground">{selectedProcessingLabel}</span>
+                        {translateDual("You're Applying For")}: <span className="text-foreground">{selectedServiceTitle}</span> · <span className="text-foreground">{selectedProcessingTime}</span> · <span className="text-foreground">{selectedProcessingLabel}</span>
                       </p>
                     </div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Personal Information</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 1 of 5 — Tell us about yourself</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Personal Information")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 1 of 5 — Tell us about yourself")}</p>
                   </div>
 
                   <div className="space-y-6">
