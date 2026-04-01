@@ -637,11 +637,11 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-6">
-                    <SectionHeading>NAME ON EDUCATIONAL CREDENTIALS (IF DIFFERENT)</SectionHeading>
+                    <SectionHeading>{translateDual("NAME ON EDUCATIONAL CREDENTIALS (IF DIFFERENT)")}</SectionHeading>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <FieldGroup label="Last"><GlassInput value={credLastName} onChange={(e) => setCredLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
-                      <FieldGroup label="First"><GlassInput value={credFirstName} onChange={(e) => setCredFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
-                      <FieldGroup label="Middle"><GlassInput value={credMiddleName} onChange={(e) => setCredMiddleName(e.target.value)} placeholder="Middle name" /></FieldGroup>
+                      <FieldGroup label={translateDual("Last")}><GlassInput value={credLastName} onChange={(e) => setCredLastName(e.target.value)} placeholder="Last name" /></FieldGroup>
+                      <FieldGroup label={translateDual("First")}><GlassInput value={credFirstName} onChange={(e) => setCredFirstName(e.target.value)} placeholder="First name" /></FieldGroup>
+                      <FieldGroup label={translateDual("Middle")}><GlassInput value={credMiddleName} onChange={(e) => setCredMiddleName(e.target.value)} placeholder="Middle name" /></FieldGroup>
                     </div>
                   </div>
 
