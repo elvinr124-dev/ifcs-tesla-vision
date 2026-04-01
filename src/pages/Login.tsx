@@ -143,7 +143,7 @@ const Login = () => {
                   onClick={handleGuestContinue}
                   className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent/80 text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/70 transition-all duration-200 hover:scale-105"
                 >
-                  Continue as Guest <ArrowRight size={16} />
+                  {translate("Continue as Guest")} <ArrowRight size={16} />
                 </button>
               </div>
             </div>
