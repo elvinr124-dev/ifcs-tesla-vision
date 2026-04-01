@@ -523,7 +523,7 @@ const ClientDashboard = () => {
                         {/* Add-Ons */}
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
-                            <Plus size={16} className="text-accent" /> Add-Ons
+                            <Plus size={16} className="text-accent" /> {translate("Add-Ons")}
                           </p>
                           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                             {addOns.map((addon) => (
