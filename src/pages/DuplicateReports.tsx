@@ -139,7 +139,7 @@ const DuplicateReports = () => {
             {/* Delivery Options */}
             <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><FileText size={20} className="text-accent" /> Report Delivery Options *</CardTitle>
+                <CardTitle className="flex items-center gap-2"><FileText size={20} className="text-accent" /> {translateDual("Report Delivery Options")} *</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
