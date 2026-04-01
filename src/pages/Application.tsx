@@ -721,14 +721,14 @@ const Application = () => {
               {step === 2 && (
                 <div className="space-y-8 animate-fade-in">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Academic History</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 2 of 5 — List the institutions you attended for the credentials you need evaluated.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Academic History")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 2 of 5 — List the institutions you attended for the credentials you need evaluated.")}</p>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FieldGroup label="Name of Institution" required><GlassInput value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} placeholder="e.g. University of Eldoria" /></FieldGroup>
-                    <FieldGroup label="Country" required><GlassInput value={country} onChange={(e) => setCountry(e.target.value)} placeholder="e.g. Republic of Eldoria" /></FieldGroup>
-                    <FieldGroup label="Dates of Attendance" required><GlassInput value={attendance} onChange={(e) => setAttendance(e.target.value)} placeholder="e.g. 2015–2019" /></FieldGroup>
-                    <FieldGroup label="Degree(s) Earned" required><GlassInput value={degrees} onChange={(e) => setDegrees(e.target.value)} placeholder="e.g. B.Sc. Computer Science" /></FieldGroup>
+                    <FieldGroup label={translateDual("Name of Institution")} required><GlassInput value={institutionName} onChange={(e) => setInstitutionName(e.target.value)} placeholder="e.g. University of Eldoria" /></FieldGroup>
+                    <FieldGroup label={translateDual("Country")} required><GlassInput value={country} onChange={(e) => setCountry(e.target.value)} placeholder="e.g. Republic of Eldoria" /></FieldGroup>
+                    <FieldGroup label={translateDual("Dates of Attendance")} required><GlassInput value={attendance} onChange={(e) => setAttendance(e.target.value)} placeholder="e.g. 2015–2019" /></FieldGroup>
+                    <FieldGroup label={translateDual("Degree(s) Earned")} required><GlassInput value={degrees} onChange={(e) => setDegrees(e.target.value)} placeholder="e.g. B.Sc. Computer Science" /></FieldGroup>
                   </div>
                 </div>
               )}
