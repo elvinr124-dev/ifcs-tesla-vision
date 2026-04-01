@@ -178,7 +178,7 @@ const DuplicateReports = () => {
                 {delivery === "hardcopy" && (
                   <div className="space-y-4 animate-fade-in">
                     <div className="flex items-center gap-3">
-                      <label className="text-sm font-medium text-foreground">Quantity:</label>
+                      <label className="text-sm font-medium text-foreground">{translateDual("Quantity")}:</label>
                       <Input type="number" min={1} max={10} value={hardCopyQty} onChange={(e) => setHardCopyQty(Number(e.target.value))} className="w-20" />
                     </div>
 
