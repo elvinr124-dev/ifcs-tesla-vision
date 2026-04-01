@@ -186,7 +186,7 @@ const DuplicateReports = () => {
                     <div className="rounded-xl border border-border bg-muted/30 p-5 space-y-3">
                       <div className="flex items-center gap-2 text-foreground font-medium">
                         <Truck size={18} className="text-accent" />
-                        Shipping Method *
+                        {translateDual("Shipping Method")} *
                       </div>
                       <div className="grid gap-2">
                         {SHIPPING_OPTIONS.map((opt) => (
