@@ -433,7 +433,7 @@ const ClientDashboard = () => {
                               className="gap-2 rounded-full"
                               onClick={() => window.open(receiptUrl, "_blank")}
                             >
-                              <FileText size={16} /> View Receipt
+                              <FileText size={16} /> {translate("View Receipt")}
                             </Button>
                           )}
                         </div>
