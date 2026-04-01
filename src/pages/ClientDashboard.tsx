@@ -379,7 +379,7 @@ const ClientDashboard = () => {
             <CardContent className="space-y-4">
               {orders.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  No orders yet. Use the Track Order section above to find your order.
+                  {translate("No orders yet. Use the Track Order section above to find your order.")}
                 </p>
               )}
               {orders.map((order) => {
