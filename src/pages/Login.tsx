@@ -157,9 +157,9 @@ const Login = () => {
                 <Shield size={36} className="text-foreground/60" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Staff Login</h2>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Staff Login")}</h2>
                 <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  TFCS staff members can view client carts, orders, and manage applications.
+                  {translate("TFCS staff members can view client carts, orders, and manage applications.")}
                 </p>
               </div>
               <Link
