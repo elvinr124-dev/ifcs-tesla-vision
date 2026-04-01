@@ -1043,7 +1043,7 @@ const Application = () => {
 
                   <div className="rounded-2xl border border-destructive/30 bg-destructive/5 px-5 py-3">
                     <p className="text-xs text-destructive font-semibold">
-                      ⚠ Please note your application is NOT complete. You must click "Submit Application" to complete your transaction. A confirmation email will be sent after successful payment.
+                      {translateDual("⚠ Please note your application is NOT complete. You must click \"Submit Application\" to complete your transaction. A confirmation email will be sent after successful payment.")}
                     </p>
                   </div>
 
