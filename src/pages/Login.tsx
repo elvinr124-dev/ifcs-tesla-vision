@@ -166,7 +166,7 @@ const Login = () => {
                 to="/login/staff"
                 className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl border border-border bg-muted/50 text-foreground text-sm font-semibold hover:bg-muted transition-all duration-200 hover:scale-105"
               >
-                Staff Login <ArrowRight size={16} />
+                {translate("Staff Login")} <ArrowRight size={16} />
               </Link>
               <p className="text-xs text-muted-foreground/60">TFCS internal access only</p>
             </div>
