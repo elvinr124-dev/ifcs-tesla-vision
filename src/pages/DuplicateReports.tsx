@@ -131,7 +131,7 @@ const DuplicateReports = () => {
 
           {/* Total */}
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Your total</p>
+            <p className="text-sm text-muted-foreground">{translateDual("Your total")}</p>
             <p className="text-4xl font-bold text-foreground">${total.toFixed(2)}</p>
           </div>
 
