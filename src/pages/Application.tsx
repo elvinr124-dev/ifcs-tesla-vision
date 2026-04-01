@@ -1023,7 +1023,7 @@ const Application = () => {
 
                     {/* Discount code input */}
                     <div className="pt-3 border-t border-border">
-                      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">Discount Code</p>
+                      <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translateDual("Discount Code")}</p>
                       <div className="flex gap-3">
                         <input
                           value={discountCode}
