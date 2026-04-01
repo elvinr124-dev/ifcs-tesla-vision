@@ -531,7 +531,7 @@ const ClientDashboard = () => {
                                 <div className="rounded-lg border border-border p-4 hover:border-accent/40 hover:bg-accent/5 transition-all cursor-pointer group">
                                   <div className="flex items-center justify-between">
                                     <div>
-                                      <p className="text-sm font-medium text-foreground">{addon.label}</p>
+                                      <p className="text-sm font-medium text-foreground">{translate(addon.label)}</p>
                                       <p className="text-lg font-bold text-accent">${addon.price}</p>
                                     </div>
                                     <Plus size={18} className="text-muted-foreground group-hover:text-accent transition-colors" />
