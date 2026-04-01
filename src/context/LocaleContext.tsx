@@ -336,7 +336,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const cached = translationCache.current[locale.languageCode]?.[text];
     if (cached) return `${text} (${cached})`;
     
-    if (!pendingTexts.current.has(text)) {
+    if (!pendingTexts.current.has(text) && !inFlightTexts.current.has(text)) {
       pendingTexts.current.add(text);
       clearTimeout(batchTimer.current);
       batchTimer.current = setTimeout(processBatch, 300);
