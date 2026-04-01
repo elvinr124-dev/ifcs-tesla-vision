@@ -142,7 +142,7 @@ const Signup = () => {
 
               <div className="space-y-4">
                 <SectionHeading>{translate("Account Details")}</SectionHeading>
-                <FieldGroup label="Email Address" required>
+                <FieldGroup label={translate("Email Address")} required>
                   <GlassInput value={email} onChange={(e) => setEmail(e.target.value)} type="email" placeholder="you@example.com" maxLength={255} />
                 </FieldGroup>
                 <FieldGroup label="Password" required>
