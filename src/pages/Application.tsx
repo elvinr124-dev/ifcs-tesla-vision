@@ -646,23 +646,23 @@ const Application = () => {
                   </div>
 
                   <div className="space-y-4">
-                    <SectionHeading>DATE OF BIRTH</SectionHeading>
+                    <SectionHeading>{translateDual("DATE OF BIRTH")}</SectionHeading>
                     <div className="grid grid-cols-3 gap-4">
-                      <FieldGroup label="Month" required>
+                      <FieldGroup label={translateDual("Month")} required>
                         <GlassSelect value={dobMonth} onChange={(e) => setDobMonth(e.target.value)}>
-                          <option value="">Month</option>
+                          <option value="">{translateDual("Month")}</option>
                           {months.map((m) => <option key={m} value={m}>{m}</option>)}
                         </GlassSelect>
                       </FieldGroup>
-                      <FieldGroup label="Day" required>
+                      <FieldGroup label={translateDual("Day")} required>
                         <GlassSelect value={dobDay} onChange={(e) => setDobDay(e.target.value)}>
-                          <option value="">Day</option>
+                          <option value="">{translateDual("Day")}</option>
                           {days.map((d) => <option key={d} value={d}>{d}</option>)}
                         </GlassSelect>
                       </FieldGroup>
-                      <FieldGroup label="Year" required>
+                      <FieldGroup label={translateDual("Year")} required>
                         <GlassSelect value={dobYear} onChange={(e) => setDobYear(e.target.value)}>
-                          <option value="">Year</option>
+                          <option value="">{translateDual("Year")}</option>
                           {years.map((y) => <option key={y} value={y}>{y}</option>)}
                         </GlassSelect>
                       </FieldGroup>
