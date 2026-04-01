@@ -143,6 +143,7 @@ const Application = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { discountCode, setDiscountCode, discountAmount } = useCart();
+  const { translateDual, translate } = useLocale();
   const routeState = location.state as {
     serviceTitle?: string; processingKey?: string; processingLabel?: string; processingTime?: string; price?: number;
   } | null;
