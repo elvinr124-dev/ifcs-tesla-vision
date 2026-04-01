@@ -264,7 +264,7 @@ const DuplicateReports = () => {
                   <Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Phone Number *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Phone Number")} *</label>
                   <Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
