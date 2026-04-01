@@ -754,8 +754,8 @@ const Application = () => {
               {step === 4 && (
                 <div className="space-y-8 animate-fade-in">
                   <div>
-                    <h2 className="text-3xl font-bold tracking-tight text-foreground">Additional Services</h2>
-                    <p className="text-sm text-muted-foreground mt-1">Step 4 of 5 — Translation, documents, and delivery preferences.</p>
+                    <h2 className="text-3xl font-bold tracking-tight text-foreground">{translateDual("Additional Services")}</h2>
+                    <p className="text-sm text-muted-foreground mt-1">{translateDual("Step 4 of 5 — Translation, documents, and delivery preferences.")}</p>
                   </div>
 
                   <div className="space-y-3">
