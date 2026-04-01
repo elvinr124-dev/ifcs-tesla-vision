@@ -106,8 +106,8 @@ const Signup = () => {
             <div className="h-1 bg-gradient-to-r from-accent via-accent/60 to-transparent" />
             <div className="p-8 md:p-10 space-y-8">
               <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">Join IFCS</h2>
-                <p className="text-sm text-muted-foreground mt-1">Create your client account to start an evaluation</p>
+                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Join IFCS")}</h2>
+                <p className="text-sm text-muted-foreground mt-1">{translate("Create your client account to start an evaluation")}</p>
               </div>
 
               {error && (
