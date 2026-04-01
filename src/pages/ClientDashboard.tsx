@@ -553,7 +553,7 @@ const ClientDashboard = () => {
           <Card className="border-border bg-card">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-xl">
-                <ShieldCheck size={22} className="text-accent" /> Shared Evaluation Reports
+                <ShieldCheck size={22} className="text-accent" /> {translate("Shared Evaluation Reports")}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
