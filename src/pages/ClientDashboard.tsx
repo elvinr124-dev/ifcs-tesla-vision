@@ -317,9 +317,9 @@ const ClientDashboard = () => {
 
       <section className="pt-28 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
         <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
-          Welcome{user?.firstName ? `, ${user.firstName}` : ""}
+          {translate("Welcome")}{user?.firstName ? `, ${user.firstName}` : ""}
         </h1>
-        <p className="text-muted-foreground mt-2 text-lg">Applicant Dashboard</p>
+        <p className="text-muted-foreground mt-2 text-lg">{translate("Applicant Dashboard")}</p>
       </section>
 
       <div className="content-bg">
