@@ -137,8 +137,8 @@ const BookConsultation = () => {
                 ) : (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-2xl font-bold tracking-tight text-foreground">Contact Us</h3>
-                      <p className="text-sm text-muted-foreground mt-1">We welcome any questions and promise a swift response.</p>
+                      <h3 className="text-2xl font-bold tracking-tight text-foreground">{translate("Contact Us")}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{translate("We welcome any questions and promise a swift response.")}</p>
                     </div>
 
                     <div className="space-y-4">
