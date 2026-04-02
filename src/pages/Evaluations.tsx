@@ -290,7 +290,7 @@ const Evaluations = () => {
 
                     <div>
                       <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5 mb-3">
-                        <Clock size={12} /> Select Processing Speed
+                        <Clock size={12} /> {translate("Select Processing Speed")}
                       </p>
                       <div className="grid grid-cols-3 gap-3">
                         {([
