@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { Calendar, User } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
 import blogBg from "@/assets/blog-bg.jpg";
 import peruImg from "@/assets/blog-peru-education.jpg";
 import argentinaImg from "@/assets/blog-argentina-vocational.jpg";
