@@ -109,7 +109,7 @@ const Account = () => {
                 className="flex items-center gap-3 w-full px-5 py-4 rounded-2xl bg-muted hover:bg-muted/80 transition-all duration-200 group"
               >
                 <LogOut size={20} className="text-muted-foreground group-hover:text-foreground transition-colors" />
-                <span className="text-sm font-semibold text-foreground">Sign Out</span>
+                <span className="text-sm font-semibold text-foreground">{translate("Sign Out")}</span>
               </button>
 
               {user.role === "client" && (
