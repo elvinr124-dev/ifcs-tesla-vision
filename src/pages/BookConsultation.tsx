@@ -83,7 +83,7 @@ const BookConsultation = () => {
                 <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
                   <Briefcase size={18} className="text-accent" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">Admissions & Academic Advising</h3>
+                <h3 className="text-lg font-semibold text-foreground">{translate("Admissions & Academic Advising")}</h3>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Our senior staff has extensive admissions and academic advisory experience. They have reviewed literally thousands of applications and know firsthand what is required among U.S. colleges and universities. Based on the education you have completed abroad, there is no doubt IFCS can help you find the institution and program best suited for you and streamline the application process along the way.
