@@ -93,7 +93,7 @@ const Cart = () => {
               {items.map((item) => (
                 <div key={item.id} className="rounded-2xl border border-border bg-card p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 shadow-sm hover:shadow-md transition-shadow">
                   <div className="space-y-1 flex-1">
-                    <span className="text-xs font-bold uppercase tracking-widest text-accent">Academic Evaluation</span>
+                    <span className="text-xs font-bold uppercase tracking-widest text-accent">{translate("Academic Evaluation")}</span>
                     <h3 className="text-lg font-bold text-foreground">{item.serviceTitle}</h3>
                     <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
                       <Clock size={13} />
