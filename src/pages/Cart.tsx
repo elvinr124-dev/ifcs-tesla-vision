@@ -173,7 +173,7 @@ const Cart = () => {
 
               <div className="text-center pt-4">
                 <Link to="/evaluations" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                  <ArrowLeft size={16} /> Add More Services
+                  <ArrowLeft size={16} /> {translate("Add More Services")}
                 </Link>
               </div>
             </div>
