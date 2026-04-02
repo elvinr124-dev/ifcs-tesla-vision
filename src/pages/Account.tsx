@@ -119,7 +119,7 @@ const Account = () => {
                       className="flex items-center gap-3 w-full px-5 py-4 rounded-2xl bg-destructive/10 hover:bg-destructive/20 transition-all duration-200 group"
                     >
                       <Trash2 size={20} className="text-destructive" />
-                      <span className="text-sm font-semibold text-destructive">Delete Account</span>
+                      <span className="text-sm font-semibold text-destructive">{translate("Delete Account")}</span>
                     </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
