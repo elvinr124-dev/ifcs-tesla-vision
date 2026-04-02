@@ -145,7 +145,7 @@ const Cart = () => {
               <div className="rounded-2xl border border-accent/30 bg-accent/5 p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-widest text-accent">Order Total</p>
+                    <p className="text-xs font-semibold uppercase tracking-widest text-accent">{translate("Order Total")}</p>
                     <p className="text-sm text-muted-foreground">{items.length} item{items.length !== 1 ? "s" : ""}</p>
                   </div>
                   <div className="text-right">
