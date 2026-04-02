@@ -130,7 +130,7 @@ const Cart = () => {
                     onClick={() => setDiscountCode(codeInput)}
                     className="px-5 h-11 rounded-xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all"
                   >
-                    Apply
+                    {translate("Apply")}
                   </button>
                 </div>
                 {discountCode && discountAmount > 0 && (
