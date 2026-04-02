@@ -102,7 +102,7 @@ const Cart = () => {
                   </div>
                   <div className="flex items-center gap-4 flex-shrink-0">
                     <div className="text-right">
-                      <p className="text-xs text-muted-foreground uppercase tracking-widest">Price</p>
+                      <p className="text-xs text-muted-foreground uppercase tracking-widest">{translate("Price")}</p>
                       <p className="text-2xl font-bold text-foreground">${item.price}</p>
                     </div>
                     <button
