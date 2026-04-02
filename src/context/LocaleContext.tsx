@@ -249,6 +249,9 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
     setLocale(newLocale);
     localStorage.setItem(LOCALE_KEY, JSON.stringify(newLocale));
+    // Clear pending to retrigger translations for new language
+    pendingTexts.current = new Set();
+    inFlightTexts.current = new Set();
     forceUpdate(n => n + 1);
   }, [locale]);
 
@@ -323,7 +326,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!pendingTexts.current.has(text) && !inFlightTexts.current.has(text)) {
       pendingTexts.current.add(text);
       clearTimeout(batchTimer.current);
-      batchTimer.current = setTimeout(processBatch, 300);
+      batchTimer.current = setTimeout(processBatch, 100);
     }
     
     return text;
@@ -339,7 +342,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!pendingTexts.current.has(text) && !inFlightTexts.current.has(text)) {
       pendingTexts.current.add(text);
       clearTimeout(batchTimer.current);
-      batchTimer.current = setTimeout(processBatch, 300);
+      batchTimer.current = setTimeout(processBatch, 100);
     }
     
     return text;

@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { Calendar, User } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
 import blogBg from "@/assets/blog-bg.jpg";
 import peruImg from "@/assets/blog-peru-education.jpg";
 import argentinaImg from "@/assets/blog-argentina-vocational.jpg";
@@ -40,7 +41,9 @@ const blogPosts = [
   },
 ];
 
-const Blog = () => (
+const Blog = () => {
+  const { translate } = useLocale();
+  return (
   <div className="min-h-screen bg-background">
     <Navbar />
 
@@ -48,10 +51,10 @@ const Blog = () => (
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${blogBg})` }} />
       <div className="video-overlay" />
       <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
-        <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Insights & Research</p>
-        <h1 className="tesla-hero-title text-white">Blog</h1>
+        <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Insights & Research")}</p>
+        <h1 className="tesla-hero-title text-white">{translate("Blog")}</h1>
         <p className="tesla-hero-subtitle text-white/90 max-w-lg">
-          Expert analysis and insights on international credential evaluation and education systems worldwide.
+          {translate("Expert analysis and insights on international credential evaluation and education systems worldwide.")}
         </p>
       </div>
     </section>
@@ -80,7 +83,7 @@ const Blog = () => (
                 {post.title}
               </h2>
               <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
-              <span className="inline-block mt-4 text-sm font-semibold text-accent">Read More →</span>
+              <span className="inline-block mt-4 text-sm font-semibold text-accent">{translate("Read More")} →</span>
             </div>
           </Link>
         ))}
@@ -91,6 +94,7 @@ const Blog = () => (
 
     <Footer />
   </div>
-);
+  );
+};
 
 export default Blog;

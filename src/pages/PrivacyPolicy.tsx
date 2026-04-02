@@ -3,9 +3,11 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { ArrowLeft } from "lucide-react";
+import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
 
 const PrivacyPolicy = () => {
+  const { translate } = useLocale();
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
@@ -15,10 +17,10 @@ const PrivacyPolicy = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12">
           <Link to="/" className="inline-flex items-center gap-2 text-sm font-medium mb-6 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Home
+            <ArrowLeft size={16} /> {translate("Back to Home")}
           </Link>
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Legal</p>
-          <h1 className="tesla-hero-title text-white">Privacy Policy</h1>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">{translate("Legal")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Privacy Policy")}</h1>
         </div>
       </section>
 

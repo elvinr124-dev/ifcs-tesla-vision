@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Briefcase, Phone, Mail } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { useLocale } from "@/context/LocaleContext";
 import consultingBg from "@/assets/consulting-bg.jpg";
 
 const GlassInput = ({
@@ -37,6 +38,7 @@ const FieldGroup = ({ label, required, children }: { label: string; required?: b
 );
 
 const BookConsultation = () => {
+  const { translate } = useLocale();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -56,10 +58,10 @@ const BookConsultation = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${consultingBg})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center hero-text-shadow animate-fade-in-up">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Schedule Your Session</p>
-          <h1 className="tesla-hero-title text-white">Book a Consultation</h1>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">{translate("Schedule Your Session")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Book a Consultation")}</h1>
           <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/90">
-            Get expert guidance on credential evaluations and admissions from our senior staff.
+            {translate("Get expert guidance on credential evaluations and admissions from our senior staff.")}
           </p>
         </div>
       </section>
@@ -69,8 +71,8 @@ const BookConsultation = () => {
           {/* Info Side */}
           <div className="space-y-8">
             <div>
-              <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3">Evaluations Consulting</p>
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground mb-4">Expert Advice, Zero Guesswork</h2>
+              <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3">{translate("Evaluations Consulting")}</p>
+              <h2 className="text-3xl font-semibold tracking-tight text-foreground mb-4">{translate("Expert Advice, Zero Guesswork")}</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 A consultant is a professional who provides professional or expert advice in a particular area. Foreign credential evaluations, and admission policies of U.S. universities are our main areas of expertise. If you want to avoid expensive guesswork then it only makes sense to use IFCS as your personal guide.
               </p>
@@ -81,7 +83,7 @@ const BookConsultation = () => {
                 <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
                   <Briefcase size={18} className="text-accent" />
                 </div>
-                <h3 className="text-lg font-semibold text-foreground">Admissions & Academic Advising</h3>
+                <h3 className="text-lg font-semibold text-foreground">{translate("Admissions & Academic Advising")}</h3>
               </div>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Our senior staff has extensive admissions and academic advisory experience. They have reviewed literally thousands of applications and know firsthand what is required among U.S. colleges and universities. Based on the education you have completed abroad, there is no doubt IFCS can help you find the institution and program best suited for you and streamline the application process along the way.
@@ -89,7 +91,7 @@ const BookConsultation = () => {
             </div>
 
             <div className="p-6 rounded-3xl border border-accent/20 bg-accent/5">
-              <h3 className="text-base font-semibold text-foreground mb-3">Pricing</h3>
+              <h3 className="text-base font-semibold text-foreground mb-3">{translate("Pricing")}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-accent" />
@@ -124,19 +126,19 @@ const BookConsultation = () => {
                     <div className="w-16 h-16 mx-auto rounded-3xl bg-accent/10 flex items-center justify-center">
                       <Mail size={28} className="text-accent" />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground">Message Sent!</h3>
+                    <h3 className="text-xl font-bold text-foreground">{translate("Message Sent!")}</h3>
                     <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                      We'll get back to you within 1 business day to schedule your consultation.
+                      {translate("We'll get back to you within 1 business day to schedule your consultation.")}
                     </p>
                     <Link to="/consulting" className="inline-flex items-center gap-2 text-sm text-accent hover:underline mt-4">
-                      <ArrowLeft size={14} /> Back to Consulting
+                      <ArrowLeft size={14} /> {translate("Back to Consulting")}
                     </Link>
                   </div>
                 ) : (
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-2xl font-bold tracking-tight text-foreground">Contact Us</h3>
-                      <p className="text-sm text-muted-foreground mt-1">We welcome any questions and promise a swift response.</p>
+                      <h3 className="text-2xl font-bold tracking-tight text-foreground">{translate("Contact Us")}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{translate("We welcome any questions and promise a swift response.")}</p>
                     </div>
 
                     <div className="space-y-4">
@@ -165,7 +167,7 @@ const BookConsultation = () => {
                       disabled={!name || !email || !message}
                       className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                     >
-                      Submit
+                      {translate("Submit")}
                     </button>
                   </div>
                 )}
@@ -177,7 +179,7 @@ const BookConsultation = () => {
 
       <div className="text-center pb-16 content-bg">
         <Link to="/consulting" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft size={16} /> Back to Consulting
+          <ArrowLeft size={16} /> {translate("Back to Consulting")}
         </Link>
       </div>
 

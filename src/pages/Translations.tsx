@@ -158,39 +158,39 @@ const Translations = () => {
             <div className="space-y-8">
               <div>
                 <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
-                  Details & Pricing
+                  {translate("Details & Pricing")}
                 </p>
                 <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
-                  What's included in our certified translation service
+                  {translate("What's included in our certified translation service")}
                 </h2>
                 <p className="mt-6 text-base text-muted-foreground font-light leading-relaxed">
-                  A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.
+                  {translate("A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.")}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 mt-8">
                   <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
-                    Start Your Order
+                    {translate("Start Your Order")}
                   </Link>
                   <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted transition-all duration-300">
-                    Get a Quote
+                    {translate("Get a Quote")}
                   </Link>
                 </div>
               </div>
 
               {/* Add-ons */}
               <div className="rounded-2xl border border-border bg-card p-6">
-                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">Available Add-Ons</p>
+                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">{translate("Available Add-Ons")}</p>
                 <div className="space-y-4">
                   <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
                     <div>
-                      <h4 className="text-sm font-semibold text-foreground">Expedited Turnaround</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">Priority processing — 1–2 business days delivery.</p>
+                      <h4 className="text-sm font-semibold text-foreground">{translate("Expedited Turnaround")}</h4>
+                      <p className="text-xs text-muted-foreground font-light mt-1">{translate("Priority processing — 1–2 business days delivery.")}</p>
                     </div>
                     <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
                   </div>
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h4 className="text-sm font-semibold text-foreground">Hard Copy</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">Printed original shipped via FedEx with tracking.</p>
+                      <h4 className="text-sm font-semibold text-foreground">{translate("Hard Copy")}</h4>
+                      <p className="text-xs text-muted-foreground font-light mt-1">{translate("Printed original shipped via FedEx with tracking.")}</p>
                     </div>
                     <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
                   </div>
@@ -199,27 +199,27 @@ const Translations = () => {
 
               {/* Turnaround & Guarantee */}
               <div className="rounded-2xl border border-border bg-card p-6">
-                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">Turnaround & Guarantee</p>
+                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">{translate("Turnaround & Guarantee")}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="flex items-start gap-2">
                     <Clock size={16} className="text-accent shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">3–5 business days</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Expedited: 1–2 days (+$25)</p>
+                      <p className="text-sm font-medium text-foreground">{translate("3–5 business days")}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{translate("Expedited: 1–2 days (+$25)")}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
                     <ShieldCheck size={16} className="text-accent shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">100% Accepted</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">USCIS guaranteed</p>
+                      <p className="text-sm font-medium text-foreground">{translate("100% Accepted")}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{translate("USCIS guaranteed")}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
                     <Lock size={16} className="text-accent shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">Secure</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Encrypted & confidential</p>
+                      <p className="text-sm font-medium text-foreground">{translate("Secure")}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{translate("Encrypted & confidential")}</p>
                     </div>
                   </div>
                 </div>
@@ -233,14 +233,14 @@ const Translations = () => {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h3 className="text-xl font-semibold text-foreground">Certified Translation</h3>
+                    <h3 className="text-xl font-semibold text-foreground">{translate("Certified Translation")}</h3>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Word-for-word document translation with certification letter for official use.
+                      {translate("Word-for-word document translation with certification letter for official use.")}
                     </p>
                   </div>
                   <div className="text-right shrink-0 ml-4">
                     <span className="text-3xl font-bold text-foreground">$50</span>
-                    <p className="text-xs text-muted-foreground mt-0.5">per page</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{translate("per page")}</p>
                   </div>
                 </div>
 
@@ -249,56 +249,56 @@ const Translations = () => {
                   <div className="flex items-start gap-2 mb-3">
                     <Info size={14} className="text-accent shrink-0 mt-0.5" />
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      First page includes up to <strong className="text-foreground">300 words</strong> (including numbers, stamps, signatures). Additional pages are charged at <strong className="text-foreground">$0.10/word</strong> for all words. Overage on any page: <strong className="text-foreground">$0.10/word</strong> beyond 300.
+                      {translate("First page includes up to")} <strong className="text-foreground">300 {translate("words")}</strong> {translate("(including numbers, stamps, signatures). Additional pages are charged at")} <strong className="text-foreground">$0.10/{translate("word")}</strong> {translate("for all words. Overage on any page:")} <strong className="text-foreground">$0.10/{translate("word")}</strong> {translate("beyond 300.")}
                     </p>
                   </div>
                   <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex justify-between">
-                      <span>Custom formatting</span>
-                      <span className="font-semibold text-foreground">+$20/page</span>
+                      <span>{translate("Custom formatting")}</span>
+                      <span className="font-semibold text-foreground">+$20/{translate("page")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Additional pages</span>
-                      <span className="font-semibold text-foreground">$0.10/word</span>
+                      <span>{translate("Additional pages")}</span>
+                      <span className="font-semibold text-foreground">$0.10/{translate("word")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Birth Certificates</span>
-                      <span className="font-semibold text-foreground">$75/page</span>
+                      <span>{translate("Birth Certificates")}</span>
+                      <span className="font-semibold text-foreground">$75/{translate("page")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Double pages (side-by-side)</span>
-                      <span className="font-semibold text-foreground">$100 flat</span>
+                      <span>{translate("Double pages (side-by-side)")}</span>
+                      <span className="font-semibold text-foreground">$100 {translate("flat")}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Included features */}
                 <div className="mt-6">
-                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground mb-3">What's Included</p>
+                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground mb-3">{translate("What's Included")}</p>
                   <div className="grid grid-cols-1 gap-2.5">
                     {pricingFeatures.map((f) =>
                     <div key={f} className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">{f}</span>
+                      <span className="text-xs text-muted-foreground">{translate(f)}</span>
                     </div>
                     )}
                   </div>
                   <div className="mt-5 pt-4 border-t border-border space-y-2">
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">USCIS acceptance guaranteed</span>
+                      <span className="text-xs text-muted-foreground">{translate("USCIS acceptance guaranteed")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">Unlimited revisions</span>
+                      <span className="text-xs text-muted-foreground">{translate("Unlimited revisions")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">AI-powered word count verification</span>
+                      <span className="text-xs text-muted-foreground">{translate("AI-powered word count verification")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">Native-speaking professional translators</span>
+                      <span className="text-xs text-muted-foreground">{translate("Native-speaking professional translators")}</span>
                     </div>
                   </div>
                 </div>
@@ -307,8 +307,7 @@ const Translations = () => {
                 <div className="mt-6 pt-4 border-t border-border flex items-center gap-3">
                   <Award size={18} className="text-accent shrink-0" />
                   <p className="text-xs text-muted-foreground">
-                    Translated by <strong className="text-foreground">ATA-certified translators</strong> — the gold standard in professional translation accuracy.
-                  </p>
+                    {translate("Translated by ATA-certified translators — the gold standard in professional translation accuracy.")}</p>
                 </div>
               </div>
             </div>
@@ -320,13 +319,13 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg-alt">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            150+ Languages
+            {translate("150+ Languages")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground">
-            Translated by native-speaking professionals
+            {translate("Translated by native-speaking professionals")}
           </h2>
           <p className="mt-4 text-base md:text-lg text-center text-muted-foreground max-w-2xl mx-auto font-light">
-            Each translator is a vetted professional with native fluency. We match your document to the ideal linguist for accuracy and quality.
+            {translate("Each translator is a vetted professional with native fluency. We match your document to the ideal linguist for accuracy and quality.")}
           </p>
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {displayedLangs.map((lang) =>
@@ -334,7 +333,7 @@ const Translations = () => {
               key={lang}
               className="flex items-center gap-2 px-4 py-3 rounded-sm border border-border bg-card hover:border-accent/50 transition-colors">
                 <Globe size={14} className="text-accent shrink-0" />
-                <span className="text-sm font-medium text-foreground">{lang}</span>
+                <span className="text-sm font-medium text-foreground">{translate(lang)}</span>
               </div>
             )}
           </div>
@@ -342,7 +341,7 @@ const Translations = () => {
             <button
               onClick={() => setShowAllLangs(!showAllLangs)}
               className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:opacity-80 transition-opacity">
-              {showAllLangs ? "Show fewer" : "See all languages"}
+              {showAllLangs ? translate("Show fewer") : translate("See all languages")}
               {showAllLangs ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
@@ -353,13 +352,13 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            Any Document
+            {translate("Any Document")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground">
-            Upload any document for translation
+            {translate("Upload any document for translation")}
           </h2>
           <p className="mt-4 text-base md:text-lg text-center text-muted-foreground max-w-2xl mx-auto font-light">
-            From birth certificates to legal contracts — our translators bring industry-specific expertise to ensure precision.
+            {translate("From birth certificates to legal contracts — our translators bring industry-specific expertise to ensure precision.")}
           </p>
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {documents.map(({ name, icon: Icon }) =>
@@ -367,7 +366,7 @@ const Translations = () => {
               key={name}
               className="flex flex-col items-center gap-3 p-6 rounded-sm border border-border bg-card hover:border-accent/50 hover:shadow-sm transition-all text-center">
                 <Icon size={28} className="text-accent" />
-                <span className="text-sm font-medium text-foreground">{name}</span>
+                <span className="text-sm font-medium text-foreground">{translate(name)}</span>
               </div>
             )}
           </div>
@@ -378,18 +377,18 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg-alt">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            Solutions
+            {translate("Solutions")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground">
-            Expert translations to meet your needs
+            {translate("Expert translations to meet your needs")}
           </h2>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {useCases.map(({ title, desc }) =>
             <div
               key={title}
               className="p-8 rounded-sm border border-border bg-card hover:border-accent/50 transition-colors">
-                <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed">{desc}</p>
+                <h3 className="text-lg font-semibold text-foreground mb-2">{translate(title)}</h3>
+                <p className="text-sm text-muted-foreground font-light leading-relaxed">{translate(desc)}</p>
               </div>
             )}
           </div>
@@ -400,45 +399,45 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-4xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            Pricing & Terms
+            {translate("Pricing & Terms")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground mb-12">
-            Transparent pricing, no surprises
+            {translate("Transparent pricing, no surprises")}
           </h2>
 
           <div className="space-y-6">
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">Page Definition</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("Page Definition")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                Certified translation pages are limited to <strong className="text-foreground">300 words or less</strong>, including numbers, characters, signatures, and stamps. Everything that needs to be translated or reproduced counts as a word — stamps, signatures, numbers, coat of arms, seals, and all other content.
+                {translate("Certified translation pages are limited to 300 words or less, including numbers, characters, signatures, and stamps. Everything that needs to be translated or reproduced counts as a word — stamps, signatures, numbers, coat of arms, seals, and all other content.")}
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">AI-Powered Word Count</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("AI-Powered Word Count")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                Our AI system automatically calculates the word count upon upload. The first 300 words are covered by the base page rate. Additional words are billed at <strong className="text-foreground">$0.10 per word</strong> (e.g., a 350-word page at $50 base totals $55).
+                {translate("Our AI system automatically calculates the word count upon upload. The first 300 words are covered by the base page rate. Additional words are billed at $0.10 per word (e.g., a 350-word page at $50 base totals $55).")}
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">Custom Formatting</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("Custom Formatting")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                If our AI detects 5 or more formatted boxes/table cells per page, the base rate adjusts to <strong className="text-foreground">$70 per page</strong> (for 1–9 page projects) to account for custom formatting work. Documents without complex formatting are billed at $50 per page.
+                {translate("If our AI detects 5 or more formatted boxes/table cells per page, the base rate adjusts to $70 per page (for 1–9 page projects) to account for custom formatting work. Documents without complex formatting are billed at $50 per page.")}
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">Special Document Types</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("Special Document Types")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                <strong className="text-foreground">Birth certificates</strong> are always translated at $75 per page. <strong className="text-foreground">Double pages</strong> (two pages displayed side-by-side on a single sheet) are billed as two pages with a $100 minimum.
+                {translate("Birth certificates are always translated at $75 per page. Double pages (two pages displayed side-by-side on a single sheet) are billed as two pages with a $100 minimum.")}
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">Upload Requirements</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("Upload Requirements")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                All uploaded documents must be clear and legible. If our system detects a blurry or unreadable upload, you will be asked to re-upload a clearer version to ensure translation accuracy.
+                {translate("All uploaded documents must be clear and legible. If our system detects a blurry or unreadable upload, you will be asked to re-upload a clearer version to ensure translation accuracy.")}
               </p>
             </div>
           </div>
@@ -449,10 +448,10 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg-alt">
         <div className="max-w-3xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            FAQ
+            {translate("FAQ")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground mb-12">
-            Common questions
+            {translate("Common questions")}
           </h2>
           <div className="space-y-0">
             {faqs.map(({ q, a }, i) =>
@@ -460,7 +459,7 @@ const Translations = () => {
                 <button
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full flex items-center justify-between py-6 text-left">
-                  <span className="text-base font-medium text-foreground pr-4">{q}</span>
+                  <span className="text-base font-medium text-foreground pr-4">{translate(q)}</span>
                   {openFaq === i ?
                 <ChevronUp size={20} className="text-muted-foreground shrink-0" /> :
                 <ChevronDown size={20} className="text-muted-foreground shrink-0" />
@@ -468,7 +467,7 @@ const Translations = () => {
                 </button>
                 {openFaq === i &&
               <p className="pb-6 text-sm text-muted-foreground font-light leading-relaxed">
-                    {a}
+                    {translate(a)}
                   </p>
               }
               </div>
@@ -481,17 +480,17 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 bg-primary text-center">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-primary-foreground">
-            Ready to get started?
+            {translate("Ready to get started?")}
           </h2>
           <p className="mt-4 text-base md:text-lg text-primary-foreground/70 font-light">
-            Upload your document and receive a certified translation in as little as 24 hours.
+            {translate("Upload your document and receive a certified translation in as little as 24 hours.")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8 justify-center">
             <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
-              Start Your Order
+              {translate("Start Your Order")}
             </Link>
             <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-primary-foreground/30 text-primary-foreground font-semibold text-sm hover:bg-primary-foreground/10 transition-all duration-300">
-              Get a Quote
+              {translate("Get a Quote")}
             </Link>
           </div>
         </div>

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import { LogOut, Trash2, User, ArrowLeft } from "lucide-react";
 import BackToHome from "@/components/BackToHome";
 import { useState } from "react";
@@ -21,6 +22,7 @@ import {
 
 const Account = () => {
   const { user, logout } = useAuth();
+  const { translate } = useLocale();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
@@ -77,7 +79,7 @@ const Account = () => {
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-8 transition-colors"
           >
             <ArrowLeft size={16} />
-            Back
+            {translate("Back")}
           </button>
 
           {/* Profile card */}
@@ -107,7 +109,7 @@ const Account = () => {
                 className="flex items-center gap-3 w-full px-5 py-4 rounded-2xl bg-muted hover:bg-muted/80 transition-all duration-200 group"
               >
                 <LogOut size={20} className="text-muted-foreground group-hover:text-foreground transition-colors" />
-                <span className="text-sm font-semibold text-foreground">Sign Out</span>
+                <span className="text-sm font-semibold text-foreground">{translate("Sign Out")}</span>
               </button>
 
               {user.role === "client" && (
@@ -117,24 +119,24 @@ const Account = () => {
                       className="flex items-center gap-3 w-full px-5 py-4 rounded-2xl bg-destructive/10 hover:bg-destructive/20 transition-all duration-200 group"
                     >
                       <Trash2 size={20} className="text-destructive" />
-                      <span className="text-sm font-semibold text-destructive">Delete Account</span>
+                      <span className="text-sm font-semibold text-destructive">{translate("Delete Account")}</span>
                     </button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                      <AlertDialogTitle>{translate("Are you absolutely sure?")}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your account and remove all your data.
+                        {translate("This action cannot be undone. This will permanently delete your account and remove all your data.")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{translate("Cancel")}</AlertDialogCancel>
                       <AlertDialogAction
                         onClick={handleDeleteAccount}
                         disabled={deleting}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
-                        {deleting ? "Deleting..." : "Delete Account"}
+                        {deleting ? translate("Deleting...") : translate("Delete Account")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

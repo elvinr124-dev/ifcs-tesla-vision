@@ -251,14 +251,14 @@ const Evaluations = () => {
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div>
                         <p className="text-xs font-semibold tracking-[0.25em] uppercase text-black/60 mb-1">
-                          Academic Evaluation
+                          {translate("Academic Evaluation")}
                         </p>
                         <h3 className="text-2xl md:text-3xl font-bold tracking-tight text-black">
-                          {service.title}
+                          {translate(service.title)}
                         </h3>
                       </div>
                       <div className="flex-shrink-0 bg-black/10 backdrop-blur-md border border-black/10 rounded-2xl px-5 py-3 text-center">
-                        <p className="text-xs text-black/50 uppercase tracking-widest mb-1">From</p>
+                        <p className="text-xs text-black/50 uppercase tracking-widest mb-1">{translate("From")}</p>
                         <p className="text-3xl font-bold text-black">${service.price}</p>
                       </div>
                     </div>
@@ -266,31 +266,31 @@ const Evaluations = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
                          <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5">
-                          <FileText size={12} /> Description
+                          <FileText size={12} /> {translate("Description")}
                         </p>
                         <p className="text-[15px] font-medium leading-relaxed text-black/90">
-                          {service.description}
+                          {translate(service.description)}
                         </p>
                       </div>
                       <div className="space-y-4">
                         <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
                           <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5">
-                            <Award size={12} className="text-accent" /> Recommended For
+                            <Award size={12} className="text-accent" /> {translate("Recommended For")}
                           </p>
-                          <p className="text-[15px] font-medium leading-relaxed text-black/90">{service.recommendedFor}</p>
+                          <p className="text-[15px] font-medium leading-relaxed text-black/90">{translate(service.recommendedFor)}</p>
                         </div>
                         <div className="bg-black/5 backdrop-blur-sm border border-black/10 rounded-2xl p-5 space-y-1">
                           <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5">
-                            <FileText size={12} /> Required Documents
+                            <FileText size={12} /> {translate("Required Documents")}
                           </p>
-                          <p className="text-[15px] font-medium leading-relaxed text-black/90">{service.documents}</p>
+                          <p className="text-[15px] font-medium leading-relaxed text-black/90">{translate(service.documents)}</p>
                         </div>
                       </div>
                     </div>
 
                     <div>
                       <p className="text-xs font-bold tracking-[0.2em] uppercase text-black/60 flex items-center gap-1.5 mb-3">
-                        <Clock size={12} /> Select Processing Speed
+                        <Clock size={12} /> {translate("Select Processing Speed")}
                       </p>
                       <div className="grid grid-cols-3 gap-3">
                         {([
@@ -334,7 +334,7 @@ const Evaluations = () => {
 
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-auto pt-2">
                       <p className="text-sm text-black/50">
-                        Selected: <span className="text-black font-semibold">${getSelectedPrice(service, idx)}</span>
+                        {translate("Selected")}: <span className="text-black font-semibold">${getSelectedPrice(service, idx)}</span>
                       </p>
                       <div className="flex gap-3">
                         <button
@@ -346,12 +346,12 @@ const Evaluations = () => {
                             }
                           }}
                           className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
-                          <Eye size={16} /> View Sample
+                          <Eye size={16} /> {translate("View Sample")}
                         </button>
                         <Link
                           to="/learn-more-evaluations"
                           className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
-                          <BookOpen size={16} /> Learn More
+                          <BookOpen size={16} /> {translate("Learn More")}
                         </Link>
                         <button
                           onClick={() => {
@@ -377,7 +377,7 @@ const Evaluations = () => {
                             showToast(`"${service.title} ${processingLabels[key]}" added to cart!`);
                           }}
                           className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200 shadow-lg hover:scale-105">
-                          🛒 Add to Cart
+                          🛒 {translate("Add to Cart")}
                         </button>
                         <button
                           onClick={() => {
@@ -401,7 +401,7 @@ const Evaluations = () => {
                             }
                           }}
                           className="inline-flex items-center gap-2 bg-black text-white font-semibold text-sm px-8 py-3 rounded-2xl hover:bg-black/80 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105">
-                          Start Application →
+                          {translate("Start Application")} →
                         </button>
                       </div>
                     </div>
