@@ -167,7 +167,7 @@ const BookConsultation = () => {
                       disabled={!name || !email || !message}
                       className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
                     >
-                      Submit
+                      {translate("Submit")}
                     </button>
                   </div>
                 )}
