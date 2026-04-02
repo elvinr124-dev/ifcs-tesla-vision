@@ -41,7 +41,9 @@ const blogPosts = [
   },
 ];
 
-const Blog = () => (
+const Blog = () => {
+  const { translate } = useLocale();
+  return (
   <div className="min-h-screen bg-background">
     <Navbar />
 
@@ -49,10 +51,10 @@ const Blog = () => (
       <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${blogBg})` }} />
       <div className="video-overlay" />
       <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
-        <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Insights & Research</p>
-        <h1 className="tesla-hero-title text-white">Blog</h1>
+        <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Insights & Research")}</p>
+        <h1 className="tesla-hero-title text-white">{translate("Blog")}</h1>
         <p className="tesla-hero-subtitle text-white/90 max-w-lg">
-          Expert analysis and insights on international credential evaluation and education systems worldwide.
+          {translate("Expert analysis and insights on international credential evaluation and education systems worldwide.")}
         </p>
       </div>
     </section>
