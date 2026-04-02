@@ -399,45 +399,45 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-4xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            Pricing & Terms
+            {translate("Pricing & Terms")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground mb-12">
-            Transparent pricing, no surprises
+            {translate("Transparent pricing, no surprises")}
           </h2>
 
           <div className="space-y-6">
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">Page Definition</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("Page Definition")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                Certified translation pages are limited to <strong className="text-foreground">300 words or less</strong>, including numbers, characters, signatures, and stamps. Everything that needs to be translated or reproduced counts as a word — stamps, signatures, numbers, coat of arms, seals, and all other content.
+                {translate("Certified translation pages are limited to 300 words or less, including numbers, characters, signatures, and stamps. Everything that needs to be translated or reproduced counts as a word — stamps, signatures, numbers, coat of arms, seals, and all other content.")}
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">AI-Powered Word Count</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("AI-Powered Word Count")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                Our AI system automatically calculates the word count upon upload. The first 300 words are covered by the base page rate. Additional words are billed at <strong className="text-foreground">$0.10 per word</strong> (e.g., a 350-word page at $50 base totals $55).
+                {translate("Our AI system automatically calculates the word count upon upload. The first 300 words are covered by the base page rate. Additional words are billed at $0.10 per word (e.g., a 350-word page at $50 base totals $55).")}
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">Custom Formatting</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("Custom Formatting")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                If our AI detects 5 or more formatted boxes/table cells per page, the base rate adjusts to <strong className="text-foreground">$70 per page</strong> (for 1–9 page projects) to account for custom formatting work. Documents without complex formatting are billed at $50 per page.
+                {translate("If our AI detects 5 or more formatted boxes/table cells per page, the base rate adjusts to $70 per page (for 1–9 page projects) to account for custom formatting work. Documents without complex formatting are billed at $50 per page.")}
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">Special Document Types</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("Special Document Types")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                <strong className="text-foreground">Birth certificates</strong> are always translated at $75 per page. <strong className="text-foreground">Double pages</strong> (two pages displayed side-by-side on a single sheet) are billed as two pages with a $100 minimum.
+                {translate("Birth certificates are always translated at $75 per page. Double pages (two pages displayed side-by-side on a single sheet) are billed as two pages with a $100 minimum.")}
               </p>
             </div>
 
             <div className="p-6 rounded-xl border border-border bg-card">
-              <h3 className="text-base font-semibold text-foreground mb-2">Upload Requirements</h3>
+              <h3 className="text-base font-semibold text-foreground mb-2">{translate("Upload Requirements")}</h3>
               <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                All uploaded documents must be clear and legible. If our system detects a blurry or unreadable upload, you will be asked to re-upload a clearer version to ensure translation accuracy.
+                {translate("All uploaded documents must be clear and legible. If our system detects a blurry or unreadable upload, you will be asked to re-upload a clearer version to ensure translation accuracy.")}
               </p>
             </div>
           </div>
@@ -448,10 +448,10 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg-alt">
         <div className="max-w-3xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            FAQ
+            {translate("FAQ")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground mb-12">
-            Common questions
+            {translate("Common questions")}
           </h2>
           <div className="space-y-0">
             {faqs.map(({ q, a }, i) =>
@@ -459,7 +459,7 @@ const Translations = () => {
                 <button
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 className="w-full flex items-center justify-between py-6 text-left">
-                  <span className="text-base font-medium text-foreground pr-4">{q}</span>
+                  <span className="text-base font-medium text-foreground pr-4">{translate(q)}</span>
                   {openFaq === i ?
                 <ChevronUp size={20} className="text-muted-foreground shrink-0" /> :
                 <ChevronDown size={20} className="text-muted-foreground shrink-0" />
@@ -467,7 +467,7 @@ const Translations = () => {
                 </button>
                 {openFaq === i &&
               <p className="pb-6 text-sm text-muted-foreground font-light leading-relaxed">
-                    {a}
+                    {translate(a)}
                   </p>
               }
               </div>
@@ -480,17 +480,17 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 bg-primary text-center">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-primary-foreground">
-            Ready to get started?
+            {translate("Ready to get started?")}
           </h2>
           <p className="mt-4 text-base md:text-lg text-primary-foreground/70 font-light">
-            Upload your document and receive a certified translation in as little as 24 hours.
+            {translate("Upload your document and receive a certified translation in as little as 24 hours.")}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 mt-8 justify-center">
             <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
-              Start Your Order
+              {translate("Start Your Order")}
             </Link>
             <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-primary-foreground/30 text-primary-foreground font-semibold text-sm hover:bg-primary-foreground/10 transition-all duration-300">
-              Get a Quote
+              {translate("Get a Quote")}
             </Link>
           </div>
         </div>
