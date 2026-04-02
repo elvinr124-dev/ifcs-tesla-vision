@@ -346,7 +346,7 @@ const Evaluations = () => {
                             }
                           }}
                           className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
-                          <Eye size={16} /> View Sample
+                          <Eye size={16} /> {translate("View Sample")}
                         </button>
                         <Link
                           to="/learn-more-evaluations"
