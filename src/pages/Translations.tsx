@@ -233,14 +233,14 @@ const Translations = () => {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h3 className="text-xl font-semibold text-foreground">Certified Translation</h3>
+                    <h3 className="text-xl font-semibold text-foreground">{translate("Certified Translation")}</h3>
                     <p className="text-sm text-muted-foreground mt-1">
-                      Word-for-word document translation with certification letter for official use.
+                      {translate("Word-for-word document translation with certification letter for official use.")}
                     </p>
                   </div>
                   <div className="text-right shrink-0 ml-4">
                     <span className="text-3xl font-bold text-foreground">$50</span>
-                    <p className="text-xs text-muted-foreground mt-0.5">per page</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">{translate("per page")}</p>
                   </div>
                 </div>
 
@@ -249,56 +249,56 @@ const Translations = () => {
                   <div className="flex items-start gap-2 mb-3">
                     <Info size={14} className="text-accent shrink-0 mt-0.5" />
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      First page includes up to <strong className="text-foreground">300 words</strong> (including numbers, stamps, signatures). Additional pages are charged at <strong className="text-foreground">$0.10/word</strong> for all words. Overage on any page: <strong className="text-foreground">$0.10/word</strong> beyond 300.
+                      {translate("First page includes up to")} <strong className="text-foreground">300 {translate("words")}</strong> {translate("(including numbers, stamps, signatures). Additional pages are charged at")} <strong className="text-foreground">$0.10/{translate("word")}</strong> {translate("for all words. Overage on any page:")} <strong className="text-foreground">$0.10/{translate("word")}</strong> {translate("beyond 300.")}
                     </p>
                   </div>
                   <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex justify-between">
-                      <span>Custom formatting</span>
-                      <span className="font-semibold text-foreground">+$20/page</span>
+                      <span>{translate("Custom formatting")}</span>
+                      <span className="font-semibold text-foreground">+$20/{translate("page")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Additional pages</span>
-                      <span className="font-semibold text-foreground">$0.10/word</span>
+                      <span>{translate("Additional pages")}</span>
+                      <span className="font-semibold text-foreground">$0.10/{translate("word")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Birth Certificates</span>
-                      <span className="font-semibold text-foreground">$75/page</span>
+                      <span>{translate("Birth Certificates")}</span>
+                      <span className="font-semibold text-foreground">$75/{translate("page")}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Double pages (side-by-side)</span>
-                      <span className="font-semibold text-foreground">$100 flat</span>
+                      <span>{translate("Double pages (side-by-side)")}</span>
+                      <span className="font-semibold text-foreground">$100 {translate("flat")}</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Included features */}
                 <div className="mt-6">
-                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground mb-3">What's Included</p>
+                  <p className="text-xs font-medium tracking-[0.15em] uppercase text-muted-foreground mb-3">{translate("What's Included")}</p>
                   <div className="grid grid-cols-1 gap-2.5">
                     {pricingFeatures.map((f) =>
                     <div key={f} className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">{f}</span>
+                      <span className="text-xs text-muted-foreground">{translate(f)}</span>
                     </div>
                     )}
                   </div>
                   <div className="mt-5 pt-4 border-t border-border space-y-2">
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">USCIS acceptance guaranteed</span>
+                      <span className="text-xs text-muted-foreground">{translate("USCIS acceptance guaranteed")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">Unlimited revisions</span>
+                      <span className="text-xs text-muted-foreground">{translate("Unlimited revisions")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">AI-powered word count verification</span>
+                      <span className="text-xs text-muted-foreground">{translate("AI-powered word count verification")}</span>
                     </div>
                     <div className="flex items-center gap-2">
                       <CheckCircle size={14} className="text-accent shrink-0" />
-                      <span className="text-xs text-muted-foreground">Native-speaking professional translators</span>
+                      <span className="text-xs text-muted-foreground">{translate("Native-speaking professional translators")}</span>
                     </div>
                   </div>
                 </div>
@@ -307,8 +307,7 @@ const Translations = () => {
                 <div className="mt-6 pt-4 border-t border-border flex items-center gap-3">
                   <Award size={18} className="text-accent shrink-0" />
                   <p className="text-xs text-muted-foreground">
-                    Translated by <strong className="text-foreground">ATA-certified translators</strong> — the gold standard in professional translation accuracy.
-                  </p>
+                    {translate("Translated by ATA-certified translators — the gold standard in professional translation accuracy.")}</p>
                 </div>
               </div>
             </div>
