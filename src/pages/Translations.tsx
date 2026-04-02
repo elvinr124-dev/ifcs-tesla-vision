@@ -158,20 +158,20 @@ const Translations = () => {
             <div className="space-y-8">
               <div>
                 <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">
-                  Details & Pricing
+                  {translate("Details & Pricing")}
                 </p>
                 <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-foreground">
-                  What's included in our certified translation service
+                  {translate("What's included in our certified translation service")}
                 </h2>
                 <p className="mt-6 text-base text-muted-foreground font-light leading-relaxed">
-                  A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.
+                  {translate("A professionally prepared word-for-word translation of your documents, delivered on IFCS letterhead with a signed and stamped certificate of translation accuracy. Our expert translators deliver accurate, reliable translations with fast service, including same-day options. Enjoy clear pricing with no hidden fees and strict safeguards to keep your information secure.")}
                 </p>
                 <div className="flex flex-col sm:flex-row gap-3 mt-8">
                   <Link to="/translations/order" className="inline-flex items-center justify-center px-6 py-3 rounded-lg bg-accent text-accent-foreground font-semibold text-sm shadow-lg hover:scale-105 transition-all duration-300">
-                    Start Your Order
+                    {translate("Start Your Order")}
                   </Link>
                   <Link to="/translations/quote" className="inline-flex items-center justify-center px-6 py-3 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted transition-all duration-300">
-                    Get a Quote
+                    {translate("Get a Quote")}
                   </Link>
                 </div>
               </div>
