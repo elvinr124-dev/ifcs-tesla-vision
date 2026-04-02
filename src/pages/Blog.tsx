@@ -83,7 +83,7 @@ const Blog = () => {
                 {post.title}
               </h2>
               <p className="text-sm text-muted-foreground line-clamp-2">{post.excerpt}</p>
-              <span className="inline-block mt-4 text-sm font-semibold text-accent">Read More →</span>
+              <span className="inline-block mt-4 text-sm font-semibold text-accent">{translate("Read More")} →</span>
             </div>
           </Link>
         ))}
