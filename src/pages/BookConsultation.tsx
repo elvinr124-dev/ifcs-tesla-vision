@@ -91,7 +91,7 @@ const BookConsultation = () => {
             </div>
 
             <div className="p-6 rounded-3xl border border-accent/20 bg-accent/5">
-              <h3 className="text-base font-semibold text-foreground mb-3">Pricing</h3>
+              <h3 className="text-base font-semibold text-foreground mb-3">{translate("Pricing")}</h3>
               <ul className="space-y-2 text-sm text-muted-foreground">
                 <li className="flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-accent" />
