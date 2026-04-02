@@ -77,15 +77,15 @@ const Cart = () => {
               <div className="w-16 h-16 rounded-3xl bg-muted flex items-center justify-center">
                 <ShoppingCart size={28} className="text-muted-foreground" />
               </div>
-              <h3 className="text-xl font-bold text-foreground">Your cart is empty</h3>
+              <h3 className="text-xl font-bold text-foreground">{translate("Your cart is empty")}</h3>
               <p className="text-muted-foreground text-sm max-w-xs">
-                Browse our evaluation services and add them to your cart to get started.
+                {translate("Browse our evaluation services and add them to your cart to get started.")}
               </p>
               <Link
                 to="/evaluations"
                 className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105"
               >
-                Browse Evaluations <ArrowRight size={16} />
+                {translate("Browse Evaluations")} <ArrowRight size={16} />
               </Link>
             </div>
           ) : (
