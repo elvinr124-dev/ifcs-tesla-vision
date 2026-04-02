@@ -351,7 +351,7 @@ const Evaluations = () => {
                         <Link
                           to="/learn-more-evaluations"
                           className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
-                          <BookOpen size={16} /> Learn More
+                          <BookOpen size={16} /> {translate("Learn More")}
                         </Link>
                         <button
                           onClick={() => {
