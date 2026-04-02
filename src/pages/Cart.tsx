@@ -137,7 +137,7 @@ const Cart = () => {
                   <p className="text-sm text-emerald-600 mt-2 font-semibold">✓ Code "{discountCode}" applied — ${discountAmount} off</p>
                 )}
                 {discountCode && discountAmount === 0 && (
-                  <p className="text-sm text-destructive mt-2 font-semibold">Invalid discount code</p>
+                  <p className="text-sm text-destructive mt-2 font-semibold">{translate("Invalid discount code")}</p>
                 )}
               </div>
 
