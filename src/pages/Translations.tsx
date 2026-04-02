@@ -319,13 +319,13 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg-alt">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            150+ Languages
+            {translate("150+ Languages")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground">
-            Translated by native-speaking professionals
+            {translate("Translated by native-speaking professionals")}
           </h2>
           <p className="mt-4 text-base md:text-lg text-center text-muted-foreground max-w-2xl mx-auto font-light">
-            Each translator is a vetted professional with native fluency. We match your document to the ideal linguist for accuracy and quality.
+            {translate("Each translator is a vetted professional with native fluency. We match your document to the ideal linguist for accuracy and quality.")}
           </p>
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
             {displayedLangs.map((lang) =>
@@ -333,7 +333,7 @@ const Translations = () => {
               key={lang}
               className="flex items-center gap-2 px-4 py-3 rounded-sm border border-border bg-card hover:border-accent/50 transition-colors">
                 <Globe size={14} className="text-accent shrink-0" />
-                <span className="text-sm font-medium text-foreground">{lang}</span>
+                <span className="text-sm font-medium text-foreground">{translate(lang)}</span>
               </div>
             )}
           </div>
@@ -341,7 +341,7 @@ const Translations = () => {
             <button
               onClick={() => setShowAllLangs(!showAllLangs)}
               className="inline-flex items-center gap-1 text-sm font-medium text-accent hover:opacity-80 transition-opacity">
-              {showAllLangs ? "Show fewer" : "See all languages"}
+              {showAllLangs ? translate("Show fewer") : translate("See all languages")}
               {showAllLangs ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
             </button>
           </div>
