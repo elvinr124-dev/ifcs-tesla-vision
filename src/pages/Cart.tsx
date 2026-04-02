@@ -123,7 +123,7 @@ const Cart = () => {
                   <input
                     value={codeInput}
                     onChange={(e) => setCodeInput(e.target.value.toUpperCase())}
-                    placeholder="Enter code"
+                    placeholder={translate("Enter code")}
                     className="flex-1 h-11 px-4 rounded-xl text-sm bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 text-foreground placeholder:text-muted-foreground"
                   />
                   <button
