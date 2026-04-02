@@ -126,12 +126,12 @@ const BookConsultation = () => {
                     <div className="w-16 h-16 mx-auto rounded-3xl bg-accent/10 flex items-center justify-center">
                       <Mail size={28} className="text-accent" />
                     </div>
-                    <h3 className="text-xl font-bold text-foreground">Message Sent!</h3>
+                    <h3 className="text-xl font-bold text-foreground">{translate("Message Sent!")}</h3>
                     <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-                      We'll get back to you within 1 business day to schedule your consultation.
+                      {translate("We'll get back to you within 1 business day to schedule your consultation.")}
                     </p>
                     <Link to="/consulting" className="inline-flex items-center gap-2 text-sm text-accent hover:underline mt-4">
-                      <ArrowLeft size={14} /> Back to Consulting
+                      <ArrowLeft size={14} /> {translate("Back to Consulting")}
                     </Link>
                   </div>
                 ) : (
