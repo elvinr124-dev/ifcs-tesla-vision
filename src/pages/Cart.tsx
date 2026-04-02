@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
+import { useLocale } from "@/context/LocaleContext";
 import { ShoppingCart, Trash2, ArrowLeft, ArrowRight, Clock, Tag } from "lucide-react";
 import cartBg from "@/assets/cart-bg.jpg";
 import { useState } from "react";
