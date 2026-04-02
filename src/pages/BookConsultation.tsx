@@ -5,6 +5,7 @@ import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Briefcase, Phone, Mail } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import { useLocale } from "@/context/LocaleContext";
 import consultingBg from "@/assets/consulting-bg.jpg";
 
 const GlassInput = ({
