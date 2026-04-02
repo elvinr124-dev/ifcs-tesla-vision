@@ -352,13 +352,13 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            Any Document
+            {translate("Any Document")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground">
-            Upload any document for translation
+            {translate("Upload any document for translation")}
           </h2>
           <p className="mt-4 text-base md:text-lg text-center text-muted-foreground max-w-2xl mx-auto font-light">
-            From birth certificates to legal contracts — our translators bring industry-specific expertise to ensure precision.
+            {translate("From birth certificates to legal contracts — our translators bring industry-specific expertise to ensure precision.")}
           </p>
           <div className="mt-12 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
             {documents.map(({ name, icon: Icon }) =>
@@ -366,7 +366,7 @@ const Translations = () => {
               key={name}
               className="flex flex-col items-center gap-3 p-6 rounded-sm border border-border bg-card hover:border-accent/50 hover:shadow-sm transition-all text-center">
                 <Icon size={28} className="text-accent" />
-                <span className="text-sm font-medium text-foreground">{name}</span>
+                <span className="text-sm font-medium text-foreground">{translate(name)}</span>
               </div>
             )}
           </div>
@@ -377,18 +377,18 @@ const Translations = () => {
       <section className="py-24 px-6 md:px-12 content-bg-alt">
         <div className="max-w-6xl mx-auto">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent text-center">
-            Solutions
+            {translate("Solutions")}
           </p>
           <h2 className="text-3xl md:text-5xl font-semibold tracking-tight text-center text-foreground">
-            Expert translations to meet your needs
+            {translate("Expert translations to meet your needs")}
           </h2>
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {useCases.map(({ title, desc }) =>
             <div
               key={title}
               className="p-8 rounded-sm border border-border bg-card hover:border-accent/50 transition-colors">
-                <h3 className="text-lg font-semibold text-foreground mb-2">{title}</h3>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed">{desc}</p>
+                <h3 className="text-lg font-semibold text-foreground mb-2">{translate(title)}</h3>
+                <p className="text-sm text-muted-foreground font-light leading-relaxed">{translate(desc)}</p>
               </div>
             )}
           </div>
