@@ -58,10 +58,10 @@ const BookConsultation = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${consultingBg})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 text-center hero-text-shadow animate-fade-in-up">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">Schedule Your Session</p>
-          <h1 className="tesla-hero-title text-white">Book a Consultation</h1>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-accent">{translate("Schedule Your Session")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Book a Consultation")}</h1>
           <p className="tesla-hero-subtitle max-w-2xl mx-auto mt-4 text-white/90">
-            Get expert guidance on credential evaluations and admissions from our senior staff.
+            {translate("Get expert guidance on credential evaluations and admissions from our senior staff.")}
           </p>
         </div>
       </section>
