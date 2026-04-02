@@ -179,7 +179,7 @@ const BookConsultation = () => {
 
       <div className="text-center pb-16 content-bg">
         <Link to="/consulting" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft size={16} /> Back to Consulting
+          <ArrowLeft size={16} /> {translate("Back to Consulting")}
         </Link>
       </div>
 
