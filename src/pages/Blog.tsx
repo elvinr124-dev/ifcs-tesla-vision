@@ -94,6 +94,7 @@ const Blog = () => {
 
     <Footer />
   </div>
-);
+  );
+};
 
 export default Blog;
