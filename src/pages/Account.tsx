@@ -22,6 +22,7 @@ import {
 
 const Account = () => {
   const { user, logout } = useAuth();
+  const { translate } = useLocale();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [deleting, setDeleting] = useState(false);
