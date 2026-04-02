@@ -166,7 +166,7 @@ const Cart = () => {
                     onClick={clearCart}
                     className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl border border-destructive/30 bg-destructive/5 text-destructive text-sm font-semibold hover:bg-destructive/15 transition-all duration-200"
                   >
-                    <Trash2 size={16} /> Clear Cart
+                    <Trash2 size={16} /> {translate("Clear Cart")}
                   </button>
                 </div>
               </div>
