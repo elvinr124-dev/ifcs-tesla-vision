@@ -38,6 +38,7 @@ const FieldGroup = ({ label, required, children }: { label: string; required?: b
 );
 
 const BookConsultation = () => {
+  const { translate } = useLocale();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
