@@ -178,19 +178,19 @@ const Translations = () => {
 
               {/* Add-ons */}
               <div className="rounded-2xl border border-border bg-card p-6">
-                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">Available Add-Ons</p>
+                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">{translate("Available Add-Ons")}</p>
                 <div className="space-y-4">
                   <div className="flex items-start justify-between gap-4 pb-4 border-b border-border">
                     <div>
-                      <h4 className="text-sm font-semibold text-foreground">Expedited Turnaround</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">Priority processing — 1–2 business days delivery.</p>
+                      <h4 className="text-sm font-semibold text-foreground">{translate("Expedited Turnaround")}</h4>
+                      <p className="text-xs text-muted-foreground font-light mt-1">{translate("Priority processing — 1–2 business days delivery.")}</p>
                     </div>
                     <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
                   </div>
                   <div className="flex items-start justify-between gap-4">
                     <div>
-                      <h4 className="text-sm font-semibold text-foreground">Hard Copy</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">Printed original shipped via FedEx with tracking.</p>
+                      <h4 className="text-sm font-semibold text-foreground">{translate("Hard Copy")}</h4>
+                      <p className="text-xs text-muted-foreground font-light mt-1">{translate("Printed original shipped via FedEx with tracking.")}</p>
                     </div>
                     <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
                   </div>
@@ -199,27 +199,27 @@ const Translations = () => {
 
               {/* Turnaround & Guarantee */}
               <div className="rounded-2xl border border-border bg-card p-6">
-                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">Turnaround & Guarantee</p>
+                <p className="text-sm font-medium tracking-[0.15em] uppercase text-muted-foreground mb-4">{translate("Turnaround & Guarantee")}</p>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="flex items-start gap-2">
                     <Clock size={16} className="text-accent shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">3–5 business days</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Expedited: 1–2 days (+$25)</p>
+                      <p className="text-sm font-medium text-foreground">{translate("3–5 business days")}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{translate("Expedited: 1–2 days (+$25)")}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
                     <ShieldCheck size={16} className="text-accent shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">100% Accepted</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">USCIS guaranteed</p>
+                      <p className="text-sm font-medium text-foreground">{translate("100% Accepted")}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{translate("USCIS guaranteed")}</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-2">
                     <Lock size={16} className="text-accent shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-medium text-foreground">Secure</p>
-                      <p className="text-xs text-muted-foreground mt-0.5">Encrypted & confidential</p>
+                      <p className="text-sm font-medium text-foreground">{translate("Secure")}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{translate("Encrypted & confidential")}</p>
                     </div>
                   </div>
                 </div>
