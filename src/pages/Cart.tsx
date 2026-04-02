@@ -10,6 +10,7 @@ import cartBg from "@/assets/cart-bg.jpg";
 import { useState } from "react";
 
 const Cart = () => {
+  const { translate } = useLocale();
   const { items, removeItem, clearCart, discountCode, setDiscountCode, discountAmount } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
