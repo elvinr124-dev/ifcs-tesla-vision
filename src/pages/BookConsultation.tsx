@@ -71,8 +71,8 @@ const BookConsultation = () => {
           {/* Info Side */}
           <div className="space-y-8">
             <div>
-              <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3">Evaluations Consulting</p>
-              <h2 className="text-3xl font-semibold tracking-tight text-foreground mb-4">Expert Advice, Zero Guesswork</h2>
+              <p className="text-sm font-medium tracking-[0.2em] uppercase text-accent mb-3">{translate("Evaluations Consulting")}</p>
+              <h2 className="text-3xl font-semibold tracking-tight text-foreground mb-4">{translate("Expert Advice, Zero Guesswork")}</h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 A consultant is a professional who provides professional or expert advice in a particular area. Foreign credential evaluations, and admission policies of U.S. universities are our main areas of expertise. If you want to avoid expensive guesswork then it only makes sense to use IFCS as your personal guide.
               </p>
