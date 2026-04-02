@@ -136,7 +136,7 @@ const Account = () => {
                         disabled={deleting}
                         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                       >
-                        {deleting ? "Deleting..." : "Delete Account"}
+                        {deleting ? translate("Deleting...") : translate("Delete Account")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
