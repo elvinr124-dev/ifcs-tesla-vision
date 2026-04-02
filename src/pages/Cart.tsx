@@ -118,7 +118,7 @@ const Cart = () => {
 
               {/* Discount Code */}
               <div className="rounded-2xl border border-border bg-card p-6">
-                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5"><Tag size={12} /> Discount Code</p>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-3 flex items-center gap-1.5"><Tag size={12} /> {translate("Discount Code")}</p>
                 <div className="flex gap-3">
                   <input
                     value={codeInput}
