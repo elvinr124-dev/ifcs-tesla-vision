@@ -62,10 +62,10 @@ const Cart = () => {
         <div className="absolute inset-0 bg-cover bg-center" style={{ backgroundImage: `url(${cartBg})` }} />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-5xl mx-auto px-6 md:px-12 hero-text-shadow">
-          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">Your Selection</p>
-          <h1 className="tesla-hero-title text-white">Your Cart</h1>
+          <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Your Selection")}</p>
+          <h1 className="tesla-hero-title text-white">{translate("Your Cart")}</h1>
           <p className="tesla-hero-subtitle text-white/90 max-w-lg">
-            Review your evaluation services before proceeding to payment.
+            {translate("Review your evaluation services before proceeding to payment.")}
           </p>
         </div>
       </section>
