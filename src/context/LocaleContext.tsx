@@ -249,6 +249,9 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
     setLocale(newLocale);
     localStorage.setItem(LOCALE_KEY, JSON.stringify(newLocale));
+    // Clear pending to retrigger translations for new language
+    pendingTexts.current = new Set();
+    inFlightTexts.current = new Set();
     forceUpdate(n => n + 1);
   }, [locale]);
 
