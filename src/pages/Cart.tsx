@@ -160,7 +160,7 @@ const Cart = () => {
                     onClick={handleProceed}
                     className="flex-1 inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105"
                   >
-                    Proceed to Application <ArrowRight size={16} />
+                    {translate("Proceed to Application")} <ArrowRight size={16} />
                   </button>
                   <button
                     onClick={clearCart}
