@@ -668,14 +668,14 @@ const StaffDashboard = () => {
                           {/* Quick note tags */}
                           <div className="flex flex-wrap gap-2 mb-3">
                             {quickNotes.map((qn) => (
-                              <Button key={qn} size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
+                              <button key={qn} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl text-xs font-semibold border border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 transition-all"
                                 onClick={() => {
                                   const currentNote = o.staff_note || "";
                                   const newNote = currentNote ? `${currentNote}\n${qn}` : qn;
                                   handleUpdateNote(o.id, newNote);
                                 }}>
                                 <Plus size={10} /> {qn}
-                              </Button>
+                              </button>
                             ))}
                           </div>
 
