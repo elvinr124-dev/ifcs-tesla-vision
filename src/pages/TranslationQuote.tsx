@@ -53,6 +53,7 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
 );
 
 const TranslationQuote = () => {
+  const { translate, translateDual } = useLocale();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
