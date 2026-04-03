@@ -617,7 +617,7 @@ const StaffDashboard = () => {
                 <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by IFCS ID, App ID, reference # or email..." className="pl-10 rounded-2xl h-12" />
               </div>
             </div>
-            <CardContent className="space-y-4">
+            <div className="space-y-4">
               {filtered.length === 0 && (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">{searchQuery ? `No applications found for "${searchQuery}"` : "No orders in the queue yet."}</p>
