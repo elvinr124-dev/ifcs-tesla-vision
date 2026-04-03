@@ -127,7 +127,7 @@ const StaffDashboard = () => {
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
 
   // Delete confirmation
-  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; type: "client" | "order"; id: string; label: string; email?: string }>({ open: false, type: "client", id: "", label: "" });
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; deleteType: "client" | "application" | "both"; orderId: string; label: string; email?: string }>({ open: false, deleteType: "both", orderId: "", label: "" });
 
   // New Application Entry dialog
   const [newAppOpen, setNewAppOpen] = useState(false);
