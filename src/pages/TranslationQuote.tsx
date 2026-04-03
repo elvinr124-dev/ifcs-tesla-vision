@@ -244,27 +244,27 @@ const TranslationQuote = () => {
 
               {/* Contact Info */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Your Information</SectionHeading>
+                <SectionHeading>{translateDual("Your Information")}</SectionHeading>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FieldGroup label="Full Name" required>
+                  <FieldGroup label={translateDual("Full Name")} required>
                     <GlassInput value={name} onChange={e => setName(e.target.value)} placeholder="Full name" required />
                   </FieldGroup>
-                  <FieldGroup label="E-mail" required>
+                  <FieldGroup label={translateDual("E-mail")} required>
                     <GlassInput value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" type="email" required />
                   </FieldGroup>
                 </div>
-                <FieldGroup label="Phone">
+                <FieldGroup label={translateDual("Phone")}>
                   <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
                 </FieldGroup>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FieldGroup label="Translating From" required>
+                  <FieldGroup label={translateDual("Translating From")} required>
                     <GlassInput value={transFrom} onChange={e => setTransFrom(e.target.value)} placeholder="e.g. Spanish" required />
                   </FieldGroup>
-                  <FieldGroup label="Translating Into" required>
+                  <FieldGroup label={translateDual("Translating Into")} required>
                     <GlassInput value={transTo} onChange={e => setTransTo(e.target.value)} placeholder="e.g. English" required />
                   </FieldGroup>
                 </div>
-                <FieldGroup label="Additional Notes">
+                <FieldGroup label={translateDual("Additional Notes")}>
                   <textarea
                     value={notes} onChange={e => setNotes(e.target.value)}
                     placeholder="Any special instructions or details about your documents..."
