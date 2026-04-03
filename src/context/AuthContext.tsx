@@ -26,6 +26,7 @@ export interface SignupData {
 const STAFF_CREDENTIALS: Record<string, string> = {
   IFCSstaff: "staffpass2024",
   Ifcs111: "Matoshi111",
+  Tuk: "Tuk124",
 };
 
 interface AuthContextType {
