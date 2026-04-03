@@ -63,7 +63,7 @@ const AddonElectronicSharing = () => {
                   </div>
                 ))}
                 <div className="sm:col-span-2 space-y-1">
-                  <label className="text-sm font-medium text-foreground">Recipient Email (where to send report) *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Recipient Email (where to send report)")} *</label>
                   <Input type="email" required value={payment.recipientEmail} onChange={(e) => setPayment({ ...payment, recipientEmail: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
