@@ -79,17 +79,17 @@ const AddonRenewal = () => {
 
           <form onSubmit={handlePay} className="space-y-8">
             <Card className="border-border bg-card">
-              <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> Your Information & Payment</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Your Information & Payment")}</CardTitle></CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Name on Documents *</label><Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">IFCS ID *</label><Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Email *</label><Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Phone *</label><Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} /></div>
-                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Name on Credit Card *</label><Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} /></div>
-                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Card Number *</label><Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Month *</label><Input required value={payment.month} onChange={(e) => setPayment({ ...payment, month: e.target.value })} placeholder="MM" /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Year *</label><Input required value={payment.year} onChange={(e) => setPayment({ ...payment, year: e.target.value })} placeholder="YYYY" /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">CVV *</label><Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Name on Documents")} *</label><Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("IFCS ID")} *</label><Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Email")} *</label><Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Phone")} *</label><Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} /></div>
+                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Name on Credit Card")} *</label><Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} /></div>
+                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Card Number")} *</label><Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Month")} *</label><Input required value={payment.month} onChange={(e) => setPayment({ ...payment, month: e.target.value })} placeholder="MM" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Year")} *</label><Input required value={payment.year} onChange={(e) => setPayment({ ...payment, year: e.target.value })} placeholder="YYYY" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("CVV")} *</label><Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" /></div>
               </CardContent>
             </Card>
 
