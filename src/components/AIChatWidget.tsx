@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, X, Send, Paperclip } from "lucide-react";
+import { MessageCircle, X, Send, Paperclip, RotateCcw, Maximize2, Minimize2 } from "lucide-react";
 
 type NavButton = { label: string; path: string; state?: any };
 type Message = {
