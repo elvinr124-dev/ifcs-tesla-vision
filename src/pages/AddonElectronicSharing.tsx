@@ -43,7 +43,7 @@ const AddonElectronicSharing = () => {
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
           <div className="text-center">
             <Share2 size={48} className="text-accent mx-auto mb-4" />
-            <p className="text-muted-foreground">Send a secure electronic copy of your IFCS evaluation report to any institution or employer.</p>
+            <p className="text-muted-foreground">{translate("Send a secure electronic copy of your IFCS evaluation report to any institution or employer.")}</p>
             <p className="text-4xl font-bold text-foreground mt-4">$25.00</p>
           </div>
 
