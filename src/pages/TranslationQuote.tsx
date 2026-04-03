@@ -352,7 +352,7 @@ const TranslationQuote = () => {
                 )}
 
                 <button type="button" onClick={() => fileInputRef.current?.click()} className="text-sm font-medium text-accent hover:opacity-75 transition-opacity underline underline-offset-4">
-                  + Add another file
+                  {translate("+ Add another file")}
                 </button>
               </div>
 
