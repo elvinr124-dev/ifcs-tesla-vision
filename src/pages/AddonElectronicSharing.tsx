@@ -83,7 +83,7 @@ const AddonElectronicSharing = () => {
                   <Input required value={payment.year} onChange={(e) => setPayment({ ...payment, year: e.target.value })} placeholder="YYYY" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">CVV *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("CVV")} *</label>
                   <Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" />
                 </div>
               </CardContent>
