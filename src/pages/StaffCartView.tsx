@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
-import ifcsLogoSig from "@/assets/ifcs-logo-signature.png";
+import ifcsEmailSig from "@/assets/ifcs-email-signature.png";
 
 const STAFF_EMAILS = [
   "docs@ifcsevals.com",
@@ -24,10 +24,7 @@ const STAFF_EMAILS = [
   "translations@ifcsevals.com",
 ];
 
-const SIGNATURE_TEMPLATE = (fromEmail: string) => {
-  const emailPrefix = fromEmail ? fromEmail.split("@")[0] : "info";
-  return `\n\n——————————————————\nInstitute of Foreign Credential Services | NACES Member | ATA Member\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: 914.693.2840\nFax: 914.231-7782\nE-mail: ${emailPrefix}@ifcsevals.com\nwww.ifcsevals.com`;
-};
+// Signature is now image-only, no text appended to email content
 
 interface AppRow {
   id: string;
@@ -123,25 +120,10 @@ const StaffCartView = () => {
   };
 
   const handleAttachSignature = () => {
-    if (signatureAttached) {
-      // Remove signature
-      const sigText = SIGNATURE_TEMPLATE(emailFrom);
-      setEmailContent((prev) => prev.replace(sigText, ""));
-      setSignatureAttached(false);
-    } else {
-      // Add signature
-      setEmailContent((prev) => prev + SIGNATURE_TEMPLATE(emailFrom));
-      setSignatureAttached(true);
-    }
+    setSignatureAttached((prev) => !prev);
   };
 
-  // Update signature when "from" changes and signature is attached
   const handleFromChange = (newFrom: string) => {
-    if (signatureAttached) {
-      const oldSig = SIGNATURE_TEMPLATE(emailFrom);
-      const newSig = SIGNATURE_TEMPLATE(newFrom);
-      setEmailContent((prev) => prev.replace(oldSig, newSig));
-    }
     setEmailFrom(newFrom);
   };
 
@@ -428,12 +410,7 @@ const StaffCartView = () => {
             {/* Signature preview when attached */}
             {signatureAttached && (
               <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
-                <div className="flex items-start gap-4">
-                  <img src={ifcsLogoSig} alt="IFCS Logo" className="w-28 h-auto object-contain flex-shrink-0" />
-                  <div className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
-                    {`Institute of Foreign Credential Services | NACES Member | ATA Member\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: 914.693.2840\nFax: 914.231-7782\nE-mail: ${emailFrom ? emailFrom.split("@")[0] : "info"}@ifcsevals.com\nwww.ifcsevals.com`}
-                  </div>
-                </div>
+                <img src={ifcsEmailSig} alt="IFCS Email Signature" className="max-w-md h-auto object-contain" />
               </div>
             )}
 
