@@ -316,14 +316,21 @@ const ClientDashboard = () => {
       <Navbar />
 
       <section className="pt-28 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
-          {translate("Welcome")}{user?.firstName ? `, ${user.firstName}` : ""}
-        </h1>
-        <p className="text-muted-foreground mt-2 text-lg">{translate("Applicant Dashboard")}</p>
+        <div className="flex items-center gap-4 mb-2">
+          <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+            <ShieldCheck size={24} className="text-accent" />
+          </div>
+          <div>
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">
+              {translate("Welcome")}{user?.firstName ? `, ${user.firstName}` : ""}
+            </h1>
+            <p className="text-muted-foreground mt-0.5 text-base">{translate("Applicant Dashboard")}</p>
+          </div>
+        </div>
       </section>
 
       <div className="content-bg">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-10">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-8">
 
           {/* ── Track Order ── */}
           <Card className="border-border bg-card">
