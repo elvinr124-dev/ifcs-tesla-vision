@@ -552,8 +552,8 @@ const ClientDashboard = () => {
                   </div>
                 );
               })}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* ── Credential Vault ── */}
           <Card className="border-border bg-card">
