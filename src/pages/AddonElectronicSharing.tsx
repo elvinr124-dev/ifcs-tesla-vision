@@ -34,8 +34,8 @@ const AddonElectronicSharing = () => {
         <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">Electronic Sharing</h1>
-          <p className="text-white/80 mt-2 text-lg">Share your evaluation report electronically</p>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">{translate("Electronic Sharing")}</h1>
+          <p className="text-white/80 mt-2 text-lg">{translate("Share your evaluation report electronically")}</p>
         </div>
       </section>
 
