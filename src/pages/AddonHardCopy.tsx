@@ -60,7 +60,7 @@ const AddonHardCopy = () => {
 
           <form onSubmit={handlePay} className="space-y-8">
             <Card className="border-border bg-card">
-              <CardHeader><CardTitle className="flex items-center gap-2"><MapPin size={20} className="text-accent" /> Delivery Address</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="flex items-center gap-2"><MapPin size={20} className="text-accent" /> {translateDual("Delivery Address")}</CardTitle></CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
                 <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Address Line One *</label><Input required value={address.line1} onChange={(e) => setAddress({ ...address, line1: e.target.value })} /></div>
                 <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Address Line Two</label><Input value={address.line2} onChange={(e) => setAddress({ ...address, line2: e.target.value })} /></div>
