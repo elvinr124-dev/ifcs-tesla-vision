@@ -97,7 +97,7 @@ const AddonElectronicSharing = () => {
                 </div>
                 <div className="flex items-start gap-3">
                   <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={(c) => setAgreePrivacy(c === true)} />
-                  <label htmlFor="privacy" className="text-sm text-muted-foreground">I agree to the <span className="text-accent underline cursor-pointer">Privacy Policy</span></label>
+                  <label htmlFor="privacy" className="text-sm text-muted-foreground">{translate("I agree to the")} <span className="text-accent underline cursor-pointer">{translate("Privacy Policy")}</span></label>
                 </div>
               </CardContent>
             </Card>
