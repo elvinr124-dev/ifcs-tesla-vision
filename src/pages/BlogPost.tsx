@@ -152,6 +152,7 @@ const posts: Record<string, { title: string; date: string; author: string; image
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { translate } = useLocale();
   const post = slug ? posts[slug] : null;
 
   if (!post) {
