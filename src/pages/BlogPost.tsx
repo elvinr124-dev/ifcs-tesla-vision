@@ -179,7 +179,7 @@ const BlogPost = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12 pb-12 hero-text-shadow">
           <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-medium mb-4 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Blog
+            <ArrowLeft size={16} /> {translate("Back to Blog")}
           </Link>
           <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">{post.title}</h1>
           <div className="flex items-center gap-4 mt-4 text-sm text-white/70">
