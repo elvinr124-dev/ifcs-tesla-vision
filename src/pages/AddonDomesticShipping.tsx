@@ -10,10 +10,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CreditCard, Truck, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
+import { useLocale } from "@/context/LocaleContext";
 
 const AddonDomesticShipping = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { translateDual, translate } = useLocale();
   const [address, setAddress] = useState({ line1: "", line2: "", city: "", state: "", zip: "" });
   const [payment, setPayment] = useState({ name: "", ifcsId: "", email: "", phone: "", cardHolder: "", cardNumber: "", month: "", year: "", cvv: "" });
   const [agreeTerms, setAgreeTerms] = useState(false);
