@@ -120,25 +120,10 @@ const StaffCartView = () => {
   };
 
   const handleAttachSignature = () => {
-    if (signatureAttached) {
-      // Remove signature
-      const sigText = SIGNATURE_TEMPLATE(emailFrom);
-      setEmailContent((prev) => prev.replace(sigText, ""));
-      setSignatureAttached(false);
-    } else {
-      // Add signature
-      setEmailContent((prev) => prev + SIGNATURE_TEMPLATE(emailFrom));
-      setSignatureAttached(true);
-    }
+    setSignatureAttached((prev) => !prev);
   };
 
-  // Update signature when "from" changes and signature is attached
   const handleFromChange = (newFrom: string) => {
-    if (signatureAttached) {
-      const oldSig = SIGNATURE_TEMPLATE(emailFrom);
-      const newSig = SIGNATURE_TEMPLATE(newFrom);
-      setEmailContent((prev) => prev.replace(oldSig, newSig));
-    }
     setEmailFrom(newFrom);
   };
 
