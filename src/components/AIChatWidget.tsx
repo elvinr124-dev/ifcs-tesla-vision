@@ -315,16 +315,16 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["uscis", "accepted", "immigration", "recognized"],
-    response: `Yes! **IFCS evaluations and translations are accepted by:**\n\n✅ **USCIS** (U.S. Citizenship and Immigration Services)\n✅ Universities and colleges nationwide\n✅ Federal and state government agencies\n✅ Employers across all industries\n✅ Professional licensure boards`,
+    keywords: ["uscis", "accepted", "immigration", "recognized", "green card", "h1b", "h-1b", "work visa", "immigrant"],
+    response: `Yes! As a **NACES member**, IFCS evaluations are recognized at the highest level:\n\n✅ **USCIS** (U.S. Citizenship and Immigration Services)\n✅ **U.S. Military** branches\n✅ Universities and colleges nationwide\n✅ Federal and state government agencies\n✅ Employers across all industries\n✅ Professional licensure boards\n\nFor **immigration and employment purposes**, we recommend the **General Analysis ($100)** which provides the U.S. equivalency statement accepted by USCIS.\n\nNACES membership ensures our evaluations meet the gold standard of credential evaluation in the United States.`,
     navButtons: [
-      { label: "Start Application", path: "/application" },
+      { label: "Start Application", path: "/application", state: { serviceTitle: "General Analysis", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 100 } },
       { label: "Learn More", path: "/learn-more-evaluations" },
     ],
   },
   {
-    keywords: ["refund", "cancel", "money back"],
-    response: `Here is our refund policy:\n\n• Refunds are issued **only for overpayment**.\n• **Standard service** can be canceled within **24 hours**, subject to a **$50 minimum processing fee**.\n• **No refunds** for 24-hour and 3-day rush services once processing has begun.`,
+    keywords: ["refund", "cancel", "money back", "dispute", "complaint"],
+    response: `For case-specific inquiries regarding refunds, disputes, or complaints, please contact our team directly:\n\n📞 **(914) 693-2840**\n📧 **apps@ifcsevals.com**\n\nPlease have your **Application ID** ready for the fastest response.\n\n**General refund policy:**\n• Refunds are issued **only for overpayment**.\n• **Standard service** can be canceled within **24 hours**, subject to a **$50 minimum processing fee**.\n• **No refunds** for 24-hour and 3-day rush services once processing has begun.`,
     navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
@@ -399,8 +399,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["naces", "member", "accredit", "legitimate"],
-    response: `IFCS is a recognized credential evaluation service trusted by:\n\n✅ **NAFSA** — Association of International Educators\n✅ **AACRAO** — American Association of Collegiate Registrars and Admissions Officers\n✅ **IAU** — International Association of Universities\n✅ **UNESCO** — United Nations Educational, Scientific and Cultural Organization`,
+    keywords: ["naces", "member", "accredit", "legitimate", "recognized", "credible", "trusted", "accepted everywhere"],
+    response: `**IFCS is a proud member of NACES** (National Association of Credential Evaluation Services) — the gold standard for credential evaluation in the United States.\n\n**What NACES membership means:**\n✅ Evaluations accepted by **USCIS**, the **U.S. Military**, and **thousands of universities**\n✅ Adheres to the highest ethical and professional standards\n✅ Uses **AACRAO EDGE** research databases — the same tools used by top university registrars\n\n**IFCS is also recognized by:**\n✅ **NAFSA** — Association of International Educators\n✅ **AACRAO** — American Association of Collegiate Registrars and Admissions Officers\n✅ **IAU** — International Association of Universities\n✅ **UNESCO** — United Nations Educational, Scientific and Cultural Organization`,
     navButtons: [
       { label: "About Us", path: "/about" },
       { label: "Learn More", path: "/learn-more-evaluations" },
