@@ -276,9 +276,9 @@ const TranslationQuote = () => {
 
               {/* Upload */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
-                <SectionHeading>Upload Your Documents</SectionHeading>
+                <SectionHeading>{translateDual("Upload Your Documents")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
-                  Upload clear images or PDFs. Our AI will analyze word counts for review — pricing will be provided by our team.
+                  {translate("Upload clear images or PDFs. Our AI will analyze word counts for review — pricing will be provided by our team.")}
                 </p>
 
                 <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border rounded-2xl p-8 cursor-pointer hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 group">
