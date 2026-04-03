@@ -630,15 +630,15 @@ const StaffDashboard = () => {
                 const applicantName = client ? `${client.first_name} ${client.last_name}` : o.client_email;
 
                 return (
-                  <div key={o.id} className="rounded-xl border border-border overflow-hidden">
+                  <div key={o.id} className="rounded-2xl border border-border overflow-hidden hover:shadow-md transition-shadow">
                     <button onClick={() => setSelectedOrder(isSelected ? null : o.id)}
-                      className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left">
+                      className="w-full flex items-center justify-between p-5 hover:bg-muted/20 transition-colors text-left">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
                           {o.application_id && <p className="font-semibold text-foreground">App ID {o.application_id}</p>}
                           {o.ifcs_id && <p className="font-semibold text-accent">IFCS ID {o.ifcs_id}</p>}
                           {!o.application_id && !o.ifcs_id && <p className="font-semibold text-foreground">#{o.reference_id}</p>}
-                          <Badge variant="secondary" className={`${meta.color} gap-1`}>{meta.icon} {meta.label}</Badge>
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${meta.color}`}>{meta.icon} {meta.label}</span>
                         </div>
                         <p className="text-sm text-foreground mt-1">{applicantName} <span className="text-muted-foreground">— {o.client_email}</span></p>
                         <p className="text-xs text-muted-foreground">{o.service || "No service specified"} · Added {new Date(o.submitted_at).toLocaleDateString()}</p>
