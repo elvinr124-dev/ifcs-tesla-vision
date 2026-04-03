@@ -374,11 +374,11 @@ const TranslationQuote = () => {
 
               {/* Document Summary */}
               <div className="rounded-3xl border border-accent/30 bg-card shadow-lg p-8 space-y-5 sticky top-24">
-                <SectionHeading>Document Summary</SectionHeading>
+                <SectionHeading>{translateDual("Document Summary")}</SectionHeading>
 
                 {fileAnalyses.length === 0 ? (
                   <p className="text-sm text-muted-foreground font-light text-center py-4">
-                    Upload documents to see analysis
+                    {translate("Upload documents to see analysis")}
                   </p>
                 ) : (
                   <div className="space-y-3">
