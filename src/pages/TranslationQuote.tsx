@@ -7,6 +7,7 @@ import BackToHome from "@/components/BackToHome";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useLocale } from "@/context/LocaleContext";
 
 interface FileAnalysis {
   file: File;
