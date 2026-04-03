@@ -206,14 +206,14 @@ const TranslationQuote = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12">
           <Link to="/translations" className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Translations
+            <ArrowLeft size={16} /> {translate("Back to Translations")}
           </Link>
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">Request a Quote</p>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">{translate("Request a Quote")}</p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white">
-            Translation Quote
+            {translate("Translation Quote")}
           </h1>
           <p className="mt-4 text-base md:text-lg text-white/80 font-light max-w-xl">
-            Upload your documents for a personalized quote. Our AI will analyze word counts and our team will review and respond with pricing.
+            {translate("Upload your documents for a personalized quote. Our AI will analyze word counts and our team will review and respond with pricing.")}
           </p>
         </div>
       </section>
