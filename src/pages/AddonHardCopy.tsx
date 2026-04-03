@@ -62,13 +62,13 @@ const AddonHardCopy = () => {
             <Card className="border-border bg-card">
               <CardHeader><CardTitle className="flex items-center gap-2"><MapPin size={20} className="text-accent" /> {translateDual("Delivery Address")}</CardTitle></CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
-                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Address Line One *</label><Input required value={address.line1} onChange={(e) => setAddress({ ...address, line1: e.target.value })} /></div>
-                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Address Line Two</label><Input value={address.line2} onChange={(e) => setAddress({ ...address, line2: e.target.value })} /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">City *</label><Input required value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">State *</label><Input required value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Zip *</label><Input required value={address.zip} onChange={(e) => setAddress({ ...address, zip: e.target.value })} /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Country *</label>
-                  <Select value={address.country} onValueChange={(v) => setAddress({ ...address, country: v })}><SelectTrigger><SelectValue placeholder="Select country" /></SelectTrigger><SelectContent>{COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>
+                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Address Line One")} *</label><Input required value={address.line1} onChange={(e) => setAddress({ ...address, line1: e.target.value })} /></div>
+                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Address Line Two")}</label><Input value={address.line2} onChange={(e) => setAddress({ ...address, line2: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("City")} *</label><Input required value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("State")} *</label><Input required value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Zip")} *</label><Input required value={address.zip} onChange={(e) => setAddress({ ...address, zip: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Country")} *</label>
+                  <Select value={address.country} onValueChange={(v) => setAddress({ ...address, country: v })}><SelectTrigger><SelectValue placeholder={translate("Select country")} /></SelectTrigger><SelectContent>{COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent></Select>
                 </div>
               </CardContent>
             </Card>
