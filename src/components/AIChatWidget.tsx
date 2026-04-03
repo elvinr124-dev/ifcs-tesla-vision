@@ -315,10 +315,10 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["uscis", "accepted", "immigration", "recognized"],
-    response: `Yes! **IFCS evaluations and translations are accepted by:**\n\n✅ **USCIS** (U.S. Citizenship and Immigration Services)\n✅ Universities and colleges nationwide\n✅ Federal and state government agencies\n✅ Employers across all industries\n✅ Professional licensure boards`,
+    keywords: ["uscis", "accepted", "immigration", "recognized", "green card", "h1b", "h-1b", "work visa", "immigrant"],
+    response: `Yes! As a **NACES member**, IFCS evaluations are recognized at the highest level:\n\n✅ **USCIS** (U.S. Citizenship and Immigration Services)\n✅ **U.S. Military** branches\n✅ Universities and colleges nationwide\n✅ Federal and state government agencies\n✅ Employers across all industries\n✅ Professional licensure boards\n\nFor **immigration and employment purposes**, we recommend the **General Analysis ($100)** which provides the U.S. equivalency statement accepted by USCIS.\n\nNACES membership ensures our evaluations meet the gold standard of credential evaluation in the United States.`,
     navButtons: [
-      { label: "Start Application", path: "/application" },
+      { label: "Start Application", path: "/application", state: { serviceTitle: "General Analysis", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 100 } },
       { label: "Learn More", path: "/learn-more-evaluations" },
     ],
   },
