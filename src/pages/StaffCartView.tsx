@@ -279,9 +279,9 @@ const StaffCartView = () => {
 
       {/* E-Signature Dialog */}
       <Dialog open={sigOpen} onOpenChange={setSigOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>E-Signature — {sigData?.appId}</DialogTitle>
+            <DialogTitle>E-Signature & Agreements — {sigData?.appId}</DialogTitle>
           </DialogHeader>
           {sigData && (
             <div className="space-y-6">
@@ -290,18 +290,30 @@ const StaffCartView = () => {
                 <p className="text-lg font-bold text-foreground">{sigData.name}</p>
               </div>
 
-              <div className="space-y-4">
-                <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-2">
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Terms & Conditions Signature</p>
+              {/* Terms & Conditions agreed to */}
+              <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-3">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Terms & Conditions — Agreed</p>
+                <div className="text-xs text-muted-foreground leading-relaxed max-h-40 overflow-y-auto pr-2">
+                  <p>By submitting this application, the applicant agrees to be bound by the Terms of Service of the Institute of Foreign Credential Services (IFCS). The applicant acknowledges that IFCS evaluations are advisory in nature, that processing times are estimates, and that all fees are non-refundable once evaluation has begun. IFCS is not responsible for delays caused by incomplete or inaccurate documentation provided by the applicant. The applicant grants IFCS permission to contact issuing institutions for document verification purposes.</p>
+                </div>
+                <div className="border-t border-border pt-3">
+                  <p className="text-xs text-muted-foreground font-semibold mb-1">Digital Signature</p>
                   {sigData.terms ? (
                     <p className="text-xl font-serif italic text-foreground">{sigData.terms}</p>
                   ) : (
                     <p className="text-sm text-muted-foreground italic">No signature on file</p>
                   )}
                 </div>
+              </div>
 
-                <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-2">
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Privacy Policy Signature</p>
+              {/* Privacy Policy agreed to */}
+              <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-3">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Privacy Policy — Agreed</p>
+                <div className="text-xs text-muted-foreground leading-relaxed max-h-40 overflow-y-auto pr-2">
+                  <p>The applicant acknowledges and consents to the Privacy Policy of IFCS. Personal information collected — including name, date of birth, contact details, and academic records — is used solely for credential evaluation purposes. IFCS may share applicant information with designated institutions and employers as requested. Data is securely stored and will not be sold or distributed to third parties beyond the scope of the evaluation. The applicant has the right to request access to, correction of, or deletion of their personal data at any time by contacting IFCS.</p>
+                </div>
+                <div className="border-t border-border pt-3">
+                  <p className="text-xs text-muted-foreground font-semibold mb-1">Digital Signature</p>
                   {sigData.privacy ? (
                     <p className="text-xl font-serif italic text-foreground">{sigData.privacy}</p>
                   ) : (
@@ -316,36 +328,36 @@ const StaffCartView = () => {
 
       {/* Email Dialog */}
       <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-3xl w-[90vw]">
           <DialogHeader>
             <DialogTitle>Send Email</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            {/* From */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">From</label>
-              <Select value={emailFrom} onValueChange={setEmailFrom}>
-                <SelectTrigger className="rounded-2xl">
-                  <SelectValue placeholder="Select sender..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {STAFF_EMAILS.map((e) => (
-                    <SelectItem key={e} value={e}>{e}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* To */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">To</label>
-              <Input value={emailTo} readOnly className="rounded-2xl bg-muted/50" />
+          <div className="space-y-5">
+            {/* From & To row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">From</label>
+                <Select value={emailFrom} onValueChange={setEmailFrom}>
+                  <SelectTrigger className="rounded-2xl h-12">
+                    <SelectValue placeholder="Select sender..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STAFF_EMAILS.map((e) => (
+                      <SelectItem key={e} value={e}>{e}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">To</label>
+                <Input value={emailTo} readOnly className="rounded-2xl bg-muted/50 h-12" />
+              </div>
             </div>
 
             {/* Subject */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Subject</label>
-              <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Email subject..." className="rounded-2xl" />
+              <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Email subject..." className="rounded-2xl h-12" />
             </div>
 
             {/* Content */}
@@ -355,8 +367,8 @@ const StaffCartView = () => {
                 value={emailContent}
                 onChange={(e) => setEmailContent(e.target.value)}
                 placeholder="Write your message..."
-                rows={6}
-                className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                rows={10}
+                className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring resize-y min-h-[200px]"
               />
             </div>
 
@@ -366,7 +378,7 @@ const StaffCartView = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
                 >
                   <Paperclip size={14} /> Attach File
                 </button>
@@ -390,7 +402,7 @@ const StaffCartView = () => {
             <button
               onClick={handleSendEmail}
               disabled={emailSending || !emailFrom || !emailSubject.trim() || !emailContent.trim()}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send size={16} /> {emailSending ? "Sending..." : "Send Email"}
             </button>

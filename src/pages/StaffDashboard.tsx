@@ -127,7 +127,7 @@ const StaffDashboard = () => {
   const [activeConvId, setActiveConvId] = useState<string | null>(null);
 
   // Delete confirmation
-  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; type: "client" | "order"; id: string; label: string; email?: string }>({ open: false, type: "client", id: "", label: "" });
+  const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; deleteType: "client" | "application" | "both"; orderId: string; label: string; email?: string }>({ open: false, deleteType: "both", orderId: "", label: "" });
 
   // New Application Entry dialog
   const [newAppOpen, setNewAppOpen] = useState(false);
@@ -249,28 +249,30 @@ const StaffDashboard = () => {
 
   // Delete client or order (with associated data)
   const handleDelete = async () => {
-    if (deleteDialog.type === "order") {
-      // Also delete associated application
-      const order = orders.find(o => o.id === deleteDialog.id);
+    const order = orders.find(o => o.id === deleteDialog.orderId);
+
+    if (deleteDialog.deleteType === "application" || deleteDialog.deleteType === "both") {
       if (order?.application_id) {
         await (supabase as any).from("applications").delete().eq("application_id", order.application_id);
       }
-      await (supabase as any).from("client_orders").delete().eq("id", deleteDialog.id);
-      setOrders(prev => prev.filter(o => o.id !== deleteDialog.id));
+      await (supabase as any).from("client_orders").delete().eq("id", deleteDialog.orderId);
+      setOrders(prev => prev.filter(o => o.id !== deleteDialog.orderId));
+    }
 
-      // Also delete the client account if requested
+    if (deleteDialog.deleteType === "client" || deleteDialog.deleteType === "both") {
       if (deleteDialog.email) {
         await (supabase as any).from("client_accounts").delete().eq("email", deleteDialog.email);
         setClients(prev => prev.filter(c => c.email !== deleteDialog.email));
       }
-
-      toast({ title: "Deleted", description: "Application and associated data removed." });
-    } else {
-      await (supabase as any).from("client_accounts").delete().eq("id", deleteDialog.id);
-      setClients(prev => prev.filter(c => c.id !== deleteDialog.id));
-      toast({ title: "Client Deleted" });
     }
-    setDeleteDialog({ open: false, type: "client", id: "", label: "" });
+
+    const messages: Record<string, string> = {
+      client: "Client account deleted.",
+      application: "Application deleted.",
+      both: "Application and client account deleted.",
+    };
+    toast({ title: "Deleted", description: messages[deleteDialog.deleteType] });
+    setDeleteDialog({ open: false, deleteType: "both", orderId: "", label: "" });
   };
 
   // Upload attachment on existing order note
@@ -528,8 +530,15 @@ const StaffDashboard = () => {
       <Navbar />
 
       <section className="pt-28 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">Staff Dashboard</h1>
-        <p className="text-muted-foreground mt-2 text-lg">Manage applications, share reports & communicate with applicants</p>
+        <div className="flex items-center gap-4 mb-2">
+          <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+            <Package size={24} className="text-accent" />
+          </div>
+          <div>
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Staff Dashboard</h1>
+            <p className="text-muted-foreground mt-0.5 text-base">Manage applications, share reports & communicate with applicants</p>
+          </div>
+        </div>
       </section>
 
       <div className="content-bg">
@@ -696,13 +705,21 @@ const StaffDashboard = () => {
                         </div>
 
                         {/* Chat & Delete */}
-                        <div className="flex gap-3 flex-wrap">
+                        <div className="flex gap-2 flex-wrap">
                           <Button size="sm" variant="outline" className="gap-1 rounded-full" onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
                           </Button>
+                          <Button size="sm" variant="outline" className="gap-1 rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"
+                            onClick={() => setDeleteDialog({ open: true, deleteType: "client", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                            <UserX size={14} /> Delete Client
+                          </Button>
+                          <Button size="sm" variant="outline" className="gap-1 rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"
+                            onClick={() => setDeleteDialog({ open: true, deleteType: "application", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                            <Trash2 size={14} /> Delete Application
+                          </Button>
                           <Button size="sm" variant="destructive" className="gap-1 rounded-full"
-                            onClick={() => setDeleteDialog({ open: true, type: "order", id: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
-                            <Trash2 size={14} /> Delete Application & Client
+                            onClick={() => setDeleteDialog({ open: true, deleteType: "both", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                            <Trash2 size={14} /> Delete Client & Application
                           </Button>
                         </div>
                       </div>
@@ -985,7 +1002,15 @@ const StaffDashboard = () => {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete application <strong>{deleteDialog.label}</strong> and the associated client account? This action cannot be undone.
+              {deleteDialog.deleteType === "client" && (
+                <>Are you sure you want to delete the <strong>client account</strong> associated with <strong>{deleteDialog.label}</strong>? This action cannot be undone.</>
+              )}
+              {deleteDialog.deleteType === "application" && (
+                <>Are you sure you want to delete application <strong>{deleteDialog.label}</strong>? The client account will remain. This action cannot be undone.</>
+              )}
+              {deleteDialog.deleteType === "both" && (
+                <>Are you sure you want to delete application <strong>{deleteDialog.label}</strong> and the associated client account? This action cannot be undone.</>
+              )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

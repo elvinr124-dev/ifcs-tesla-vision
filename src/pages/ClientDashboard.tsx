@@ -316,14 +316,21 @@ const ClientDashboard = () => {
       <Navbar />
 
       <section className="pt-28 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-foreground">
-          {translate("Welcome")}{user?.firstName ? `, ${user.firstName}` : ""}
-        </h1>
-        <p className="text-muted-foreground mt-2 text-lg">{translate("Applicant Dashboard")}</p>
+        <div className="flex items-center gap-4 mb-2">
+          <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">
+            <ShieldCheck size={24} className="text-accent" />
+          </div>
+          <div>
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">
+              {translate("Welcome")}{user?.firstName ? `, ${user.firstName}` : ""}
+            </h1>
+            <p className="text-muted-foreground mt-0.5 text-base">{translate("Applicant Dashboard")}</p>
+          </div>
+        </div>
       </section>
 
       <div className="content-bg">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-10">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-8">
 
           {/* ── Track Order ── */}
           <Card className="border-border bg-card">
@@ -392,26 +399,28 @@ const ClientDashboard = () => {
                 const receiptUrl = order.application_id ? appDataMap[order.application_id]?.receipt_url : null;
 
                 return (
-                  <div key={order.id} className="rounded-xl border border-border overflow-hidden">
+                  <div key={order.id} className="rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     <button
                       onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
-                      className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left"
+                      className="w-full flex items-center justify-between p-5 hover:bg-muted/20 transition-colors text-left"
                     >
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 flex-wrap">
-                          {order.application_id && <p className="font-semibold text-foreground">App ID {order.application_id}</p>}
+                          {order.application_id && <p className="font-bold text-foreground">App ID {order.application_id}</p>}
                           {(order.ifcs_id || hasAppData?.ifcs_id) && (
-                            <p className="font-semibold text-accent">— IFCS ID {order.ifcs_id || hasAppData?.ifcs_id}</p>
+                            <p className="font-bold text-accent">— IFCS ID {order.ifcs_id || hasAppData?.ifcs_id}</p>
                           )}
-                          {!order.application_id && <p className="font-semibold text-foreground">#{order.reference_id}</p>}
-                          <Badge variant="secondary" className={`${meta.color} gap-1`}>
+                          {!order.application_id && <p className="font-bold text-foreground">#{order.reference_id}</p>}
+                          <Badge variant="secondary" className={`${meta.color} gap-1 rounded-full px-3`}>
                             {meta.icon} {meta.label}
                           </Badge>
                         </div>
-                        {order.service && <p className="text-sm text-muted-foreground mt-1">{order.service}</p>}
-                        <p className="text-xs text-muted-foreground">Added {new Date(order.submitted_at).toLocaleDateString()}</p>
+                        {order.service && <p className="text-sm text-muted-foreground mt-1.5 truncate">{order.service}</p>}
+                        <p className="text-xs text-muted-foreground mt-0.5">Added {new Date(order.submitted_at).toLocaleDateString()}</p>
                       </div>
-                      {isExpanded ? <ChevronUp size={20} className="text-muted-foreground" /> : <ChevronDown size={20} className="text-muted-foreground" />}
+                      <div className="ml-4 flex-shrink-0">
+                        {isExpanded ? <ChevronUp size={20} className="text-muted-foreground" /> : <ChevronDown size={20} className="text-muted-foreground" />}
+                      </div>
                     </button>
 
                     {isExpanded && (
