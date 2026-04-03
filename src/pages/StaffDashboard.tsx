@@ -734,47 +734,50 @@ const StaffDashboard = () => {
           </div>
 
           {/* ── Share Evaluation Report ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl"><FileText size={22} className="text-accent" /> Share Evaluation Report</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleShare} className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Recipient Email *</label>
-                  <Input type="email" placeholder="applicant@email.com or institution@school.edu" value={shareEmail} onChange={(e) => setShareEmail(e.target.value)} required />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">IFCS Reference # *</label>
-                  <Input placeholder="44507" value={shareRef} onChange={(e) => setShareRef(e.target.value)} required />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Evaluation Type *</label>
-                  <Select value={shareType} onValueChange={setShareType}>
-                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="general">General Analysis</SelectItem>
-                      <SelectItem value="general_gpa">General Analysis + GPA</SelectItem>
-                      <SelectItem value="course">Course-by-Course</SelectItem>
-                      <SelectItem value="comprehensive">Comprehensive Course-by-Course</SelectItem>
-                      <SelectItem value="health">Health Professions Course-by-Course</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Expiration Date *</label>
-                  <Input type="date" value={shareExpiry} onChange={(e) => setShareExpiry(e.target.value)} required />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-foreground">Upload Evaluation (PDF Only) *</label>
-                  <Input type="file" accept=".pdf" onChange={(e) => setShareFile(e.target.files?.[0] || null)} />
-                </div>
-                <div className="md:col-span-2">
-                  <Button type="submit" className="gap-2 px-8"><Upload size={16} /> Upload & Share Report</Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <FileText size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Share Evaluation Report</h2>
+            </div>
+            <form onSubmit={handleShare} className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Recipient Email *</label>
+                <Input type="email" placeholder="applicant@email.com or institution@school.edu" value={shareEmail} onChange={(e) => setShareEmail(e.target.value)} required className="rounded-2xl h-12" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">IFCS Reference # *</label>
+                <Input placeholder="44507" value={shareRef} onChange={(e) => setShareRef(e.target.value)} required className="rounded-2xl h-12" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Evaluation Type *</label>
+                <Select value={shareType} onValueChange={setShareType}>
+                  <SelectTrigger className="rounded-2xl h-12"><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="general">General Analysis</SelectItem>
+                    <SelectItem value="general_gpa">General Analysis + GPA</SelectItem>
+                    <SelectItem value="course">Course-by-Course</SelectItem>
+                    <SelectItem value="comprehensive">Comprehensive Course-by-Course</SelectItem>
+                    <SelectItem value="health">Health Professions Course-by-Course</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Expiration Date *</label>
+                <Input type="date" value={shareExpiry} onChange={(e) => setShareExpiry(e.target.value)} required className="rounded-2xl h-12" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium text-foreground">Upload Evaluation (PDF Only) *</label>
+                <Input type="file" accept=".pdf" onChange={(e) => setShareFile(e.target.files?.[0] || null)} className="rounded-2xl" />
+              </div>
+              <div className="md:col-span-2">
+                <button type="submit" className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all">
+                  <Upload size={16} /> Upload & Share Report
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
 
