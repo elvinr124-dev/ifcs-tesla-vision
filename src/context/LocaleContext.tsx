@@ -306,7 +306,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
       // If there are still pending texts, process another batch
       if (pendingTexts.current.size > 0) {
-        batchTimer.current = setTimeout(processBatch, 200);
+        batchTimer.current = setTimeout(processBatch, 100);
       }
     } catch (e) {
       console.error("Translation error:", e);
