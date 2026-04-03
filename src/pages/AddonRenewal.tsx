@@ -72,9 +72,9 @@ const AddonRenewal = () => {
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
           <div className="text-center">
             <RefreshCw size={48} className="text-accent mx-auto mb-4" />
-            <p className="text-muted-foreground">Renew your expired or expiring IFCS evaluation report. Your renewed report will be valid for an additional 5 years from the date of renewal.</p>
+            <p className="text-muted-foreground">{translate("Renew your expired or expiring IFCS evaluation report. Your renewed report will be valid for an additional 5 years from the date of renewal.")}</p>
             <p className="text-4xl font-bold text-foreground mt-4">$100.00</p>
-            <p className="text-sm text-muted-foreground mt-1">Renewal — Up to 5 Years</p>
+            <p className="text-sm text-muted-foreground mt-1">{translate("Renewal — Up to 5 Years")}</p>
           </div>
 
           <form onSubmit={handlePay} className="space-y-8">
