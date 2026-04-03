@@ -75,7 +75,7 @@ const AddonElectronicSharing = () => {
                   <Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Month *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Month")} *</label>
                   <Input required value={payment.month} onChange={(e) => setPayment({ ...payment, month: e.target.value })} placeholder="MM" />
                 </div>
                 <div className="space-y-1">
