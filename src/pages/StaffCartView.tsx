@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
-import ifcsEmailSig from "@/assets/ifcs-email-signature.png";
+import ifcsLogo from "@/assets/ifcs-logo-signature.png";
 
 const STAFF_EMAILS = [
   "docs@ifcsevals.com",
@@ -410,7 +410,19 @@ const StaffCartView = () => {
             {/* Signature preview when attached */}
             {signatureAttached && (
               <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
-                <img src={ifcsEmailSig} alt="IFCS Email Signature" className="max-w-md h-auto object-contain" />
+                <div className="flex items-center gap-4">
+                  <img src={ifcsLogo} alt="IFCS Logo" className="w-24 h-auto object-contain flex-shrink-0" />
+                  <div className="text-xs leading-relaxed" style={{ fontFamily: "Arial, sans-serif", color: "#333" }}>
+                    <p className="font-bold text-sm" style={{ color: "#1a3a5c" }}>
+                      Institute of Foreign Credential Services |<br />NACES Member| ATA Member
+                    </p>
+                    <p className="mt-0.5">6 Cedar St, Dobbs Ferry, NY 10522</p>
+                    <p>Phone: 914.693.2840</p>
+                    <p>Fax: 914. 231-7782</p>
+                    <p>E-mail: <a href={`mailto:${emailFrom || "info@ifcsevals.com"}`} className="text-primary underline">{emailFrom || "info@ifcsevals.com"}</a></p>
+                    <p><a href="https://www.ifcsevals.com" className="text-primary underline">www.ifcsevals.com</a></p>
+                  </div>
+                </div>
               </div>
             )}
 
