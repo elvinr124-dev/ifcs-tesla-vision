@@ -35,8 +35,8 @@ const AddonDomesticShipping = () => {
         <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">Domestic Shipping</h1>
-          <p className="text-white/80 mt-2 text-lg">Ship your evaluation within the United States</p>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">{translate("Domestic Shipping")}</h1>
+          <p className="text-white/80 mt-2 text-lg">{translate("Ship your evaluation within the United States")}</p>
         </div>
       </section>
 
