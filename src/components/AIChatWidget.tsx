@@ -829,6 +829,7 @@ Is there anything else I can help with?`,
 const AIChatWidget = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
