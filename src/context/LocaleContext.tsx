@@ -342,7 +342,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!pendingTexts.current.has(text) && !inFlightTexts.current.has(text)) {
       pendingTexts.current.add(text);
       clearTimeout(batchTimer.current);
-      batchTimer.current = setTimeout(processBatch, 100);
+      batchTimer.current = setTimeout(processBatch, 50);
     }
     
     return text;
