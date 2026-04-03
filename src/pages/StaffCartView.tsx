@@ -498,7 +498,7 @@ const StaffCartView = () => {
                   </span>
                 ))}
               </div>
-            )
+            )}
           </div>
         </DialogContent>
       </Dialog>
