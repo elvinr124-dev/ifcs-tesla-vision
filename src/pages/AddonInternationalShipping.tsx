@@ -67,7 +67,7 @@ const AddonInternationalShipping = () => {
             <Card className="border-border bg-card">
               <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Payment")}</CardTitle></CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
-                {[{ label: "Name on Documents *", key: "name" },{ label: "IFCS ID *", key: "ifcsId", placeholder: "IFCS-XXXXX" },{ label: "Email *", key: "email", type: "email" },{ label: "Phone *", key: "phone", type: "tel" }].map(({ label, key, ...rest }) => (
+                {[{ label: translateDual("Name on Documents") + " *", key: "name" },{ label: translateDual("IFCS ID") + " *", key: "ifcsId", placeholder: "IFCS-XXXXX" },{ label: translateDual("Email") + " *", key: "email", type: "email" },{ label: translateDual("Phone") + " *", key: "phone", type: "tel" }].map(({ label, key, ...rest }) => (
                   <div key={key} className="space-y-1"><label className="text-sm font-medium text-foreground">{label}</label><Input required value={(payment as any)[key]} onChange={(e) => setPayment({ ...payment, [key]: e.target.value })} {...rest} /></div>
                 ))}
                 <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Name on Credit Card *</label><Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} /></div>
