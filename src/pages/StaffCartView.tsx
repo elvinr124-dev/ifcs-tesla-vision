@@ -279,9 +279,9 @@ const StaffCartView = () => {
 
       {/* E-Signature Dialog */}
       <Dialog open={sigOpen} onOpenChange={setSigOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>E-Signature — {sigData?.appId}</DialogTitle>
+            <DialogTitle>E-Signature & Agreements — {sigData?.appId}</DialogTitle>
           </DialogHeader>
           {sigData && (
             <div className="space-y-6">
@@ -290,18 +290,30 @@ const StaffCartView = () => {
                 <p className="text-lg font-bold text-foreground">{sigData.name}</p>
               </div>
 
-              <div className="space-y-4">
-                <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-2">
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Terms & Conditions Signature</p>
+              {/* Terms & Conditions agreed to */}
+              <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-3">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Terms & Conditions — Agreed</p>
+                <div className="text-xs text-muted-foreground leading-relaxed max-h-40 overflow-y-auto pr-2">
+                  <p>By submitting this application, the applicant agrees to be bound by the Terms of Service of the Institute of Foreign Credential Services (IFCS). The applicant acknowledges that IFCS evaluations are advisory in nature, that processing times are estimates, and that all fees are non-refundable once evaluation has begun. IFCS is not responsible for delays caused by incomplete or inaccurate documentation provided by the applicant. The applicant grants IFCS permission to contact issuing institutions for document verification purposes.</p>
+                </div>
+                <div className="border-t border-border pt-3">
+                  <p className="text-xs text-muted-foreground font-semibold mb-1">Digital Signature</p>
                   {sigData.terms ? (
                     <p className="text-xl font-serif italic text-foreground">{sigData.terms}</p>
                   ) : (
                     <p className="text-sm text-muted-foreground italic">No signature on file</p>
                   )}
                 </div>
+              </div>
 
-                <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-2">
-                  <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Privacy Policy Signature</p>
+              {/* Privacy Policy agreed to */}
+              <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-3">
+                <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Privacy Policy — Agreed</p>
+                <div className="text-xs text-muted-foreground leading-relaxed max-h-40 overflow-y-auto pr-2">
+                  <p>The applicant acknowledges and consents to the Privacy Policy of IFCS. Personal information collected — including name, date of birth, contact details, and academic records — is used solely for credential evaluation purposes. IFCS may share applicant information with designated institutions and employers as requested. Data is securely stored and will not be sold or distributed to third parties beyond the scope of the evaluation. The applicant has the right to request access to, correction of, or deletion of their personal data at any time by contacting IFCS.</p>
+                </div>
+                <div className="border-t border-border pt-3">
+                  <p className="text-xs text-muted-foreground font-semibold mb-1">Digital Signature</p>
                   {sigData.privacy ? (
                     <p className="text-xl font-serif italic text-foreground">{sigData.privacy}</p>
                   ) : (
