@@ -49,7 +49,7 @@ const AddonElectronicSharing = () => {
 
           <form onSubmit={handlePay} className="space-y-8">
             <Card className="border-border bg-card">
-              <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> Your Information & Payment</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Your Information & Payment")}</CardTitle></CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
                 {[
                   { label: "Name on Documents *", key: "name" },
