@@ -427,22 +427,20 @@ const ClientDashboard = () => {
                         {/* Action buttons */}
                         <div className="flex flex-wrap gap-2">
                           {hasAppData && (
-                            <Button
-                              variant="outline"
-                              className="gap-2 rounded-full"
+                            <button
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-all"
                               onClick={() => handleViewApplication(order.application_id!)}
                             >
-                              <Eye size={16} /> {translate("View Application")}
-                            </Button>
+                              <Eye size={14} /> {translate("View Application")}
+                            </button>
                           )}
                           {receiptUrl && (
-                            <Button
-                              variant="outline"
-                              className="gap-2 rounded-full"
+                            <button
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-border bg-muted/50 text-foreground text-xs font-semibold hover:bg-muted transition-all"
                               onClick={() => window.open(receiptUrl, "_blank")}
                             >
-                              <FileText size={16} /> {translate("View Receipt")}
-                            </Button>
+                              <FileText size={14} /> {translate("View Receipt")}
+                            </button>
                           )}
                         </div>
 
