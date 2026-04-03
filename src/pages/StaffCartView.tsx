@@ -328,36 +328,36 @@ const StaffCartView = () => {
 
       {/* Email Dialog */}
       <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-3xl w-[90vw]">
           <DialogHeader>
             <DialogTitle>Send Email</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
-            {/* From */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">From</label>
-              <Select value={emailFrom} onValueChange={setEmailFrom}>
-                <SelectTrigger className="rounded-2xl">
-                  <SelectValue placeholder="Select sender..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {STAFF_EMAILS.map((e) => (
-                    <SelectItem key={e} value={e}>{e}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {/* To */}
-            <div className="space-y-1.5">
-              <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">To</label>
-              <Input value={emailTo} readOnly className="rounded-2xl bg-muted/50" />
+          <div className="space-y-5">
+            {/* From & To row */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">From</label>
+                <Select value={emailFrom} onValueChange={setEmailFrom}>
+                  <SelectTrigger className="rounded-2xl h-12">
+                    <SelectValue placeholder="Select sender..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STAFF_EMAILS.map((e) => (
+                      <SelectItem key={e} value={e}>{e}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">To</label>
+                <Input value={emailTo} readOnly className="rounded-2xl bg-muted/50 h-12" />
+              </div>
             </div>
 
             {/* Subject */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Subject</label>
-              <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Email subject..." className="rounded-2xl" />
+              <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Email subject..." className="rounded-2xl h-12" />
             </div>
 
             {/* Content */}
@@ -367,8 +367,8 @@ const StaffCartView = () => {
                 value={emailContent}
                 onChange={(e) => setEmailContent(e.target.value)}
                 placeholder="Write your message..."
-                rows={6}
-                className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring resize-none"
+                rows={10}
+                className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring resize-y min-h-[200px]"
               />
             </div>
 
@@ -378,7 +378,7 @@ const StaffCartView = () => {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
                 >
                   <Paperclip size={14} /> Attach File
                 </button>
@@ -402,7 +402,7 @@ const StaffCartView = () => {
             <button
               onClick={handleSendEmail}
               disabled={emailSending || !emailFrom || !emailSubject.trim() || !emailContent.trim()}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Send size={16} /> {emailSending ? "Sending..." : "Send Email"}
             </button>
