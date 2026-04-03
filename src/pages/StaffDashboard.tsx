@@ -708,21 +708,22 @@ const StaffDashboard = () => {
 
                         {/* Chat & Delete */}
                         <div className="flex gap-2 flex-wrap">
-                          <Button size="sm" variant="outline" className="gap-1 rounded-full" onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
+                            onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
-                          </Button>
-                          <Button size="sm" variant="outline" className="gap-1 rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-destructive/30 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-all"
                             onClick={() => setDeleteDialog({ open: true, deleteType: "client", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
                             <UserX size={14} /> Delete Client
-                          </Button>
-                          <Button size="sm" variant="outline" className="gap-1 rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-destructive/30 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-all"
                             onClick={() => setDeleteDialog({ open: true, deleteType: "application", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
                             <Trash2 size={14} /> Delete Application
-                          </Button>
-                          <Button size="sm" variant="destructive" className="gap-1 rounded-full"
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-destructive text-destructive-foreground text-xs font-semibold hover:bg-destructive/90 transition-all"
                             onClick={() => setDeleteDialog({ open: true, deleteType: "both", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
                             <Trash2 size={14} /> Delete Client & Application
-                          </Button>
+                          </button>
                         </div>
                       </div>
                     )}
