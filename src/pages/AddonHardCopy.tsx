@@ -88,8 +88,8 @@ const AddonHardCopy = () => {
             </Card>
 
             <Card className="border-border bg-card"><CardContent className="pt-6 space-y-4">
-              <div className="flex items-start gap-3"><Checkbox id="terms" checked={agreeTerms} onCheckedChange={(c) => setAgreeTerms(c === true)} /><label htmlFor="terms" className="text-sm text-muted-foreground">I agree to the <span className="text-accent underline cursor-pointer">Terms and Conditions</span></label></div>
-              <div className="flex items-start gap-3"><Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={(c) => setAgreePrivacy(c === true)} /><label htmlFor="privacy" className="text-sm text-muted-foreground">I agree to the <span className="text-accent underline cursor-pointer">Privacy Policy</span></label></div>
+              <div className="flex items-start gap-3"><Checkbox id="terms" checked={agreeTerms} onCheckedChange={(c) => setAgreeTerms(c === true)} /><label htmlFor="terms" className="text-sm text-muted-foreground">{translate("I agree to the")} <span className="text-accent underline cursor-pointer">{translate("Terms and Conditions")}</span></label></div>
+              <div className="flex items-start gap-3"><Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={(c) => setAgreePrivacy(c === true)} /><label htmlFor="privacy" className="text-sm text-muted-foreground">{translate("I agree to the")} <span className="text-accent underline cursor-pointer">{translate("Privacy Policy")}</span></label></div>
             </CardContent></Card>
 
             <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">Pay ${total.toFixed(2)}</Button>
