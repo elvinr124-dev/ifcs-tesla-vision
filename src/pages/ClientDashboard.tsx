@@ -609,18 +609,17 @@ const ClientDashboard = () => {
           </div>
 
           {/* ── Contact IFCS ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <MessageSquare size={22} className="text-accent" /> Contact IFCS
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Need help? Click the <span className="font-semibold text-emerald-500">Contact Agent</span> button in the bottom-right corner to start a live chat with an IFCS representative. You can also reach us at <a href="mailto:info@ifcsevals.com" className="text-accent underline">info@ifcsevals.com</a>.
-              </p>
-            </CardContent>
-          </Card>
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <MessageSquare size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Contact IFCS</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Need help? Click the <span className="font-semibold text-emerald-500">Contact Agent</span> button in the bottom-right corner to start a live chat with an IFCS representative. You can also reach us at <a href="mailto:info@ifcsevals.com" className="text-accent underline">info@ifcsevals.com</a>.
+            </p>
+          </div>
         </div>
       </div>
 
