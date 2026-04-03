@@ -83,7 +83,7 @@ const AddonInternationalShipping = () => {
               <div className="flex items-start gap-3"><Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={(c) => setAgreePrivacy(c === true)} /><label htmlFor="privacy" className="text-sm text-muted-foreground">{translate("I agree to the")} <span className="text-accent underline cursor-pointer">{translate("Privacy Policy")}</span></label></div>
             </CardContent></Card>
 
-            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">Pay $70.00</Button>
+            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">{translate("Pay")} $70.00</Button>
           </form>
         </div>
       </div>
