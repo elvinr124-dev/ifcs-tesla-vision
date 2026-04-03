@@ -102,7 +102,7 @@ const AddonElectronicSharing = () => {
               </CardContent>
             </Card>
 
-            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">Pay $25.00</Button>
+            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">{translate("Pay")} $25.00</Button>
           </form>
         </div>
       </div>
