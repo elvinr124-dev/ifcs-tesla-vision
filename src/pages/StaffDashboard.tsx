@@ -652,10 +652,11 @@ const StaffDashboard = () => {
                           <p className="text-sm font-medium text-foreground mb-2">Update Status</p>
                           <div className="flex flex-wrap gap-2">
                             {Object.entries(statusMeta).map(([key, val]) => (
-                              <Button key={key} size="sm" variant={o.status === key ? "default" : "outline"} className="gap-1 rounded-full"
+                              <button key={key}
+                                className={`inline-flex items-center gap-1 px-4 py-2 rounded-2xl text-xs font-semibold transition-all ${o.status === key ? "bg-accent text-accent-foreground" : "border border-border bg-muted/50 text-foreground hover:bg-muted"}`}
                                 onClick={() => handleStatusChange(o.id, key)}>
                                 {val.icon} {val.label}
-                              </Button>
+                              </button>
                             ))}
                           </div>
                         </div>
