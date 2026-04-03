@@ -44,7 +44,7 @@ const AddonDomesticShipping = () => {
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
           <div className="text-center">
             <Truck size={48} className="text-accent mx-auto mb-4" />
-            <p className="text-muted-foreground">Have your IFCS evaluation report shipped to any U.S. address via USPS Priority Mail.</p>
+            <p className="text-muted-foreground">{translate("Have your IFCS evaluation report shipped to any U.S. address via USPS Priority Mail.")}</p>
             <p className="text-4xl font-bold text-foreground mt-4">$25.00</p>
           </div>
 
