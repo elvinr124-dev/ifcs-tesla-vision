@@ -395,7 +395,7 @@ const TranslationQuote = () => {
                     ))}
                     <div className="border-t border-border pt-3">
                       <p className="text-xs text-muted-foreground">
-                        Our team will review your documents and provide a detailed quote via email.
+                        {translate("Our team will review your documents and provide a detailed quote via email.")}
                       </p>
                     </div>
                   </div>
