@@ -529,14 +529,14 @@ const StaffDashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="pt-28 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-2">
-          <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">
-            <Package size={24} className="text-accent" />
+      <section className="pt-28 pb-14 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="flex items-center gap-5 mb-2">
+          <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/20 flex items-center justify-center shadow-sm">
+            <Package size={28} className="text-accent" />
           </div>
           <div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Staff Dashboard</h1>
-            <p className="text-muted-foreground mt-0.5 text-base">Manage applications, share reports & communicate with applicants</p>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Staff Dashboard</h1>
+            <p className="text-muted-foreground mt-1 text-base">Manage applications, share reports & communicate with applicants</p>
           </div>
         </div>
       </section>
