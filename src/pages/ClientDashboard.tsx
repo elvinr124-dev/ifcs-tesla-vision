@@ -375,13 +375,14 @@ const ClientDashboard = () => {
           </div>
 
           {/* ── My Orders ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Package size={22} className="text-accent" /> {translate("My Orders")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Package size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">{translate("My Orders")}</h2>
+            </div>
+            <div className="space-y-4">
               {orders.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-8">
                   {translate("No orders yet. Use the Track Order section above to find your order.")}
@@ -409,9 +410,9 @@ const ClientDashboard = () => {
                             <p className="font-bold text-accent">— IFCS ID {order.ifcs_id || hasAppData?.ifcs_id}</p>
                           )}
                           {!order.application_id && <p className="font-bold text-foreground">#{order.reference_id}</p>}
-                          <Badge variant="secondary" className={`${meta.color} gap-1 rounded-full px-3`}>
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${meta.color}`}>
                             {meta.icon} {meta.label}
-                          </Badge>
+                          </span>
                         </div>
                         {order.service && <p className="text-sm text-muted-foreground mt-1.5 truncate">{order.service}</p>}
                         <p className="text-xs text-muted-foreground mt-0.5">Added {new Date(order.submitted_at).toLocaleDateString()}</p>
