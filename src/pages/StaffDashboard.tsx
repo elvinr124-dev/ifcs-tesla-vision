@@ -995,7 +995,15 @@ const StaffDashboard = () => {
           <DialogHeader>
             <DialogTitle>Confirm Deletion</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete application <strong>{deleteDialog.label}</strong> and the associated client account? This action cannot be undone.
+              {deleteDialog.deleteType === "client" && (
+                <>Are you sure you want to delete the <strong>client account</strong> associated with <strong>{deleteDialog.label}</strong>? This action cannot be undone.</>
+              )}
+              {deleteDialog.deleteType === "application" && (
+                <>Are you sure you want to delete application <strong>{deleteDialog.label}</strong>? The client account will remain. This action cannot be undone.</>
+              )}
+              {deleteDialog.deleteType === "both" && (
+                <>Are you sure you want to delete application <strong>{deleteDialog.label}</strong> and the associated client account? This action cannot be undone.</>
+              )}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
