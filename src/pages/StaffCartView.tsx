@@ -6,12 +6,13 @@ import BackToHome from "@/components/BackToHome";
 import ViewApplicationDialog from "@/components/ViewApplicationDialog";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Shield, Search, Eye, PenTool, Mail, Send, Paperclip, X, Users, Stamp } from "lucide-react";
+import { Shield, Search, Eye, PenTool, Mail, Send, Paperclip, X, Users, Stamp, Sparkles, SpellCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
+import ifcsLogoSig from "@/assets/ifcs-logo-signature.png";
 
 const STAFF_EMAILS = [
   "docs@ifcsevals.com",
