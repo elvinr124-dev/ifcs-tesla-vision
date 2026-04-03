@@ -64,6 +64,7 @@ const StaffCartView = () => {
   const [emailAttachments, setEmailAttachments] = useState<File[]>([]);
   const [emailSending, setEmailSending] = useState(false);
   const [signatureAttached, setSignatureAttached] = useState(false);
+  const [aiProcessing, setAiProcessing] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
