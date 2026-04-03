@@ -52,7 +52,7 @@ const AddonHardCopy = () => {
             <p className="text-muted-foreground">{translate("Receive official printed hard copies of your IFCS evaluation report.")}</p>
             <p className="text-4xl font-bold text-foreground mt-4">${total.toFixed(2)}</p>
             <div className="flex items-center justify-center gap-3 mt-3">
-              <label className="text-sm font-medium text-foreground">Quantity:</label>
+              <label className="text-sm font-medium text-foreground">{translateDual("Quantity")}:</label>
               <Input type="number" min={1} max={10} value={qty} onChange={(e) => setQty(Number(e.target.value))} className="w-20" />
               <span className="text-sm text-muted-foreground">× $25 each</span>
             </div>
