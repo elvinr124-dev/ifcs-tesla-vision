@@ -24,10 +24,7 @@ const STAFF_EMAILS = [
   "translations@ifcsevals.com",
 ];
 
-const SIGNATURE_TEMPLATE = (fromEmail: string) => {
-  const emailPrefix = fromEmail ? fromEmail.split("@")[0] : "info";
-  return `\n\n——————————————————\nInstitute of Foreign Credential Services | NACES Member | ATA Member\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: 914.693.2840\nFax: 914.231-7782\nE-mail: ${emailPrefix}@ifcsevals.com\nwww.ifcsevals.com`;
-};
+// Signature is now image-only, no text appended to email content
 
 interface AppRow {
   id: string;
