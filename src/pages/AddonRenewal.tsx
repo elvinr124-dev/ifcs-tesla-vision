@@ -95,7 +95,7 @@ const AddonRenewal = () => {
 
             <Card className="border-border bg-card">
               <CardContent className="pt-6 space-y-4">
-                <p className="text-sm font-medium text-foreground mb-2">Please read and agree to the terms and conditions & privacy policy:</p>
+                <p className="text-sm font-medium text-foreground mb-2">{translate("Please read and agree to the terms and conditions & privacy policy:")}</p>
                 <div className="flex items-start gap-3">
                   <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
                   <label htmlFor="terms" className="text-sm text-muted-foreground">
