@@ -67,7 +67,7 @@ const AddonElectronicSharing = () => {
                   <Input type="email" required value={payment.recipientEmail} onChange={(e) => setPayment({ ...payment, recipientEmail: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
-                  <label className="text-sm font-medium text-foreground">Name on Credit Card *</label>
+                  <label className="text-sm font-medium text-foreground">{translateDual("Name on Credit Card")} *</label>
                   <Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} />
                 </div>
                 <div className="sm:col-span-2 space-y-1">
