@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
-import ifcsLogoSig from "@/assets/ifcs-logo-signature.png";
+import ifcsEmailSig from "@/assets/ifcs-email-signature.png";
 
 const STAFF_EMAILS = [
   "docs@ifcsevals.com",
