@@ -1,35 +1,586 @@
 import { useState, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { MessageCircle, X, Send, Paperclip } from "lucide-react";
 
-const EVALUATION_DETAILED_RESPONSE = `Greetings,
+type NavButton = { label: string; path: string };
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+  attachments?: string[];
+  navButtons?: NavButton[];
+};
 
-We appreciate your interest in our evaluation services.
+const SUGGESTIONS = [
+  "What is an evaluation?",
+  "What's the difference between an Evaluation and Translation?",
+  "What's a Translation?",
+  "How fast can I get my evaluation?",
+  "How much does an evaluation cost?",
+  "What documents do I need?",
+  "Do you offer rush processing?",
+  "How do I apply?",
+  "What is a course-by-course evaluation?",
+  "Do you offer consulting?",
+  "How do I check my status?",
+  "What languages do you translate?",
+];
 
-To initiate the process, kindly follow the steps outlined below:
+interface KBEntry {
+  keywords: string[];
+  response: string;
+  navButtons?: NavButton[];
+}
 
-**1. Apply Online:** Please visit our website at [Institute of Foreign Credential Services (IFCS)](https://ifcsevals.com) and complete the online application form. Along with the application, you will be able to upload copies of your transcripts and degree certificate/diploma.
+const KNOWLEDGE_BASE: KBEntry[] = [
+  {
+    keywords: ["what is an evaluation", "what is credential evaluation", "what's a credential evaluation", "what is a evaluation"],
+    response: `A **credential evaluation** is an expert assessment of your foreign academic credentials to determine their U.S. equivalency.
 
-**2. Required Documents, Fees, and Processing Time:** On the application page, you will find a list of the required documents for evaluation, as well as information regarding the applicable fees and the estimated processing time: https://ifcsevals.com/evaluations/
+IFCS evaluators — recognized experts in the field — review your transcripts and diplomas, convert grading scales, and produce a detailed report showing how your education aligns with U.S. standards.
 
-**3. Submitting Official Transcripts:** After submitting your application, it is important to arrange for your issuing institutions to send your official transcripts directly to our office either by mail or email. Only documents received directly from the issuing institutions will be considered official. Our mailing address is:
+**Who needs one?**
+• Students applying to U.S. colleges or universities
+• Professionals seeking employment or licensure
+• Immigrants needing documentation for USCIS
+• Anyone whose foreign credentials need U.S. recognition
 
-**IFCS**
-**6 Cedar Street**
-**Dobbs Ferry, NY 10522**
+IFCS is trusted by universities, federal and state government agencies, employers, and licensure boards across the U.S.`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Learn More", path: "/learn-more-evaluations" },
+    ],
+  },
+  {
+    keywords: ["difference between evaluation and translation", "evaluation vs translation", "evaluation and translation"],
+    response: `Great question! They serve different purposes:
 
-For electronic official documents, the email's subject line should include your "IFCS ID" which will be sent to you after you submit your application online.
+**Evaluation** — An expert analysis that converts your foreign academic credentials into their U.S. equivalency. It tells universities and employers *what* your degree means in the American system.
 
-Alternatively, you can pay $140 for document authentication, and we will reach out to the issuing institution to verify your documents.
+**Translation** — A word-for-word conversion of your documents from their original language into English. It tells readers *what* your documents say.
 
-**4. Translation Services:** If your transcripts are in a foreign language, please note that we can provide you with a translation quote after we have received your application.
+**Do you need both?** If your documents are not in English, you'll typically need a certified translation first, then an evaluation. IFCS can handle both for you!
 
-**5. Report Delivery Services:** We can mail or email your credential evaluation report to the desired addresses.
+• Evaluations start at **$100**
+• Translations are **$50 per page**`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "View Translations", path: "/translations" },
+    ],
+  },
+  {
+    keywords: ["what's a translation", "what is a translation", "what is translation"],
+    response: `A **certified translation** is a professionally prepared, word-for-word conversion of your documents from their original language into English.
 
-Please follow the instructions on our website and let us know if you have any additional questions.`;
+IFCS translations include:
+• Delivered on **IFCS letterhead**
+• **Signed and stamped** certificate of accuracy
+• Accepted by **USCIS**, universities, and government agencies
+• Available in **150+ languages**
+• Standard turnaround: **3–5 business days**
+• **Same-day** and expedited options available
+• Pricing: **$50 per page** with no hidden fees
 
-type Message = { role: "user" | "assistant"; content: string; attachments?: string[] };
+If USCIS does not accept your translation, we will re-translate at **no charge**.`,
+    navButtons: [
+      { label: "Start Translation Order", path: "/translations/order" },
+      { label: "Get a Quote", path: "/translations/quote" },
+    ],
+  },
+  {
+    keywords: ["how fast", "how long does evaluation", "turnaround", "how quickly"],
+    response: `IFCS offers three processing speeds for evaluations:
+
+⏱️ **Standard:** 8–10 business days
+⚡ **3-Day Rush:** 3 business days
+🚀 **24-Hour Priority:** Within 24 hours
+
+Rush pricing varies by evaluation type. For example:
+• General Analysis: $100 (Standard) → $150 (3-Day) → $195 (24-Hour)
+• Course-by-Course: $190 (Standard) → $290 (3-Day) → $350 (24-Hour)
+
+Processing begins once all required documents and payment are received.`,
+    navButtons: [
+      { label: "View Pricing", path: "/evaluations" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["how much", "price", "cost", "fee", "pricing"],
+    response: `Here are our evaluation pricing tiers:
+
+| Service | Price |
+|---------|-------|
+| **General Analysis** | $100 |
+| **General Analysis + GPA** | $150 |
+| **Cosmetology Course-by-Course** | $170 |
+| **Course-by-Course** | $190 |
+| **Health Professions** | $230 |
+| **Comprehensive Course-by-Course** | $290 |
+| **High School & University CxC** | $295 |
+| **Professional Licensure CxC** | $400 |
+
+**Rush options** are available at additional cost for 3-day and 24-hour processing.
+
+**Translations:** $50 per page
+**Consulting:** Evaluation consultations are **FREE**. Admission advising is **$60/hour**.
+**Duplicate Reports:** $25 per copy`,
+    navButtons: [
+      { label: "View Full Pricing", path: "/pricing" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["what document", "documents do i need", "required document", "what do i need to submit"],
+    response: `The documents you need depend on the evaluation type:
+
+**For most evaluations:**
+📄 **Transcripts / Mark Sheets** — official academic records
+📄 **Diploma Certificate** — proof of degree completion
+
+**For High School & University Course-by-Course ($295):**
+📄 High School diploma + transcript
+📄 University degree certificate + transcript
+
+**Important notes:**
+• Legible uploaded copies are sufficient to **start** your application
+• Official transcripts must be sent directly from your institution to be considered official
+• If documents are in a foreign language, IFCS can provide a translation quote
+• **Document Authentication** ($140) — IFCS contacts your institution to verify documents directly
+
+📍 **Mailing address:** IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522`,
+    navButtons: [
+      { label: "Start Application", path: "/application" },
+      { label: "Learn More", path: "/learn-more-evaluations" },
+    ],
+  },
+  {
+    keywords: ["rush", "expedite", "urgent", "faster", "priority"],
+    response: `Yes! We offer **rush processing** for all evaluation types:
+
+⚡ **3-Day Rush** — Results in 3 business days
+🚀 **24-Hour Priority** — Results within 24 hours of document receipt
+
+Rush fees vary by evaluation type. Here are some examples:
+• General Analysis: $150 (3-Day) / $195 (24-Hour)
+• Course-by-Course: $290 (3-Day) / $350 (24-Hour)
+• Comprehensive CxC: $390 (3-Day) / $450 (24-Hour)
+
+For **translations**, we offer same-day and next-day expedited service at $14.95/page additional.`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["how do i apply", "how to apply", "application process", "get started", "start", "apply"],
+    response: `Getting started with IFCS is simple — just follow these 4 steps:
+
+**Step 1:** Determine which evaluation you need. Not sure? Our evaluation consultation is **FREE**!
+
+**Step 2:** Complete the **online application** on our website.
+
+**Step 3:** Upload legible copies of your transcripts and diploma certificates.
+
+**Step 4:** Submit your signed application and make payment.
+
+After submission, you'll receive an **IFCS ID** via email. Arrange for your institution to send official transcripts to:
+
+📍 **IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522**
+
+Alternatively, pay **$140 for document authentication** and we handle verification directly.`,
+    navButtons: [
+      { label: "Start Application", path: "/application" },
+      { label: "View Evaluations", path: "/evaluations" },
+    ],
+  },
+  {
+    keywords: ["course-by-course", "course by course", "cxc"],
+    response: `**Course-by-Course evaluations** provide a detailed breakdown of your academic record, including:
+
+• List of all individual courses
+• Semester credit hours for each course
+• Letter grades and cumulative GPA
+• U.S. equivalency for each credential
+
+**Types available:**
+• **Course-by-Course** ($190) — For college transfer and undergrad admission
+• **Cosmetology CxC** ($170) — Specialized for cosmetology credentials
+• **Health Professions CxC** ($230) — Includes clinical experience details
+• **Comprehensive CxC** ($290) — Includes upper/lower division levels, covers up to 2 degrees
+• **High School & University CxC** ($295) — Covers both high school and university records
+• **Professional Licensure CxC** ($400) — For professional licensing boards
+
+Course-by-Course is recommended for **transfer credit**, **graduate admissions**, and **employment**.`,
+    navButtons: [
+      { label: "View All Evaluations", path: "/evaluations" },
+      { label: "Learn More", path: "/learn-more-evaluations" },
+    ],
+  },
+  {
+    keywords: ["consult", "consulting", "advising", "advisor", "appointment"],
+    response: `IFCS offers two types of consulting:
+
+🆓 **Evaluation Consultation — FREE**
+Our experts help you determine which evaluation type is right for your specific goals (education, employment, immigration, or licensure).
+
+💼 **Admissions & Academic Advising — $60/hour**
+Our senior staff has reviewed thousands of applications and can help you:
+• Find the right U.S. institution and program
+• Streamline the application process
+• Understand admission requirements
+
+Consultations are held at our **Dobbs Ferry office** by appointment.
+
+📞 **(914) 693-2840**
+📧 **info@ifcsevals.com**`,
+    navButtons: [
+      { label: "Book a Consultation", path: "/consulting/book" },
+      { label: "View Consulting Page", path: "/consulting" },
+    ],
+  },
+  {
+    keywords: ["check status", "track", "status of", "my evaluation", "order status"],
+    response: `You can check the status of your evaluation through your **My Dashboard** on our website.
+
+You'll need:
+• Your **Application ID** (starts with "EE")
+• Your **Date of Birth**
+
+If you have an IFCS ID, you can also use that to look up your order.
+
+Need further assistance? Contact us:
+📞 **(914) 693-2840**
+📧 **info@ifcsevals.com**`,
+    navButtons: [
+      { label: "Go to Dashboard", path: "/dashboard/client" },
+      { label: "Contact Us", path: "/contact" },
+    ],
+  },
+  {
+    keywords: ["what language", "which language", "language do you", "languages"],
+    response: `We translate documents from and into **150+ languages**, including but not limited to:
+
+🌍 Spanish, French, Arabic, Chinese, Hindi, Portuguese, Russian, Japanese, Korean, German, Italian, Turkish, Vietnamese, Thai, Polish, Ukrainian, and many more!
+
+All translations include:
+• IFCS letterhead with signed certificate of accuracy
+• Accepted by USCIS, universities, and government agencies
+• Standard turnaround: 3–5 business days
+• $50 per page
+
+If you don't see your language listed, contact us — we likely support it!`,
+    navButtons: [
+      { label: "Start Translation Order", path: "/translations/order" },
+      { label: "Get a Quote", path: "/translations/quote" },
+    ],
+  },
+  {
+    keywords: ["uscis", "accepted", "immigration", "recognized"],
+    response: `Yes! **IFCS evaluations and translations are accepted by:**
+
+✅ **USCIS** (U.S. Citizenship and Immigration Services)
+✅ Universities and colleges nationwide
+✅ Federal and state government agencies
+✅ Employers across all industries
+✅ Professional licensure boards
+
+IFCS evaluators are recognized experts, regular contributors to **NAFSA**, **AACRAO**, and the **International Association of Universities**.
+
+For certified translations: If USCIS does not accept your translation, we will re-translate at **no charge**.`,
+    navButtons: [
+      { label: "Start Application", path: "/application" },
+      { label: "Learn More", path: "/learn-more-evaluations" },
+    ],
+  },
+  {
+    keywords: ["refund", "cancel", "money back"],
+    response: `Here is our refund policy:
+
+• Refunds are issued **only for overpayment**.
+• **Standard (8–10 day) service** can be canceled within **24 hours** of submission, subject to a **$50 minimum processing fee**.
+• **No refunds** for 24-hour and 3-day rush services once processing has begun.
+
+If you have questions about your specific situation, please contact us:
+📞 **(914) 693-2840**
+📧 **info@ifcsevals.com**`,
+    navButtons: [
+      { label: "Contact Us", path: "/contact" },
+    ],
+  },
+  {
+    keywords: ["duplicate", "additional cop", "extra cop"],
+    response: `If you've received an evaluation from IFCS within the past **5 years**, you can request additional copies:
+
+📄 **Electronic Report:** $25
+📄 **Hard Copy:** $25 each
+📦 **Domestic Shipping:** $25
+✈️ **International Shipping:** $70
+
+You can order duplicates directly through our website!`,
+    navButtons: [
+      { label: "Order Duplicate Reports", path: "/duplicate-reports" },
+    ],
+  },
+  {
+    keywords: ["shipping", "delivery", "mail", "send report"],
+    response: `We offer several delivery options for your evaluation report:
+
+📧 **Electronic Sharing:** $25
+📄 **Hard Copy:** $25 each
+📦 **Domestic Shipping:** $25
+✈️ **International Shipping:** $70
+
+Reports are valid for **5 years**. After expiration, renewal is available for **$100**.`,
+    navButtons: [
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["renewal", "expire", "expiration", "valid", "how long is report valid"],
+    response: `Evaluation reports are valid for **5 years** from the date of issuance.
+
+After expiration, you can renew your report for **$100**, which extends validity for another 5 years.
+
+Need a renewal? You can start the process on our website.`,
+    navButtons: [
+      { label: "Renew Evaluation", path: "/addon/renewal" },
+    ],
+  },
+  {
+    keywords: ["contact", "phone", "email", "reach", "office", "address", "location", "hours"],
+    response: `You can reach IFCS at:
+
+📞 **Phone:** (914) 693-2840
+📠 **Fax:** (914) 231-7782
+📧 **Email:** info@ifcsevals.com
+📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522
+🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST
+
+We welcome any questions and promise a swift response!`,
+    navButtons: [
+      { label: "Contact Us", path: "/contact" },
+    ],
+  },
+  {
+    keywords: ["general analysis", "general evaluation"],
+    response: `The **General Analysis** is our most affordable evaluation:
+
+**Price:** $100 (Standard 8–10 business days)
+**Rush:** $150 (3-Day) / $195 (24-Hour)
+
+**What it includes:**
+• Country of study
+• Institution attended
+• Dates of attendance
+• Credential received
+• Overall U.S. equivalency
+
+**Recommended for:**
+• Immigration purposes
+• Military applications
+• Junior college admission
+
+**Required Documents:** Transcripts/mark sheets and diploma certificate`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations#general-analysis" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["comprehensive", "graduate", "professional license", "licensure"],
+    response: `The **Comprehensive Course-by-Course** evaluation is our most detailed option:
+
+**Price:** $290 (Standard) / $390 (3-Day) / $450 (24-Hour)
+
+**What it includes:**
+• All courses with semester credit hours and grades
+• Lower and upper-division designations
+• Graduate level classifications
+• U.S. equivalency for each credential
+• Covers **up to 2 degrees**
+
+**Recommended for:**
+• Graduate school admission
+• Professional licensure
+• Multiple degrees
+
+We also offer **Professional Licensure Course-by-Course** at **$400** specifically for licensing boards.`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations#comprehensive-course-by-course" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["health profession", "medical", "nursing", "clinical"],
+    response: `The **Health Professions Course-by-Course** is designed for healthcare professionals:
+
+**Price:** $230 (Standard) / $330 (3-Day) / $390 (24-Hour)
+
+**What it includes:**
+• All courses with credit hours and grades
+• Upper/lower division and graduate level designations
+• **Clinical experience details**
+• U.S. equivalency
+
+**Recommended for:** Medical, nursing, and health profession licensing boards.
+
+**Required Documents:** Transcripts/mark sheets and diploma certificate`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations#health-professions" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["notari", "notarization"],
+    response: `Yes! We offer **notarization** as an add-on service:
+
+💰 **$19.95 per order**
+📜 Valid in **all 50 U.S. states**
+
+You can add notarization during the translation order process.`,
+    navButtons: [
+      { label: "Start Translation Order", path: "/translations/order" },
+    ],
+  },
+  {
+    keywords: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
+    response: `Hello! 👋 Welcome to **IFCS** — the Institute of Foreign Credential Services.
+
+I can help you with:
+• **Evaluations** — pricing, types, and how to apply
+• **Translations** — certified translations in 150+ languages
+• **Consulting** — free evaluation consultations
+• **Status** — checking your evaluation progress
+• **General questions** — documents, timelines, pricing, and more
+
+What would you like to know?`,
+    navButtons: [],
+  },
+  {
+    keywords: ["thank", "thanks", "appreciate"],
+    response: `You're welcome! 😊 If you have any more questions, feel free to ask. We're here to help!
+
+For specific case questions, you can always reach our team:
+📞 **(914) 693-2840**
+📧 **info@ifcsevals.com**`,
+    navButtons: [],
+  },
+  {
+    keywords: ["blog", "articles", "news", "updates"],
+    response: `Check out our blog for the latest news, tips, and insights about foreign credential evaluations, translations, and studying in the U.S.!`,
+    navButtons: [
+      { label: "Visit Our Blog", path: "/blog" },
+    ],
+  },
+  {
+    keywords: ["about", "who is ifcs", "about ifcs", "history"],
+    response: `**IFCS** — the Institute of Foreign Credential Services — is based in Dobbs Ferry, NY and has been helping international students and professionals get their credentials recognized in the United States.
+
+**What makes IFCS unique:**
+• **Expert evaluators** — Our senior staff are recognized industry leaders
+• Regular contributors to **NAFSA**, **AACRAO**, and **IAU**
+• **Personal attention** applied to every account
+• Trusted by universities, government agencies, employers, and licensure boards nationwide
+
+📍 6 Cedar Street, Dobbs Ferry, NY 10522`,
+    navButtons: [
+      { label: "About Us", path: "/about" },
+    ],
+  },
+  {
+    keywords: ["faq", "frequently asked", "common question"],
+    response: `Our FAQ page covers the most commonly asked questions about evaluations, translations, turnaround times, pricing, and more!`,
+    navButtons: [
+      { label: "View FAQ", path: "/faq" },
+    ],
+  },
+  {
+    keywords: ["individual", "student", "personal"],
+    response: `If you're an **individual** (student, professional, or immigrant), IFCS can help you:
+
+• Get your foreign credentials **evaluated** and recognized
+• Receive **certified translations** of your documents
+• Get **free consultation** to choose the right evaluation
+• Navigate U.S. **admissions and employment** requirements
+
+Start by determining which evaluation type fits your goals!`,
+    navButtons: [
+      { label: "For Individuals", path: "/for-individuals" },
+      { label: "View Evaluations", path: "/evaluations" },
+    ],
+  },
+  {
+    keywords: ["institution", "university", "college", "employer", "organization"],
+    response: `For **institutions**, IFCS offers:
+
+• **Tailored evaluations** aligned with your admissions and transfer policies
+• **15% discount** over standard prices with monthly billing
+• **Direct access** to senior evaluators
+• **Electronic reports** sent directly to your admissions office
+• **Reduced turnaround times**
+• **Professional training** for admissions personnel
+
+Our senior staff are recognized experts in foreign credential evaluation.`,
+    navButtons: [
+      { label: "For Institutions", path: "/for-institutions" },
+      { label: "Contact Us", path: "/contact" },
+    ],
+  },
+  {
+    keywords: ["document authentication", "verify", "verification", "authenticate"],
+    response: `**Document Authentication** is available for **$140**.
+
+Instead of having your institution send official documents directly, IFCS will **contact your issuing institution** to verify your documents on your behalf.
+
+This is a convenient option if:
+• Your institution is difficult to reach
+• You need faster verification
+• You're unable to arrange official document transfer`,
+    navButtons: [
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+];
+
+const findResponse = (query: string): { response: string; navButtons: NavButton[] } => {
+  const q = query.toLowerCase().trim();
+
+  for (const entry of KNOWLEDGE_BASE) {
+    for (const kw of entry.keywords) {
+      if (q.includes(kw)) {
+        return { response: entry.response, navButtons: entry.navButtons || [] };
+      }
+    }
+  }
+
+  // Broad fallback matches
+  if (q.includes("evaluation") || q.includes("credential") || q.includes("transcript") || q.includes("degree")) {
+    const entry = KNOWLEDGE_BASE.find(e => e.keywords.includes("how do i apply"))!;
+    return { response: entry.response, navButtons: entry.navButtons || [] };
+  }
+  if (q.includes("translat")) {
+    const entry = KNOWLEDGE_BASE.find(e => e.keywords.includes("what's a translation"))!;
+    return { response: entry.response, navButtons: entry.navButtons || [] };
+  }
+
+  return {
+    response: `I appreciate your question! While I may not have the specific answer, our team would be happy to help.
+
+📞 **Phone:** (914) 693-2840
+📧 **Email:** info@ifcsevals.com
+📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522
+🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST
+
+Is there anything else I can help with regarding evaluations, translations, or consulting?`,
+    navButtons: [
+      { label: "Contact Us", path: "/contact" },
+      { label: "View FAQ", path: "/faq" },
+    ],
+  };
+};
 
 const AIChatWidget = () => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -52,87 +603,68 @@ const AIChatWidget = () => {
     setAttachments((prev) => prev.filter((_, i) => i !== index));
   };
 
+  const handleSuggestionClick = (suggestion: string) => {
+    setInput("");
+    const userMsg: Message = { role: "user", content: suggestion };
+    setMessages((prev) => [...prev, userMsg]);
+    setIsLoading(true);
+    const { response, navButtons } = findResponse(suggestion);
+    setTimeout(() => {
+      setMessages((prev) => [...prev, { role: "assistant", content: response, navButtons }]);
+      setIsLoading(false);
+    }, 600);
+  };
+
   const sendMessage = async () => {
     if ((!input.trim() && attachments.length === 0) || isLoading) return;
     const attachmentNames = attachments.map((f) => f.name);
-    const userMsg: Message = { role: "user", content: input.trim(), attachments: attachmentNames.length > 0 ? attachmentNames : undefined };
+    const userMsg: Message = {
+      role: "user",
+      content: input.trim(),
+      attachments: attachmentNames.length > 0 ? attachmentNames : undefined,
+    };
     setMessages((prev) => [...prev, userMsg]);
+    const query = input.trim();
     setInput("");
     setAttachments([]);
     setIsLoading(true);
 
-    const q = userMsg.content.toLowerCase();
-    let response = "";
+    let response: string;
+    let navButtons: NavButton[] = [];
 
-    // Price-only question
-    const isPriceOnly = (q.includes("price") || q.includes("cost") || q.includes("how much") || q.includes("fee")) && !q.includes("how") && !q.includes("process") && !q.includes("start") && !q.includes("apply") && !q.includes("need");
-
-    if (isPriceOnly) {
-      response = "Here are our main pricing tiers:\n\n**Evaluations:**\n- General Analysis: $100\n- General Analysis + GPA: $150\n- Cosmetology Course-by-Course: $170\n- Course-by-Course: $190\n- Health Professions: $230\n- Comprehensive Course-by-Course: $290\n- High School & University Course-by-Course: $295\n\n**Rush options** are available for 3-day and 24-hour processing.\n\n**Translations:** $50 per page\n\n**Consulting:** Evaluation consultations are FREE. Admission advising is $60/hour.\n\nWould you like more details on any specific service?";
-    } else if (q.includes("what type") && q.includes("evaluation")) {
-      response = "Selecting an evaluation depends on your situation:\n\n• **General evaluation analysis** — recommended for employment, military and emigration situations. General evaluations plus GPA are recommended for graduate or undergraduate admission when no transfer credits are intended.\n\n• **Course-by-course evaluation** — required for continued education (secondary and post-secondary transfers).\n\n• **Comprehensive course-by-course** — appropriate for graduate admissions and professional licensing boards.\n\n• **Health professions course-by-course** — recommended if you completed studies in healthcare and are seeking licensure with U.S. healthcare licensing boards.";
-    } else if (q.includes("refund")) {
-      response = "Refunds will be made only if you have overpaid for services to IFCS. Applications for 8–10 day service can only be canceled within **24 hours** of submission and will be subject to a **$50 minimum processing fee**. No refunds can be issued for 24-hour and 3-day service.";
-    } else if (q.includes("additional cop") || q.includes("duplicate") || q.includes("extra cop")) {
-      response = "Additional copies of your previous evaluation are available for **$25 plus shipping**.";
-    } else if (q.includes("difference") && (q.includes("evaluation") && q.includes("translation"))) {
-      response = "An **evaluation** provides a US equivalency of your foreign academic credentials. A **translation** is a word-for-word conversion from your native language into English.";
-    } else if (q.includes("send") && (q.includes("application") || q.includes("document"))) {
-      response = "We accept applications and related documents at our office between **9 a.m. to 5 p.m.** on business days. You may also send your completed application and paperwork to us via U.S. mail.\n\n📍 **IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522**";
-    } else if (q.includes("assistance") || q.includes("help") && q.includes("application") || q.includes("guidance") || q.includes("consulting")) {
-      response = "Yes! You may come in for consulting during normal business hours. We do prefer to make an appointment via email or telephone to ensure someone will be on hand to help you.\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**";
-    } else if (q.includes("what is a credential evaluation") || q.includes("what is credential evaluation") || q.includes("what's a credential evaluation")) {
-      response = "A **credential evaluation** is an expert assessment of your foreign academic credentials to determine their U.S. equivalency. It is used for university admissions, employment, immigration, and professional licensing.";
-    } else if ((q.includes("how long") && q.includes("evaluation")) || (q.includes("turnaround") && q.includes("evaluation"))) {
-      response = "Typically, evaluations done by IFCS are turned around within **8–10 business days**. We provide **24-hour priority service** and **three-day \"rush\" evaluation service** at additional costs.";
-    } else if (q.includes("what document") || (q.includes("document") && q.includes("need"))) {
-      response = "You will typically need your **transcripts/mark sheets** and **diploma certificate**. Some evaluations may require additional documentation. For the High School & University Course-by-Course, you'll need: High School diploma, High School transcript, University degree certificate, and University transcript.";
-    } else if (q.includes("recognized") || q.includes("accepted by universit")) {
-      response = "Yes. **IFCS evaluations are accepted** by universities, employers, and government agencies across the United States.";
-    } else if (q.includes("course-by-course") || q.includes("course by course")) {
-      response = "Yes. We offer **course-by-course evaluations** that list individual courses, credit hours, grades, and GPA — ideal for transfer credit and graduate admissions. Prices start at $170 for Cosmetology, $190 for standard Course-by-Course, $230 for Health Professions, $290 for Comprehensive, and $295 for High School & University.";
-    } else if (q.includes("check") && q.includes("status")) {
-      response = "You can check your evaluation status through our **application portal** or by contacting our office directly at **(914) 693-2840** or **info@ifcsevals.com**.";
-    } else if (q.includes("what is rush") || (q.includes("rush") && q.includes("processing"))) {
-      response = "**Rush processing** expedites your evaluation. The **3-day rush** delivers in 3 business days, and the **24-hour rush** delivers within 24 hours of document receipt. Rush fees vary by evaluation type.";
-    } else if (q.includes("evaluation") || q.includes("credential") || q.includes("transcript") || q.includes("degree") || q.includes("how do i") || q.includes("get started") || q.includes("apply") || q.includes("process") || q.includes("how does") || q.includes("what do i need")) {
-      response = EVALUATION_DETAILED_RESPONSE;
-    } else if (q.includes("certified translation") || q.includes("what is a certified")) {
-      response = "A **certified translation** includes a signed statement by the translator or translation company attesting that the translation is accurate and complete. It is required by USCIS, universities, and government agencies.";
-    } else if (q.includes("how long") && q.includes("translation")) {
-      response = "Standard turnaround is **3–5 business days** per document. Expedited options are available for same-day or next-day delivery.";
-    } else if (q.includes("what language") || q.includes("which language")) {
-      response = "We translate documents from and into **150+ languages**. If you don't see your language listed, contact us — we likely support it.\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**";
-    } else if (q.includes("uscis") || q.includes("accepted")) {
-      response = "Yes. All our certified translations meet **USCIS requirements** and are guaranteed to be accepted. If not, we will re-translate at no charge.";
-    } else if (q.includes("notari")) {
-      response = "Yes. We offer **notarization** as an add-on service for **$19.95 per order**. The notarized document is valid in all 50 U.S. states.";
-    } else if (q.includes("translation") || q.includes("translate")) {
-      response = "We offer certified translations in **150+ languages** at **$50 per page**. Our translations are accepted by USCIS, universities, and government agencies.\n\nStandard turnaround is **3–5 business days**.\n\n**Add-ons available:**\n- Expedited turnaround: $14.95/page\n- Notarization: $19.95/order\n- Hard copy: from $14.95\n\nYou can start your order on our Translations page!";
-    } else if (q.includes("contact") || q.includes("phone") || q.includes("email") || q.includes("reach")) {
-      response = "You can reach us at:\n\n📞 **Phone:** (914) 693-2840\n📧 **Email:** info@ifcsevals.com\n📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522\n🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST";
-    } else if (q.includes("rush") || q.includes("fast") || q.includes("expedite") || q.includes("urgent")) {
-      response = "We offer rush processing for all evaluations:\n\n- **3-Day Rush:** Results in 3 business days\n- **24-Hour Rush:** Results within 24 hours\n\nRush fees vary by evaluation type. For example, General Analysis rush is $150 (3-day) or $195 (24hr).";
-    } else if (q.includes("document") || q.includes("required")) {
-      response = "Typically you'll need:\n\n📄 **Transcripts/Mark Sheets** — official academic records\n📄 **Diploma Certificate** — proof of degree completion\n\nFor **High School & University Course-by-Course**, you'll need all four: High School diploma, High School transcript, University degree certificate, and University transcript.\n\nDocuments must be sent directly from the issuing institution to be considered official. Our mailing address is:\n\n**IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522**\n\nAlternatively, you can pay **$140 for document authentication** and we will verify directly with the institution.";
-    } else if (q.includes("consult") || q.includes("advising") || q.includes("advisor")) {
-      response = "**Evaluation consultations** are provided at **NO CHARGE**!\n\n**Admission & Academic Advisory consultations** are available at our Dobbs Ferry office at **$60/hour**.\n\nOur senior staff has reviewed thousands of applications and can help you find the right institution and program. To schedule, email us at info@ifcsevals.com or call (914) 693-2840.";
-    } else if (q.includes("shipping") || q.includes("delivery")) {
-      response = "**Delivery options:**\n\n- Electronic sharing: $25\n- Hard copy: $25 each\n- Domestic shipping: $25\n- International shipping: $70\n\nReports are valid for **5 years**. Renewal after expiration costs $100.";
-    } else if (q.includes("renewal") || q.includes("expire") || q.includes("valid")) {
-      response = "Evaluation reports are valid for **5 years** from the date of issuance. After expiration, you can renew for **$100**, which extends validity for another 5 years.";
-    } else if (q.includes("hello") || q.includes("hi") || q.includes("hey")) {
-      response = "Hello! Welcome to IFCS. I can help you with information about our credential evaluations, translations, consulting services, pricing, and more. What would you like to know?";
-    } else if (attachments.length > 0 || userMsg.attachments) {
-      response = "Thank you for sharing your document(s). For a detailed review, please submit them through our online application at https://ifcsevals.com/application or email them to **info@ifcsevals.com**.\n\nIf you have questions about the evaluation process, I'm happy to help!";
+    if (userMsg.attachments && userMsg.attachments.length > 0 && !query) {
+      response = "Thank you for sharing your document(s). For a detailed review, please submit them through our online application or email them to **info@ifcsevals.com**.\n\nIf you have questions about the evaluation process, I'm happy to help!";
+      navButtons = [{ label: "Start Application", path: "/application" }];
     } else {
-      response = "I appreciate your question! For more specific inquiries, I'd recommend contacting our team directly:\n\n📞 **Phone:** (914) 693-2840\n📧 **Email:** info@ifcsevals.com\n\nThey'll be happy to assist you with any detailed questions about your specific situation. Is there anything else I can help with regarding our services?";
+      const result = findResponse(query);
+      response = result.response;
+      navButtons = result.navButtons;
     }
 
     await new Promise((r) => setTimeout(r, 800));
-    setMessages((prev) => [...prev, { role: "assistant", content: response }]);
+    setMessages((prev) => [...prev, { role: "assistant", content: response, navButtons }]);
     setIsLoading(false);
   };
+
+  const renderMarkdown = (text: string) => {
+    return text.split("\n").map((line, i) => {
+      const parts = line.split(/(\*\*.*?\*\*)/).map((part, j) =>
+        part.startsWith("**") && part.endsWith("**") ? (
+          <strong key={j}>{part.slice(2, -2)}</strong>
+        ) : (
+          <span key={j}>{part}</span>
+        )
+      );
+      return (
+        <span key={i}>
+          {parts}
+          {i < text.split("\n").length - 1 && <br />}
+        </span>
+      );
+    });
+  };
+
+  const showSuggestions = messages.length === 0;
 
   return (
     <>
@@ -147,7 +679,7 @@ const AIChatWidget = () => {
       )}
 
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[380px] max-w-[calc(100vw-2rem)] h-[520px] max-h-[calc(100vh-4rem)] rounded-3xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden animate-fade-in-up">
+        <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-4rem)] rounded-3xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden animate-fade-in-up">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-accent text-white">
             <div className="flex items-center gap-3">
@@ -155,8 +687,8 @@ const AIChatWidget = () => {
                 <MessageCircle size={16} />
               </div>
               <div>
-                <p className="text-sm font-semibold">IFCS AI</p>
-                <p className="text-[10px] opacity-80">Ask us anything</p>
+                <p className="text-sm font-semibold">IFCS AI Assistant</p>
+                <p className="text-[10px] opacity-80">Ask us anything about our services</p>
               </div>
             </div>
             <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 rounded-full p-1.5 transition-colors">
@@ -167,19 +699,33 @@ const AIChatWidget = () => {
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
             {messages.length === 0 && (
-              <div className="text-center py-8 space-y-3">
-                <div className="w-12 h-12 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
-                  <MessageCircle size={22} className="text-accent" />
+              <div className="space-y-4">
+                <div className="text-center py-4 space-y-2">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
+                    <MessageCircle size={22} className="text-accent" />
+                  </div>
+                  <p className="text-base font-semibold text-foreground">Welcome to IFCS AI</p>
+                  <p className="text-xs text-muted-foreground max-w-[280px] mx-auto">
+                    I can help you with evaluations, translations, pricing, applications, and more. Try one of these:
+                  </p>
                 </div>
-                <p className="text-base font-semibold text-foreground">Welcome to IFCS AI</p>
-                <p className="text-xs text-muted-foreground max-w-[260px] mx-auto">
-                  Ask me about evaluations, translations, pricing, or anything else about our services.
-                </p>
+                {/* Suggestion chips */}
+                <div className="flex flex-wrap gap-2 justify-center px-2">
+                  {SUGGESTIONS.map((s, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSuggestionClick(s)}
+                      className="px-3 py-1.5 text-xs font-medium rounded-full border border-accent text-accent bg-white hover:bg-accent/10 transition-colors text-left"
+                    >
+                      {s}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
             {messages.map((msg, i) => (
               <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className="max-w-[80%] space-y-1">
+                <div className="max-w-[85%] space-y-2">
                   {msg.attachments && msg.attachments.length > 0 && (
                     <div className="flex flex-wrap gap-1">
                       {msg.attachments.map((name, j) => (
@@ -196,15 +742,25 @@ const AIChatWidget = () => {
                           ? "bg-accent text-white rounded-br-md"
                           : "bg-muted text-foreground rounded-bl-md"
                       }`}
-                      style={{ whiteSpace: "pre-wrap" }}
                     >
-                      {msg.content.split(/(\*\*.*?\*\*)/).map((part, j) =>
-                        part.startsWith("**") && part.endsWith("**") ? (
-                          <strong key={j}>{part.slice(2, -2)}</strong>
-                        ) : (
-                          <span key={j}>{part}</span>
-                        )
-                      )}
+                      {renderMarkdown(msg.content)}
+                    </div>
+                  )}
+                  {/* Navigation buttons */}
+                  {msg.navButtons && msg.navButtons.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {msg.navButtons.map((btn, j) => (
+                        <button
+                          key={j}
+                          onClick={() => {
+                            setIsOpen(false);
+                            navigate(btn.path);
+                          }}
+                          className="px-4 py-2 text-xs font-semibold rounded-full bg-accent text-white hover:bg-accent/90 transition-colors shadow-sm"
+                        >
+                          {btn.label}
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -263,7 +819,7 @@ const AIChatWidget = () => {
               />
               <button
                 onClick={sendMessage}
-                disabled={!input.trim() && attachments.length === 0 || isLoading}
+                disabled={(!input.trim() && attachments.length === 0) || isLoading}
                 className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent/90 transition-colors disabled:opacity-50 flex-shrink-0"
               >
                 <Send size={16} />
