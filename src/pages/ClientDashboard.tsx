@@ -333,48 +333,46 @@ const ClientDashboard = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-8">
 
           {/* ── Track Order ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Search size={22} className="text-accent" /> {translate("Track Order")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                {translate("Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.")}
-              </p>
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <Input
-                    value={trackId}
-                    onChange={(e) => setTrackId(e.target.value)}
-                    placeholder="IFCS ID (e.g. 44507) or App ID (e.g. EE0098)"
-                    className="max-w-sm"
-                  />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
-                  <div className="grid grid-cols-3 gap-3 max-w-sm">
-                    <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
-                      <option value="">Month</option>
-                      {months.map(m => <option key={m} value={m}>{m}</option>)}
-                    </GlassSelect>
-                    <GlassSelect value={trackDobDay} onChange={(e) => setTrackDobDay(e.target.value)}>
-                      <option value="">Day</option>
-                      {days.map(d => <option key={d} value={d}>{d}</option>)}
-                    </GlassSelect>
-                    <GlassSelect value={trackDobYear} onChange={(e) => setTrackDobYear(e.target.value)}>
-                      <option value="">Year</option>
-                      {years.map(y => <option key={y} value={y}>{y}</option>)}
-                    </GlassSelect>
-                  </div>
-                </div>
-                <Button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()} className="gap-2">
-                  <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
-                </Button>
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Search size={20} className="text-accent" />
               </div>
-            </CardContent>
-          </Card>
+              <h2 className="text-xl font-bold text-foreground">{translate("Track Order")}</h2>
+            </div>
+            <p className="text-sm text-muted-foreground mb-5">
+              {translate("Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.")}
+            </p>
+            <div className="space-y-4">
+              <Input
+                value={trackId}
+                onChange={(e) => setTrackId(e.target.value)}
+                placeholder="IFCS ID (e.g. 44507) or App ID (e.g. EE0098)"
+                className="max-w-sm rounded-2xl h-12"
+              />
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
+                <div className="grid grid-cols-3 gap-3 max-w-sm">
+                  <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
+                    <option value="">Month</option>
+                    {months.map(m => <option key={m} value={m}>{m}</option>)}
+                  </GlassSelect>
+                  <GlassSelect value={trackDobDay} onChange={(e) => setTrackDobDay(e.target.value)}>
+                    <option value="">Day</option>
+                    {days.map(d => <option key={d} value={d}>{d}</option>)}
+                  </GlassSelect>
+                  <GlassSelect value={trackDobYear} onChange={(e) => setTrackDobYear(e.target.value)}>
+                    <option value="">Year</option>
+                    {years.map(y => <option key={y} value={y}>{y}</option>)}
+                  </GlassSelect>
+                </div>
+              </div>
+              <button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
+              </button>
+            </div>
+          </div>
 
           {/* ── My Orders ── */}
           <Card className="border-border bg-card">
