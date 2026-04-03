@@ -730,8 +730,8 @@ const StaffDashboard = () => {
                   </div>
                 );
               })}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* ── Share Evaluation Report ── */}
           <Card className="border-border bg-card">
