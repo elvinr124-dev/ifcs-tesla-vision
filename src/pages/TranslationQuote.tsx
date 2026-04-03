@@ -7,6 +7,7 @@ import BackToHome from "@/components/BackToHome";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { useLocale } from "@/context/LocaleContext";
 
 interface FileAnalysis {
   file: File;
@@ -52,6 +53,7 @@ const SectionHeading = ({ children }: { children: React.ReactNode }) => (
 );
 
 const TranslationQuote = () => {
+  const { translate, translateDual } = useLocale();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -204,14 +206,14 @@ const TranslationQuote = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12">
           <Link to="/translations" className="inline-flex items-center gap-2 text-sm font-medium mb-8 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Translations
+            <ArrowLeft size={16} /> {translate("Back to Translations")}
           </Link>
-          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">Request a Quote</p>
+          <p className="text-sm font-semibold tracking-[0.25em] uppercase text-accent mb-3">{translate("Request a Quote")}</p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight text-white">
-            Translation Quote
+            {translate("Translation Quote")}
           </h1>
           <p className="mt-4 text-base md:text-lg text-white/80 font-light max-w-xl">
-            Upload your documents for a personalized quote. Our AI will analyze word counts and our team will review and respond with pricing.
+            {translate("Upload your documents for a personalized quote. Our AI will analyze word counts and our team will review and respond with pricing.")}
           </p>
         </div>
       </section>
@@ -220,10 +222,10 @@ const TranslationQuote = () => {
         <section className="py-32 px-6 md:px-12 text-center">
           <div className="max-w-xl mx-auto rounded-3xl border border-accent/40 bg-accent/5 p-12">
             <CheckCircle size={56} className="text-accent mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-foreground mb-3">Quote Request Submitted!</h2>
-            <p className="text-muted-foreground font-light mb-8">Our team will review your documents and send a detailed quote to your email shortly.</p>
+            <h2 className="text-3xl font-bold text-foreground mb-3">{translate("Quote Request Submitted!")}</h2>
+            <p className="text-muted-foreground font-light mb-8">{translate("Our team will review your documents and send a detailed quote to your email shortly.")}</p>
             <Link to="/translations" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl bg-accent text-accent-foreground font-bold shadow-xl shadow-accent/40 hover:scale-105 transition-all duration-300">
-              Back to Translations
+              {translate("Back to Translations")}
             </Link>
           </div>
         </section>
@@ -242,27 +244,27 @@ const TranslationQuote = () => {
 
               {/* Contact Info */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
-                <SectionHeading>Your Information</SectionHeading>
+                <SectionHeading>{translateDual("Your Information")}</SectionHeading>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FieldGroup label="Full Name" required>
+                  <FieldGroup label={translateDual("Full Name")} required>
                     <GlassInput value={name} onChange={e => setName(e.target.value)} placeholder="Full name" required />
                   </FieldGroup>
-                  <FieldGroup label="E-mail" required>
+                  <FieldGroup label={translateDual("E-mail")} required>
                     <GlassInput value={email} onChange={e => setEmail(e.target.value)} placeholder="you@email.com" type="email" required />
                   </FieldGroup>
                 </div>
-                <FieldGroup label="Phone">
+                <FieldGroup label={translateDual("Phone")}>
                   <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
                 </FieldGroup>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <FieldGroup label="Translating From" required>
+                  <FieldGroup label={translateDual("Translating From")} required>
                     <GlassInput value={transFrom} onChange={e => setTransFrom(e.target.value)} placeholder="e.g. Spanish" required />
                   </FieldGroup>
-                  <FieldGroup label="Translating Into" required>
+                  <FieldGroup label={translateDual("Translating Into")} required>
                     <GlassInput value={transTo} onChange={e => setTransTo(e.target.value)} placeholder="e.g. English" required />
                   </FieldGroup>
                 </div>
-                <FieldGroup label="Additional Notes">
+                <FieldGroup label={translateDual("Additional Notes")}>
                   <textarea
                     value={notes} onChange={e => setNotes(e.target.value)}
                     placeholder="Any special instructions or details about your documents..."
@@ -274,15 +276,15 @@ const TranslationQuote = () => {
 
               {/* Upload */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
-                <SectionHeading>Upload Your Documents</SectionHeading>
+                <SectionHeading>{translateDual("Upload Your Documents")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
-                  Upload clear images or PDFs. Our AI will analyze word counts for review — pricing will be provided by our team.
+                  {translate("Upload clear images or PDFs. Our AI will analyze word counts for review — pricing will be provided by our team.")}
                 </p>
 
                 <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border rounded-2xl p-8 cursor-pointer hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 group">
                   <Upload size={28} className="text-muted-foreground group-hover:text-accent transition-colors" />
-                  <span className="text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Click to browse files</span>
-                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · Max 4MB per file</span>
+                  <span className="text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">{translate("Click to browse files")}</span>
+                  <span className="text-xs text-muted-foreground/60">{translate("PDF, JPG, PNG supported · Max 4MB per file")}</span>
                   <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                 </label>
 
@@ -301,7 +303,7 @@ const TranslationQuote = () => {
                               {fa.analyzing && (
                                 <div className="flex items-center gap-2 mt-1">
                                   <Loader2 size={12} className="animate-spin text-accent" />
-                                  <span className="text-xs text-muted-foreground">Analyzing document...</span>
+                                  <span className="text-xs text-muted-foreground">{translate("Analyzing document...")}</span>
                                 </div>
                               )}
 
@@ -350,7 +352,7 @@ const TranslationQuote = () => {
                 )}
 
                 <button type="button" onClick={() => fileInputRef.current?.click()} className="text-sm font-medium text-accent hover:opacity-75 transition-opacity underline underline-offset-4">
-                  + Add another file
+                  {translate("+ Add another file")}
                 </button>
               </div>
 
@@ -362,7 +364,7 @@ const TranslationQuote = () => {
                   className="group inline-flex items-center gap-4 px-12 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   {submitting ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
-                  <span>{submitting ? "Submitting..." : "Submit Quote Request"}</span>
+                  <span>{submitting ? translate("Submitting...") : translate("Submit Quote Request")}</span>
                 </button>
               </div>
             </div>
@@ -372,11 +374,11 @@ const TranslationQuote = () => {
 
               {/* Document Summary */}
               <div className="rounded-3xl border border-accent/30 bg-card shadow-lg p-8 space-y-5 sticky top-24">
-                <SectionHeading>Document Summary</SectionHeading>
+                <SectionHeading>{translateDual("Document Summary")}</SectionHeading>
 
                 {fileAnalyses.length === 0 ? (
                   <p className="text-sm text-muted-foreground font-light text-center py-4">
-                    Upload documents to see analysis
+                    {translate("Upload documents to see analysis")}
                   </p>
                 ) : (
                   <div className="space-y-3">
@@ -393,7 +395,7 @@ const TranslationQuote = () => {
                     ))}
                     <div className="border-t border-border pt-3">
                       <p className="text-xs text-muted-foreground">
-                        Our team will review your documents and provide a detailed quote via email.
+                        {translate("Our team will review your documents and provide a detailed quote via email.")}
                       </p>
                     </div>
                   </div>
@@ -402,9 +404,9 @@ const TranslationQuote = () => {
 
               {/* Make a Payment (if already received a quote) */}
               <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-4">
-                <SectionHeading>Make a Payment</SectionHeading>
+                <SectionHeading>{translateDual("Make a Payment")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                  Already received a quote? Enter your details below to make a payment.
+                  {translate("Already received a quote? Enter your details below to make a payment.")}
                 </p>
 
                 {!showPayment ? (
@@ -414,30 +416,30 @@ const TranslationQuote = () => {
                     className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-foreground text-background font-bold text-base shadow-lg hover:scale-105 transition-all duration-300"
                   >
                     <CreditCard size={18} />
-                    <span>Make Payment</span>
+                    <span>{translate("Make Payment")}</span>
                   </button>
                 ) : (
                   <div className="space-y-4 pt-2">
-                    <FieldGroup label="Full Name" required>
+                    <FieldGroup label={translateDual("Full Name")} required>
                       <GlassInput value={payName} onChange={e => setPayName(e.target.value)} placeholder="Name on card" required />
                     </FieldGroup>
-                    <FieldGroup label="Email" required>
+                    <FieldGroup label={translateDual("Email")} required>
                       <GlassInput value={payEmail} onChange={e => setPayEmail(e.target.value)} placeholder="you@email.com" type="email" required />
                     </FieldGroup>
-                    <FieldGroup label="Amount ($)" required>
+                    <FieldGroup label={translateDual("Amount ($)")} required>
                       <GlassInput value={payAmount} onChange={e => setPayAmount(e.target.value)} placeholder="e.g. 150.00" type="number" required />
                     </FieldGroup>
-                    <FieldGroup label="Card Number" required>
+                    <FieldGroup label={translateDual("Card Number")} required>
                       <GlassInput value={payCardNumber} onChange={e => setPayCardNumber(e.target.value)} placeholder="1234 5678 9012 3456" required />
                     </FieldGroup>
                     <div className="grid grid-cols-3 gap-3">
-                      <FieldGroup label="Expiry" required>
+                      <FieldGroup label={translateDual("Expiry")} required>
                         <GlassInput value={payExpiry} onChange={e => setPayExpiry(e.target.value)} placeholder="MM/YY" required />
                       </FieldGroup>
-                      <FieldGroup label="CVC" required>
+                      <FieldGroup label={translateDual("CVC")} required>
                         <GlassInput value={payCvc} onChange={e => setPayCvc(e.target.value)} placeholder="123" required />
                       </FieldGroup>
-                      <FieldGroup label="Zip" required>
+                      <FieldGroup label={translateDual("Zip")} required>
                         <GlassInput value={payZip} onChange={e => setPayZip(e.target.value)} placeholder="10001" required />
                       </FieldGroup>
                     </div>

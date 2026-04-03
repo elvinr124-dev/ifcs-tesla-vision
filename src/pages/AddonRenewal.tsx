@@ -12,11 +12,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
+import { useLocale } from "@/context/LocaleContext";
 
 const AddonRenewal = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { translateDual, translate } = useLocale();
   const [payment, setPayment] = useState({ name: "", ifcsId: "", email: "", phone: "", cardHolder: "", cardNumber: "", month: "", year: "", cvv: "" });
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
@@ -61,8 +63,8 @@ const AddonRenewal = () => {
         <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6">
-          <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white hero-text-shadow">Renew Report</h1>
-          <p className="text-white/80 mt-4 text-lg md:text-xl">Extend your evaluation validity for 5 more years</p>
+          <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white hero-text-shadow">{translate("Renew Report")}</h1>
+          <p className="text-white/80 mt-4 text-lg md:text-xl">{translate("Extend your evaluation validity for 5 more years")}</p>
         </div>
       </section>
 
@@ -70,30 +72,30 @@ const AddonRenewal = () => {
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
           <div className="text-center">
             <RefreshCw size={48} className="text-accent mx-auto mb-4" />
-            <p className="text-muted-foreground">Renew your expired or expiring IFCS evaluation report. Your renewed report will be valid for an additional 5 years from the date of renewal.</p>
+            <p className="text-muted-foreground">{translate("Renew your expired or expiring IFCS evaluation report. Your renewed report will be valid for an additional 5 years from the date of renewal.")}</p>
             <p className="text-4xl font-bold text-foreground mt-4">$100.00</p>
-            <p className="text-sm text-muted-foreground mt-1">Renewal — Up to 5 Years</p>
+            <p className="text-sm text-muted-foreground mt-1">{translate("Renewal — Up to 5 Years")}</p>
           </div>
 
           <form onSubmit={handlePay} className="space-y-8">
             <Card className="border-border bg-card">
-              <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> Your Information & Payment</CardTitle></CardHeader>
+              <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Your Information & Payment")}</CardTitle></CardHeader>
               <CardContent className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Name on Documents *</label><Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">IFCS ID *</label><Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Email *</label><Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Phone *</label><Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} /></div>
-                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Name on Credit Card *</label><Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} /></div>
-                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">Card Number *</label><Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Month *</label><Input required value={payment.month} onChange={(e) => setPayment({ ...payment, month: e.target.value })} placeholder="MM" /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Year *</label><Input required value={payment.year} onChange={(e) => setPayment({ ...payment, year: e.target.value })} placeholder="YYYY" /></div>
-                <div className="space-y-1"><label className="text-sm font-medium text-foreground">CVV *</label><Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Name on Documents")} *</label><Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("IFCS ID")} *</label><Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Email")} *</label><Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Phone")} *</label><Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} /></div>
+                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Name on Credit Card")} *</label><Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} /></div>
+                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Card Number")} *</label><Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Month")} *</label><Input required value={payment.month} onChange={(e) => setPayment({ ...payment, month: e.target.value })} placeholder="MM" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Year")} *</label><Input required value={payment.year} onChange={(e) => setPayment({ ...payment, year: e.target.value })} placeholder="YYYY" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("CVV")} *</label><Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" /></div>
               </CardContent>
             </Card>
 
             <Card className="border-border bg-card">
               <CardContent className="pt-6 space-y-4">
-                <p className="text-sm font-medium text-foreground mb-2">Please read and agree to the terms and conditions & privacy policy:</p>
+                <p className="text-sm font-medium text-foreground mb-2">{translate("Please read and agree to the terms and conditions & privacy policy:")}</p>
                 <div className="flex items-start gap-3">
                   <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
                   <label htmlFor="terms" className="text-sm text-muted-foreground">
@@ -112,7 +114,7 @@ const AddonRenewal = () => {
             </Card>
 
             <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">
-              Pay $100.00
+              {translate("Pay")} $100.00
             </Button>
           </form>
         </div>

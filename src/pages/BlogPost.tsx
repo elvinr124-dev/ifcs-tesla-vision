@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import blogBg from "@/assets/blog-bg.jpg";
+import { useLocale } from "@/context/LocaleContext";
 import peruImg from "@/assets/blog-peru-education.jpg";
 import argentinaImg from "@/assets/blog-argentina-vocational.jpg";
 import polandImg from "@/assets/blog-poland-dba.jpg";
@@ -151,6 +152,7 @@ const posts: Record<string, { title: string; date: string; author: string; image
 
 const BlogPost = () => {
   const { slug } = useParams<{ slug: string }>();
+  const { translate } = useLocale();
   const post = slug ? posts[slug] : null;
 
   if (!post) {
@@ -159,8 +161,8 @@ const BlogPost = () => {
         <Navbar />
         <div className="flex items-center justify-center h-[60vh]">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-foreground mb-4">Post Not Found</h1>
-            <Link to="/blog" className="text-accent hover:underline">Back to Blog</Link>
+            <h1 className="text-4xl font-bold text-foreground mb-4">{translate("Post Not Found")}</h1>
+            <Link to="/blog" className="text-accent hover:underline">{translate("Back to Blog")}</Link>
           </div>
         </div>
         <Footer />
@@ -177,7 +179,7 @@ const BlogPost = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12 pb-12 hero-text-shadow">
           <Link to="/blog" className="inline-flex items-center gap-2 text-sm font-medium mb-4 opacity-70 hover:opacity-100 transition-opacity text-white">
-            <ArrowLeft size={16} /> Back to Blog
+            <ArrowLeft size={16} /> {translate("Back to Blog")}
           </Link>
           <h1 className="text-3xl md:text-5xl font-bold text-white leading-tight">{post.title}</h1>
           <div className="flex items-center gap-4 mt-4 text-sm text-white/70">
@@ -194,7 +196,7 @@ const BlogPost = () => {
             <div className="p-8 md:p-12 prose prose-sm max-w-none text-foreground prose-headings:text-foreground prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-5 prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-4 prose-p:text-foreground/90 prose-p:leading-[1.9] prose-p:mb-5 prose-li:text-foreground/90 prose-li:leading-[1.8] prose-strong:text-foreground prose-ul:space-y-3 prose-ul:my-5">
               {post.content}
               <div className="mt-12 pt-6 border-t border-border">
-                <p className="text-sm text-muted-foreground italic">Written by {post.author}</p>
+                <p className="text-sm text-muted-foreground italic">{translate("Written by")} {post.author}</p>
               </div>
             </div>
           </div>

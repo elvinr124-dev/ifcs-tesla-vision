@@ -269,8 +269,8 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     
     if (candidates.length === 0) return;
     
-    const textsToTranslate = candidates.slice(0, 25);
-    const remaining = candidates.slice(25);
+    const textsToTranslate = candidates.slice(0, 50);
+    const remaining = candidates.slice(50);
     if (remaining.length > 0) {
       remaining.forEach(t => pendingTexts.current.add(t));
     }
@@ -306,7 +306,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
       // If there are still pending texts, process another batch
       if (pendingTexts.current.size > 0) {
-        batchTimer.current = setTimeout(processBatch, 200);
+        batchTimer.current = setTimeout(processBatch, 100);
       }
     } catch (e) {
       console.error("Translation error:", e);
@@ -326,7 +326,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!pendingTexts.current.has(text) && !inFlightTexts.current.has(text)) {
       pendingTexts.current.add(text);
       clearTimeout(batchTimer.current);
-      batchTimer.current = setTimeout(processBatch, 100);
+      batchTimer.current = setTimeout(processBatch, 50);
     }
     
     return text;
@@ -342,7 +342,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!pendingTexts.current.has(text) && !inFlightTexts.current.has(text)) {
       pendingTexts.current.add(text);
       clearTimeout(batchTimer.current);
-      batchTimer.current = setTimeout(processBatch, 100);
+      batchTimer.current = setTimeout(processBatch, 50);
     }
     
     return text;
