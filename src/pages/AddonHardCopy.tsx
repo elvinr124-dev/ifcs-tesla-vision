@@ -49,7 +49,7 @@ const AddonHardCopy = () => {
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
           <div className="text-center">
             <Copy size={48} className="text-accent mx-auto mb-4" />
-            <p className="text-muted-foreground">Receive official printed hard copies of your IFCS evaluation report.</p>
+            <p className="text-muted-foreground">{translate("Receive official printed hard copies of your IFCS evaluation report.")}</p>
             <p className="text-4xl font-bold text-foreground mt-4">${total.toFixed(2)}</p>
             <div className="flex items-center justify-center gap-3 mt-3">
               <label className="text-sm font-medium text-foreground">Quantity:</label>
