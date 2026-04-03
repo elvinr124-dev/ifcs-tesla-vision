@@ -425,28 +425,68 @@ const StaffCartView = () => {
               />
             </div>
 
-            {/* Attachments & Signature */}
-            <div className="flex items-center gap-3 flex-wrap">
+            {/* Signature preview when attached */}
+            {signatureAttached && (
+              <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
+                <div className="flex items-start gap-4">
+                  <img src={ifcsLogoSig} alt="IFCS Logo" className="w-28 h-auto object-contain flex-shrink-0" />
+                  <div className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {`Institute of Foreign Credential Services | NACES Member | ATA Member\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: 914.693.2840\nFax: 914.231-7782\nE-mail: ${emailFrom ? emailFrom.split("@")[0] : "info"}@ifcsevals.com\nwww.ifcsevals.com`}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Toolbar row: Attach, Signature, Smart Rewrite, Grammar Check */}
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <div className="flex items-center gap-3 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-border bg-muted/50 text-sm font-semibold text-foreground hover:bg-muted transition-all"
+                >
+                  <Paperclip size={16} /> Attach File
+                </button>
+                <input ref={fileInputRef} type="file" multiple className="hidden" onChange={addAttachment} />
+                <button
+                  type="button"
+                  onClick={handleAttachSignature}
+                  className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl border text-sm font-semibold transition-all ${
+                    signatureAttached
+                      ? "border-accent bg-accent/10 text-accent"
+                      : "border-border bg-muted/50 text-foreground hover:bg-muted"
+                  }`}
+                >
+                  <Stamp size={16} /> {signatureAttached ? "Signature Attached ✓" : "Attach Signature"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAiRewrite("rewrite")}
+                  disabled={aiProcessing}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-purple-300 bg-purple-50 text-sm font-semibold text-purple-700 hover:bg-purple-100 transition-all disabled:opacity-50"
+                >
+                  <Sparkles size={16} /> {aiProcessing ? "Processing..." : "Smart Rewrite"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleAiRewrite("grammar")}
+                  disabled={aiProcessing}
+                  className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-green-300 bg-green-50 text-sm font-semibold text-green-700 hover:bg-green-100 transition-all disabled:opacity-50"
+                >
+                  <SpellCheck size={16} /> Grammar Check
+                </button>
+              </div>
+
+              {/* Send button - bottom right bubble */}
               <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-border bg-muted/50 text-sm font-semibold text-foreground hover:bg-muted transition-all"
+                onClick={handleSendEmail}
+                disabled={emailSending || !emailFrom || !emailSubject.trim() || !emailContent.trim()}
+                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                <Paperclip size={16} /> Attach File
-              </button>
-              <input ref={fileInputRef} type="file" multiple className="hidden" onChange={addAttachment} />
-              <button
-                type="button"
-                onClick={handleAttachSignature}
-                className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl border text-sm font-semibold transition-all ${
-                  signatureAttached
-                    ? "border-accent bg-accent/10 text-accent"
-                    : "border-border bg-muted/50 text-foreground hover:bg-muted"
-                }`}
-              >
-                <Stamp size={16} /> {signatureAttached ? "Signature Attached ✓" : "Attach Signature"}
+                <Send size={16} /> {emailSending ? "Sending..." : "Send"}
               </button>
             </div>
+
             {emailAttachments.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {emailAttachments.map((f, i) => (
@@ -458,16 +498,7 @@ const StaffCartView = () => {
                   </span>
                 ))}
               </div>
-            )}
-
-            {/* Send */}
-            <button
-              onClick={handleSendEmail}
-              disabled={emailSending || !emailFrom || !emailSubject.trim() || !emailContent.trim()}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-accent text-accent-foreground text-base font-semibold shadow-lg hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Send size={18} /> {emailSending ? "Sending..." : "Send Email"}
-            </button>
+            )
           </div>
         </DialogContent>
       </Dialog>
