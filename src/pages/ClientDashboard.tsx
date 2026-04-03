@@ -315,16 +315,16 @@ const ClientDashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="pt-28 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-2">
-          <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">
-            <ShieldCheck size={24} className="text-accent" />
+      <section className="pt-28 pb-14 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="flex items-center gap-5 mb-2">
+          <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/20 flex items-center justify-center shadow-sm">
+            <ShieldCheck size={28} className="text-accent" />
           </div>
           <div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">
-              {translate("Welcome")}{user?.firstName ? `, ${user.firstName}` : ""}
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">
+              {translate("Welcome")}{user?.firstName ? `, ${user.firstName}` : ""} 👋
             </h1>
-            <p className="text-muted-foreground mt-0.5 text-base">{translate("Applicant Dashboard")}</p>
+            <p className="text-muted-foreground mt-1 text-base">{translate("Applicant Dashboard")}</p>
           </div>
         </div>
       </section>
@@ -333,57 +333,56 @@ const ClientDashboard = () => {
         <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-8">
 
           {/* ── Track Order ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Search size={22} className="text-accent" /> {translate("Track Order")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                {translate("Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.")}
-              </p>
-              <div className="space-y-4">
-                <div className="flex gap-3">
-                  <Input
-                    value={trackId}
-                    onChange={(e) => setTrackId(e.target.value)}
-                    placeholder="IFCS ID (e.g. 44507) or App ID (e.g. EE0098)"
-                    className="max-w-sm"
-                  />
-                </div>
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
-                  <div className="grid grid-cols-3 gap-3 max-w-sm">
-                    <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
-                      <option value="">Month</option>
-                      {months.map(m => <option key={m} value={m}>{m}</option>)}
-                    </GlassSelect>
-                    <GlassSelect value={trackDobDay} onChange={(e) => setTrackDobDay(e.target.value)}>
-                      <option value="">Day</option>
-                      {days.map(d => <option key={d} value={d}>{d}</option>)}
-                    </GlassSelect>
-                    <GlassSelect value={trackDobYear} onChange={(e) => setTrackDobYear(e.target.value)}>
-                      <option value="">Year</option>
-                      {years.map(y => <option key={y} value={y}>{y}</option>)}
-                    </GlassSelect>
-                  </div>
-                </div>
-                <Button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()} className="gap-2">
-                  <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
-                </Button>
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Search size={20} className="text-accent" />
               </div>
-            </CardContent>
-          </Card>
+              <h2 className="text-xl font-bold text-foreground">{translate("Track Order")}</h2>
+            </div>
+            <p className="text-sm text-muted-foreground mb-5">
+              {translate("Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.")}
+            </p>
+            <div className="space-y-4">
+              <Input
+                value={trackId}
+                onChange={(e) => setTrackId(e.target.value)}
+                placeholder="IFCS ID (e.g. 44507) or App ID (e.g. EE0098)"
+                className="max-w-sm rounded-2xl h-12"
+              />
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
+                <div className="grid grid-cols-3 gap-3 max-w-sm">
+                  <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
+                    <option value="">Month</option>
+                    {months.map(m => <option key={m} value={m}>{m}</option>)}
+                  </GlassSelect>
+                  <GlassSelect value={trackDobDay} onChange={(e) => setTrackDobDay(e.target.value)}>
+                    <option value="">Day</option>
+                    {days.map(d => <option key={d} value={d}>{d}</option>)}
+                  </GlassSelect>
+                  <GlassSelect value={trackDobYear} onChange={(e) => setTrackDobYear(e.target.value)}>
+                    <option value="">Year</option>
+                    {years.map(y => <option key={y} value={y}>{y}</option>)}
+                  </GlassSelect>
+                </div>
+              </div>
+              <button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()}
+                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
+              </button>
+            </div>
+          </div>
 
           {/* ── My Orders ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <Package size={22} className="text-accent" /> {translate("My Orders")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Package size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">{translate("My Orders")}</h2>
+            </div>
+            <div className="space-y-4">
               {orders.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-8">
                   {translate("No orders yet. Use the Track Order section above to find your order.")}
@@ -411,9 +410,9 @@ const ClientDashboard = () => {
                             <p className="font-bold text-accent">— IFCS ID {order.ifcs_id || hasAppData?.ifcs_id}</p>
                           )}
                           {!order.application_id && <p className="font-bold text-foreground">#{order.reference_id}</p>}
-                          <Badge variant="secondary" className={`${meta.color} gap-1 rounded-full px-3`}>
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${meta.color}`}>
                             {meta.icon} {meta.label}
-                          </Badge>
+                          </span>
                         </div>
                         {order.service && <p className="text-sm text-muted-foreground mt-1.5 truncate">{order.service}</p>}
                         <p className="text-xs text-muted-foreground mt-0.5">Added {new Date(order.submitted_at).toLocaleDateString()}</p>
@@ -428,22 +427,20 @@ const ClientDashboard = () => {
                         {/* Action buttons */}
                         <div className="flex flex-wrap gap-2">
                           {hasAppData && (
-                            <Button
-                              variant="outline"
-                              className="gap-2 rounded-full"
+                            <button
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-all"
                               onClick={() => handleViewApplication(order.application_id!)}
                             >
-                              <Eye size={16} /> {translate("View Application")}
-                            </Button>
+                              <Eye size={14} /> {translate("View Application")}
+                            </button>
                           )}
                           {receiptUrl && (
-                            <Button
-                              variant="outline"
-                              className="gap-2 rounded-full"
+                            <button
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-border bg-muted/50 text-foreground text-xs font-semibold hover:bg-muted transition-all"
                               onClick={() => window.open(receiptUrl, "_blank")}
                             >
-                              <FileText size={16} /> {translate("View Receipt")}
-                            </Button>
+                              <FileText size={14} /> {translate("View Receipt")}
+                            </button>
                           )}
                         </div>
 
@@ -555,17 +552,18 @@ const ClientDashboard = () => {
                   </div>
                 );
               })}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* ── Credential Vault ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <ShieldCheck size={22} className="text-accent" /> {translate("Shared Evaluation Reports")}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <ShieldCheck size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">{translate("Shared Evaluation Reports")}</h2>
+            </div>
+            <div className="space-y-3">
               {dbReports.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">No reports shared yet.</p>
               )}
@@ -573,7 +571,7 @@ const ClientDashboard = () => {
                 const isExpired = r.expiry_date ? new Date(r.expiry_date) < new Date() : false;
                 const statusLabel = isExpired ? "expired" : r.status;
                 return (
-                  <div key={r.id} className="rounded-xl border border-border p-5 flex flex-wrap items-center justify-between gap-4">
+                  <div key={r.id} className="rounded-2xl border border-border p-5 flex flex-wrap items-center justify-between gap-4 hover:shadow-sm transition-shadow">
                     <div>
                       <p className="font-semibold text-foreground">#{r.reference_id}</p>
                       <p className="text-sm text-muted-foreground">{r.evaluation_type}</p>
@@ -587,36 +585,41 @@ const ClientDashboard = () => {
                       {!isExpired && (
                         <>
                           <Link to={`/transcript?token=${r.access_token}`}>
-                            <Button size="sm" variant="outline" className="gap-1"><Eye size={14} /> View</Button>
+                            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border text-xs font-semibold text-foreground hover:bg-muted transition-all">
+                              <Eye size={14} /> View
+                            </button>
                           </Link>
-                          <Button size="sm" variant="outline" className="gap-1" onClick={() => r.report_file_url && window.open(r.report_file_url, "_blank")} disabled={!r.report_file_url}><Download size={14} /> Download</Button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border text-xs font-semibold text-foreground hover:bg-muted transition-all" onClick={() => r.report_file_url && window.open(r.report_file_url, "_blank")} disabled={!r.report_file_url}>
+                            <Download size={14} /> Download
+                          </button>
                         </>
                       )}
                       {isExpired && (
                         <Link to="/addon/renewal">
-                          <Button size="sm" variant="destructive" className="gap-1"><RefreshCw size={14} /> Renew ($100)</Button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-destructive text-destructive-foreground text-xs font-semibold hover:bg-destructive/90 transition-all">
+                            <RefreshCw size={14} /> Renew ($100)
+                          </button>
                         </Link>
                       )}
                     </div>
                   </div>
                 );
               })}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* ── Contact IFCS ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl">
-                <MessageSquare size={22} className="text-accent" /> Contact IFCS
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground">
-                Need help? Click the <span className="font-semibold text-emerald-500">Contact Agent</span> button in the bottom-right corner to start a live chat with an IFCS representative. You can also reach us at <a href="mailto:info@ifcsevals.com" className="text-accent underline">info@ifcsevals.com</a>.
-              </p>
-            </CardContent>
-          </Card>
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <MessageSquare size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Contact IFCS</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Need help? Click the <span className="font-semibold text-emerald-500">Contact Agent</span> button in the bottom-right corner to start a live chat with an IFCS representative. You can also reach us at <a href="mailto:info@ifcsevals.com" className="text-accent underline">info@ifcsevals.com</a>.
+            </p>
+          </div>
         </div>
       </div>
 

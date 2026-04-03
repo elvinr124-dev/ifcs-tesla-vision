@@ -529,14 +529,14 @@ const StaffDashboard = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      <section className="pt-28 pb-12 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="flex items-center gap-4 mb-2">
-          <div className="w-14 h-14 rounded-2xl bg-accent/10 border border-accent/20 flex items-center justify-center">
-            <Package size={24} className="text-accent" />
+      <section className="pt-28 pb-14 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="flex items-center gap-5 mb-2">
+          <div className="w-16 h-16 rounded-3xl bg-gradient-to-br from-accent/20 to-accent/5 border border-accent/20 flex items-center justify-center shadow-sm">
+            <Package size={28} className="text-accent" />
           </div>
           <div>
-            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">Staff Dashboard</h1>
-            <p className="text-muted-foreground mt-0.5 text-base">Manage applications, share reports & communicate with applicants</p>
+            <h1 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground">Staff Dashboard</h1>
+            <p className="text-muted-foreground mt-1 text-base">Manage applications, share reports & communicate with applicants</p>
           </div>
         </div>
       </section>
@@ -583,19 +583,22 @@ const StaffDashboard = () => {
           )}
 
           {/* ── Application Queue ── */}
-          <Card className="border-border bg-card">
-            <CardHeader className="flex flex-col gap-4">
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex flex-col gap-4 mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Package size={22} className="text-accent" /> Application Queue
-                  <Badge variant="secondary" className="ml-2">{orders.length}</Badge>
-                </CardTitle>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                    <Package size={20} className="text-accent" />
+                  </div>
+                  <h2 className="text-xl font-bold text-foreground">Application Queue</h2>
+                  <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold">{orders.length}</span>
+                </div>
                 <div className="flex gap-2">
-                  <Button onClick={() => setNewAppOpen(true)} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                  <button onClick={() => setNewAppOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-all">
                     <Plus size={16} /> New Application Entry
-                  </Button>
+                  </button>
                   <Select value={filter} onValueChange={setFilter}>
-                    <SelectTrigger className="w-48"><SelectValue placeholder="Filter by status" /></SelectTrigger>
+                    <SelectTrigger className="w-48 rounded-2xl"><SelectValue placeholder="Filter by status" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All</SelectItem>
                       <SelectItem value="requested">Requested</SelectItem>
@@ -609,14 +612,12 @@ const StaffDashboard = () => {
                   </Select>
                 </div>
               </div>
-              <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by IFCS ID, App ID, reference # or email..." className="pl-9" />
-                </div>
-              </form>
-            </CardHeader>
-            <CardContent className="space-y-4">
+              <div className="relative">
+                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by IFCS ID, App ID, reference # or email..." className="pl-10 rounded-2xl h-12" />
+              </div>
+            </div>
+            <div className="space-y-4">
               {filtered.length === 0 && (
                 <div className="text-center py-8">
                   <p className="text-muted-foreground">{searchQuery ? `No applications found for "${searchQuery}"` : "No orders in the queue yet."}</p>
@@ -629,15 +630,15 @@ const StaffDashboard = () => {
                 const applicantName = client ? `${client.first_name} ${client.last_name}` : o.client_email;
 
                 return (
-                  <div key={o.id} className="rounded-xl border border-border overflow-hidden">
+                  <div key={o.id} className="rounded-2xl border border-border overflow-hidden hover:shadow-md transition-shadow">
                     <button onClick={() => setSelectedOrder(isSelected ? null : o.id)}
-                      className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors text-left">
+                      className="w-full flex items-center justify-between p-5 hover:bg-muted/20 transition-colors text-left">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 flex-wrap">
                           {o.application_id && <p className="font-semibold text-foreground">App ID {o.application_id}</p>}
                           {o.ifcs_id && <p className="font-semibold text-accent">IFCS ID {o.ifcs_id}</p>}
                           {!o.application_id && !o.ifcs_id && <p className="font-semibold text-foreground">#{o.reference_id}</p>}
-                          <Badge variant="secondary" className={`${meta.color} gap-1`}>{meta.icon} {meta.label}</Badge>
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${meta.color}`}>{meta.icon} {meta.label}</span>
                         </div>
                         <p className="text-sm text-foreground mt-1">{applicantName} <span className="text-muted-foreground">— {o.client_email}</span></p>
                         <p className="text-xs text-muted-foreground">{o.service || "No service specified"} · Added {new Date(o.submitted_at).toLocaleDateString()}</p>
@@ -651,10 +652,11 @@ const StaffDashboard = () => {
                           <p className="text-sm font-medium text-foreground mb-2">Update Status</p>
                           <div className="flex flex-wrap gap-2">
                             {Object.entries(statusMeta).map(([key, val]) => (
-                              <Button key={key} size="sm" variant={o.status === key ? "default" : "outline"} className="gap-1 rounded-full"
+                              <button key={key}
+                                className={`inline-flex items-center gap-1 px-4 py-2 rounded-2xl text-xs font-semibold transition-all ${o.status === key ? "bg-accent text-accent-foreground" : "border border-border bg-muted/50 text-foreground hover:bg-muted"}`}
                                 onClick={() => handleStatusChange(o.id, key)}>
                                 {val.icon} {val.label}
-                              </Button>
+                              </button>
                             ))}
                           </div>
                         </div>
@@ -666,14 +668,14 @@ const StaffDashboard = () => {
                           {/* Quick note tags */}
                           <div className="flex flex-wrap gap-2 mb-3">
                             {quickNotes.map((qn) => (
-                              <Button key={qn} size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
+                              <button key={qn} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl text-xs font-semibold border border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 transition-all"
                                 onClick={() => {
                                   const currentNote = o.staff_note || "";
                                   const newNote = currentNote ? `${currentNote}\n${qn}` : qn;
                                   handleUpdateNote(o.id, newNote);
                                 }}>
                                 <Plus size={10} /> {qn}
-                              </Button>
+                              </button>
                             ))}
                           </div>
 
@@ -706,72 +708,76 @@ const StaffDashboard = () => {
 
                         {/* Chat & Delete */}
                         <div className="flex gap-2 flex-wrap">
-                          <Button size="sm" variant="outline" className="gap-1 rounded-full" onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
+                            onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
-                          </Button>
-                          <Button size="sm" variant="outline" className="gap-1 rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-destructive/30 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-all"
                             onClick={() => setDeleteDialog({ open: true, deleteType: "client", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
                             <UserX size={14} /> Delete Client
-                          </Button>
-                          <Button size="sm" variant="outline" className="gap-1 rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-destructive/30 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-all"
                             onClick={() => setDeleteDialog({ open: true, deleteType: "application", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
                             <Trash2 size={14} /> Delete Application
-                          </Button>
-                          <Button size="sm" variant="destructive" className="gap-1 rounded-full"
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-destructive text-destructive-foreground text-xs font-semibold hover:bg-destructive/90 transition-all"
                             onClick={() => setDeleteDialog({ open: true, deleteType: "both", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
                             <Trash2 size={14} /> Delete Client & Application
-                          </Button>
+                          </button>
                         </div>
                       </div>
                     )}
                   </div>
                 );
               })}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* ── Share Evaluation Report ── */}
-          <Card className="border-border bg-card">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-xl"><FileText size={22} className="text-accent" /> Share Evaluation Report</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleShare} className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Recipient Email *</label>
-                  <Input type="email" placeholder="applicant@email.com or institution@school.edu" value={shareEmail} onChange={(e) => setShareEmail(e.target.value)} required />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">IFCS Reference # *</label>
-                  <Input placeholder="44507" value={shareRef} onChange={(e) => setShareRef(e.target.value)} required />
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Evaluation Type *</label>
-                  <Select value={shareType} onValueChange={setShareType}>
-                    <SelectTrigger><SelectValue placeholder="Select type" /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="general">General Analysis</SelectItem>
-                      <SelectItem value="general_gpa">General Analysis + GPA</SelectItem>
-                      <SelectItem value="course">Course-by-Course</SelectItem>
-                      <SelectItem value="comprehensive">Comprehensive Course-by-Course</SelectItem>
-                      <SelectItem value="health">Health Professions Course-by-Course</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground">Expiration Date *</label>
-                  <Input type="date" value={shareExpiry} onChange={(e) => setShareExpiry(e.target.value)} required />
-                </div>
-                <div className="space-y-2 md:col-span-2">
-                  <label className="text-sm font-medium text-foreground">Upload Evaluation (PDF Only) *</label>
-                  <Input type="file" accept=".pdf" onChange={(e) => setShareFile(e.target.files?.[0] || null)} />
-                </div>
-                <div className="md:col-span-2">
-                  <Button type="submit" className="gap-2 px-8"><Upload size={16} /> Upload & Share Report</Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <FileText size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Share Evaluation Report</h2>
+            </div>
+            <form onSubmit={handleShare} className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Recipient Email *</label>
+                <Input type="email" placeholder="applicant@email.com or institution@school.edu" value={shareEmail} onChange={(e) => setShareEmail(e.target.value)} required className="rounded-2xl h-12" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">IFCS Reference # *</label>
+                <Input placeholder="44507" value={shareRef} onChange={(e) => setShareRef(e.target.value)} required className="rounded-2xl h-12" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Evaluation Type *</label>
+                <Select value={shareType} onValueChange={setShareType}>
+                  <SelectTrigger className="rounded-2xl h-12"><SelectValue placeholder="Select type" /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="general">General Analysis</SelectItem>
+                    <SelectItem value="general_gpa">General Analysis + GPA</SelectItem>
+                    <SelectItem value="course">Course-by-Course</SelectItem>
+                    <SelectItem value="comprehensive">Comprehensive Course-by-Course</SelectItem>
+                    <SelectItem value="health">Health Professions Course-by-Course</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Expiration Date *</label>
+                <Input type="date" value={shareExpiry} onChange={(e) => setShareExpiry(e.target.value)} required className="rounded-2xl h-12" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium text-foreground">Upload Evaluation (PDF Only) *</label>
+                <Input type="file" accept=".pdf" onChange={(e) => setShareFile(e.target.files?.[0] || null)} className="rounded-2xl" />
+              </div>
+              <div className="md:col-span-2">
+                <button type="submit" className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all">
+                  <Upload size={16} /> Upload & Share Report
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
 

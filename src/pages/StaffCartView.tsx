@@ -6,7 +6,7 @@ import BackToHome from "@/components/BackToHome";
 import ViewApplicationDialog from "@/components/ViewApplicationDialog";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { Shield, Search, Eye, PenTool, Mail, Send, Paperclip, X, Users } from "lucide-react";
+import { Shield, Search, Eye, PenTool, Mail, Send, Paperclip, X, Users, Stamp } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -22,6 +22,11 @@ const STAFF_EMAILS = [
   "support@ifcsevals.com",
   "translations@ifcsevals.com",
 ];
+
+const SIGNATURE_TEMPLATE = (fromEmail: string) => {
+  const emailPrefix = fromEmail ? fromEmail.split("@")[0] : "info";
+  return `\n\n——————————————————\nInstitute of Foreign Credential Services | NACES Member | ATA Member\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: 914.693.2840\nFax: 914.231-7782\nE-mail: ${emailPrefix}@ifcsevals.com\nwww.ifcsevals.com`;
+};
 
 interface AppRow {
   id: string;
@@ -57,6 +62,7 @@ const StaffCartView = () => {
   const [emailContent, setEmailContent] = useState("");
   const [emailAttachments, setEmailAttachments] = useState<File[]>([]);
   const [emailSending, setEmailSending] = useState(false);
+  const [signatureAttached, setSignatureAttached] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -110,7 +116,31 @@ const StaffCartView = () => {
     setEmailSubject("");
     setEmailContent("");
     setEmailAttachments([]);
+    setSignatureAttached(false);
     setEmailOpen(true);
+  };
+
+  const handleAttachSignature = () => {
+    if (signatureAttached) {
+      // Remove signature
+      const sigText = SIGNATURE_TEMPLATE(emailFrom);
+      setEmailContent((prev) => prev.replace(sigText, ""));
+      setSignatureAttached(false);
+    } else {
+      // Add signature
+      setEmailContent((prev) => prev + SIGNATURE_TEMPLATE(emailFrom));
+      setSignatureAttached(true);
+    }
+  };
+
+  // Update signature when "from" changes and signature is attached
+  const handleFromChange = (newFrom: string) => {
+    if (signatureAttached) {
+      const oldSig = SIGNATURE_TEMPLATE(emailFrom);
+      const newSig = SIGNATURE_TEMPLATE(newFrom);
+      setEmailContent((prev) => prev.replace(oldSig, newSig));
+    }
+    setEmailFrom(newFrom);
   };
 
   const handleSendEmail = async () => {
@@ -326,19 +356,19 @@ const StaffCartView = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Email Dialog */}
+      {/* Email Dialog — near full screen */}
       <Dialog open={emailOpen} onOpenChange={setEmailOpen}>
-        <DialogContent className="max-w-3xl w-[90vw]">
+        <DialogContent className="max-w-[92vw] w-[92vw] max-h-[92vh] h-[92vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Send Email</DialogTitle>
+            <DialogTitle className="text-xl">Send Email</DialogTitle>
           </DialogHeader>
-          <div className="space-y-5">
+          <div className="space-y-5 flex-1">
             {/* From & To row */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">From</label>
-                <Select value={emailFrom} onValueChange={setEmailFrom}>
-                  <SelectTrigger className="rounded-2xl h-12">
+                <Select value={emailFrom} onValueChange={handleFromChange}>
+                  <SelectTrigger className="rounded-2xl h-14 text-base">
                     <SelectValue placeholder="Select sender..." />
                   </SelectTrigger>
                   <SelectContent>
@@ -350,61 +380,70 @@ const StaffCartView = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">To</label>
-                <Input value={emailTo} readOnly className="rounded-2xl bg-muted/50 h-12" />
+                <Input value={emailTo} readOnly className="rounded-2xl bg-muted/50 h-14 text-base" />
               </div>
             </div>
 
             {/* Subject */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Subject</label>
-              <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Email subject..." className="rounded-2xl h-12" />
+              <Input value={emailSubject} onChange={(e) => setEmailSubject(e.target.value)} placeholder="Email subject..." className="rounded-2xl h-14 text-base" />
             </div>
 
             {/* Content */}
-            <div className="space-y-1.5">
+            <div className="space-y-1.5 flex-1">
               <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Content</label>
               <textarea
                 value={emailContent}
                 onChange={(e) => setEmailContent(e.target.value)}
                 placeholder="Write your message..."
-                rows={10}
-                className="w-full px-4 py-3 rounded-2xl text-sm text-foreground placeholder:text-muted-foreground bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring resize-y min-h-[200px]"
+                rows={16}
+                className="w-full px-5 py-4 rounded-2xl text-base text-foreground placeholder:text-muted-foreground bg-background border border-input focus:outline-none focus:ring-2 focus:ring-ring resize-y min-h-[320px]"
               />
             </div>
 
-            {/* Attachments */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
-                >
-                  <Paperclip size={14} /> Attach File
-                </button>
-                <input ref={fileInputRef} type="file" multiple className="hidden" onChange={addAttachment} />
-              </div>
-              {emailAttachments.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {emailAttachments.map((f, i) => (
-                    <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent/10 border border-accent/20 text-xs text-accent font-medium">
-                      {f.name}
-                      <button onClick={() => setEmailAttachments((p) => p.filter((_, idx) => idx !== i))}>
-                        <X size={12} />
-                      </button>
-                    </span>
-                  ))}
-                </div>
-              )}
+            {/* Attachments & Signature */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl border border-border bg-muted/50 text-sm font-semibold text-foreground hover:bg-muted transition-all"
+              >
+                <Paperclip size={16} /> Attach File
+              </button>
+              <input ref={fileInputRef} type="file" multiple className="hidden" onChange={addAttachment} />
+              <button
+                type="button"
+                onClick={handleAttachSignature}
+                className={`inline-flex items-center gap-2 px-5 py-3 rounded-2xl border text-sm font-semibold transition-all ${
+                  signatureAttached
+                    ? "border-accent bg-accent/10 text-accent"
+                    : "border-border bg-muted/50 text-foreground hover:bg-muted"
+                }`}
+              >
+                <Stamp size={16} /> {signatureAttached ? "Signature Attached ✓" : "Attach Signature"}
+              </button>
             </div>
+            {emailAttachments.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {emailAttachments.map((f, i) => (
+                  <span key={i} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-accent/10 border border-accent/20 text-xs text-accent font-medium">
+                    {f.name}
+                    <button onClick={() => setEmailAttachments((p) => p.filter((_, idx) => idx !== i))}>
+                      <X size={12} />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
 
             {/* Send */}
             <button
               onClick={handleSendEmail}
               disabled={emailSending || !emailFrom || !emailSubject.trim() || !emailContent.trim()}
-              className="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full inline-flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-accent text-accent-foreground text-base font-semibold shadow-lg hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              <Send size={16} /> {emailSending ? "Sending..." : "Send Email"}
+              <Send size={18} /> {emailSending ? "Sending..." : "Send Email"}
             </button>
           </div>
         </DialogContent>
