@@ -323,8 +323,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["refund", "cancel", "money back"],
-    response: `Here is our refund policy:\n\n• Refunds are issued **only for overpayment**.\n• **Standard service** can be canceled within **24 hours**, subject to a **$50 minimum processing fee**.\n• **No refunds** for 24-hour and 3-day rush services once processing has begun.`,
+    keywords: ["refund", "cancel", "money back", "dispute", "complaint"],
+    response: `For case-specific inquiries regarding refunds, disputes, or complaints, please contact our team directly:\n\n📞 **(914) 693-2840**\n📧 **apps@ifcsevals.com**\n\nPlease have your **Application ID** ready for the fastest response.\n\n**General refund policy:**\n• Refunds are issued **only for overpayment**.\n• **Standard service** can be canceled within **24 hours**, subject to a **$50 minimum processing fee**.\n• **No refunds** for 24-hour and 3-day rush services once processing has begun.`,
     navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
