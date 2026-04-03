@@ -583,19 +583,22 @@ const StaffDashboard = () => {
           )}
 
           {/* ── Application Queue ── */}
-          <Card className="border-border bg-card">
-            <CardHeader className="flex flex-col gap-4">
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex flex-col gap-4 mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <CardTitle className="flex items-center gap-2 text-xl">
-                  <Package size={22} className="text-accent" /> Application Queue
-                  <Badge variant="secondary" className="ml-2">{orders.length}</Badge>
-                </CardTitle>
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                    <Package size={20} className="text-accent" />
+                  </div>
+                  <h2 className="text-xl font-bold text-foreground">Application Queue</h2>
+                  <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold">{orders.length}</span>
+                </div>
                 <div className="flex gap-2">
-                  <Button onClick={() => setNewAppOpen(true)} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                  <button onClick={() => setNewAppOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-all">
                     <Plus size={16} /> New Application Entry
-                  </Button>
+                  </button>
                   <Select value={filter} onValueChange={setFilter}>
-                    <SelectTrigger className="w-48"><SelectValue placeholder="Filter by status" /></SelectTrigger>
+                    <SelectTrigger className="w-48 rounded-2xl"><SelectValue placeholder="Filter by status" /></SelectTrigger>
                     <SelectContent>
                       <SelectItem value="all">All</SelectItem>
                       <SelectItem value="requested">Requested</SelectItem>
@@ -609,13 +612,11 @@ const StaffDashboard = () => {
                   </Select>
                 </div>
               </div>
-              <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                  <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by IFCS ID, App ID, reference # or email..." className="pl-9" />
-                </div>
-              </form>
-            </CardHeader>
+              <div className="relative">
+                <Search size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search by IFCS ID, App ID, reference # or email..." className="pl-10 rounded-2xl h-12" />
+              </div>
+            </div>
             <CardContent className="space-y-4">
               {filtered.length === 0 && (
                 <div className="text-center py-8">
