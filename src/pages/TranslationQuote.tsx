@@ -222,10 +222,10 @@ const TranslationQuote = () => {
         <section className="py-32 px-6 md:px-12 text-center">
           <div className="max-w-xl mx-auto rounded-3xl border border-accent/40 bg-accent/5 p-12">
             <CheckCircle size={56} className="text-accent mx-auto mb-4" />
-            <h2 className="text-3xl font-bold text-foreground mb-3">Quote Request Submitted!</h2>
-            <p className="text-muted-foreground font-light mb-8">Our team will review your documents and send a detailed quote to your email shortly.</p>
+            <h2 className="text-3xl font-bold text-foreground mb-3">{translate("Quote Request Submitted!")}</h2>
+            <p className="text-muted-foreground font-light mb-8">{translate("Our team will review your documents and send a detailed quote to your email shortly.")}</p>
             <Link to="/translations" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl bg-accent text-accent-foreground font-bold shadow-xl shadow-accent/40 hover:scale-105 transition-all duration-300">
-              Back to Translations
+              {translate("Back to Translations")}
             </Link>
           </div>
         </section>
