@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, X, Send, Paperclip } from "lucide-react";
+import { MessageCircle, X, Send, Paperclip, RotateCcw, Maximize2, Minimize2 } from "lucide-react";
 
 type NavButton = { label: string; path: string; state?: any };
 type Message = {
@@ -829,6 +829,7 @@ Is there anything else I can help with?`,
 const AIChatWidget = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -924,7 +925,11 @@ const AIChatWidget = () => {
       )}
 
       {isOpen && (
-        <div className="fixed bottom-6 right-6 z-50 w-[400px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-4rem)] rounded-3xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden animate-fade-in-up">
+        <div className={`fixed z-50 rounded-3xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden animate-fade-in-up transition-all duration-300 ${
+          isExpanded
+            ? "bottom-4 right-4 w-[50vw] max-w-[720px] h-[calc(100vh-2rem)]"
+            : "bottom-6 right-6 w-[400px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-4rem)]"
+        }`}>
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-accent text-white">
             <div className="flex items-center gap-3">
@@ -936,9 +941,27 @@ const AIChatWidget = () => {
                 <p className="text-[10px] opacity-80">Ask us anything about our services</p>
               </div>
             </div>
-            <button onClick={() => setIsOpen(false)} className="hover:bg-white/20 rounded-full p-1.5 transition-colors">
-              <X size={18} />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => { setMessages([]); setInput(""); setAttachments([]); }}
+                className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
+                aria-label="Reset chat"
+                title="Reset chat"
+              >
+                <RotateCcw size={16} />
+              </button>
+              <button
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
+                aria-label={isExpanded ? "Minimize" : "Expand"}
+                title={isExpanded ? "Minimize" : "Expand"}
+              >
+                {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              </button>
+              <button onClick={() => { setIsOpen(false); setIsExpanded(false); }} className="hover:bg-white/20 rounded-full p-1.5 transition-colors">
+                <X size={18} />
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
