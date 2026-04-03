@@ -168,6 +168,27 @@ const StaffCartView = () => {
     setEmailSending(false);
   };
 
+  const handleAiRewrite = async (mode: "rewrite" | "grammar") => {
+    if (!emailContent.trim()) {
+      toast.error("Write some content first.");
+      return;
+    }
+    setAiProcessing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("rewrite-email", {
+        body: { content: emailContent, mode },
+      });
+      if (error) throw error;
+      if (data?.result) {
+        setEmailContent(data.result);
+        toast.success(mode === "grammar" ? "Grammar checked!" : "Email rewritten!");
+      }
+    } catch {
+      toast.error("AI processing failed.");
+    }
+    setAiProcessing(false);
+  };
+
   const addAttachment = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setEmailAttachments((prev) => [...prev, ...Array.from(e.target.files!)]);
