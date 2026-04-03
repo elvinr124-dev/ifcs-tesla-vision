@@ -698,13 +698,21 @@ const StaffDashboard = () => {
                         </div>
 
                         {/* Chat & Delete */}
-                        <div className="flex gap-3 flex-wrap">
+                        <div className="flex gap-2 flex-wrap">
                           <Button size="sm" variant="outline" className="gap-1 rounded-full" onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
                           </Button>
+                          <Button size="sm" variant="outline" className="gap-1 rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"
+                            onClick={() => setDeleteDialog({ open: true, deleteType: "client", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                            <UserX size={14} /> Delete Client
+                          </Button>
+                          <Button size="sm" variant="outline" className="gap-1 rounded-full border-destructive/40 text-destructive hover:bg-destructive/10"
+                            onClick={() => setDeleteDialog({ open: true, deleteType: "application", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                            <Trash2 size={14} /> Delete Application
+                          </Button>
                           <Button size="sm" variant="destructive" className="gap-1 rounded-full"
-                            onClick={() => setDeleteDialog({ open: true, type: "order", id: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
-                            <Trash2 size={14} /> Delete Application & Client
+                            onClick={() => setDeleteDialog({ open: true, deleteType: "both", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                            <Trash2 size={14} /> Delete Client & Application
                           </Button>
                         </div>
                       </div>
