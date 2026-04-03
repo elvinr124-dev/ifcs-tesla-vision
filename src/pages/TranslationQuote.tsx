@@ -303,7 +303,7 @@ const TranslationQuote = () => {
                               {fa.analyzing && (
                                 <div className="flex items-center gap-2 mt-1">
                                   <Loader2 size={12} className="animate-spin text-accent" />
-                                  <span className="text-xs text-muted-foreground">Analyzing document...</span>
+                                  <span className="text-xs text-muted-foreground">{translate("Analyzing document...")}</span>
                                 </div>
                               )}
 
