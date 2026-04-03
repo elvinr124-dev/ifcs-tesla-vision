@@ -420,26 +420,26 @@ const TranslationQuote = () => {
                   </button>
                 ) : (
                   <div className="space-y-4 pt-2">
-                    <FieldGroup label="Full Name" required>
+                    <FieldGroup label={translateDual("Full Name")} required>
                       <GlassInput value={payName} onChange={e => setPayName(e.target.value)} placeholder="Name on card" required />
                     </FieldGroup>
-                    <FieldGroup label="Email" required>
+                    <FieldGroup label={translateDual("Email")} required>
                       <GlassInput value={payEmail} onChange={e => setPayEmail(e.target.value)} placeholder="you@email.com" type="email" required />
                     </FieldGroup>
-                    <FieldGroup label="Amount ($)" required>
+                    <FieldGroup label={translateDual("Amount ($)")} required>
                       <GlassInput value={payAmount} onChange={e => setPayAmount(e.target.value)} placeholder="e.g. 150.00" type="number" required />
                     </FieldGroup>
-                    <FieldGroup label="Card Number" required>
+                    <FieldGroup label={translateDual("Card Number")} required>
                       <GlassInput value={payCardNumber} onChange={e => setPayCardNumber(e.target.value)} placeholder="1234 5678 9012 3456" required />
                     </FieldGroup>
                     <div className="grid grid-cols-3 gap-3">
-                      <FieldGroup label="Expiry" required>
+                      <FieldGroup label={translateDual("Expiry")} required>
                         <GlassInput value={payExpiry} onChange={e => setPayExpiry(e.target.value)} placeholder="MM/YY" required />
                       </FieldGroup>
-                      <FieldGroup label="CVC" required>
+                      <FieldGroup label={translateDual("CVC")} required>
                         <GlassInput value={payCvc} onChange={e => setPayCvc(e.target.value)} placeholder="123" required />
                       </FieldGroup>
-                      <FieldGroup label="Zip" required>
+                      <FieldGroup label={translateDual("Zip")} required>
                         <GlassInput value={payZip} onChange={e => setPayZip(e.target.value)} placeholder="10001" required />
                       </FieldGroup>
                     </div>
