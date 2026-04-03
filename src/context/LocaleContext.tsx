@@ -270,7 +270,7 @@ export const LocaleProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (candidates.length === 0) return;
     
     const textsToTranslate = candidates.slice(0, 50);
-    const remaining = candidates.slice(25);
+    const remaining = candidates.slice(50);
     if (remaining.length > 0) {
       remaining.forEach(t => pendingTexts.current.add(t));
     }
