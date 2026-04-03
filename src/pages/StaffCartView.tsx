@@ -410,12 +410,7 @@ const StaffCartView = () => {
             {/* Signature preview when attached */}
             {signatureAttached && (
               <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
-                <div className="flex items-start gap-4">
-                  <img src={ifcsLogoSig} alt="IFCS Logo" className="w-28 h-auto object-contain flex-shrink-0" />
-                  <div className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line">
-                    {`Institute of Foreign Credential Services | NACES Member | ATA Member\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: 914.693.2840\nFax: 914.231-7782\nE-mail: ${emailFrom ? emailFrom.split("@")[0] : "info"}@ifcsevals.com\nwww.ifcsevals.com`}
-                  </div>
-                </div>
+                <img src={ifcsEmailSig} alt="IFCS Email Signature" className="max-w-md h-auto object-contain" />
               </div>
             )}
 
