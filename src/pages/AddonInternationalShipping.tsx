@@ -36,8 +36,8 @@ const AddonInternationalShipping = () => {
         <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6">
-          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">International Shipping</h1>
-          <p className="text-white/80 mt-2 text-lg">Ship your evaluation anywhere in the world</p>
+          <h1 className="text-4xl md:text-6xl font-bold tracking-tight text-white">{translate("International Shipping")}</h1>
+          <p className="text-white/80 mt-2 text-lg">{translate("Ship your evaluation anywhere in the world")}</p>
         </div>
       </section>
 
