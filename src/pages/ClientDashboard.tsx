@@ -420,6 +420,7 @@ const ClientDashboard = () => {
                       </div>
                       <div className="ml-4 flex-shrink-0">
                         {isExpanded ? <ChevronUp size={20} className="text-muted-foreground" /> : <ChevronDown size={20} className="text-muted-foreground" />}
+                      </div>
                     </button>
 
                     {isExpanded && (
