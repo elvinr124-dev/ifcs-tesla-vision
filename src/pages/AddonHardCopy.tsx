@@ -11,12 +11,14 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CreditCard, Copy, MapPin } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
+import { useLocale } from "@/context/LocaleContext";
 
 const COUNTRIES = ["Afghanistan","Albania","Algeria","Argentina","Australia","Austria","Bangladesh","Belgium","Brazil","Canada","Chile","China","Colombia","Czech Republic","Denmark","Dominican Republic","Ecuador","Egypt","Finland","France","Germany","Ghana","Greece","Guatemala","Haiti","Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kenya","Korea, Republic of","Kuwait","Lebanon","Malaysia","Mexico","Morocco","Nepal","Netherlands","New Zealand","Nigeria","Norway","Pakistan","Peru","Philippines","Poland","Portugal","Romania","Russian Federation","Saudi Arabia","Singapore","South Africa","Spain","Sri Lanka","Sweden","Switzerland","Taiwan","Thailand","Trinidad and Tobago","Tunisia","Turkey","Ukraine","United Arab Emirates","United Kingdom","United States","Uruguay","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"];
 
 const AddonHardCopy = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { translateDual, translate } = useLocale();
   const [qty, setQty] = useState(1);
   const [address, setAddress] = useState({ line1: "", line2: "", city: "", state: "", zip: "", country: "" });
   const [payment, setPayment] = useState({ name: "", ifcsId: "", email: "", phone: "", cardHolder: "", cardNumber: "", month: "", year: "", cvv: "" });
