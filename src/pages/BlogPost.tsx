@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import { ArrowLeft, Calendar, User } from "lucide-react";
 import blogBg from "@/assets/blog-bg.jpg";
+import { useLocale } from "@/context/LocaleContext";
 import peruImg from "@/assets/blog-peru-education.jpg";
 import argentinaImg from "@/assets/blog-argentina-vocational.jpg";
 import polandImg from "@/assets/blog-poland-dba.jpg";
