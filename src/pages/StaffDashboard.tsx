@@ -249,28 +249,30 @@ const StaffDashboard = () => {
 
   // Delete client or order (with associated data)
   const handleDelete = async () => {
-    if (deleteDialog.type === "order") {
-      // Also delete associated application
-      const order = orders.find(o => o.id === deleteDialog.id);
+    const order = orders.find(o => o.id === deleteDialog.orderId);
+
+    if (deleteDialog.deleteType === "application" || deleteDialog.deleteType === "both") {
       if (order?.application_id) {
         await (supabase as any).from("applications").delete().eq("application_id", order.application_id);
       }
-      await (supabase as any).from("client_orders").delete().eq("id", deleteDialog.id);
-      setOrders(prev => prev.filter(o => o.id !== deleteDialog.id));
+      await (supabase as any).from("client_orders").delete().eq("id", deleteDialog.orderId);
+      setOrders(prev => prev.filter(o => o.id !== deleteDialog.orderId));
+    }
 
-      // Also delete the client account if requested
+    if (deleteDialog.deleteType === "client" || deleteDialog.deleteType === "both") {
       if (deleteDialog.email) {
         await (supabase as any).from("client_accounts").delete().eq("email", deleteDialog.email);
         setClients(prev => prev.filter(c => c.email !== deleteDialog.email));
       }
-
-      toast({ title: "Deleted", description: "Application and associated data removed." });
-    } else {
-      await (supabase as any).from("client_accounts").delete().eq("id", deleteDialog.id);
-      setClients(prev => prev.filter(c => c.id !== deleteDialog.id));
-      toast({ title: "Client Deleted" });
     }
-    setDeleteDialog({ open: false, type: "client", id: "", label: "" });
+
+    const messages: Record<string, string> = {
+      client: "Client account deleted.",
+      application: "Application deleted.",
+      both: "Application and client account deleted.",
+    };
+    toast({ title: "Deleted", description: messages[deleteDialog.deleteType] });
+    setDeleteDialog({ open: false, deleteType: "both", orderId: "", label: "" });
   };
 
   // Upload attachment on existing order note
