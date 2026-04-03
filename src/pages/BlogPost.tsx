@@ -161,8 +161,8 @@ const BlogPost = () => {
         <Navbar />
         <div className="flex items-center justify-center h-[60vh]">
           <div className="text-center">
-            <h1 className="text-4xl font-bold text-foreground mb-4">Post Not Found</h1>
-            <Link to="/blog" className="text-accent hover:underline">Back to Blog</Link>
+            <h1 className="text-4xl font-bold text-foreground mb-4">{translate("Post Not Found")}</h1>
+            <Link to="/blog" className="text-accent hover:underline">{translate("Back to Blog")}</Link>
           </div>
         </div>
         <Footer />
