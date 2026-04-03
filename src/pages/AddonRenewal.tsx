@@ -12,11 +12,13 @@ import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/context/CartContext";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
+import { useLocale } from "@/context/LocaleContext";
 
 const AddonRenewal = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { addItem } = useCart();
+  const { translateDual, translate } = useLocale();
   const [payment, setPayment] = useState({ name: "", ifcsId: "", email: "", phone: "", cardHolder: "", cardNumber: "", month: "", year: "", cvv: "" });
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
