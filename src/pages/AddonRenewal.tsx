@@ -63,8 +63,8 @@ const AddonRenewal = () => {
         <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6">
-          <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white hero-text-shadow">Renew Report</h1>
-          <p className="text-white/80 mt-4 text-lg md:text-xl">Extend your evaluation validity for 5 more years</p>
+          <h1 className="text-5xl md:text-8xl font-bold tracking-tight text-white hero-text-shadow">{translate("Renew Report")}</h1>
+          <p className="text-white/80 mt-4 text-lg md:text-xl">{translate("Extend your evaluation validity for 5 more years")}</p>
         </div>
       </section>
 
