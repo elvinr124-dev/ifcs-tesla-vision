@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      ai_knowledge_entries: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          is_active: boolean
+          keywords: string[]
+          nav_buttons: Json
+          response: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string[]
+          nav_buttons?: Json
+          response?: string
+          title?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          keywords?: string[]
+          nav_buttons?: Json
+          response?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       applications: {
         Row: {
           application_data: Json | null

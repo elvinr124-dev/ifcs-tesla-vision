@@ -1,6 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { MessageCircle, X, Send, Paperclip, RotateCcw, Maximize2, Minimize2 } from "lucide-react";
+import { MessageCircle, X, Send, Paperclip, RotateCcw, Maximize2, Minimize2, BookOpen, Plus, Trash2, Save, Edit2, ChevronLeft } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 type NavButton = { label: string; path: string; state?: any };
 type Message = {
@@ -14,7 +16,7 @@ const SUGGESTIONS = [
   "What is an evaluation?",
   "How much does it cost?",
   "What documents do I need?",
-  "How fast can I get my evaluation?",
+  "How fast can I get it?",
   "What's a Translation?",
   "Do you offer consulting?",
 ];
@@ -25,14 +27,33 @@ interface KBEntry {
   navButtons?: NavButton[];
 }
 
-// Helper to build "Start Application" nav button with service state
 const appButton = (title: string, price: number, processing: string, procLabel: string, procKey: string): NavButton => ({
   label: `Start ${title}`,
   path: "/application",
   state: { serviceTitle: title, processingKey: procKey, processingLabel: procLabel, processingTime: processing, price },
 });
 
+// ============ BUILT-IN KNOWLEDGE BASE ============
 const KNOWLEDGE_BASE: KBEntry[] = [
+  // --- COMPANY / PEOPLE ---
+  {
+    keywords: ["who is the owner", "who is the director", "who runs ifcs", "who founded ifcs", "ceo", "founder", "director", "owner of ifcs", "who owns"],
+    response: `The Director of **IFCS** is **Agron Matoshi**. He is a recognized expert in foreign credential evaluations and leads IFCS's mission to help international students and professionals get their credentials recognized in the United States.
+
+📍 **IFCS** — Institute of Foreign Credential Services
+📍 6 Cedar Street, Dobbs Ferry, NY 10522
+📞 (914) 693-2840 | 📧 info@ifcsevals.com`,
+    navButtons: [{ label: "About Us", path: "/about" }],
+  },
+  {
+    keywords: ["who works at ifcs", "staff", "team", "employees"],
+    response: `The IFCS team is led by **Director Agron Matoshi** and consists of senior credential evaluators who are recognized experts in the field. Our evaluators are regular contributors to publications and conferences organized by **NAFSA**, **AACRAO**, and the **International Association of Universities**.
+
+For specific inquiries, contact us:
+📞 (914) 693-2840 | 📧 info@ifcsevals.com`,
+    navButtons: [{ label: "About Us", path: "/about" }],
+  },
+  // --- EVALUATIONS ---
   {
     keywords: ["what is an evaluation", "what is credential evaluation", "what's a credential evaluation", "what is a evaluation"],
     response: `A **credential evaluation** is an expert assessment of your foreign academic credentials to determine their U.S. equivalency.
@@ -59,7 +80,7 @@ IFCS is trusted by universities, federal and state government agencies, employer
 
 **Translation** — A word-for-word conversion of your documents from their original language into English. It tells readers *what* your documents say.
 
-**Do you need both?** If your documents are not in English, you'll typically need a certified translation first, then an evaluation. IFCS can handle both for you!
+**Do you need both?** If your documents are not in English, you'll typically need a certified translation first, then an evaluation. IFCS can handle both!
 
 • Evaluations start at **$100**
 • Translations are **$50 per page**`,
@@ -79,9 +100,7 @@ IFCS translations include:
 • Available in **150+ languages**
 • Standard turnaround: **3–5 business days**
 • **Same-day** and expedited options available
-• Pricing: **$50 per page** with no hidden fees
-
-If USCIS does not accept your translation, we will re-translate at **no charge**.`,
+• Pricing: **$50 per page** with no hidden fees`,
     navButtons: [
       { label: "Start Translation Order", path: "/translations/order" },
       { label: "Get a Quote", path: "/translations/quote" },
@@ -89,7 +108,7 @@ If USCIS does not accept your translation, we will re-translate at **no charge**
   },
   {
     keywords: ["how fast", "how long does evaluation", "turnaround", "how quickly"],
-    response: `IFCS offers three processing speeds for evaluations:
+    response: `IFCS offers three processing speeds:
 
 ⏱️ **Standard:** 8–10 business days
 ⚡ **3-Day Rush:** 3 business days
@@ -113,16 +132,14 @@ Processing begins once all required documents and payment are received.`,
 |---------|-------|
 | **General Analysis** | $100 |
 | **General Analysis + GPA** | $150 |
-| **Cosmetology Course-by-Course** | $170 |
+| **Cosmetology CxC** | $170 |
 | **Course-by-Course** | $190 |
 | **Health Professions CxC** | $230 |
 | **Comprehensive CxC** | $290 |
-| **High School & University CxC** | $295 |
+| **HS & University CxC** | $295 |
 | **Professional Licensure CxC** | $400 |
 
-**Rush options** are available at additional cost for 3-day and 24-hour processing.
-
-**Translations:** $50 per page
+**Translations:** $50/page
 **Consulting:** Evaluation consultations are **FREE**. Admission advising is **$60/hour**.
 **Duplicate Reports:** $25 per copy`,
     navButtons: [
@@ -130,6 +147,7 @@ Processing begins once all required documents and payment are received.`,
       { label: "View Evaluations", path: "/evaluations" },
     ],
   },
+  // --- GENERAL DOCUMENTS (no country-specific dump) ---
   {
     keywords: ["what document", "documents do i need", "required document", "what do i need to submit"],
     response: `The documents you need depend on the evaluation type and your **country of education**:
@@ -138,26 +156,12 @@ Processing begins once all required documents and payment are received.`,
 📄 **Transcripts / Mark Sheets** — official academic records
 📄 **Diploma Certificate** — proof of degree completion
 
-**Regional requirements:**
-🌴 **Caribbean countries** (Jamaica, Trinidad, Barbados, etc.) — You will need your **CXC (Caribbean Examinations Council)** results in addition to transcripts and diplomas.
-🌍 **West African countries** (Nigeria, Ghana, Sierra Leone, etc.) — **WAEC (West African Examinations Council)** results are required alongside your transcripts.
-🇮🇳 **India** — Official **mark sheets** for each year/semester are required. Consolidated mark sheets are also accepted.
-🇨🇳 **China** — Notarized translations and **degree verification** from CDGDC/CHESICC may be needed.
-🇵🇭 **Philippines** — **Transcript of Records (TOR)** and diploma are required. Some boards also require a **CAV (Certification, Authentication, and Verification)** from CHED/DFA.
-
-**For High School & University CxC ($295):**
-📄 High School diploma + transcript
-📄 University degree certificate + transcript
-
-**For Professional Licensure CxC ($400):**
-📄 High School diploma + transcript
-📄 University degree(s) + official transcripts
-📄 Professional license/registration (if applicable)
+Some countries have additional requirements — just let me know which country you studied in and I'll give you the specific details!
 
 **Important notes:**
 • Legible uploaded copies are sufficient to **start** your application
 • If documents are in a foreign language, IFCS can provide a translation quote
-• **Document Authentication** ($140) — IFCS contacts your institution to verify documents directly
+• **Document Authentication** ($140) — IFCS contacts your institution to verify directly
 
 📍 **Mailing address:** IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522`,
     navButtons: [
@@ -170,14 +174,14 @@ Processing begins once all required documents and payment are received.`,
     response: `Yes! We offer **rush processing** for all evaluation types:
 
 ⚡ **3-Day Rush** — Results in 3 business days
-🚀 **24-Hour Priority** — Results within 24 hours of document receipt
+🚀 **24-Hour Priority** — Results within 24 hours
 
-Rush fees vary by evaluation type. Here are some examples:
+Rush fees vary by evaluation type. Examples:
 • General Analysis: $150 (3-Day) / $195 (24-Hour)
 • Course-by-Course: $290 (3-Day) / $425 (24-Hour)
 • Comprehensive CxC: $390 (3-Day) / $490 (24-Hour)
 
-For **translations**, we offer same-day and next-day expedited service at $14.95/page additional.`,
+For **translations**, same-day and next-day expedited service at $14.95/page additional.`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Start Application", path: "/application" },
@@ -188,18 +192,11 @@ For **translations**, we offer same-day and next-day expedited service at $14.95
     response: `Getting started with IFCS is simple — just follow these 4 steps:
 
 **Step 1:** Determine which evaluation you need. Not sure? Our evaluation consultation is **FREE**!
-
 **Step 2:** Complete the **online application** on our website.
-
 **Step 3:** Upload legible copies of your transcripts and diploma certificates.
-
 **Step 4:** Submit your signed application and make payment.
 
-After submission, you'll receive an **IFCS ID** via email. Arrange for your institution to send official transcripts to:
-
-📍 **IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522**
-
-Alternatively, pay **$140 for document authentication** and we handle verification directly.`,
+After submission, you'll receive an **IFCS ID** via email.`,
     navButtons: [
       { label: "Start Application", path: "/application" },
       { label: "View Evaluations", path: "/evaluations" },
@@ -207,7 +204,7 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
   },
   // ---- SPECIFIC EVALUATION TYPES ----
   {
-    keywords: ["general analysis", "general evaluation"],
+    keywords: ["general analysis"],
     response: `The **General Analysis** is our most affordable evaluation at **$100**:
 
 **Rush:** $150 (3-Day) / $195 (24-Hour)
@@ -218,10 +215,7 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 • Overall U.S. equivalency
 
 **Recommended for:** Immigration, military, and junior college admission.
-
-**Required Documents:** Transcripts/mark sheets and diploma certificate.
-🌴 Caribbean applicants: CXC results also required.
-🌍 West African applicants: WAEC results also required.`,
+**Required Documents:** Transcripts/mark sheets and diploma certificate.`,
     navButtons: [
       { label: "View General Analysis", path: "/evaluations#general-analysis" },
       appButton("General Analysis", 100, "8–10 Business Days", "Standard", "standard"),
@@ -237,11 +231,9 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 • Everything in General Analysis
 • Plus an overall **GPA (Grade Point Average)**
 
-**Recommended for:** Admission to institutions when GPA is required but no credit transfer is intended.
-
-**Required Documents:** Transcripts/mark sheets and diploma certificate.`,
+**Recommended for:** Admission to institutions when GPA is required but no credit transfer is intended.`,
     navButtons: [
-      { label: "View General Analysis plus GPA", path: "/evaluations#general-analysis-plus-gpa" },
+      { label: "View General Analysis + GPA", path: "/evaluations#general-analysis-plus-gpa" },
       appButton("General Analysis plus GPA", 150, "8–10 Business Days", "Standard", "standard"),
     ],
   },
@@ -255,18 +247,15 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 • Detailed course-by-course breakdown of cosmetology credentials
 • Training hours for each subject area
 • U.S. semester credit equivalencies
-• Overall U.S. equivalency
 
-**Recommended for:** State cosmetology licensing boards, barbering, beauty therapy, hairdressing, and esthetics licensure.
-
-**Required Documents:** Certificate and transcript showing hours for each subject.`,
+**Recommended for:** State cosmetology licensing boards, barbering, beauty therapy, hairdressing, and esthetics licensure.`,
     navButtons: [
       { label: "View Cosmetology CxC", path: "/evaluations#cosmetology-course-by-course" },
       appButton("Cosmetology Course-by-Course", 170, "8–10 Business Days", "Standard", "standard"),
     ],
   },
   {
-    keywords: ["course-by-course", "course by course", "cxc evaluation", "cxc"],
+    keywords: ["course-by-course", "course by course"],
     response: `The **Course-by-Course** evaluation costs **$190**:
 
 **Rush:** $290 (3-Day) / $425 (24-Hour)
@@ -277,19 +266,14 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 • Letter grades and cumulative GPA
 • U.S. equivalency
 
-**Recommended for:** Admission to secondary and post-secondary institutions, and employment.
-
-**Required Documents:** Transcripts/mark sheets and diploma certificate.
-🌴 Caribbean applicants: CXC results also required.
-🌍 West African applicants: WAEC results also required.
-🇮🇳 Indian applicants: Year-wise or semester-wise mark sheets required.`,
+**Recommended for:** Admission to secondary and post-secondary institutions, and employment.`,
     navButtons: [
       { label: "View Course-by-Course", path: "/evaluations#course-by-course" },
       appButton("Course-by-Course", 190, "8–10 Business Days", "Standard", "standard"),
     ],
   },
   {
-    keywords: ["health profession", "health professions course-by-course", "medical", "nursing", "clinical", "health prof"],
+    keywords: ["health profession", "health professions course-by-course", "medical evaluation", "nursing evaluation", "clinical", "health prof"],
     response: `The **Health Professions Course-by-Course** is designed for healthcare professionals at **$230**:
 
 **Rush:** $355 (3-Day) / $490 (24-Hour)
@@ -300,10 +284,7 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 • **Clinical experience details**
 • U.S. equivalency
 
-**Recommended for:** Medical, nursing, and health profession licensing boards.
-
-**Required Documents:** Transcripts/mark sheets and diploma certificate.
-🇵🇭 Filipino applicants: TOR and CAV from CHED may be required by some boards.`,
+**Recommended for:** Medical, nursing, and health profession licensing boards.`,
     navButtons: [
       { label: "View Health Professions CxC", path: "/evaluations#health-professions-course-by-course" },
       appButton("Health Professions Course-by-Course", 230, "8–10 Business Days", "Standard", "standard"),
@@ -322,9 +303,7 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 • U.S. equivalency for **each** credential
 • Covers **up to 2 degrees**
 
-**Recommended for:** Graduate school admission, professional licensure, and individuals with multiple university degrees.
-
-**Note:** This service is only provided for post-secondary credentials.`,
+**Recommended for:** Graduate school admission, professional licensure, and individuals with multiple university degrees.`,
     navButtons: [
       { label: "View Comprehensive CxC", path: "/evaluations#comprehensive-course-by-course" },
       appButton("Comprehensive Course-by-Course", 290, "8–10 Business Days", "Standard", "standard"),
@@ -341,10 +320,7 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 • Detailed listing of courses, credit hours, grades, GPA
 • U.S. equivalencies for each credential level
 
-**Recommended for:** Further education, university admission, and combined secondary + post-secondary credential recognition.
-
-**Required Documents:** High School diploma, High School transcript, University degree certificate, University transcript.
-🌴 Caribbean applicants: CXC/CSEC results required for secondary credentials.`,
+**Required Documents:** High School diploma + transcript, University degree certificate + transcript.`,
     navButtons: [
       { label: "View HS & University CxC", path: "/evaluations#high-school-and-university-course-by-course" },
       appButton("High School and University Course-by-Course", 295, "8–10 Business Days", "Standard", "standard"),
@@ -362,20 +338,15 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 • Grading-scale conversion and course-level comparability
 • Professional credential validation
 
-**Recommended for:**
-• **CPA** (Certified Public Accountant) Examination & Licensure
-• **Professional Engineer (PE)** Licensure
-• **Attorney / Foreign Lawyer** Bar Admission
-
-**Required Documents:** High School diploma + transcript, University degree(s) + official transcripts, Professional license/registration (if applicable).`,
+**Recommended for:** CPA, Professional Engineer (PE), Attorney Bar Admission.`,
     navButtons: [
       { label: "View Professional Licensure CxC", path: "/evaluations#professional-licensure-course-by-course" },
       appButton("Professional Licensure Course-by-Course", 400, "8–10 Business Days", "Standard", "standard"),
     ],
   },
-  // ---- REGIONAL / COUNTRY-SPECIFIC ----
+  // ---- COUNTRY-SPECIFIC (each standalone, no other countries mentioned) ----
   {
-    keywords: ["caribbean", "jamaica", "trinidad", "barbados", "guyana", "bahamas", "cxc result", "csec", "cape"],
+    keywords: ["jamaica", "trinidad", "barbados", "guyana", "bahamas", "caribbean", "cxc", "csec", "cape", "st lucia", "antigua", "grenada", "dominica", "st kitts", "st vincent", "belize"],
     response: `For applicants from **Caribbean countries** (Jamaica, Trinidad & Tobago, Barbados, Guyana, Bahamas, etc.):
 
 **Required Documents:**
@@ -386,7 +357,7 @@ Alternatively, pay **$140 for document authentication** and we handle verificati
 
 **Important:** The CXC results serve as the equivalent of a U.S. high school transcript for Caribbean nations. Without them, a complete evaluation of secondary credentials cannot be performed.
 
-The most common evaluation for Caribbean applicants is the **Course-by-Course ($190)** or **High School & University CxC ($295)** if both secondary and university credentials are needed.`,
+The most common evaluation for Caribbean applicants is the **Course-by-Course ($190)** or **High School & University CxC ($295)**.`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Start Application", path: "/application" },
@@ -405,9 +376,8 @@ The most common evaluation for Caribbean applicants is the **Course-by-Course ($
 **For Nigerian applicants specifically:**
 • WAEC/SSCE results are essential
 • NYSC (National Youth Service Corps) certificate may be requested for some evaluations
-• Transcripts should include all courses and grades for each academic year
 
-The most common evaluation for West African applicants is the **Course-by-Course ($190)** or **Comprehensive CxC ($290)** for multiple credentials.`,
+The most common evaluation for West African applicants is the **Course-by-Course ($190)** or **Comprehensive CxC ($290)**.`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Start Application", path: "/application" },
@@ -421,12 +391,11 @@ The most common evaluation for West African applicants is the **Course-by-Course
 📄 **Mark Sheets** — Year-wise or semester-wise mark sheets for each year of study are **required**. Consolidated mark sheets are also accepted.
 📄 **Degree Certificate / Provisional Degree Certificate**
 📄 **10th & 12th Board Results** (CBSE, ICSE, or State Board) — Required for evaluations that include secondary credentials
-📄 **Migration Certificate** — Sometimes requested
 
 **Important notes:**
-• Indian universities issue mark sheets rather than transcripts — these are fully accepted by IFCS
-• If you have a **3-year bachelor's degree**, this is typically evaluated differently from a 4-year degree — IFCS will clarify the U.S. equivalency
-• For professional courses (Engineering, Medical, etc.), the **Health Professions CxC ($230)** or **Professional Licensure CxC ($400)** may be appropriate`,
+• Indian universities issue mark sheets rather than transcripts — these are fully accepted
+• If you have a **3-year bachelor's degree**, this is evaluated differently from a 4-year degree — IFCS will clarify the U.S. equivalency
+• For professional courses (Engineering, Medical), the **Health Professions CxC ($230)** or **Professional Licensure CxC ($400)** may be appropriate`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Start Application", path: "/application" },
@@ -439,14 +408,10 @@ The most common evaluation for West African applicants is the **Course-by-Course
 **Required Documents:**
 📄 **Transcript of Records (TOR)** — Official academic transcript
 📄 **Diploma / Degree Certificate**
-📄 **CAV (Certification, Authentication, and Verification)** — From CHED (Commission on Higher Education) or DFA, may be required by some U.S. licensing boards
+📄 **CAV (Certification, Authentication, and Verification)** — From CHED or DFA, may be required by some U.S. licensing boards
 
 **For healthcare professionals:**
-• The **Health Professions CxC ($230)** is commonly required for nursing, medical, and allied health licensure boards
-• Some boards specifically require the CAV in addition to the evaluation
-
-**For teachers:**
-• Course-by-Course ($190) is typically sufficient for teacher certification`,
+• The **Health Professions CxC ($230)** is commonly required for nursing, medical, and allied health licensure boards`,
     navButtons: [
       { label: "View Health Professions CxC", path: "/evaluations#health-professions-course-by-course" },
       { label: "Start Application", path: "/application" },
@@ -459,12 +424,9 @@ The most common evaluation for West African applicants is the **Course-by-Course
 **Required Documents:**
 📄 **Official Transcripts** — In Chinese with notarized English translations
 📄 **Degree Certificate / Diploma** — With notarized English translation
-📄 **CDGDC/CHESICC Verification** — Degree verification from China's official verification bodies may be needed for some evaluations
+📄 **CDGDC/CHESICC Verification** — Degree verification may be needed
 
-**Important notes:**
-• Chinese documents not in English will require a **certified translation** — IFCS can provide this service ($50/page)
-• The Chinese grading system and degree structure is well understood by our evaluators
-• For graduate school applications, the **Course-by-Course ($190)** or **Comprehensive CxC ($290)** is recommended`,
+**Important:** Chinese documents not in English require a **certified translation** — IFCS can provide this ($50/page).`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Translation Services", path: "/translations" },
@@ -480,12 +442,7 @@ The most common evaluation for West African applicants is the **Course-by-Course
 📄 **Cédula Profesional** — Professional license (if applicable)
 📄 **Certified English translations** of all documents
 
-**Important:** All Mexican documents require certified English translations. IFCS can provide this ($50/page).
-
-Common evaluations for Mexican applicants:
-• **General Analysis ($100)** — For immigration or basic equivalency
-• **Course-by-Course ($190)** — For university admission or employment
-• **Professional Licensure CxC ($400)** — For CPA, engineering, or legal licensure`,
+All Mexican documents require certified English translations. IFCS can provide this ($50/page).`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Translation Services", path: "/translations" },
@@ -500,45 +457,125 @@ Common evaluations for Mexican applicants:
 📄 **졸업증명서 (Graduation Certificate)** — Or degree certificate
 📄 **Certified English translations** if documents are in Korean
 
-Korean universities often issue both Korean and English versions of transcripts. If English versions are available, separate translations may not be needed.`,
+Korean universities often issue both Korean and English versions of transcripts.`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Start Application", path: "/application" },
     ],
   },
   {
-    keywords: ["middle east", "saudi", "uae", "dubai", "qatar", "kuwait", "arabic"],
-    response: `For applicants from **Middle Eastern countries** (Saudi Arabia, UAE, Qatar, Kuwait, etc.):
+    keywords: ["middle east", "saudi", "uae", "dubai", "qatar", "kuwait", "arabic", "jordan", "lebanon", "iraq", "iran", "egypt"],
+    response: `For applicants from **Middle Eastern countries**:
 
 **Required Documents:**
 📄 **Official Transcripts** — In Arabic with certified English translations
 📄 **Degree Certificate** — With certified English translation
 📄 **Equivalency Certificate** — From the Ministry of Education (if available)
 
-**Important:** Arabic documents require certified English translation. IFCS can provide this ($50/page).
-
-For professional licensure (engineering, medical), the **Professional Licensure CxC ($400)** or **Health Professions CxC ($230)** may be required.`,
+Arabic documents require certified English translation. IFCS can provide this ($50/page).`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Translation Services", path: "/translations" },
     ],
   },
   {
-    keywords: ["africa", "east africa", "kenya", "ethiopia", "tanzania", "uganda", "south africa"],
-    response: `For applicants from **African countries** (Kenya, Ethiopia, Tanzania, Uganda, South Africa, etc.):
+    keywords: ["kenya", "ethiopia", "tanzania", "uganda", "south africa", "east africa"],
+    response: `For applicants from **East/Southern African countries**:
 
 **Required Documents:**
 📄 **Official Transcripts / Academic Records**
 📄 **Degree Certificate / Diploma**
 📄 **Secondary school certificates** — KCSE (Kenya), EGSECE (Ethiopia), CSEE (Tanzania), UCE/UACE (Uganda), NSC (South Africa)
+📄 **Certified English translations** if documents are not in English`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["brazil", "brazilian", "enem"],
+    response: `For applicants from **Brazil**:
+
+**Required Documents:**
+📄 **Histórico Escolar** — Official academic transcript
+📄 **Diploma** — Degree certificate
+📄 **Certified English translations** of all Portuguese documents
+
+IFCS can provide certified translations at $50/page.`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Translation Services", path: "/translations" },
+    ],
+  },
+  {
+    keywords: ["russia", "russian", "ukraine", "ukrainian", "belarus"],
+    response: `For applicants from **Russia / Ukraine / Belarus**:
+
+**Required Documents:**
+📄 **Диплом (Diploma)** — Degree certificate with certified English translation
+📄 **Приложение к диплому (Diploma Supplement)** — Transcript/grades with translation
+📄 **Аттестат (Attestat)** — Secondary school certificate, if needed
+
+All documents require **certified English translations**. IFCS can provide these at $50/page.`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Translation Services", path: "/translations" },
+    ],
+  },
+  {
+    keywords: ["pakistan", "pakistani"],
+    response: `For applicants from **Pakistan**:
+
+**Required Documents:**
+📄 **Detailed Marks Certificate (DMC)** — For each year/semester
+📄 **Degree Certificate**
+📄 **Matric & Inter Board Results** — For secondary-level evaluations
+📄 **HEC Attestation** — Higher Education Commission attestation (recommended)`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["bangladesh", "bangladeshi"],
+    response: `For applicants from **Bangladesh**:
+
+**Required Documents:**
+📄 **Mark Sheets / Academic Transcripts** — For each year
+📄 **Certificate / Degree**
+📄 **SSC & HSC Results** — For secondary-level evaluations
+📄 **Certified English translations** if documents are in Bengali`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Start Application", path: "/application" },
+    ],
+  },
+  {
+    keywords: ["japan", "japanese"],
+    response: `For applicants from **Japan**:
+
+**Required Documents:**
+📄 **成績証明書 (Seiseki Shōmeisho)** — Official transcripts
+📄 **卒業証明書 (Sotsugyō Shōmeisho)** — Graduation certificate
+📄 **Certified English translations** if documents are in Japanese
+
+IFCS can provide certified translations at $50/page.`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Translation Services", path: "/translations" },
+    ],
+  },
+  {
+    keywords: ["france", "french", "germany", "german", "italy", "italian", "spain", "spanish", "europe", "european", "uk", "united kingdom", "britain", "british", "portugal", "portuguese", "netherlands", "dutch", "poland", "polish", "romania", "romanian"],
+    response: `For applicants from **European countries**:
+
+**Required Documents:**
+📄 **Official Transcripts / Academic Records**
+📄 **Degree Certificate / Diploma**
+📄 **Diploma Supplement** (if available — common in Bologna Process countries)
 📄 **Certified English translations** if documents are not in English
 
-**For East African applicants:**
-• National examination results serve as secondary credentials
-• University transcripts should include all courses and grades
-
-**For South African applicants:**
-• Matric results (NSC) are accepted for secondary evaluation`,
+IFCS can provide certified translations at $50/page for non-English documents.`,
     navButtons: [
       { label: "View Evaluations", path: "/evaluations" },
       { label: "Start Application", path: "/application" },
@@ -553,12 +590,10 @@ For professional licensure (engineering, medical), the **Professional Licensure 
 Our experts help you determine which evaluation type is right for your specific goals.
 
 💼 **Admissions & Academic Advising — $60/hour**
-Our senior staff can help you find the right U.S. institution and program, streamline the application process, and understand admission requirements.
+Our senior staff can help you find the right U.S. institution and program.
 
 Consultations are held at our **Dobbs Ferry office** by appointment.
-
-📞 **(914) 693-2840**
-📧 **info@ifcsevals.com**`,
+📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**`,
     navButtons: [
       { label: "Book a Consultation", path: "/consulting/book" },
       { label: "View Consulting Page", path: "/consulting" },
@@ -566,18 +601,14 @@ Consultations are held at our **Dobbs Ferry office** by appointment.
   },
   {
     keywords: ["check status", "track", "status of", "my evaluation", "order status"],
-    response: `You can check the status of your evaluation through your **My Dashboard** on our website.
+    response: `You can check the status of your evaluation through your **My Dashboard**.
 
 You'll need:
 • Your **Application ID** (starts with "EE")
 • Your **Date of Birth**
 
-If you have an IFCS ID, you can also use that to look up your order.
-
-📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**`,
-    navButtons: [
-      { label: "Go to Dashboard", path: "/dashboard/client" },
-    ],
+If you have an IFCS ID, you can also use that to look up your order.`,
+    navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }],
   },
   {
     keywords: ["what language", "which language", "language do you", "languages"],
@@ -613,13 +644,11 @@ IFCS evaluators are recognized experts, regular contributors to **NAFSA**, **AAC
     response: `Here is our refund policy:
 
 • Refunds are issued **only for overpayment**.
-• **Standard (8–10 day) service** can be canceled within **24 hours** of submission, subject to a **$50 minimum processing fee**.
+• **Standard service** can be canceled within **24 hours**, subject to a **$50 minimum processing fee**.
 • **No refunds** for 24-hour and 3-day rush services once processing has begun.
 
 📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**`,
-    navButtons: [
-      { label: "Contact Us", path: "/contact" },
-    ],
+    navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
     keywords: ["duplicate", "additional cop", "extra cop"],
@@ -629,9 +658,7 @@ IFCS evaluators are recognized experts, regular contributors to **NAFSA**, **AAC
 📄 **Hard Copy:** $25 each
 📦 **Domestic Shipping:** $25
 ✈️ **International Shipping:** $70`,
-    navButtons: [
-      { label: "Order Duplicate Reports", path: "/duplicate-reports" },
-    ],
+    navButtons: [{ label: "Order Duplicate Reports", path: "/duplicate-reports" }],
   },
   {
     keywords: ["shipping", "delivery", "mail", "send report"],
@@ -643,43 +670,35 @@ IFCS evaluators are recognized experts, regular contributors to **NAFSA**, **AAC
 ✈️ **International Shipping:** $70
 
 Reports are valid for **5 years**. After expiration, renewal is available for **$100**.`,
-    navButtons: [
-      { label: "Start Application", path: "/application" },
-    ],
+    navButtons: [{ label: "Start Application", path: "/application" }],
   },
   {
     keywords: ["renewal", "expire", "expiration", "valid", "how long is report valid"],
     response: `Evaluation reports are valid for **5 years** from the date of issuance. After expiration, you can renew for **$100**.`,
-    navButtons: [
-      { label: "Renew Evaluation", path: "/addon/renewal" },
-    ],
+    navButtons: [{ label: "Renew Evaluation", path: "/addon/renewal" }],
   },
   {
-    keywords: ["contact", "phone", "email", "reach", "office", "address", "location", "hours"],
+    keywords: ["contact", "phone", "email address", "reach", "office", "address", "location", "hours"],
     response: `📞 **Phone:** (914) 693-2840
 📠 **Fax:** (914) 231-7782
 📧 **Email:** info@ifcsevals.com
 📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522
-🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST`,
-    navButtons: [
-      { label: "Contact Us", path: "/contact" },
-    ],
+🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST
+
+**Director:** Agron Matoshi`,
+    navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
     keywords: ["notari", "notarization"],
     response: `Yes! We offer **notarization** as an add-on: **$19.95 per order**, valid in **all 50 U.S. states**. You can add it during the translation order process.`,
-    navButtons: [
-      { label: "Start Translation Order", path: "/translations/order" },
-    ],
+    navButtons: [{ label: "Start Translation Order", path: "/translations/order" }],
   },
   {
     keywords: ["document authentication", "verify", "verification", "authenticate"],
     response: `**Document Authentication** is available for **$140**.
 
-IFCS will **contact your issuing institution** to verify your documents on your behalf. This is convenient if your institution is difficult to reach or you need faster verification.`,
-    navButtons: [
-      { label: "Start Application", path: "/application" },
-    ],
+IFCS will **contact your issuing institution** to verify your documents on your behalf. This saves you time if your institution is difficult to reach.`,
+    navButtons: [{ label: "Start Application", path: "/application" }],
   },
   {
     keywords: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
@@ -708,7 +727,7 @@ What would you like to know?`,
   },
   {
     keywords: ["about", "who is ifcs", "about ifcs", "history"],
-    response: `**IFCS** — the Institute of Foreign Credential Services — is based in Dobbs Ferry, NY and helps international students and professionals get their credentials recognized in the U.S.
+    response: `**IFCS** — the Institute of Foreign Credential Services — is based in Dobbs Ferry, NY and is led by **Director Agron Matoshi**.
 
 **What makes IFCS unique:**
 • **Expert evaluators** — recognized industry leaders
@@ -724,7 +743,7 @@ What would you like to know?`,
   },
   {
     keywords: ["individual", "student", "personal"],
-    response: `If you're an **individual**, IFCS can help you get your foreign credentials evaluated, translated, and recognized. Start by determining which evaluation type fits your goals!`,
+    response: `If you're an **individual**, IFCS can help you get your foreign credentials evaluated, translated, and recognized.`,
     navButtons: [
       { label: "For Individuals", path: "/for-individuals" },
       { label: "View Evaluations", path: "/evaluations" },
@@ -745,9 +764,7 @@ What would you like to know?`,
 ✅ **NAFSA** — Association of International Educators
 ✅ **AACRAO** — American Association of Collegiate Registrars and Admissions Officers
 ✅ **IAU** — International Association of Universities
-✅ **UNESCO** — United Nations Educational, Scientific and Cultural Organization
-
-Our senior evaluators are regular contributors to publications and conferences organized by these bodies.`,
+✅ **UNESCO** — United Nations Educational, Scientific and Cultural Organization`,
     navButtons: [
       { label: "About Us", path: "/about" },
       { label: "Learn More", path: "/learn-more-evaluations" },
@@ -757,20 +774,15 @@ Our senior evaluators are regular contributors to publications and conferences o
     keywords: ["original document", "do i need original", "send original"],
     response: `**No, you do not need to send originals to start!** Legible uploaded copies of your transcripts and diplomas are sufficient to begin your application.
 
-However, for official evaluation:
-• Your institution may need to send **official transcripts** directly to IFCS
-• Or you can pay **$140 for Document Authentication** and IFCS will verify directly with your institution
+For official evaluation, your institution may need to send **official transcripts** directly to IFCS, or you can pay **$140 for Document Authentication**.
 
 📍 **Mailing address:** IFCS, 6 Cedar Street, Dobbs Ferry, NY 10522`,
-    navButtons: [
-      { label: "Start Application", path: "/application" },
-    ],
+    navButtons: [{ label: "Start Application", path: "/application" }],
   },
   {
     keywords: ["three degree", "3 degree", "more than two", "multiple degree"],
-    response: `The **Comprehensive Course-by-Course ($290)** covers up to **2 degrees**. If you have 3 or more degrees, additional fees may apply.
+    response: `The **Comprehensive Course-by-Course ($290)** covers up to **2 degrees**. If you have 3 or more, additional fees may apply.
 
-Please contact us for a custom quote:
 📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**`,
     navButtons: [
       { label: "View Comprehensive CxC", path: "/evaluations#comprehensive-course-by-course" },
@@ -781,33 +793,69 @@ Please contact us for a custom quote:
     keywords: ["accepted by my school", "will my school accept", "does my university accept"],
     response: `IFCS evaluations are trusted and accepted by universities, federal and state government agencies, employers, and licensure boards across the U.S.
 
-However, we always recommend checking with your specific institution's admissions office to confirm their requirements. If you need help, our evaluation consultation is **FREE**!`,
+We always recommend checking with your specific institution's admissions office. Our evaluation consultation is **FREE**!`,
     navButtons: [
       { label: "Contact Us", path: "/contact" },
       { label: "Book Consultation", path: "/consulting/book" },
     ],
   },
+  {
+    keywords: ["dobbs ferry", "where are you", "where is ifcs"],
+    response: `IFCS is located at:
+
+📍 **6 Cedar Street, Dobbs Ferry, NY 10522**
+📞 (914) 693-2840
+📠 Fax: (914) 231-7782
+📧 info@ifcsevals.com
+🕐 Monday–Friday, 9 AM – 5 PM EST
+
+**Director:** Agron Matoshi`,
+    navButtons: [{ label: "Contact Us", path: "/contact" }],
+  },
+  {
+    keywords: ["sample", "sample report", "what does report look like"],
+    response: `You can view sample evaluation reports on our evaluations page! Each evaluation type has a "View Sample" button so you can see exactly what the report looks like.`,
+    navButtons: [
+      { label: "View Evaluations", path: "/evaluations" },
+      { label: "Learn More", path: "/learn-more-evaluations" },
+    ],
+  },
 ];
 
-const findResponse = (query: string): { response: string; navButtons: NavButton[] } => {
+// ============ MATCHING LOGIC ============
+const findResponse = (query: string, customEntries: KBEntry[]): { response: string; navButtons: NavButton[] } => {
   const q = query.toLowerCase().trim();
+  const allEntries = [...customEntries, ...KNOWLEDGE_BASE];
 
-  for (const entry of KNOWLEDGE_BASE) {
+  // Score-based matching: prefer entries with more keyword matches
+  let bestMatch: KBEntry | null = null;
+  let bestScore = 0;
+
+  for (const entry of allEntries) {
+    let score = 0;
     for (const kw of entry.keywords) {
-      if (q.includes(kw)) {
-        return { response: entry.response, navButtons: entry.navButtons || [] };
+      if (q.includes(kw.toLowerCase())) {
+        score += kw.length; // longer keyword = more specific = higher score
       }
+    }
+    if (score > bestScore) {
+      bestScore = score;
+      bestMatch = entry;
     }
   }
 
-  // Broad fallback matches
+  if (bestMatch && bestScore > 0) {
+    return { response: bestMatch.response, navButtons: bestMatch.navButtons || [] };
+  }
+
+  // Broad fallback
   if (q.includes("evaluation") || q.includes("credential") || q.includes("transcript") || q.includes("degree")) {
-    const entry = KNOWLEDGE_BASE.find(e => e.keywords.includes("how do i apply"))!;
-    return { response: entry.response, navButtons: entry.navButtons || [] };
+    const entry = KNOWLEDGE_BASE.find(e => e.keywords.includes("how do i apply"));
+    if (entry) return { response: entry.response, navButtons: entry.navButtons || [] };
   }
   if (q.includes("translat")) {
-    const entry = KNOWLEDGE_BASE.find(e => e.keywords.includes("what's a translation"))!;
-    return { response: entry.response, navButtons: entry.navButtons || [] };
+    const entry = KNOWLEDGE_BASE.find(e => e.keywords.includes("what's a translation"));
+    if (entry) return { response: entry.response, navButtons: entry.navButtons || [] };
   }
 
   return {
@@ -826,52 +874,263 @@ Is there anything else I can help with?`,
   };
 };
 
+// ============ CHAT STATE KEY ============
+const CHAT_STATE_KEY = "ifcs_ai_chat_state";
+
+const saveChatState = (messages: Message[]) => {
+  try {
+    sessionStorage.setItem(CHAT_STATE_KEY, JSON.stringify(messages));
+  } catch { /* ignore */ }
+};
+
+const loadChatState = (): Message[] => {
+  try {
+    const saved = sessionStorage.getItem(CHAT_STATE_KEY);
+    return saved ? JSON.parse(saved) : [];
+  } catch { return []; }
+};
+
+// ============ KNOWLEDGE EDITOR ============
+interface DBKnowledgeEntry {
+  id: string;
+  title: string;
+  keywords: string[];
+  response: string;
+  nav_buttons: NavButton[];
+  category: string;
+  is_active: boolean;
+}
+
+const KnowledgeEditor = ({ onClose }: { onClose: () => void }) => {
+  const [entries, setEntries] = useState<DBKnowledgeEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [editing, setEditing] = useState<DBKnowledgeEntry | null>(null);
+  const [formTitle, setFormTitle] = useState("");
+  const [formKeywords, setFormKeywords] = useState("");
+  const [formResponse, setFormResponse] = useState("");
+  const [formCategory, setFormCategory] = useState("general");
+  const [saving, setSaving] = useState(false);
+
+  const fetchEntries = useCallback(async () => {
+    setLoading(true);
+    const { data } = await (supabase as any).from("ai_knowledge_entries").select("*").eq("is_active", true).order("created_at", { ascending: false });
+    setEntries(data || []);
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { fetchEntries(); }, [fetchEntries]);
+
+  const resetForm = () => {
+    setEditing(null);
+    setFormTitle("");
+    setFormKeywords("");
+    setFormResponse("");
+    setFormCategory("general");
+  };
+
+  const startEdit = (entry: DBKnowledgeEntry) => {
+    setEditing(entry);
+    setFormTitle(entry.title);
+    setFormKeywords(entry.keywords.join(", "));
+    setFormResponse(entry.response);
+    setFormCategory(entry.category);
+  };
+
+  const handleSave = async () => {
+    if (!formTitle.trim() || !formResponse.trim()) return;
+    setSaving(true);
+    const keywords = formKeywords.split(",").map(k => k.trim().toLowerCase()).filter(Boolean);
+    const payload = {
+      title: formTitle.trim(),
+      keywords,
+      response: formResponse.trim(),
+      category: formCategory,
+      nav_buttons: [],
+      updated_at: new Date().toISOString(),
+    };
+
+    if (editing) {
+      await (supabase as any).from("ai_knowledge_entries").update(payload).eq("id", editing.id);
+    } else {
+      await (supabase as any).from("ai_knowledge_entries").insert(payload);
+    }
+    resetForm();
+    await fetchEntries();
+    setSaving(false);
+  };
+
+  const handleDelete = async (id: string) => {
+    await (supabase as any).from("ai_knowledge_entries").delete().eq("id", id);
+    await fetchEntries();
+  };
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-accent text-white">
+        <button onClick={onClose} className="hover:bg-white/20 rounded-full p-1.5 transition-colors">
+          <ChevronLeft size={18} />
+        </button>
+        <BookOpen size={18} />
+        <span className="text-sm font-semibold">Knowledge Base Editor</span>
+      </div>
+
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+        {/* Add / Edit Form */}
+        <div className="rounded-2xl border border-border p-4 space-y-3 bg-muted/30">
+          <p className="text-xs font-bold uppercase tracking-wider text-foreground">
+            {editing ? "Edit Entry" : "Add New Entry"}
+          </p>
+          <input
+            value={formTitle}
+            onChange={e => setFormTitle(e.target.value)}
+            placeholder="Title (e.g. 'Office Hours')"
+            className="w-full px-3 py-2 rounded-xl text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+          />
+          <input
+            value={formKeywords}
+            onChange={e => setFormKeywords(e.target.value)}
+            placeholder="Keywords (comma-separated, e.g. 'hours, open, schedule')"
+            className="w-full px-3 py-2 rounded-xl text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50"
+          />
+          <select
+            value={formCategory}
+            onChange={e => setFormCategory(e.target.value)}
+            className="w-full px-3 py-2 rounded-xl text-sm border border-border bg-background text-foreground"
+          >
+            <option value="general">General</option>
+            <option value="evaluations">Evaluations</option>
+            <option value="translations">Translations</option>
+            <option value="company">Company</option>
+            <option value="policies">Policies</option>
+          </select>
+          <textarea
+            value={formResponse}
+            onChange={e => setFormResponse(e.target.value)}
+            placeholder="AI Response (supports **bold** formatting)"
+            rows={5}
+            className="w-full px-3 py-2 rounded-xl text-sm border border-border bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-accent/50 resize-none"
+          />
+          <div className="flex gap-2">
+            <button
+              onClick={handleSave}
+              disabled={saving || !formTitle.trim() || !formResponse.trim()}
+              className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold rounded-full bg-accent text-white hover:bg-accent/90 transition-colors disabled:opacity-50"
+            >
+              <Save size={14} /> {editing ? "Update" : "Add Entry"}
+            </button>
+            {editing && (
+              <button onClick={resetForm} className="px-4 py-2 text-xs font-semibold rounded-full border border-border text-foreground hover:bg-muted transition-colors">
+                Cancel
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Existing Entries */}
+        <p className="text-xs font-bold uppercase tracking-wider text-foreground">
+          Custom Entries ({entries.length})
+        </p>
+        {loading ? (
+          <p className="text-xs text-muted-foreground text-center py-4">Loading...</p>
+        ) : entries.length === 0 ? (
+          <p className="text-xs text-muted-foreground text-center py-4">No custom entries yet. Add one above!</p>
+        ) : (
+          <div className="space-y-2">
+            {entries.map(entry => (
+              <div key={entry.id} className="rounded-2xl border border-border p-3 bg-background space-y-1">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-foreground truncate">{entry.title}</p>
+                    <p className="text-[10px] text-muted-foreground truncate">
+                      Keywords: {entry.keywords.join(", ")}
+                    </p>
+                  </div>
+                  <div className="flex gap-1 flex-shrink-0">
+                    <button onClick={() => startEdit(entry)} className="p-1.5 rounded-full hover:bg-muted transition-colors text-muted-foreground hover:text-accent">
+                      <Edit2 size={14} />
+                    </button>
+                    <button onClick={() => handleDelete(entry.id)} className="p-1.5 rounded-full hover:bg-destructive/10 transition-colors text-muted-foreground hover:text-destructive">
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                </div>
+                <p className="text-xs text-muted-foreground line-clamp-2">{entry.response.replace(/\*\*/g, "")}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// ============ MAIN WIDGET ============
 const AIChatWidget = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isStaff = user?.role === "staff";
   const [isOpen, setIsOpen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>(loadChatState);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [attachments, setAttachments] = useState<File[]>([]);
+  const [showKnowledge, setShowKnowledge] = useState(false);
+  const [customEntries, setCustomEntries] = useState<KBEntry[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load custom knowledge entries from DB
+  useEffect(() => {
+    const loadCustom = async () => {
+      const { data } = await (supabase as any).from("ai_knowledge_entries").select("*").eq("is_active", true);
+      if (data) {
+        setCustomEntries(data.map((e: any) => ({
+          keywords: e.keywords || [],
+          response: e.response || "",
+          navButtons: e.nav_buttons || [],
+        })));
+      }
+    };
+    loadCustom();
+  }, [showKnowledge]); // reload when closing knowledge editor
+
+  // Save chat state on message changes
+  useEffect(() => {
+    saveChatState(messages);
+  }, [messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setAttachments((prev) => [...prev, ...Array.from(e.target.files!)]);
-    }
+    if (e.target.files) setAttachments(prev => [...prev, ...Array.from(e.target.files!)]);
   };
 
-  const removeAttachment = (index: number) => {
-    setAttachments((prev) => prev.filter((_, i) => i !== index));
-  };
+  const removeAttachment = (index: number) => setAttachments(prev => prev.filter((_, i) => i !== index));
 
   const handleSuggestionClick = (suggestion: string) => {
     setInput("");
     const userMsg: Message = { role: "user", content: suggestion };
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages(prev => [...prev, userMsg]);
     setIsLoading(true);
-    const { response, navButtons } = findResponse(suggestion);
+    const { response, navButtons } = findResponse(suggestion, customEntries);
     setTimeout(() => {
-      setMessages((prev) => [...prev, { role: "assistant", content: response, navButtons }]);
+      setMessages(prev => [...prev, { role: "assistant", content: response, navButtons }]);
       setIsLoading(false);
-    }, 600);
+    }, 400);
   };
 
   const sendMessage = async () => {
     if ((!input.trim() && attachments.length === 0) || isLoading) return;
-    const attachmentNames = attachments.map((f) => f.name);
+    const attachmentNames = attachments.map(f => f.name);
     const userMsg: Message = {
       role: "user",
       content: input.trim(),
       attachments: attachmentNames.length > 0 ? attachmentNames : undefined,
     };
-    setMessages((prev) => [...prev, userMsg]);
+    setMessages(prev => [...prev, userMsg]);
     const query = input.trim();
     setInput("");
     setAttachments([]);
@@ -884,14 +1143,21 @@ const AIChatWidget = () => {
       response = "Thank you for sharing your document(s). For a detailed review, please submit them through our online application or email them to **info@ifcsevals.com**.";
       navButtons = [{ label: "Start Application", path: "/application" }];
     } else {
-      const result = findResponse(query);
+      const result = findResponse(query, customEntries);
       response = result.response;
       navButtons = result.navButtons;
     }
 
-    await new Promise((r) => setTimeout(r, 800));
-    setMessages((prev) => [...prev, { role: "assistant", content: response, navButtons }]);
+    await new Promise(r => setTimeout(r, 500));
+    setMessages(prev => [...prev, { role: "assistant", content: response, navButtons }]);
     setIsLoading(false);
+  };
+
+  const handleReset = () => {
+    setMessages([]);
+    setInput("");
+    setAttachments([]);
+    sessionStorage.removeItem(CHAT_STATE_KEY);
   };
 
   const renderMarkdown = (text: string) => {
@@ -930,174 +1196,186 @@ const AIChatWidget = () => {
             ? "bottom-4 right-4 w-[50vw] max-w-[720px] h-[calc(100vh-2rem)]"
             : "bottom-6 right-6 w-[400px] max-w-[calc(100vw-2rem)] h-[560px] max-h-[calc(100vh-4rem)]"
         }`}>
-          {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-accent text-white">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                <MessageCircle size={16} />
-              </div>
-              <div>
-                <p className="text-sm font-semibold">IFCS AI Assistant</p>
-                <p className="text-[10px] opacity-80">Ask us anything about our services</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => { setMessages([]); setInput(""); setAttachments([]); }}
-                className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
-                aria-label="Reset chat"
-                title="Reset chat"
-              >
-                <RotateCcw size={16} />
-              </button>
-              <button
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
-                aria-label={isExpanded ? "Minimize" : "Expand"}
-                title={isExpanded ? "Minimize" : "Expand"}
-              >
-                {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-              </button>
-              <button onClick={() => { setIsOpen(false); setIsExpanded(false); }} className="hover:bg-white/20 rounded-full p-1.5 transition-colors">
-                <X size={18} />
-              </button>
-            </div>
-          </div>
-
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-            {messages.length === 0 && (
-              <div className="space-y-4">
-                <div className="text-center py-3 space-y-2">
-                  <div className="w-12 h-12 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
-                    <MessageCircle size={22} className="text-accent" />
+          {showKnowledge ? (
+            <KnowledgeEditor onClose={() => setShowKnowledge(false)} />
+          ) : (
+            <>
+              {/* Header */}
+              <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-accent text-white">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                    <MessageCircle size={16} />
                   </div>
-                  <p className="text-base font-semibold text-foreground">Welcome to IFCS AI</p>
-                  <p className="text-xs text-muted-foreground max-w-[280px] mx-auto">
-                    How can I help you today? Try one of these:
-                  </p>
+                  <div>
+                    <p className="text-sm font-semibold">IFCS AI Assistant</p>
+                    <p className="text-[10px] opacity-80">Ask us anything about our services</p>
+                  </div>
                 </div>
-                {/* Suggestion chips - cleaner grid layout */}
-                <div className="grid grid-cols-2 gap-2 px-2">
-                  {SUGGESTIONS.map((s, i) => (
+                <div className="flex items-center gap-1">
+                  {isStaff && (
                     <button
-                      key={i}
-                      onClick={() => handleSuggestionClick(s)}
-                      className="px-3 py-2.5 text-xs font-medium rounded-2xl border border-accent/30 text-accent bg-white hover:bg-accent hover:text-white transition-all duration-200 text-center leading-tight"
+                      onClick={() => setShowKnowledge(true)}
+                      className="hover:bg-white/20 rounded-full px-3 py-1.5 transition-colors flex items-center gap-1.5 text-[11px] font-semibold"
+                      title="Manage Knowledge Base"
                     >
-                      {s}
+                      <BookOpen size={14} /> Knowledge
                     </button>
-                  ))}
+                  )}
+                  <button
+                    onClick={handleReset}
+                    className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
+                    aria-label="Reset chat"
+                    title="Reset chat"
+                  >
+                    <RotateCcw size={16} />
+                  </button>
+                  <button
+                    onClick={() => setIsExpanded(!isExpanded)}
+                    className="hover:bg-white/20 rounded-full p-1.5 transition-colors"
+                    title={isExpanded ? "Minimize" : "Expand"}
+                  >
+                    {isExpanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                  </button>
+                  <button onClick={() => { setIsOpen(false); setIsExpanded(false); }} className="hover:bg-white/20 rounded-full p-1.5 transition-colors">
+                    <X size={18} />
+                  </button>
                 </div>
               </div>
-            )}
-            {messages.map((msg, i) => (
-              <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div className="max-w-[85%] space-y-2">
-                  {msg.attachments && msg.attachments.length > 0 && (
-                    <div className="flex flex-wrap gap-1">
-                      {msg.attachments.map((name, j) => (
-                        <span key={j} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/20 text-[10px] text-accent font-medium">
-                          <Paperclip size={10} /> {name}
-                        </span>
-                      ))}
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+                {messages.length === 0 && (
+                  <div className="space-y-4">
+                    <div className="text-center py-3 space-y-2">
+                      <div className="w-12 h-12 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
+                        <MessageCircle size={22} className="text-accent" />
+                      </div>
+                      <p className="text-base font-semibold text-foreground">Welcome to IFCS AI</p>
+                      <p className="text-xs text-muted-foreground max-w-[280px] mx-auto">
+                        How can I help you today? Try one of these:
+                      </p>
                     </div>
-                  )}
-                  {msg.content && (
-                    <div
-                      className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
-                        msg.role === "user"
-                          ? "bg-accent text-white rounded-br-md"
-                          : "bg-muted text-foreground rounded-bl-md"
-                      }`}
-                    >
-                      {renderMarkdown(msg.content)}
-                    </div>
-                  )}
-                  {/* Navigation buttons */}
-                  {msg.navButtons && msg.navButtons.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-1">
-                      {msg.navButtons.map((btn, j) => (
+                    <div className="grid grid-cols-2 gap-2 px-2">
+                      {SUGGESTIONS.map((s, i) => (
                         <button
-                          key={j}
-                          onClick={() => {
-                            setIsOpen(false);
-                            if (btn.state) {
-                              navigate(btn.path, { state: btn.state });
-                            } else {
-                              navigate(btn.path);
-                            }
-                          }}
-                          className="px-4 py-2 text-xs font-semibold rounded-full bg-accent text-white hover:bg-accent/90 transition-colors shadow-sm"
+                          key={i}
+                          onClick={() => handleSuggestionClick(s)}
+                          className="px-3 py-2.5 text-xs font-medium rounded-2xl border border-accent/30 text-accent bg-white hover:bg-accent hover:text-white transition-all duration-200 text-center leading-tight"
                         >
-                          {btn.label}
+                          {s}
                         </button>
                       ))}
                     </div>
-                  )}
-                </div>
+                  </div>
+                )}
+                {messages.map((msg, i) => (
+                  <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                    <div className="max-w-[85%] space-y-2">
+                      {msg.attachments && msg.attachments.length > 0 && (
+                        <div className="flex flex-wrap gap-1">
+                          {msg.attachments.map((name, j) => (
+                            <span key={j} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/20 text-[10px] text-accent font-medium">
+                              <Paperclip size={10} /> {name}
+                            </span>
+                          ))}
+                        </div>
+                      )}
+                      {msg.content && (
+                        <div
+                          className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                            msg.role === "user"
+                              ? "bg-accent text-white rounded-br-md"
+                              : "bg-muted text-foreground rounded-bl-md"
+                          }`}
+                        >
+                          {renderMarkdown(msg.content)}
+                        </div>
+                      )}
+                      {msg.navButtons && msg.navButtons.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-1">
+                          {msg.navButtons.map((btn, j) => (
+                            <button
+                              key={j}
+                              onClick={() => {
+                                setIsOpen(false);
+                                if (btn.state) {
+                                  navigate(btn.path, { state: btn.state });
+                                } else {
+                                  navigate(btn.path);
+                                }
+                              }}
+                              className="px-4 py-2 text-xs font-semibold rounded-full bg-accent text-white hover:bg-accent/90 transition-colors shadow-sm"
+                            >
+                              {btn.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 flex gap-1">
+                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
               </div>
-            ))}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 flex gap-1">
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                  <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
-                </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
-          </div>
 
-          {/* Attachments preview */}
-          {attachments.length > 0 && (
-            <div className="px-4 py-2 border-t border-border flex flex-wrap gap-1">
-              {attachments.map((file, i) => (
-                <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/10 text-[10px] font-medium text-accent">
-                  <Paperclip size={10} /> {file.name}
-                  <button onClick={() => removeAttachment(i)} className="ml-1 hover:text-destructive">
-                    <X size={10} />
+              {/* Attachments preview */}
+              {attachments.length > 0 && (
+                <div className="px-4 py-2 border-t border-border flex flex-wrap gap-1">
+                  {attachments.map((file, i) => (
+                    <span key={i} className="inline-flex items-center gap-1 px-2 py-1 rounded-lg bg-accent/10 text-[10px] font-medium text-accent">
+                      <Paperclip size={10} /> {file.name}
+                      <button onClick={() => removeAttachment(i)} className="ml-1 hover:text-destructive">
+                        <X size={10} />
+                      </button>
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Input */}
+              <div className="border-t border-border px-4 py-3">
+                <div className="flex gap-2 items-center">
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-10 h-10 rounded-full flex items-center justify-center text-muted-foreground hover:text-accent hover:bg-muted transition-colors flex-shrink-0"
+                    aria-label="Attach file"
+                  >
+                    <Paperclip size={18} />
                   </button>
-                </span>
-              ))}
-            </div>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    multiple
+                    onChange={handleFileSelect}
+                    className="hidden"
+                    accept="image/*,.pdf,.doc,.docx"
+                  />
+                  <input
+                    value={input}
+                    onChange={e => setInput(e.target.value)}
+                    onKeyDown={e => e.key === "Enter" && sendMessage()}
+                    placeholder="Type your message..."
+                    className="flex-1 h-10 px-4 rounded-full text-sm text-foreground placeholder:text-muted-foreground bg-muted border border-border focus:outline-none focus:ring-2 focus:ring-accent/50"
+                  />
+                  <button
+                    onClick={sendMessage}
+                    disabled={(!input.trim() && attachments.length === 0) || isLoading}
+                    className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent/90 transition-colors disabled:opacity-50 flex-shrink-0"
+                  >
+                    <Send size={16} />
+                  </button>
+                </div>
+              </div>
+            </>
           )}
-
-          {/* Input */}
-          <div className="border-t border-border px-4 py-3">
-            <div className="flex gap-2 items-center">
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-muted-foreground hover:text-accent hover:bg-muted transition-colors flex-shrink-0"
-                aria-label="Attach file"
-              >
-                <Paperclip size={18} />
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                onChange={handleFileSelect}
-                className="hidden"
-                accept="image/*,.pdf,.doc,.docx"
-              />
-              <input
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-                placeholder="Type your message..."
-                className="flex-1 h-10 px-4 rounded-full text-sm text-foreground placeholder:text-muted-foreground bg-muted border border-border focus:outline-none focus:ring-2 focus:ring-accent/50"
-              />
-              <button
-                onClick={sendMessage}
-                disabled={(!input.trim() && attachments.length === 0) || isLoading}
-                className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent/90 transition-colors disabled:opacity-50 flex-shrink-0"
-              >
-                <Send size={16} />
-              </button>
-            </div>
-          </div>
         </div>
       )}
     </>
