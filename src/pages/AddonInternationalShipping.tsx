@@ -18,6 +18,7 @@ const COUNTRIES = ["Afghanistan","Albania","Algeria","Argentina","Australia","Au
 const AddonInternationalShipping = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { translateDual, translate } = useLocale();
   const [address, setAddress] = useState({ line1: "", line2: "", city: "", state: "", zip: "", country: "" });
   const [payment, setPayment] = useState({ name: "", ifcsId: "", email: "", phone: "", cardHolder: "", cardNumber: "", month: "", year: "", cvv: "" });
   const [agreeTerms, setAgreeTerms] = useState(false);
