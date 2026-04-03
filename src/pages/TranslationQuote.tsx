@@ -416,7 +416,7 @@ const TranslationQuote = () => {
                     className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-foreground text-background font-bold text-base shadow-lg hover:scale-105 transition-all duration-300"
                   >
                     <CreditCard size={18} />
-                    <span>Make Payment</span>
+                    <span>{translate("Make Payment")}</span>
                   </button>
                 ) : (
                   <div className="space-y-4 pt-2">
