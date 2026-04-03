@@ -283,8 +283,8 @@ const TranslationQuote = () => {
 
                 <label className="flex flex-col items-center justify-center gap-3 border-2 border-dashed border-border rounded-2xl p-8 cursor-pointer hover:border-accent/50 hover:bg-accent/5 transition-all duration-200 group">
                   <Upload size={28} className="text-muted-foreground group-hover:text-accent transition-colors" />
-                  <span className="text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">Click to browse files</span>
-                  <span className="text-xs text-muted-foreground/60">PDF, JPG, PNG supported · Max 4MB per file</span>
+                  <span className="text-sm font-medium text-muted-foreground group-hover:text-accent transition-colors">{translate("Click to browse files")}</span>
+                  <span className="text-xs text-muted-foreground/60">{translate("PDF, JPG, PNG supported · Max 4MB per file")}</span>
                   <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept=".pdf,.jpg,.jpeg,.png" />
                 </label>
 
