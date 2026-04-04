@@ -1008,7 +1008,7 @@ const Application = () => {
                       {effectiveDiscountAmount > 0 && (
                         <div className="flex items-start justify-between gap-4 text-sm">
                           <span className="text-emerald-600 font-semibold">Discount ({discountCode}):</span>
-                          <span className="text-right font-medium text-emerald-600">-${discountAmount}</span>
+                          <span className="text-right font-medium text-emerald-600">-${effectiveDiscountAmount}</span>
                         </div>
                       )}
                       <div className="border-t border-border pt-3 mt-3 flex items-start justify-between gap-4 text-sm">
