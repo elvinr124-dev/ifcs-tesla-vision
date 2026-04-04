@@ -800,7 +800,10 @@ const AIChatWidget = () => {
   const [showKnowledge, setShowKnowledge] = useState(false);
   const [customEntries, setCustomEntries] = useState<KBEntry[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const lastUserMsgRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [pendingScroll, setPendingScroll] = useState<"user" | "assistant" | null>(null);
 
   // Load custom knowledge entries from DB
   useEffect(() => {
@@ -822,7 +825,16 @@ const AIChatWidget = () => {
     saveChatState(messages);
   }, [messages]);
 
-  // Don't auto-scroll to bottom - let user read from top of response
+  // Scroll logic: on user send → scroll to bottom; on AI response → scroll so user's prompt is at top
+  useEffect(() => {
+    if (!pendingScroll) return;
+    if (pendingScroll === "user") {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else if (pendingScroll === "assistant" && lastUserMsgRef.current) {
+      lastUserMsgRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setPendingScroll(null);
+  }, [pendingScroll, messages]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setAttachments(prev => [...prev, ...Array.from(e.target.files!)]);
