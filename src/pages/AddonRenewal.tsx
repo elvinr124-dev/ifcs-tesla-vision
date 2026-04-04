@@ -111,7 +111,7 @@ const AddonRenewal = () => {
               </div>
             </div>
 
-            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">
+            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-full">
               {translate("Pay")} $100.00
             </Button>
           </form>

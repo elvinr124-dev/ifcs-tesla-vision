@@ -403,7 +403,7 @@ const TranslationQuote = () => {
               </div>
 
               {/* Make a Payment (if already received a quote) */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-4">
+              <div className="rounded-3xl border border-border bg-white shadow-lg p-8 space-y-4">
                 <SectionHeading>{translateDual("Make a Payment")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">
                   {translate("Already received a quote? Enter your details below to make a payment.")}
