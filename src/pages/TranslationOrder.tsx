@@ -473,8 +473,7 @@ const TranslationOrder = () => {
               </div>
 
               {/* Upload Documents */}
-              <div
-                className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5"
+              <div className="space-y-5"
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDragOver={handleDragOver}
