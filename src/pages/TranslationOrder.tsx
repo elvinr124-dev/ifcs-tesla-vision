@@ -613,7 +613,7 @@ const TranslationOrder = () => {
               </div>
 
               {/* Add-Ons */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
+              <div className="space-y-5">
                 <SectionHeading>Add-Ons</SectionHeading>
 
                 <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
