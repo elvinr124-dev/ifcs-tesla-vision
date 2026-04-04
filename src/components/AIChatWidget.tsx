@@ -1037,13 +1037,20 @@ const AIChatWidget = () => {
                       )}
                       {msg.content && (
                         <div
-                          className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                             msg.role === "user"
-                              ? "bg-accent text-white rounded-br-md"
-                              : "bg-muted text-foreground rounded-bl-md"
+                              ? "bg-gradient-to-br from-[hsl(220,70%,30%)] to-[hsl(220,70%,40%)] text-white rounded-br-md shadow-sm"
+                              : "bg-muted/60 text-foreground rounded-bl-md border border-border/50"
                           }`}
                         >
                           {renderMarkdown(msg.content)}
+                          {msg.role === "assistant" && (
+                            <div className="mt-3 pt-2 border-t border-border/30">
+                              <p className="text-[9px] text-muted-foreground/70 italic leading-tight">
+                                ⚠️ AI-generated responses may contain errors. For verified information, please contact IFCS directly. IFCS is not responsible for inaccuracies.
+                              </p>
+                            </div>
+                          )}
                         </div>
                       )}
                       {msg.navButtons && msg.navButtons.length > 0 && (
