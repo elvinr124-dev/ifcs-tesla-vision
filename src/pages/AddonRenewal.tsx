@@ -93,25 +93,23 @@ const AddonRenewal = () => {
               </div>
             </div>
 
-            <Card className="border-border bg-card">
-              <CardContent className="pt-6 space-y-4">
-                <p className="text-sm font-medium text-foreground mb-2">{translate("Please read and agree to the terms and conditions & privacy policy:")}</p>
-                <div className="flex items-start gap-3">
-                  <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
-                  <label htmlFor="terms" className="text-sm text-muted-foreground">
-                    I agree to the <Link to="/terms" className="text-accent underline">Terms and Conditions</Link>
-                    {agreeTerms && termsSignature && <span className="ml-2 text-xs text-accent">✓ Signed: {termsSignature}</span>}
-                  </label>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={handlePrivacyCheck} />
-                  <label htmlFor="privacy" className="text-sm text-muted-foreground">
-                    I agree to the <Link to="/privacy" className="text-accent underline">Privacy Policy</Link>
-                    {agreePrivacy && privacySignature && <span className="ml-2 text-xs text-accent">✓ Signed: {privacySignature}</span>}
-                  </label>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-4">
+              <p className="text-sm font-medium text-foreground mb-2">{translate("Please read and agree to the terms and conditions & privacy policy:")}</p>
+              <div className="flex items-start gap-3">
+                <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
+                <label htmlFor="terms" className="text-sm text-muted-foreground">
+                  I agree to the <Link to="/terms" className="text-accent underline">Terms and Conditions</Link>
+                  {agreeTerms && termsSignature && <span className="ml-2 text-xs text-accent">✓ Signed: {termsSignature}</span>}
+                </label>
+              </div>
+              <div className="flex items-start gap-3">
+                <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={handlePrivacyCheck} />
+                <label htmlFor="privacy" className="text-sm text-muted-foreground">
+                  I agree to the <Link to="/privacy" className="text-accent underline">Privacy Policy</Link>
+                  {agreePrivacy && privacySignature && <span className="ml-2 text-xs text-accent">✓ Signed: {privacySignature}</span>}
+                </label>
+              </div>
+            </div>
 
             <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">
               {translate("Pay")} $100.00
