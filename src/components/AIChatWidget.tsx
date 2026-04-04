@@ -38,12 +38,12 @@ const appButton = (title: string, price: number, processing: string, procLabel: 
 const KNOWLEDGE_BASE: KBEntry[] = [
   {
     keywords: ["who is the owner", "who is the director", "who runs ifcs", "who founded ifcs", "ceo", "founder", "director", "owner of ifcs", "who owns"],
-    response: `The Director of **IFCS** is **Agron Matoshi**. He is a recognized expert in foreign credential evaluations and leads IFCS's mission to help international students and professionals get their credentials recognized in the United States.\n\n📍 **IFCS** — Institute of Foreign Credential Services\n📍 6 Cedar Street, Dobbs Ferry, NY 10522\n📞 (914) 693-2840 | 📧 info@ifcsevals.com`,
-    navButtons: [{ label: "About Us", path: "/about" }],
+    response: `For inquiries about our leadership team, please contact us directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n📍 6 Cedar Street, Dobbs Ferry, NY 10522`,
+    navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
     keywords: ["who works at ifcs", "staff", "team", "employees"],
-    response: `The IFCS team is led by **Director Agron Matoshi** and consists of senior credential evaluators who are recognized experts in the field. Our evaluators are regular contributors to publications and conferences organized by **NAFSA**, **AACRAO**, and the **International Association of Universities**.\n\nFor specific inquiries, contact us:\n📞 (914) 693-2840 | 📧 info@ifcsevals.com`,
+    response: `The IFCS team consists of senior credential evaluators who are recognized experts in the field. Our evaluators are regular contributors to publications and conferences organized by leading international education associations.\n\nFor specific inquiries, contact us:\n📞 (914) 693-2840 | 📧 info@ifcsevals.com`,
     navButtons: [{ label: "About Us", path: "/about" }],
   },
   {
