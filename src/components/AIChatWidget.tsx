@@ -844,11 +844,10 @@ const AIChatWidget = () => {
 
   const handleSuggestionClick = (suggestion: string) => {
     setInput(suggestion);
-    // Trigger send
-    const fakeInput = suggestion;
     setInput("");
-    const userMsg: Message = { role: "user", content: fakeInput };
+    const userMsg: Message = { role: "user", content: suggestion };
     setMessages(prev => [...prev, userMsg]);
+    setPendingScroll("user");
     setIsLoading(true);
     sendToAI([...messages, userMsg]);
   };
