@@ -449,10 +449,10 @@ const KNOWLEDGE_BASE: KBEntry[] = [
       { label: "Learn More", path: "/learn-more-evaluations" },
     ],
   },
-  // Cart, Login, Discount Codes
+  // Cart
   {
     keywords: ["cart", "shopping cart", "add to cart", "my cart", "whats in my cart"],
-    response: `You can add multiple services to your **cart** before checking out! The cart is accessible from the navigation bar.\n\nYou can also apply **discount codes** at checkout:\n• **IFCS10** — 10% off\n• **IFCS20** — 20% off\n• **WELCOME15** — 15% off`,
+    response: `You can add multiple services to your **cart** before checking out! The cart is accessible from the navigation bar.\n\nYou can also apply **discount codes** at checkout for savings.`,
     navButtons: [{ label: "View Cart", path: "/cart" }],
   },
   {
@@ -466,8 +466,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["discount", "coupon", "promo", "promo code", "discount code", "save money", "deal"],
-    response: `Yes! IFCS offers **discount codes** you can apply in the cart:\n\n• **IFCS10** — 10% off your order\n• **IFCS20** — 20% off your order\n• **WELCOME15** — 15% off for new clients\n\nSimply add your services to the cart and enter the code at checkout!`,
-    navButtons: [{ label: "View Cart", path: "/cart" }, { label: "View Pricing", path: "/pricing" }],
+    response: `IFCS does offer **discount codes** from time to time. To inquire about current promotions or obtain a discount code, please contact us directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n\nOnce you have a code, simply add your services to the cart and enter it at checkout!`,
+    navButtons: [{ label: "Contact Us", path: "/contact" }, { label: "View Pricing", path: "/pricing" }],
   },
   {
     keywords: ["privacy policy", "privacy", "data protection", "personal data", "data"],
