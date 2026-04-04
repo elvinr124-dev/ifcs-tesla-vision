@@ -345,7 +345,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["contact", "phone", "email address", "reach", "office", "address", "location", "hours"],
-    response: `📞 **Phone:** (914) 693-2840\n📠 **Fax:** (914) 231-7782\n📧 **Email:** info@ifcsevals.com\n📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522\n🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST\n\n**Director:** Agron Matoshi`,
+    response: `📞 **Phone:** (914) 693-2840\n📠 **Fax:** (914) 231-7782\n📧 **Email:** info@ifcsevals.com\n📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522\n🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST`,
     navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
