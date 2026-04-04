@@ -1102,7 +1102,151 @@ const StaffDashboard = () => {
         </DialogContent>
       </Dialog>
 
-      <BackToHome />
+      {/* Edit Application Dialog */}
+      <Dialog open={editAppOpen} onOpenChange={setEditAppOpen}>
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Edit Application — {editAppData?.application_id}</DialogTitle>
+            <DialogDescription>Update application details. The client will be notified of changes.</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 pt-2">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">First Name</label>
+                <Input value={editFields.first_name} onChange={e => setEditFields(p => ({ ...p, first_name: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Middle Name</label>
+                <Input value={editFields.middle_name} onChange={e => setEditFields(p => ({ ...p, middle_name: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Last Name</label>
+                <Input value={editFields.last_name} onChange={e => setEditFields(p => ({ ...p, last_name: e.target.value }))} className="rounded-full" />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Date of Birth</label>
+                <Input value={editFields.dob} onChange={e => setEditFields(p => ({ ...p, dob: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Gender</label>
+                <Select value={editFields.gender} onValueChange={v => setEditFields(p => ({ ...p, gender: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">IFCS ID</label>
+                <Input value={editFields.ifcs_id} onChange={e => setEditFields(p => ({ ...p, ifcs_id: e.target.value }))} className="rounded-full" />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Cell Phone</label>
+                <Input value={editFields.cell_phone} onChange={e => setEditFields(p => ({ ...p, cell_phone: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Home Phone</label>
+                <Input value={editFields.home_phone} onChange={e => setEditFields(p => ({ ...p, home_phone: e.target.value }))} className="rounded-full" />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Service</label>
+                <Select value={editFields.service_title} onValueChange={v => setEditFields(p => ({ ...p, service_title: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="General Analysis">General Analysis</SelectItem>
+                    <SelectItem value="General Analysis + GPA">General Analysis + GPA</SelectItem>
+                    <SelectItem value="Course-by-Course">Course-by-Course</SelectItem>
+                    <SelectItem value="Health Professions Course-by-Course">Health Professions Course-by-Course</SelectItem>
+                    <SelectItem value="Comprehensive Course-by-Course">Comprehensive Course-by-Course</SelectItem>
+                    <SelectItem value="High School and University Course-by-Course">HS & University Course-by-Course</SelectItem>
+                    <SelectItem value="Professional Licensure Course-by-Course">Professional Licensure Course-by-Course</SelectItem>
+                    <SelectItem value="Cosmetology Course-by-Course">Cosmetology Course-by-Course</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Processing Speed</label>
+                <Select value={editFields.processing_label} onValueChange={v => setEditFields(p => ({ ...p, processing_label: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Standard">Standard</SelectItem>
+                    <SelectItem value="Rush 3-Day">Rush 3-Day</SelectItem>
+                    <SelectItem value="Rush 24hr">Rush 24hr</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Status</label>
+                <Select value={editFields.status} onValueChange={v => setEditFields(p => ({ ...p, status: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(statusMeta).map(([key, val]) => (
+                      <SelectItem key={key} value={key}>{val.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Evaluator</label>
+                <Select value={editFields.evaluator} onValueChange={v => setEditFields(p => ({ ...p, evaluator: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                  <SelectContent>
+                    {evaluators.map(ev => <SelectItem key={ev} value={ev}>{ev}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Verification Source</label>
+                <Select value={editFields.verification_source} onValueChange={v => setEditFields(p => ({ ...p, verification_source: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                  <SelectContent>
+                    {verificationSources.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Country</label>
+                <Input value={editFields.country} onChange={e => setEditFields(p => ({ ...p, country: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Institution Name</label>
+                <Input value={editFields.institution_name} onChange={e => setEditFields(p => ({ ...p, institution_name: e.target.value }))} className="rounded-full" />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Staff Notes</label>
+              <Textarea value={editFields.staff_notes} onChange={e => setEditFields(p => ({ ...p, staff_notes: e.target.value }))} rows={4} />
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setEditAppOpen(false)} className="rounded-full">Cancel</Button>
+              <Button onClick={handleSaveEdit} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Footer />
     </div>
   );
