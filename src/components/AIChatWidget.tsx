@@ -22,6 +22,14 @@ const SUGGESTIONS = [
   "Do you offer consulting?",
 ];
 
+const QUICK_PROMPTS = [
+  "Check my application status",
+  "Do you have discount codes?",
+  "How do I log in?",
+  "View pricing",
+  "What's in my cart?",
+];
+
 interface KBEntry {
   keywords: string[];
   response: string;
@@ -441,6 +449,41 @@ const KNOWLEDGE_BASE: KBEntry[] = [
       { label: "Learn More", path: "/learn-more-evaluations" },
     ],
   },
+  // Cart, Login, Discount Codes
+  {
+    keywords: ["cart", "shopping cart", "add to cart", "my cart", "whats in my cart"],
+    response: `You can add multiple services to your **cart** before checking out! The cart is accessible from the navigation bar.\n\nYou can also apply **discount codes** at checkout:\n• **IFCS10** — 10% off\n• **IFCS20** — 20% off\n• **WELCOME15** — 15% off`,
+    navButtons: [{ label: "View Cart", path: "/cart" }],
+  },
+  {
+    keywords: ["login", "sign in", "log in", "account", "my account", "sign up", "register", "create account"],
+    response: `You can **log in** or **create an account** to track your applications, view order history, and manage your evaluations.\n\nAlready have an account? Log in to access your dashboard.\nNew to IFCS? Create a free account to get started!`,
+    navButtons: [
+      { label: "Log In", path: "/login" },
+      { label: "Sign Up", path: "/signup" },
+      { label: "My Dashboard", path: "/dashboard/client" },
+    ],
+  },
+  {
+    keywords: ["discount", "coupon", "promo", "promo code", "discount code", "save money", "deal"],
+    response: `Yes! IFCS offers **discount codes** you can apply in the cart:\n\n• **IFCS10** — 10% off your order\n• **IFCS20** — 20% off your order\n• **WELCOME15** — 15% off for new clients\n\nSimply add your services to the cart and enter the code at checkout!`,
+    navButtons: [{ label: "View Cart", path: "/cart" }, { label: "View Pricing", path: "/pricing" }],
+  },
+  {
+    keywords: ["privacy policy", "privacy", "data protection", "personal data", "data"],
+    response: `IFCS takes your privacy seriously. Our **Privacy Policy** outlines how we collect, use, and protect your personal information.\n\nAll documents and personal data are handled with strict confidentiality and security measures.`,
+    navButtons: [{ label: "View Privacy Policy", path: "/privacy-policy" }],
+  },
+  {
+    keywords: ["terms of service", "terms", "conditions", "terms and conditions", "tos"],
+    response: `Our **Terms of Service** outline the conditions for using IFCS services, including evaluation policies, payment terms, and service agreements.\n\nWe recommend reviewing them before submitting an application.`,
+    navButtons: [{ label: "View Terms of Service", path: "/terms-of-service" }],
+  },
+  {
+    keywords: ["dashboard", "my orders", "track order", "order history", "my applications"],
+    response: `Your **Dashboard** lets you:\n• Track application status in real-time\n• View staff notes and updates\n• Access receipts and order history\n• Check your IFCS ID\n\nLog in to access your dashboard!`,
+    navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }, { label: "Log In", path: "/login" }],
+  },
   // Albania and Balkans
   {
     keywords: ["albania", "albanian", "albanian diploma", "albanian university", "albanian high school", "tirana", "kosova", "kosovo", "pristina"],
@@ -854,6 +897,43 @@ const AIChatWidget = () => {
 
   const sendToAI = async (conversationMessages: Message[]) => {
     try {
+      // Check if user is providing an app ID + DOB for status lookup
+      const lastMsg = conversationMessages[conversationMessages.length - 1];
+      const prevMsgs = conversationMessages.slice(-4);
+      
+      // Detect if this looks like a DOB response after an app ID was given
+      const dobMatch = lastMsg.content.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+      const prevAppIdMsg = prevMsgs.find(m => m.role === "user" && /\b(EE\d{3,}|\d{5})\b/i.test(m.content));
+      
+      if (dobMatch && prevAppIdMsg) {
+        const appIdMatch = prevAppIdMsg.content.match(/\b(EE\d{3,}|\d{5})\b/i);
+        if (appIdMatch) {
+          // Do actual status lookup
+          const { data, error } = await supabase.functions.invoke("ai-chat", {
+            body: { action: "lookup-status", applicationId: appIdMatch[1], dob: lastMsg.content.trim() },
+          });
+          
+          if (!error && data) {
+            if (data.found) {
+              setMessages(prev => [...prev, {
+                role: "assistant",
+                content: `**Application Found**\n\n**Applicant:** ${data.name}\n**Application ID:** ${data.applicationId}\n**IFCS ID:** ${data.ifcsId}\n**Service:** ${data.service}\n**Processing:** ${data.processing}\n**Status:** ${data.status}\n${data.staffNotes ? `**Notes:** ${data.staffNotes}` : ""}\n\nFor detailed information, visit your dashboard.`,
+                navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }],
+              }]);
+            } else {
+              setMessages(prev => [...prev, {
+                role: "assistant",
+                content: data.message || "No application found. Please verify your Application ID and Date of Birth.",
+                navButtons: [{ label: "Contact Us", path: "/contact" }],
+              }]);
+            }
+            setPendingScroll("assistant");
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
+
       const allKB = [...customEntries, ...KNOWLEDGE_BASE];
       const { data, error } = await supabase.functions.invoke("ai-chat", {
         body: {
@@ -870,7 +950,7 @@ const AIChatWidget = () => {
         console.error("AI chat error:", error);
         setMessages(prev => [...prev, {
           role: "assistant",
-          content: "I'm sorry, I'm having trouble connecting right now. Please try again or contact us directly:\n\n📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**",
+          content: "I'm sorry, I'm having trouble connecting right now. Please try again or contact us directly:\n\n(914) 693-2840 | info@ifcsevals.com",
           navButtons: [{ label: "Contact Us", path: "/contact" }],
         }]);
       } else {
@@ -885,7 +965,7 @@ const AIChatWidget = () => {
       console.error("AI chat error:", e);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "I'm experiencing technical difficulties. Please contact us directly:\n\n📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**",
+        content: "I'm experiencing technical difficulties. Please contact us directly:\n\n(914) 693-2840 | info@ifcsevals.com",
         navButtons: [{ label: "Contact Us", path: "/contact" }],
       }]);
     } finally {
@@ -928,7 +1008,9 @@ const AIChatWidget = () => {
   };
 
   const renderMarkdown = (text: string) => {
-    const lines = text.split("\n");
+    // Clean up problematic characters before rendering
+    const cleanedText = text.replace(/\?\?+/g, "?").replace(/!!+/g, "!").replace(/#{1,4}\s/g, "");
+    const lines = cleanedText.split("\n");
     return lines.map((line, i) => {
       const trimmed = line.trim();
 
@@ -1145,6 +1227,21 @@ const AIChatWidget = () => {
                         <X size={10} />
                       </button>
                     </span>
+                  ))}
+                </div>
+              )}
+
+              {/* Quick-send suggestion chips */}
+              {messages.length > 0 && !isLoading && (
+                <div className="px-4 py-2 border-t border-border flex gap-1.5 overflow-x-auto scrollbar-none">
+                  {QUICK_PROMPTS.map((prompt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSuggestionClick(prompt)}
+                      className="flex-shrink-0 px-3 py-1.5 text-[11px] font-medium rounded-full border border-accent text-accent bg-white hover:bg-accent/5 transition-colors whitespace-nowrap"
+                    >
+                      {prompt}
+                    </button>
                   ))}
                 </div>
               )}
