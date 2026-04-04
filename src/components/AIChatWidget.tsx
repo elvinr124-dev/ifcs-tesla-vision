@@ -401,7 +401,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["naces", "member", "accredit", "legitimate", "recognized", "credible", "trusted", "accepted everywhere"],
-    response: `**IFCS is a proud member of NACES** (National Association of Credential Evaluation Services) — the gold standard for credential evaluation in the United States.\n\n**What NACES membership means:**\n✅ Evaluations accepted by **USCIS**, the **U.S. Military**, and **thousands of universities**\n✅ Adheres to the highest ethical and professional standards\n✅ Uses **AACRAO EDGE** research databases — the same tools used by top university registrars\n\n**IFCS is also recognized by:**\n✅ **NAFSA** — Association of International Educators\n✅ **AACRAO** — American Association of Collegiate Registrars and Admissions Officers\n✅ **IAU** — International Association of Universities\n✅ **UNESCO** — United Nations Educational, Scientific and Cultural Organization`,
+    response: `**IFCS is a proud member of NACES** — the gold standard for credential evaluation in the United States.\n\n**What this means:**\n✅ Evaluations accepted by **USCIS**, the **U.S. Military**, and **thousands of universities**\n✅ Adheres to the highest ethical and professional standards\n✅ Uses industry-standard research databases used by top university registrars\n\n**Also recognized by:** NAFSA, IAU, UNESCO`,
     navButtons: [
       { label: "About Us", path: "/about" },
       { label: "Learn More", path: "/learn-more-evaluations" },
