@@ -906,6 +906,7 @@ const AIChatWidget = () => {
     setInput("");
     setAttachments([]);
     setIsLoading(true);
+    setPendingScroll("user");
 
     if (userMsg.attachments && userMsg.attachments.length > 0 && !query) {
       setMessages(prev => [...prev, {
