@@ -303,8 +303,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["check status", "track", "status of", "my evaluation", "order status"],
-    response: `You can check the status of your evaluation through your **My Dashboard**.\n\nYou'll need:\n• Your **Application ID** (starts with "EE")\n• Your **Date of Birth**`,
+    keywords: ["check status", "track", "status of", "my evaluation", "order status", "where is my evaluation", "application status", "EE0", "EE1", "EE2", "EE3", "EE4", "EE5", "EE6", "EE7", "EE8", "EE9"],
+    response: `I can help you check your application status! Please provide:\n\n• Your **Application ID** (e.g., EE0788)\n• Your **Date of Birth** (for verification)\n\nOnce verified, I'll share your current status and direct you to your dashboard.`,
     navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }],
   },
   {
@@ -408,8 +408,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["original document", "do i need original", "send original"],
-    response: `**No, you do not need to send originals to start!** Legible uploaded copies of your transcripts and diplomas are sufficient to begin your application.`,
+    keywords: ["original document", "do i need original", "send original", "mail documents", "send documents", "official documents"],
+    response: `**No, you do not need to send originals to start!** Legible uploaded copies of your transcripts and diplomas are sufficient to begin your application.\n\n**Sending Official Documents:**\nOnce your application is submitted, you will receive an **IFCS ID** (a 5-digit reference number). At that point, you may contact your issuing institution and request that official documents be sent directly to IFCS. You will be provided with the appropriate mailing address and instructions.\n\n**Note:** In some cases, IFCS may require the original documents to be mailed directly to our office for verification purposes.`,
     navButtons: [{ label: "Start Application", path: "/application" }],
   },
   {
@@ -930,9 +930,21 @@ const AIChatWidget = () => {
   const renderMarkdown = (text: string) => {
     const lines = text.split("\n");
     return lines.map((line, i) => {
+      const trimmed = line.trim();
+
+      // Strip markdown headers (###, ##, #) and render as bold text
+      const headerMatch = trimmed.match(/^#{1,4}\s+(.+)$/);
+      if (headerMatch) {
+        return (
+          <p key={i} className="py-1">
+            <strong className="font-bold text-foreground text-[14px]">{headerMatch[1]}</strong>
+          </p>
+        );
+      }
+
       // Handle bullet points
-      const isBullet = /^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/.test(line.trim()) || line.trim().startsWith("- ");
-      const isNumbered = /^\d+[\.\)]\s/.test(line.trim());
+      const isBullet = /^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/.test(trimmed) || trimmed.startsWith("- ");
+      const isNumbered = /^\d+[\.\)]\s/.test(trimmed);
 
       const formatInline = (text: string) => {
         return text.split(/(\*\*.*?\*\*|\*[^*]+?\*)/).map((part, j) => {
@@ -949,13 +961,13 @@ const AIChatWidget = () => {
       if (isBullet || isNumbered) {
         return (
           <div key={i} className="flex gap-2 py-0.5">
-            <span className="flex-shrink-0 mt-0.5">{isBullet ? line.trim().match(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]/)?.[0] || "•" : ""}</span>
-            <span className="flex-1">{formatInline(isBullet ? line.trim().replace(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/, "") : line.trim())}</span>
+            <span className="flex-shrink-0 mt-0.5">{isBullet ? trimmed.match(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]/)?.[0] || "•" : ""}</span>
+            <span className="flex-1">{formatInline(isBullet ? trimmed.replace(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/, "") : trimmed)}</span>
           </div>
         );
       }
 
-      if (line.trim() === "") return <div key={i} className="h-2" />;
+      if (trimmed === "") return <div key={i} className="h-2" />;
 
       return (
         <p key={i} className="py-0.5">
