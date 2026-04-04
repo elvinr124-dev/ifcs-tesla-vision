@@ -800,7 +800,10 @@ const AIChatWidget = () => {
   const [showKnowledge, setShowKnowledge] = useState(false);
   const [customEntries, setCustomEntries] = useState<KBEntry[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+  const lastUserMsgRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [pendingScroll, setPendingScroll] = useState<"user" | "assistant" | null>(null);
 
   // Load custom knowledge entries from DB
   useEffect(() => {
@@ -822,7 +825,16 @@ const AIChatWidget = () => {
     saveChatState(messages);
   }, [messages]);
 
-  // Don't auto-scroll to bottom - let user read from top of response
+  // Scroll logic: on user send → scroll to bottom; on AI response → scroll so user's prompt is at top
+  useEffect(() => {
+    if (!pendingScroll) return;
+    if (pendingScroll === "user") {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else if (pendingScroll === "assistant" && lastUserMsgRef.current) {
+      lastUserMsgRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+    setPendingScroll(null);
+  }, [pendingScroll, messages]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setAttachments(prev => [...prev, ...Array.from(e.target.files!)]);
@@ -832,11 +844,10 @@ const AIChatWidget = () => {
 
   const handleSuggestionClick = (suggestion: string) => {
     setInput(suggestion);
-    // Trigger send
-    const fakeInput = suggestion;
     setInput("");
-    const userMsg: Message = { role: "user", content: fakeInput };
+    const userMsg: Message = { role: "user", content: suggestion };
     setMessages(prev => [...prev, userMsg]);
+    setPendingScroll("user");
     setIsLoading(true);
     sendToAI([...messages, userMsg]);
   };
@@ -868,6 +879,7 @@ const AIChatWidget = () => {
           content: data?.content || "I'm sorry, I couldn't process that. Please try again.",
           navButtons: data?.navButtons || [],
         }]);
+        setPendingScroll("assistant");
       }
     } catch (e) {
       console.error("AI chat error:", e);
@@ -894,6 +906,7 @@ const AIChatWidget = () => {
     setInput("");
     setAttachments([]);
     setIsLoading(true);
+    setPendingScroll("user");
 
     if (userMsg.attachments && userMsg.attachments.length > 0 && !query) {
       setMessages(prev => [...prev, {
@@ -915,32 +928,52 @@ const AIChatWidget = () => {
   };
 
   const renderMarkdown = (text: string) => {
-    return text.split("\n").map((line, i) => {
-      // Handle italic *text*
-      const parts = line.split(/(\*\*.*?\*\*|\*[^*]+?\*)/).map((part, j) => {
-        if (part.startsWith("**") && part.endsWith("**")) {
-          return <strong key={j}>{part.slice(2, -2)}</strong>;
-        }
-        if (part.startsWith("*") && part.endsWith("*") && !part.startsWith("**")) {
-          return <em key={j} className="text-muted-foreground text-[10px]">{part.slice(1, -1)}</em>;
-        }
-        return <span key={j}>{part}</span>;
-      });
+    const lines = text.split("\n");
+    return lines.map((line, i) => {
+      // Handle bullet points
+      const isBullet = /^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/.test(line.trim()) || line.trim().startsWith("- ");
+      const isNumbered = /^\d+[\.\)]\s/.test(line.trim());
+
+      const formatInline = (text: string) => {
+        return text.split(/(\*\*.*?\*\*|\*[^*]+?\*)/).map((part, j) => {
+          if (part.startsWith("**") && part.endsWith("**")) {
+            return <strong key={j} className="font-bold text-foreground">{part.slice(2, -2)}</strong>;
+          }
+          if (part.startsWith("*") && part.endsWith("*") && !part.startsWith("**")) {
+            return <em key={j} className="italic">{part.slice(1, -1)}</em>;
+          }
+          return <span key={j}>{part}</span>;
+        });
+      };
+
+      if (isBullet || isNumbered) {
+        return (
+          <div key={i} className="flex gap-2 py-0.5">
+            <span className="flex-shrink-0 mt-0.5">{isBullet ? line.trim().match(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]/)?.[0] || "•" : ""}</span>
+            <span className="flex-1">{formatInline(isBullet ? line.trim().replace(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/, "") : line.trim())}</span>
+          </div>
+        );
+      }
+
+      if (line.trim() === "") return <div key={i} className="h-2" />;
+
       return (
-        <span key={i}>
-          {parts}
-          {i < text.split("\n").length - 1 && <br />}
-        </span>
+        <p key={i} className="py-0.5">
+          {formatInline(line)}
+        </p>
       );
     });
   };
+
+  // Find the index of the last user message for scroll ref
+  const lastUserMsgIndex = messages.reduce((acc, msg, i) => msg.role === "user" ? i : acc, -1);
 
   return (
     <>
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[hsl(220,70%,25%)] to-[hsl(220,70%,40%)] shadow-lg shadow-[hsl(220,70%,30%)]/40 flex items-center justify-center hover:scale-110 transition-transform duration-200 border-2 border-white/20"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-accent shadow-lg shadow-accent/40 flex items-center justify-center hover:scale-110 transition-transform duration-200 border-2 border-white/20"
           aria-label="Open chat"
         >
           <img src={ifcsLogo} alt="IFCS AI" className="w-9 h-9 rounded-full object-cover" />
@@ -958,7 +991,7 @@ const AIChatWidget = () => {
           ) : (
             <>
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-gradient-to-r from-[hsl(220,70%,25%)] to-[hsl(220,70%,35%)] text-white">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-accent text-white">
                 <div className="flex items-center gap-3">
                   <img src={ifcsLogo} alt="IFCS" className="w-9 h-9 rounded-full object-cover border-2 border-white/30" />
                   <div>
@@ -998,7 +1031,7 @@ const AIChatWidget = () => {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
+              <div ref={messagesContainerRef} className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
                 {messages.length === 0 && (
                   <div className="space-y-4">
                     <div className="text-center py-3 space-y-2">
@@ -1013,7 +1046,7 @@ const AIChatWidget = () => {
                         <button
                           key={i}
                           onClick={() => handleSuggestionClick(s)}
-                          className="px-3 py-2.5 text-xs font-medium rounded-full border border-[hsl(220,70%,35%)]/30 text-[hsl(220,70%,35%)] bg-white hover:bg-[hsl(220,70%,35%)] hover:text-white transition-all duration-200 text-center leading-tight shadow-sm"
+                          className="px-3 py-2.5 text-xs font-medium rounded-full border border-accent/30 text-accent bg-white hover:bg-accent hover:text-white transition-all duration-200 text-center leading-tight shadow-sm"
                         >
                           {s}
                         </button>
@@ -1022,7 +1055,11 @@ const AIChatWidget = () => {
                   </div>
                 )}
                 {messages.map((msg, i) => (
-                  <div key={i} className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
+                  <div
+                    key={i}
+                    ref={i === lastUserMsgIndex ? lastUserMsgRef : undefined}
+                    className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                  >
                     <div className="max-w-[85%] space-y-2">
                       {msg.attachments && msg.attachments.length > 0 && (
                         <div className="flex flex-wrap gap-1">
@@ -1035,9 +1072,9 @@ const AIChatWidget = () => {
                       )}
                       {msg.content && (
                         <div
-                          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
+                          className={`rounded-2xl px-4 py-3 text-[13px] leading-relaxed ${
                             msg.role === "user"
-                              ? "bg-gradient-to-br from-[hsl(220,70%,30%)] to-[hsl(220,70%,40%)] text-white rounded-br-md shadow-sm"
+                              ? "bg-accent text-white rounded-br-md shadow-sm"
                               : "bg-muted/60 text-foreground rounded-bl-md border border-border/50"
                           }`}
                         >
@@ -1064,7 +1101,7 @@ const AIChatWidget = () => {
                                   navigate(btn.path);
                                 }
                               }}
-                              className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-[hsl(220,70%,30%)] to-[hsl(220,70%,40%)] text-white hover:opacity-90 transition-all shadow-sm"
+                              className="px-4 py-2 text-xs font-semibold rounded-full bg-accent text-white hover:opacity-90 transition-all shadow-sm"
                             >
                               {btn.label}
                             </button>
@@ -1077,9 +1114,9 @@ const AIChatWidget = () => {
                 {isLoading && (
                   <div className="flex justify-start">
                     <div className="bg-muted rounded-2xl rounded-bl-md px-4 py-3 flex gap-1">
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "0ms" }} />
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "150ms" }} />
-                      <span className="w-2 h-2 rounded-full bg-muted-foreground/40 animate-bounce" style={{ animationDelay: "300ms" }} />
+                      <span className="w-2 h-2 rounded-full bg-accent/40 animate-bounce" style={{ animationDelay: "0ms" }} />
+                      <span className="w-2 h-2 rounded-full bg-accent/40 animate-bounce" style={{ animationDelay: "150ms" }} />
+                      <span className="w-2 h-2 rounded-full bg-accent/40 animate-bounce" style={{ animationDelay: "300ms" }} />
                     </div>
                   </div>
                 )}
@@ -1128,7 +1165,7 @@ const AIChatWidget = () => {
                   <button
                     onClick={sendMessage}
                     disabled={(!input.trim() && attachments.length === 0) || isLoading}
-                    className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(220,70%,25%)] to-[hsl(220,70%,40%)] text-white flex items-center justify-center hover:opacity-90 transition-all disabled:opacity-50 flex-shrink-0 shadow-sm"
+                    className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:opacity-90 transition-all disabled:opacity-50 flex-shrink-0 shadow-sm"
                   >
                     <Send size={16} />
                   </button>
