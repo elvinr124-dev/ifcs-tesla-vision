@@ -776,8 +776,14 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Chat & Delete */}
+                        {/* Edit, Chat & Delete */}
                         <div className="flex gap-2 flex-wrap">
+                          {o.application_id && (
+                            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
+                              onClick={() => openEditApp(o)}>
+                              <Edit3 size={14} /> Edit Application
+                            </button>
+                          )}
                           <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
                             onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
