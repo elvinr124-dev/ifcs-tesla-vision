@@ -142,7 +142,7 @@ const Application = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { discountCode, setDiscountCode, discountAmount } = useCart();
+  const { discountCode, setDiscountCode, discountAmount: cartDiscountAmount } = useCart();
   const { translateDual, translate } = useLocale();
   const routeState = location.state as {
     serviceTitle?: string; processingKey?: string; processingLabel?: string; processingTime?: string; price?: number;
@@ -152,6 +152,10 @@ const Application = () => {
   const selectedProcessingLabel = routeState?.processingLabel ?? "Standard";
   const selectedProcessingTime = routeState?.processingTime ?? "8–10 Business Days";
   const selectedPrice = routeState?.price ?? 100;
+  const isCunyEligibleService = ["Course-by-Course", "High School and University Course-by-Course"].includes(selectedServiceTitle);
+  const effectiveDiscountAmount = discountCode.toUpperCase() === "CUNY"
+    ? (isCunyEligibleService ? 20 : 0)
+    : cartDiscountAmount;
 
   const [step, setStep] = useState(1);
 
@@ -243,7 +247,7 @@ const Application = () => {
   }, [deliveryOptions, usPostageAddresses.length, domesticCourierAddresses.length, intlCourierAddresses.length]);
 
   const authCost = authOption === "authenticate" ? 140 : 0;
-  const totalPrice = selectedPrice + deliveryCosts + authCost - discountAmount;
+  const totalPrice = selectedPrice + deliveryCosts + authCost - effectiveDiscountAmount;
 
   const needsAddress = deliveryOptions.some(o => ["us-postage", "domestic-courier", "intl-courier"].includes(o));
 
@@ -379,8 +383,8 @@ const Application = () => {
     lines.push("");
     lines.push("Part 5 - Payment Options");
     lines.push("");
-    if (discountCode && discountAmount > 0) {
-      lines.push(`Discount Code: ${discountCode} (-$${discountAmount})`);
+    if (discountCode && effectiveDiscountAmount > 0) {
+      lines.push(`Discount Code: ${discountCode} (-$${effectiveDiscountAmount})`);
     }
     lines.push(`Total: $${Math.max(0, totalPrice).toFixed(2)}`);
     lines.push("");
@@ -426,7 +430,7 @@ const Application = () => {
       achAccountLast4: paymentMethod === "ach" ? achAccount.slice(-4) : "",
       totalPrice: Math.max(0, totalPrice),
       discountCode: discountCode || "",
-      discountAmount,
+      discountAmount: effectiveDiscountAmount,
       authCost,
       deliveryCosts,
       filesCount: files.length,
@@ -1001,7 +1005,7 @@ const Application = () => {
                           <span className="text-right font-medium text-foreground">+$140</span>
                         </div>
                       )}
-                      {discountAmount > 0 && (
+                      {effectiveDiscountAmount > 0 && (
                         <div className="flex items-start justify-between gap-4 text-sm">
                           <span className="text-emerald-600 font-semibold">Discount ({discountCode}):</span>
                           <span className="text-right font-medium text-emerald-600">-${discountAmount}</span>
@@ -1032,10 +1036,10 @@ const Application = () => {
                           className="flex-1 h-10 px-4 rounded-xl text-sm bg-muted/60 border border-border focus:outline-none focus:ring-2 focus:ring-accent/60 text-foreground placeholder:text-muted-foreground"
                         />
                       </div>
-                      {discountCode && discountAmount > 0 && (
-                        <p className="text-sm text-emerald-600 mt-2 font-semibold">✓ Code "{discountCode}" applied — ${discountAmount} off</p>
+                      {discountCode && effectiveDiscountAmount > 0 && (
+                        <p className="text-sm text-emerald-600 mt-2 font-semibold">✓ Code "{discountCode}" applied — ${effectiveDiscountAmount} off</p>
                       )}
-                      {discountCode && discountAmount === 0 && (
+                      {discountCode && effectiveDiscountAmount === 0 && (
                         <p className="text-sm text-destructive mt-2 font-semibold">Invalid discount code</p>
                       )}
                     </div>

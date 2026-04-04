@@ -33,10 +33,19 @@ const VALID_CODES: Record<string, number> = {
   "CUNY": 20,
 };
 
+const ELIGIBLE_CUNY_SERVICES = new Set([
+  "Course-by-Course",
+  "High School and University Course-by-Course",
+]);
+
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [items, setItems] = useState<CartItem[]>([]);
   const [discountCode, setDiscountCode] = useState("");
-  const discountAmount = VALID_CODES[discountCode.toUpperCase()] ?? 0;
+  const normalizedDiscountCode = discountCode.toUpperCase();
+  const cunyEligible = items.length > 0 && items.every((item) => ELIGIBLE_CUNY_SERVICES.has(item.serviceTitle));
+  const discountAmount = normalizedDiscountCode === "CUNY"
+    ? (cunyEligible ? 20 : 0)
+    : VALID_CODES[normalizedDiscountCode] ?? 0;
 
   const addItem = (item: Omit<CartItem, "id" | "addedAt">) => {
     const newItem: CartItem = {
