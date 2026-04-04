@@ -243,7 +243,7 @@ const TranslationQuote = () => {
               )}
 
               {/* Contact Info */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
+              <div className="space-y-6">
                 <SectionHeading>{translateDual("Your Information")}</SectionHeading>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FieldGroup label={translateDual("Full Name")} required>
