@@ -57,7 +57,7 @@ const AddonRenewal = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
         <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
