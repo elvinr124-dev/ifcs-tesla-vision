@@ -137,7 +137,7 @@ const DuplicateReports = () => {
 
           <form onSubmit={handlePay} className="space-y-8">
             {/* Delivery Options */}
-            <Card className="border-border bg-card">
+            <div>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2"><FileText size={20} className="text-accent" /> {translateDual("Report Delivery Options")} *</CardTitle>
               </CardHeader>
