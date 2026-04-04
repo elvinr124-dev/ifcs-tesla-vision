@@ -108,7 +108,7 @@ const DuplicateReports = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       {/* Hero — standardized height */}
@@ -122,7 +122,7 @@ const DuplicateReports = () => {
         </div>
       </section>
 
-      <div className="content-bg">
+      <div>
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
 
           <p className="text-muted-foreground text-center">
