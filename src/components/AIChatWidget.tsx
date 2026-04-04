@@ -973,7 +973,9 @@ const AIChatWidget = () => {
   };
 
   const renderMarkdown = (text: string) => {
-    const lines = text.split("\n");
+    // Clean up problematic characters before rendering
+    const cleanedText = text.replace(/\?\?+/g, "?").replace(/!!+/g, "!").replace(/#{1,4}\s/g, "");
+    const lines = cleanedText.split("\n");
     return lines.map((line, i) => {
       const trimmed = line.trim();
 
