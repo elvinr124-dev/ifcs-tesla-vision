@@ -822,9 +822,7 @@ const AIChatWidget = () => {
     saveChatState(messages);
   }, [messages]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // Don't auto-scroll to bottom - let user read from top of response
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setAttachments(prev => [...prev, ...Array.from(e.target.files!)]);
