@@ -1004,12 +1004,10 @@ const AIChatWidget = () => {
                 {messages.length === 0 && (
                   <div className="space-y-4">
                     <div className="text-center py-3 space-y-2">
-                      <div className="w-12 h-12 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
-                        <MessageCircle size={22} className="text-accent" />
-                      </div>
-                      <p className="text-base font-semibold text-foreground">Welcome to IFCS AI</p>
-                      <p className="text-xs text-muted-foreground max-w-[280px] mx-auto">
-                        Ask in any language — I'll respond in yours!
+                      <img src={ifcsLogo} alt="IFCS" className="w-14 h-14 mx-auto rounded-full object-cover shadow-md" />
+                      <p className="text-base font-bold text-foreground">IFCS AI</p>
+                      <p className="text-xs text-muted-foreground max-w-[260px] mx-auto">
+                        How can we help you today?
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-2 px-2">
