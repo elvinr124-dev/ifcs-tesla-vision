@@ -967,11 +967,13 @@ const AIChatWidget = () => {
             body: { action: "lookup-status", applicationId: appIdMatch[1], dob: lastMsg.content.trim() },
           });
           
-          if (!error && data) {
+            if (!error && data) {
             if (data.found) {
+              // Format status: replace underscores and capitalize properly
+              const formatStatus = (s: string) => s.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
               setMessages(prev => [...prev, {
                 role: "assistant",
-                content: `**Application Found**\n\n**Applicant:** ${data.name}\n**Application ID:** ${data.applicationId}\n**IFCS ID:** ${data.ifcsId}\n**Service:** ${data.service}\n**Processing:** ${data.processing}\n**Status:** ${data.status}\n${data.staffNotes ? `**Notes:** ${data.staffNotes}` : ""}\n\nFor detailed information, visit your dashboard.`,
+                content: `**Application Found**\n\n**Applicant:** ${data.name}\n**Application ID:** ${data.applicationId}\n**IFCS ID:** ${data.ifcsId}\n**Service:** ${data.service}\n**Processing:** ${data.processing}\n**Status:** ${formatStatus(data.status)}\n${data.staffNotes ? `**Notes:** ${data.staffNotes}` : ""}\n\nFor detailed information, visit your dashboard.`,
                 navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }],
               }]);
             } else {
