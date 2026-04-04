@@ -914,8 +914,6 @@ const AIChatWidget = () => {
     sessionStorage.removeItem(CHAT_STATE_KEY);
   };
 
-  const AI_DISCLAIMER = "⚠️ *AI-generated responses may contain errors. For verified information, please contact IFCS directly. IFCS is not responsible for inaccuracies in AI responses.*";
-
   const renderMarkdown = (text: string) => {
     return text.split("\n").map((line, i) => {
       // Handle italic *text*
