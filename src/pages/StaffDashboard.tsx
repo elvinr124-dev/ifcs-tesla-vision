@@ -492,10 +492,9 @@ const StaffDashboard = () => {
     try {
       await supabase.functions.invoke("send-application-email", {
         body: {
-          type: "application_updated",
+          subject: "Your IFCS Application Has Been Updated",
+          body: `Dear ${editFields.first_name} ${editFields.last_name},\n\nYour application (${editAppData.application_id}) has been updated by our team. Please log in to your dashboard to view the latest details.\n\nBest regards,\nIFCS Team\n\nInstitute of Foreign Credential Services\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: (914) 693-2840\nwww.ifcsevals.com`,
           recipientEmail: editAppData.client_email,
-          applicantName: `${editFields.first_name} ${editFields.last_name}`,
-          noteContent: "Your application has been updated. Please log in to your dashboard to view the latest details.",
         },
       });
     } catch {}
