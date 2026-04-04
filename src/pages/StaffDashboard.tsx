@@ -129,6 +129,15 @@ const StaffDashboard = () => {
   // Delete confirmation
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; deleteType: "client" | "application" | "both"; orderId: string; label: string; email?: string }>({ open: false, deleteType: "both", orderId: "", label: "" });
 
+  // Edit Application dialog
+  const [editAppOpen, setEditAppOpen] = useState(false);
+  const [editAppData, setEditAppData] = useState<any>(null);
+  const [editFields, setEditFields] = useState({
+    first_name: "", last_name: "", middle_name: "", dob: "", ifcs_id: "", status: "",
+    service_title: "", processing_label: "", evaluator: "", staff_notes: "", verification_source: "",
+    country: "", institution_name: "", cell_phone: "", home_phone: "", gender: "",
+  });
+
   // New Application Entry dialog
   const [newAppOpen, setNewAppOpen] = useState(false);
   const [newAppSendTo, setNewAppSendTo] = useState("applicant");
