@@ -430,7 +430,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["dobbs ferry", "where are you", "where is ifcs"],
-    response: `IFCS is located at:\n\n📍 **6 Cedar Street, Dobbs Ferry, NY 10522**\n📞 (914) 693-2840\n📠 Fax: (914) 231-7782\n📧 info@ifcsevals.com\n🕐 Monday–Friday, 9 AM – 5 PM EST\n\n**Director:** Agron Matoshi`,
+    response: `IFCS is located at:\n\n📍 **6 Cedar Street, Dobbs Ferry, NY 10522**\n📞 (914) 693-2840\n📠 Fax: (914) 231-7782\n📧 info@ifcsevals.com\n🕐 Monday–Friday, 9 AM – 5 PM EST`,
     navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
