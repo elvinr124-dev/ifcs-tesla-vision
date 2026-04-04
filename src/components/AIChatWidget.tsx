@@ -1015,7 +1015,7 @@ const AIChatWidget = () => {
                         <button
                           key={i}
                           onClick={() => handleSuggestionClick(s)}
-                          className="px-3 py-2.5 text-xs font-medium rounded-2xl border border-accent/30 text-accent bg-white hover:bg-accent hover:text-white transition-all duration-200 text-center leading-tight"
+                          className="px-3 py-2.5 text-xs font-medium rounded-full border border-[hsl(220,70%,35%)]/30 text-[hsl(220,70%,35%)] bg-white hover:bg-[hsl(220,70%,35%)] hover:text-white transition-all duration-200 text-center leading-tight shadow-sm"
                         >
                           {s}
                         </button>
