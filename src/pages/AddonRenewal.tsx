@@ -68,7 +68,7 @@ const AddonRenewal = () => {
         </div>
       </section>
 
-      <div className="content-bg">
+      <div>
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
           <div className="text-center">
             <RefreshCw size={48} className="text-accent mx-auto mb-4" />
