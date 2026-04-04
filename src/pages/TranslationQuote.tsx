@@ -197,7 +197,7 @@ const TranslationQuote = () => {
   };
 
   return (
-    <div className="min-h-screen content-bg">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       {/* Hero */}
