@@ -608,9 +608,9 @@ const Application = () => {
       </div>
 
       {/* Form */}
-      <section className="py-10 px-6 md:px-12 content-bg">
+      <section className="py-10 px-6 md:px-12 bg-white">
         <div className="max-w-4xl mx-auto">
-          <div className="rounded-3xl border border-border bg-card shadow-xl overflow-hidden">
+          <div className="overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-accent via-accent/60 to-transparent" />
             <div className="p-8 md:p-12 space-y-10">
 
@@ -1151,19 +1151,19 @@ const Application = () => {
               <div className="flex items-center justify-between pt-6 border-t border-border">
                 {step > 1 ? (
                   <button onClick={prev}
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl border border-border bg-muted/50 text-sm font-semibold text-foreground hover:bg-muted transition-all duration-200">
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-border bg-muted/50 text-sm font-semibold text-foreground hover:bg-muted transition-all duration-200">
                     <ArrowLeft size={16} /> Back
                   </button>
                 ) : <div />}
 
                 {step < 5 ? (
                   <button onClick={next}
-                    className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-accent/50 transition-all duration-200 hover:scale-105">
+                    className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 hover:shadow-accent/50 transition-all duration-200 hover:scale-105">
                     Continue — {step}/5 <ArrowRight size={16} />
                   </button>
                 ) : (
                   <button onClick={handleSubmit} disabled={!agreeTerms || !agreePrivacy || submitting}
-                    className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100">
+                    className="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-accent text-accent-foreground text-sm font-semibold shadow-lg shadow-accent/30 hover:bg-accent/90 transition-all duration-200 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100">
                     {submitting ? "Submitting..." : "Submit Application 5/5"} <CheckCircle2 size={16} />
                   </button>
                 )}

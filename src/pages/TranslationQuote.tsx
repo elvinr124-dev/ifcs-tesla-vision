@@ -197,7 +197,7 @@ const TranslationQuote = () => {
   };
 
   return (
-    <div className="min-h-screen content-bg">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       {/* Hero */}
@@ -243,7 +243,7 @@ const TranslationQuote = () => {
               )}
 
               {/* Contact Info */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
+              <div className="space-y-6">
                 <SectionHeading>{translateDual("Your Information")}</SectionHeading>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FieldGroup label={translateDual("Full Name")} required>
@@ -275,7 +275,7 @@ const TranslationQuote = () => {
               </div>
 
               {/* Upload */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
+              <div className="space-y-5">
                 <SectionHeading>{translateDual("Upload Your Documents")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
                   {translate("Upload clear images or PDFs. Our AI will analyze word counts for review — pricing will be provided by our team.")}
@@ -361,7 +361,7 @@ const TranslationQuote = () => {
                 <button
                   type="submit"
                   disabled={isAnalyzing || hasBlurryFiles || submitting}
-                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
+                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-full bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   {submitting ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} />}
                   <span>{submitting ? translate("Submitting...") : translate("Submit Quote Request")}</span>
@@ -373,7 +373,7 @@ const TranslationQuote = () => {
             <div className="space-y-6">
 
               {/* Document Summary */}
-              <div className="rounded-3xl border border-accent/30 bg-card shadow-lg p-8 space-y-5 sticky top-24">
+              <div className="rounded-3xl border border-accent/30 bg-white shadow-lg p-8 space-y-5 sticky top-24">
                 <SectionHeading>{translateDual("Document Summary")}</SectionHeading>
 
                 {fileAnalyses.length === 0 ? (
@@ -403,7 +403,7 @@ const TranslationQuote = () => {
               </div>
 
               {/* Make a Payment (if already received a quote) */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-4">
+              <div className="rounded-3xl border border-border bg-white shadow-lg p-8 space-y-4">
                 <SectionHeading>{translateDual("Make a Payment")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light leading-relaxed">
                   {translate("Already received a quote? Enter your details below to make a payment.")}

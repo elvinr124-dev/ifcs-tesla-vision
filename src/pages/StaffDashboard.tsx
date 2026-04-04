@@ -132,6 +132,7 @@ const StaffDashboard = () => {
   // Edit Application dialog
   const [editAppOpen, setEditAppOpen] = useState(false);
   const [editAppData, setEditAppData] = useState<any>(null);
+  const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
   const [editFields, setEditFields] = useState({
     first_name: "", last_name: "", middle_name: "", dob: "", ifcs_id: "", status: "",
     service_title: "", processing_label: "", evaluator: "", staff_notes: "", verification_source: "",
@@ -469,8 +470,12 @@ const StaffDashboard = () => {
 
   const handleSaveEdit = async () => {
     if (!editAppData) return;
-    const confirmed = window.confirm("Are you sure you want to save these changes? The client will be notified.");
-    if (!confirmed) return;
+    setSaveConfirmOpen(true);
+  };
+
+  const confirmSaveEdit = async () => {
+    if (!editAppData) return;
+    setSaveConfirmOpen(false);
 
     await (supabase as any).from("applications").update({
       first_name: editFields.first_name, last_name: editFields.last_name, middle_name: editFields.middle_name,
@@ -1246,7 +1251,21 @@ const StaffDashboard = () => {
         </DialogContent>
       </Dialog>
 
-      <BackToHome />
+      {/* Save Confirmation Dialog */}
+      <Dialog open={saveConfirmOpen} onOpenChange={setSaveConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Changes</DialogTitle>
+            <DialogDescription>Are you sure you want to save these changes? The client will be notified.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setSaveConfirmOpen(false)} className="rounded-full">Cancel</Button>
+            <Button onClick={confirmSaveEdit} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90">Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
       <Footer />
     </div>
   );

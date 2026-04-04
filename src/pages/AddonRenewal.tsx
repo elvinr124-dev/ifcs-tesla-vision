@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -57,7 +56,7 @@ const AddonRenewal = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <Navbar />
       <section className="relative h-[80vh] min-h-[600px] flex items-center justify-center overflow-hidden">
         <img src={brooklynBridge} alt="" className="absolute inset-0 w-full h-full object-cover" />
@@ -68,7 +67,7 @@ const AddonRenewal = () => {
         </div>
       </section>
 
-      <div className="content-bg">
+      <div>
         <div className="max-w-3xl mx-auto px-6 py-16 space-y-8">
           <div className="text-center">
             <RefreshCw size={48} className="text-accent mx-auto mb-4" />
@@ -78,9 +77,9 @@ const AddonRenewal = () => {
           </div>
 
           <form onSubmit={handlePay} className="space-y-8">
-            <Card className="border-border bg-card">
-              <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Your Information & Payment")}</CardTitle></CardHeader>
-              <CardContent className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <h3 className="flex items-center gap-2 text-lg font-semibold"><CreditCard size={20} className="text-accent" /> {translateDual("Your Information & Payment")}</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Name on Documents")} *</label><Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("IFCS ID")} *</label><Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Email")} *</label><Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} /></div>
@@ -90,30 +89,28 @@ const AddonRenewal = () => {
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Month")} *</label><Input required value={payment.month} onChange={(e) => setPayment({ ...payment, month: e.target.value })} placeholder="MM" /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Year")} *</label><Input required value={payment.year} onChange={(e) => setPayment({ ...payment, year: e.target.value })} placeholder="YYYY" /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("CVV")} *</label><Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" /></div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            <Card className="border-border bg-card">
-              <CardContent className="pt-6 space-y-4">
-                <p className="text-sm font-medium text-foreground mb-2">{translate("Please read and agree to the terms and conditions & privacy policy:")}</p>
-                <div className="flex items-start gap-3">
-                  <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
-                  <label htmlFor="terms" className="text-sm text-muted-foreground">
-                    I agree to the <Link to="/terms" className="text-accent underline">Terms and Conditions</Link>
-                    {agreeTerms && termsSignature && <span className="ml-2 text-xs text-accent">✓ Signed: {termsSignature}</span>}
-                  </label>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={handlePrivacyCheck} />
-                  <label htmlFor="privacy" className="text-sm text-muted-foreground">
-                    I agree to the <Link to="/privacy" className="text-accent underline">Privacy Policy</Link>
-                    {agreePrivacy && privacySignature && <span className="ml-2 text-xs text-accent">✓ Signed: {privacySignature}</span>}
-                  </label>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-4">
+              <p className="text-sm font-medium text-foreground mb-2">{translate("Please read and agree to the terms and conditions & privacy policy:")}</p>
+              <div className="flex items-start gap-3">
+                <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
+                <label htmlFor="terms" className="text-sm text-muted-foreground">
+                  I agree to the <Link to="/terms" className="text-accent underline">Terms and Conditions</Link>
+                  {agreeTerms && termsSignature && <span className="ml-2 text-xs text-accent">✓ Signed: {termsSignature}</span>}
+                </label>
+              </div>
+              <div className="flex items-start gap-3">
+                <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={handlePrivacyCheck} />
+                <label htmlFor="privacy" className="text-sm text-muted-foreground">
+                  I agree to the <Link to="/privacy" className="text-accent underline">Privacy Policy</Link>
+                  {agreePrivacy && privacySignature && <span className="ml-2 text-xs text-accent">✓ Signed: {privacySignature}</span>}
+                </label>
+              </div>
+            </div>
 
-            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">
+            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-full">
               {translate("Pay")} $100.00
             </Button>
           </form>

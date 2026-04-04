@@ -395,7 +395,7 @@ const TranslationOrder = () => {
   };
 
   return (
-    <div className="min-h-screen content-bg">
+    <div className="min-h-screen bg-white">
       <Navbar />
 
       {/* Hero */}
@@ -441,7 +441,7 @@ const TranslationOrder = () => {
               )}
 
               {/* Your Information */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
+              <div className="space-y-6">
                 <SectionHeading>{translateDual("Your Information")}</SectionHeading>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FieldGroup label={translateDual("Full Name")} required>
@@ -473,8 +473,7 @@ const TranslationOrder = () => {
               </div>
 
               {/* Upload Documents */}
-              <div
-                className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5"
+              <div className="space-y-5"
                 onDragEnter={handleDragEnter}
                 onDragLeave={handleDragLeave}
                 onDragOver={handleDragOver}
@@ -614,7 +613,7 @@ const TranslationOrder = () => {
               </div>
 
               {/* Add-Ons */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
+              <div className="space-y-5">
                 <SectionHeading>Add-Ons</SectionHeading>
 
                 <label className="flex items-center justify-between p-4 rounded-2xl border border-border hover:border-accent/30 cursor-pointer transition-colors">
@@ -642,7 +641,7 @@ const TranslationOrder = () => {
               </div>
 
               {/* Payment Details */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
+              <div className="space-y-6">
                 <SectionHeading>Payment Details</SectionHeading>
                 <FieldGroup label="Name on Card" required>
                   <GlassInput value={cardName} onChange={e => setCardName(e.target.value)} placeholder="Full name on card" required />
@@ -668,7 +667,7 @@ const TranslationOrder = () => {
                 <button
                   type="submit"
                   disabled={isAnalyzing || hasBlurryFiles}
-                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
+                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-full bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <CreditCard size={20} />
                   <span>Place Order — ${total.toFixed(2)}</span>
@@ -679,7 +678,7 @@ const TranslationOrder = () => {
             {/* Right Column — Order Summary */}
             <div className="space-y-6">
 
-              <div className="rounded-3xl border border-accent/30 bg-card shadow-lg p-8 space-y-5 sticky top-24">
+              <div className="rounded-3xl border border-accent/30 bg-white shadow-lg p-8 space-y-5 sticky top-24">
                 <SectionHeading>Order Summary</SectionHeading>
 
                 {fileAnalyses.length === 0 ? (
