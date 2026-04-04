@@ -1196,6 +1196,21 @@ const AIChatWidget = () => {
                 </div>
               )}
 
+              {/* Quick-send suggestion chips */}
+              {messages.length > 0 && !isLoading && (
+                <div className="px-4 py-2 border-t border-border flex gap-1.5 overflow-x-auto scrollbar-none">
+                  {QUICK_PROMPTS.map((prompt, i) => (
+                    <button
+                      key={i}
+                      onClick={() => handleSuggestionClick(prompt)}
+                      className="flex-shrink-0 px-3 py-1.5 text-[11px] font-medium rounded-full border border-accent text-accent bg-white hover:bg-accent/5 transition-colors whitespace-nowrap"
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               {/* Input */}
               <div className="border-t border-border px-4 py-3">
                 <div className="flex gap-2 items-center">
