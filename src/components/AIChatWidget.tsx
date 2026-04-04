@@ -22,6 +22,14 @@ const SUGGESTIONS = [
   "Do you offer consulting?",
 ];
 
+const QUICK_PROMPTS = [
+  "Check my application status",
+  "Do you have discount codes?",
+  "How do I log in?",
+  "View pricing",
+  "What's in my cart?",
+];
+
 interface KBEntry {
   keywords: string[];
   response: string;
