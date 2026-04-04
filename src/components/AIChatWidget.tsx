@@ -1130,7 +1130,7 @@ const AIChatWidget = () => {
                   <button
                     onClick={sendMessage}
                     disabled={(!input.trim() && attachments.length === 0) || isLoading}
-                    className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent/90 transition-colors disabled:opacity-50 flex-shrink-0"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(220,70%,25%)] to-[hsl(220,70%,40%)] text-white flex items-center justify-center hover:opacity-90 transition-all disabled:opacity-50 flex-shrink-0 shadow-sm"
                   >
                     <Send size={16} />
                   </button>
