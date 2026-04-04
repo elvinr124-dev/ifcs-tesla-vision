@@ -8,15 +8,38 @@ import { useLocale } from "@/context/LocaleContext";
 const CUNY = () => {
   const { translate } = useLocale();
 
+  const cbcState = {
+    serviceTitle: "Course-by-Course",
+    processingKey: "standard",
+    processingLabel: "Standard",
+    processingTime: "8–10 Business Days",
+    price: 190,
+  };
+
+  const hsUniState = {
+    serviceTitle: "High School and University Course-by-Course",
+    processingKey: "standard",
+    processingLabel: "Standard",
+    processingTime: "8–10 Business Days",
+    price: 295,
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
 
-      {/* Hero Section */}
       <section className="relative h-[80vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-bottom"
+          className="absolute inset-0 bg-cover bg-bottom scale-105"
           style={{ backgroundImage: `url(${cunyHeroBg})` }}
+        />
+        <div
+          className="absolute inset-0 bg-no-repeat"
+          style={{
+            backgroundImage: `url(${cunyHeroBg})`,
+            backgroundPosition: "center bottom",
+            backgroundSize: "auto 100%",
+          }}
         />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6 hero-text-shadow">
@@ -35,10 +58,8 @@ const CUNY = () => {
         </div>
       </section>
 
-      {/* Content Section */}
       <section className="py-20 bg-white">
         <div className="max-w-3xl mx-auto px-6 text-center">
-          {/* CUNY Logo */}
           <div className="flex justify-center mb-12">
             <img
               src={cunyLogo}
@@ -47,33 +68,33 @@ const CUNY = () => {
             />
           </div>
 
-          {/* Discount Info */}
           <div className="bg-muted/30 rounded-3xl p-8 md:p-12 mb-12">
             <p className="text-lg md:text-xl leading-relaxed" style={{ color: "hsl(var(--foreground))" }}>
-              {translate("As a CUNY prospective student, you can receive a")}{" "}
+              {translate("As a CUNY prospective student, you can receive a")} {" "}
               <span className="font-bold text-xl" style={{ color: "hsl(var(--accent))" }}>$20 {translate("discount")}</span>{" "}
-              {translate("on your Course-by-Course or High School & University Course-by-Course evaluation — any processing speed — by entering the following code:")}
+              {translate("on your Course-by-Course or High School & University Course-by-Course evaluation at any processing speed by entering the following code:")}
             </p>
             <div className="mt-6 inline-block px-8 py-3 rounded-full font-bold text-2xl tracking-widest" style={{ background: "hsl(var(--accent))", color: "white" }}>
               CUNY
             </div>
           </div>
 
-          {/* Start Application - Two Buttons */}
           <div className="mb-12">
             <p className="text-lg mb-8" style={{ color: "hsl(var(--foreground))" }}>
-              {translate("Choose the evaluation that fits your academic needs and begin your application today.")}
+              {translate("Choose the evaluation that matches your academic background and start your application below.")}
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Link
-                to="/application?toa=CBC&tf=8d"
+                to="/application"
+                state={cbcState}
                 className="inline-flex items-center justify-center px-10 py-4 text-base font-semibold tracking-wide rounded-full transition-all duration-200 shadow-2xl hover:scale-105"
                 style={{ background: "hsl(var(--accent))", color: "white", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.5)" }}
               >
                 {translate("Course-by-Course (CBC)")}
               </Link>
               <Link
-                to="/application?toa=HSCBC&tf=8d"
+                to="/application"
+                state={hsUniState}
                 className="inline-flex items-center justify-center px-10 py-4 text-base font-semibold tracking-wide rounded-full transition-all duration-200 shadow-2xl hover:scale-105 border-2"
                 style={{ background: "white", color: "hsl(var(--accent))", borderColor: "hsl(var(--accent))", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.2)" }}
               >
@@ -82,9 +103,8 @@ const CUNY = () => {
             </div>
           </div>
 
-          {/* Contact */}
           <p className="text-base" style={{ color: "hsl(var(--muted-foreground))" }}>
-            {translate("If you have any questions, please send an email to")}{" "}
+            {translate("If you have any questions, please send an email to")} {" "}
             <a
               href="mailto:info@ifcsevals.com"
               className="font-semibold underline"
