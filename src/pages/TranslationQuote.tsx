@@ -275,7 +275,7 @@ const TranslationQuote = () => {
               </div>
 
               {/* Upload */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-5">
+              <div className="space-y-5">
                 <SectionHeading>{translateDual("Upload Your Documents")}</SectionHeading>
                 <p className="text-sm text-muted-foreground font-light">
                   {translate("Upload clear images or PDFs. Our AI will analyze word counts for review — pricing will be provided by our team.")}
