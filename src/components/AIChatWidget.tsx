@@ -1285,18 +1285,22 @@ const AIChatWidget = () => {
                 </div>
               )}
 
-              {/* Quick-send suggestion chips */}
+              {/* Quick-send contextual suggestion chips */}
               {messages.length > 0 && !isLoading && (
                 <div className="px-4 py-2 border-t border-border flex gap-1.5 overflow-x-auto scrollbar-none">
-                  {QUICK_PROMPTS.map((prompt, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleSuggestionClick(prompt)}
-                      className="flex-shrink-0 px-3 py-1.5 text-[11px] font-medium rounded-full border border-accent text-accent bg-white hover:bg-accent/5 transition-colors whitespace-nowrap"
-                    >
-                      {prompt}
-                    </button>
-                  ))}
+                  {(() => {
+                    const lastAssistant = [...messages].reverse().find(m => m.role === "assistant");
+                    const prompts = lastAssistant ? getContextualPrompts(lastAssistant.content) : QUICK_PROMPTS;
+                    return prompts.map((prompt, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleSuggestionClick(prompt)}
+                        className="flex-shrink-0 px-3 py-1.5 text-[11px] font-medium rounded-full border border-accent text-accent bg-white hover:bg-accent/5 transition-colors whitespace-nowrap"
+                      >
+                        {prompt}
+                      </button>
+                    ));
+                  })()}
                 </div>
               )}
 
