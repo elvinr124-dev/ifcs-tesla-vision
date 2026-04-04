@@ -930,9 +930,21 @@ const AIChatWidget = () => {
   const renderMarkdown = (text: string) => {
     const lines = text.split("\n");
     return lines.map((line, i) => {
+      const trimmed = line.trim();
+
+      // Strip markdown headers (###, ##, #) and render as bold text
+      const headerMatch = trimmed.match(/^#{1,4}\s+(.+)$/);
+      if (headerMatch) {
+        return (
+          <p key={i} className="py-1">
+            <strong className="font-bold text-foreground text-[14px]">{headerMatch[1]}</strong>
+          </p>
+        );
+      }
+
       // Handle bullet points
-      const isBullet = /^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/.test(line.trim()) || line.trim().startsWith("- ");
-      const isNumbered = /^\d+[\.\)]\s/.test(line.trim());
+      const isBullet = /^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/.test(trimmed) || trimmed.startsWith("- ");
+      const isNumbered = /^\d+[\.\)]\s/.test(trimmed);
 
       const formatInline = (text: string) => {
         return text.split(/(\*\*.*?\*\*|\*[^*]+?\*)/).map((part, j) => {
@@ -949,13 +961,13 @@ const AIChatWidget = () => {
       if (isBullet || isNumbered) {
         return (
           <div key={i} className="flex gap-2 py-0.5">
-            <span className="flex-shrink-0 mt-0.5">{isBullet ? line.trim().match(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]/)?.[0] || "•" : ""}</span>
-            <span className="flex-1">{formatInline(isBullet ? line.trim().replace(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/, "") : line.trim())}</span>
+            <span className="flex-shrink-0 mt-0.5">{isBullet ? trimmed.match(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]/)?.[0] || "•" : ""}</span>
+            <span className="flex-1">{formatInline(isBullet ? trimmed.replace(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/, "") : trimmed)}</span>
           </div>
         );
       }
 
-      if (line.trim() === "") return <div key={i} className="h-2" />;
+      if (trimmed === "") return <div key={i} className="h-2" />;
 
       return (
         <p key={i} className="py-0.5">
