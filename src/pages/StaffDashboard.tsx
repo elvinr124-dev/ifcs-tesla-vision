@@ -132,6 +132,7 @@ const StaffDashboard = () => {
   // Edit Application dialog
   const [editAppOpen, setEditAppOpen] = useState(false);
   const [editAppData, setEditAppData] = useState<any>(null);
+  const [saveConfirmOpen, setSaveConfirmOpen] = useState(false);
   const [editFields, setEditFields] = useState({
     first_name: "", last_name: "", middle_name: "", dob: "", ifcs_id: "", status: "",
     service_title: "", processing_label: "", evaluator: "", staff_notes: "", verification_source: "",
