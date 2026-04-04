@@ -22,33 +22,53 @@ serve(async (req) => {
       const sb = createClient(supabaseUrl, supabaseKey);
 
       // Try by application_id first, then by ifcs_id
-      let query = sb.from("applications").select("application_id, ifcs_id, first_name, last_name, dob, status, service_title, processing_label, staff_notes, created_at").or(`application_id.eq.${applicationId},ifcs_id.eq.${applicationId}`);
+      const searchId = applicationId.trim().toUpperCase();
+      let query = sb.from("applications").select("application_id, ifcs_id, first_name, last_name, dob, status, service_title, processing_label, staff_notes, created_at").or(`application_id.ilike.${searchId},ifcs_id.ilike.${searchId},ifcs_id.ilike.IFCS-${searchId}`);
       const { data: apps, error } = await query;
 
       if (error || !apps || apps.length === 0) {
-        return new Response(JSON.stringify({ found: false, message: "No application found with that ID." }), {
+        return new Response(JSON.stringify({ found: false, message: "No application found with that ID. Please double-check and try again, or contact us at (914) 693-2840." }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
-      // Verify DOB
-      const app = apps.find((a: any) => a.dob === dob);
+      // Normalize DOB for comparison: handle MM/DD/YY, MM/DD/YYYY, MM-DD-YYYY etc.
+      const normalizeDob = (d: string): string => {
+        if (!d) return "";
+        const cleaned = d.replace(/[-\.]/g, "/").trim();
+        const parts = cleaned.split("/");
+        if (parts.length !== 3) return cleaned.toLowerCase();
+        let [mm, dd, yy] = parts;
+        mm = mm.padStart(2, "0");
+        dd = dd.padStart(2, "0");
+        // Normalize year: convert 4-digit to 2-digit and vice versa for comparison
+        if (yy.length === 4) yy = yy.slice(-2);
+        return `${mm}/${dd}/${yy}`;
+      };
+
+      const normalizedInputDob = normalizeDob(dob);
+      const app = apps.find((a: any) => normalizeDob(a.dob) === normalizedInputDob);
       if (!app) {
-        return new Response(JSON.stringify({ found: false, message: "Date of birth does not match our records. Please double-check and try again." }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
+        // Try exact match as fallback
+        const appExact = apps.find((a: any) => a.dob === dob);
+        if (!appExact) {
+          return new Response(JSON.stringify({ found: false, message: "Date of birth does not match our records. Please use the format MM/DD/YYYY (e.g., 04/17/2000) and try again." }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
       }
 
+      const matchedApp = app || apps.find((a: any) => a.dob === dob)!;
       return new Response(JSON.stringify({
         found: true,
-        status: app.status || "Requested",
-        service: app.service_title || "N/A",
-        processing: app.processing_label || "Standard",
-        name: `${app.first_name} ${app.last_name}`,
-        applicationId: app.application_id,
-        ifcsId: app.ifcs_id || "Not yet assigned",
-        staffNotes: app.staff_notes || "",
-        createdAt: app.created_at,
+        status: matchedApp.status || "Requested",
+        service: matchedApp.service_title || "N/A",
+        processing: matchedApp.processing_label || "Standard",
+        name: `${matchedApp.first_name} ${matchedApp.last_name}`,
+        applicationId: matchedApp.application_id,
+        ifcsId: matchedApp.ifcs_id || "Not yet assigned",
+        staffNotes: matchedApp.staff_notes || "",
+        createdAt: matchedApp.created_at,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });

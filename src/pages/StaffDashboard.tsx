@@ -594,7 +594,7 @@ const StaffDashboard = () => {
                   <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold">{orders.length}</span>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => setNewAppOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-foreground text-background text-sm font-semibold hover:bg-foreground/90 transition-all">
+                  <button onClick={() => setNewAppOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-white text-sm font-semibold hover:bg-accent/90 transition-all shadow-sm">
                     <Plus size={16} /> New Application Entry
                   </button>
                   <Select value={filter} onValueChange={setFilter}>
@@ -901,8 +901,8 @@ const StaffDashboard = () => {
               </div>
 
               <DialogFooter>
-                <Button variant="outline" onClick={() => setNewAppOpen(false)}>Cancel</Button>
-                <Button onClick={handleNewApplication} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                <Button variant="outline" onClick={() => setNewAppOpen(false)} className="rounded-full">Cancel</Button>
+                <Button onClick={handleNewApplication} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
                   <Plus size={16} /> Add Application
                 </Button>
               </DialogFooter>
@@ -992,8 +992,8 @@ const StaffDashboard = () => {
               </div>
 
               <DialogFooter>
-                <Button variant="outline" onClick={() => setNewAppOpen(false)}>Cancel</Button>
-                <Button onClick={handleInstitutionSend} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                <Button variant="outline" onClick={() => setNewAppOpen(false)} className="rounded-full">Cancel</Button>
+                <Button onClick={handleInstitutionSend} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
                   <Send size={16} /> Send Report
                 </Button>
               </DialogFooter>

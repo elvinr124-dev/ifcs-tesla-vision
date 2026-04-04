@@ -24,11 +24,57 @@ const SUGGESTIONS = [
 
 const QUICK_PROMPTS = [
   "Check my application status",
-  "Do you have discount codes?",
   "How do I log in?",
   "View pricing",
   "What's in my cart?",
 ];
+
+// Contextual prompts based on last AI response content
+const getContextualPrompts = (lastAssistantMsg: string): string[] => {
+  const lower = lastAssistantMsg.toLowerCase();
+  
+  if (lower.includes("general analysis") && !lower.includes("course-by-course")) {
+    return ["Start General Analysis application", "What documents do I need?", "View pricing", "What about rush processing?"];
+  }
+  if (lower.includes("course-by-course") && lower.includes("health")) {
+    return ["Start Health Professions application", "What documents do I need?", "View pricing", "Do you offer rush?"];
+  }
+  if (lower.includes("course-by-course") && lower.includes("comprehensive")) {
+    return ["Start Comprehensive application", "I have 3+ degrees", "View pricing", "How fast can I get it?"];
+  }
+  if (lower.includes("course-by-course") && lower.includes("professional licensure")) {
+    return ["Start Professional Licensure application", "Is this for CPA?", "View pricing", "What about rush?"];
+  }
+  if (lower.includes("course-by-course") && lower.includes("cosmetology")) {
+    return ["Start Cosmetology application", "View pricing", "What documents do I need?"];
+  }
+  if (lower.includes("course-by-course")) {
+    return ["Start Course-by-Course application", "What documents do I need?", "View pricing", "How fast can I get it?"];
+  }
+  if (lower.includes("translation")) {
+    return ["Start translation order", "Get a translation quote", "How much per page?", "What languages?"];
+  }
+  if (lower.includes("evaluation")) {
+    return ["View all evaluation types", "Which evaluation do I need?", "View pricing", "How do I apply?"];
+  }
+  if (lower.includes("application found") || lower.includes("status")) {
+    return ["Go to my dashboard", "Contact IFCS", "Request duplicate report"];
+  }
+  if (lower.includes("caribbean") || lower.includes("cxc")) {
+    return ["Start application", "View evaluations", "What is CXC?"];
+  }
+  if (lower.includes("waec") || lower.includes("nigeria") || lower.includes("west afric")) {
+    return ["Start application", "View evaluations", "Need translations too"];
+  }
+  if (lower.includes("consult")) {
+    return ["Book a consultation", "View evaluations", "View pricing"];
+  }
+  if (lower.includes("discount") || lower.includes("promo")) {
+    return ["Contact IFCS for codes", "View pricing", "Start application"];
+  }
+  // Default fallback
+  return QUICK_PROMPTS;
+};
 
 interface KBEntry {
   keywords: string[];
@@ -449,10 +495,10 @@ const KNOWLEDGE_BASE: KBEntry[] = [
       { label: "Learn More", path: "/learn-more-evaluations" },
     ],
   },
-  // Cart, Login, Discount Codes
+  // Cart
   {
     keywords: ["cart", "shopping cart", "add to cart", "my cart", "whats in my cart"],
-    response: `You can add multiple services to your **cart** before checking out! The cart is accessible from the navigation bar.\n\nYou can also apply **discount codes** at checkout:\n• **IFCS10** — 10% off\n• **IFCS20** — 20% off\n• **WELCOME15** — 15% off`,
+    response: `You can add multiple services to your **cart** before checking out! The cart is accessible from the navigation bar.\n\nYou can also apply **discount codes** at checkout for savings.`,
     navButtons: [{ label: "View Cart", path: "/cart" }],
   },
   {
@@ -466,8 +512,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["discount", "coupon", "promo", "promo code", "discount code", "save money", "deal"],
-    response: `Yes! IFCS offers **discount codes** you can apply in the cart:\n\n• **IFCS10** — 10% off your order\n• **IFCS20** — 20% off your order\n• **WELCOME15** — 15% off for new clients\n\nSimply add your services to the cart and enter the code at checkout!`,
-    navButtons: [{ label: "View Cart", path: "/cart" }, { label: "View Pricing", path: "/pricing" }],
+    response: `IFCS does offer **discount codes** from time to time. To inquire about current promotions or obtain a discount code, please contact us directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n\nOnce you have a code, simply add your services to the cart and enter it at checkout!`,
+    navButtons: [{ label: "Contact Us", path: "/contact" }, { label: "View Pricing", path: "/pricing" }],
   },
   {
     keywords: ["privacy policy", "privacy", "data protection", "personal data", "data"],
@@ -899,14 +945,22 @@ const AIChatWidget = () => {
     try {
       // Check if user is providing an app ID + DOB for status lookup
       const lastMsg = conversationMessages[conversationMessages.length - 1];
-      const prevMsgs = conversationMessages.slice(-4);
+      const prevMsgs = conversationMessages.slice(-6);
       
       // Detect if this looks like a DOB response after an app ID was given
-      const dobMatch = lastMsg.content.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-      const prevAppIdMsg = prevMsgs.find(m => m.role === "user" && /\b(EE\d{3,}|\d{5})\b/i.test(m.content));
+      const dobMatch = lastMsg.content.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+      // Also detect if the user provides both app ID and DOB in one message
+      const combinedAppIdMatch = lastMsg.content.match(/\b(EE\d{3,}|NE\d{3,}|IFCS-?\d{4,5}|\d{5})\b/i);
+      const prevAppIdMsg = prevMsgs.find(m => m.role === "user" && /\b(EE\d{3,}|NE\d{3,}|IFCS-?\d{4,5}|\d{5})\b/i.test(m.content));
+      // Also check if AI asked for DOB in the last assistant message
+      const aiAskedForDob = prevMsgs.some(m => m.role === "assistant" && (m.content.toLowerCase().includes("date of birth") || m.content.toLowerCase().includes("dob")));
       
-      if (dobMatch && prevAppIdMsg) {
-        const appIdMatch = prevAppIdMsg.content.match(/\b(EE\d{3,}|\d{5})\b/i);
+      // Case 1: User provides DOB after previously giving app ID
+      // Case 2: User provides both in one message  
+      const effectiveAppIdMsg = prevAppIdMsg || (combinedAppIdMatch && dobMatch ? lastMsg : null);
+      
+      if (dobMatch && effectiveAppIdMsg) {
+        const appIdMatch = effectiveAppIdMsg.content.match(/\b(EE\d{3,}|NE\d{3,}|IFCS-?\d{4,5}|\d{5})\b/i);
         if (appIdMatch) {
           // Do actual status lookup
           const { data, error } = await supabase.functions.invoke("ai-chat", {
@@ -1231,18 +1285,22 @@ const AIChatWidget = () => {
                 </div>
               )}
 
-              {/* Quick-send suggestion chips */}
+              {/* Quick-send contextual suggestion chips */}
               {messages.length > 0 && !isLoading && (
                 <div className="px-4 py-2 border-t border-border flex gap-1.5 overflow-x-auto scrollbar-none">
-                  {QUICK_PROMPTS.map((prompt, i) => (
-                    <button
-                      key={i}
-                      onClick={() => handleSuggestionClick(prompt)}
-                      className="flex-shrink-0 px-3 py-1.5 text-[11px] font-medium rounded-full border border-accent text-accent bg-white hover:bg-accent/5 transition-colors whitespace-nowrap"
-                    >
-                      {prompt}
-                    </button>
-                  ))}
+                  {(() => {
+                    const lastAssistant = [...messages].reverse().find(m => m.role === "assistant");
+                    const prompts = lastAssistant ? getContextualPrompts(lastAssistant.content) : QUICK_PROMPTS;
+                    return prompts.map((prompt, i) => (
+                      <button
+                        key={i}
+                        onClick={() => handleSuggestionClick(prompt)}
+                        className="flex-shrink-0 px-3 py-1.5 text-[11px] font-medium rounded-full border border-accent text-accent bg-white hover:bg-accent/5 transition-colors whitespace-nowrap"
+                      >
+                        {prompt}
+                      </button>
+                    ));
+                  })()}
                 </div>
               )}
 
