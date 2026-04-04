@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MessageCircle, X, Send, Paperclip, RotateCcw, Maximize2, Minimize2, BookOpen, Plus, Trash2, Save, Edit2, ChevronLeft, Sparkles, Wand2, Loader2, Tag, Search } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import ifcsLogo from "@/assets/ifcs-logo.png";
 
 type NavButton = { label: string; path: string; state?: any };
 type Message = {
@@ -37,12 +38,12 @@ const appButton = (title: string, price: number, processing: string, procLabel: 
 const KNOWLEDGE_BASE: KBEntry[] = [
   {
     keywords: ["who is the owner", "who is the director", "who runs ifcs", "who founded ifcs", "ceo", "founder", "director", "owner of ifcs", "who owns"],
-    response: `The Director of **IFCS** is **Agron Matoshi**. He is a recognized expert in foreign credential evaluations and leads IFCS's mission to help international students and professionals get their credentials recognized in the United States.\n\n📍 **IFCS** — Institute of Foreign Credential Services\n📍 6 Cedar Street, Dobbs Ferry, NY 10522\n📞 (914) 693-2840 | 📧 info@ifcsevals.com`,
-    navButtons: [{ label: "About Us", path: "/about" }],
+    response: `For inquiries about our leadership team, please contact us directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n📍 6 Cedar Street, Dobbs Ferry, NY 10522`,
+    navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
     keywords: ["who works at ifcs", "staff", "team", "employees"],
-    response: `The IFCS team is led by **Director Agron Matoshi** and consists of senior credential evaluators who are recognized experts in the field. Our evaluators are regular contributors to publications and conferences organized by **NAFSA**, **AACRAO**, and the **International Association of Universities**.\n\nFor specific inquiries, contact us:\n📞 (914) 693-2840 | 📧 info@ifcsevals.com`,
+    response: `The IFCS team consists of senior credential evaluators who are recognized experts in the field. Our evaluators are regular contributors to publications and conferences organized by leading international education associations.\n\nFor specific inquiries, contact us:\n📞 (914) 693-2840 | 📧 info@ifcsevals.com`,
     navButtons: [{ label: "About Us", path: "/about" }],
   },
   {
@@ -344,7 +345,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["contact", "phone", "email address", "reach", "office", "address", "location", "hours"],
-    response: `📞 **Phone:** (914) 693-2840\n📠 **Fax:** (914) 231-7782\n📧 **Email:** info@ifcsevals.com\n📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522\n🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST\n\n**Director:** Agron Matoshi`,
+    response: `📞 **Phone:** (914) 693-2840\n📠 **Fax:** (914) 231-7782\n📧 **Email:** info@ifcsevals.com\n📍 **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522\n🕐 **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST`,
     navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
@@ -374,7 +375,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["about", "who is ifcs", "about ifcs", "history"],
-    response: `**IFCS** — the Institute of Foreign Credential Services — is based in Dobbs Ferry, NY and is led by **Director Agron Matoshi**.\n\n**What makes IFCS unique:**\n• **Expert evaluators** — recognized industry leaders\n• Regular contributors to **NAFSA**, **AACRAO**, and **IAU**\n• **Personal attention** applied to every account\n• Trusted by universities, government agencies, employers, and licensure boards`,
+    response: `**IFCS** — the Institute of Foreign Credential Services — is based in Dobbs Ferry, NY.\n\n**What makes IFCS unique:**\n• **Expert evaluators** — recognized industry leaders\n• Regular contributors to leading international education organizations\n• **Personal attention** applied to every account\n• Trusted by universities, government agencies, employers, and licensure boards`,
     navButtons: [{ label: "About Us", path: "/about" }],
   },
   {
@@ -400,7 +401,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["naces", "member", "accredit", "legitimate", "recognized", "credible", "trusted", "accepted everywhere"],
-    response: `**IFCS is a proud member of NACES** (National Association of Credential Evaluation Services) — the gold standard for credential evaluation in the United States.\n\n**What NACES membership means:**\n✅ Evaluations accepted by **USCIS**, the **U.S. Military**, and **thousands of universities**\n✅ Adheres to the highest ethical and professional standards\n✅ Uses **AACRAO EDGE** research databases — the same tools used by top university registrars\n\n**IFCS is also recognized by:**\n✅ **NAFSA** — Association of International Educators\n✅ **AACRAO** — American Association of Collegiate Registrars and Admissions Officers\n✅ **IAU** — International Association of Universities\n✅ **UNESCO** — United Nations Educational, Scientific and Cultural Organization`,
+    response: `**IFCS is a proud member of NACES** — the gold standard for credential evaluation in the United States.\n\n**What this means:**\n✅ Evaluations accepted by **USCIS**, the **U.S. Military**, and **thousands of universities**\n✅ Adheres to the highest ethical and professional standards\n✅ Uses industry-standard research databases used by top university registrars\n\n**Also recognized by:** NAFSA, IAU, UNESCO`,
     navButtons: [
       { label: "About Us", path: "/about" },
       { label: "Learn More", path: "/learn-more-evaluations" },
@@ -429,7 +430,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["dobbs ferry", "where are you", "where is ifcs"],
-    response: `IFCS is located at:\n\n📍 **6 Cedar Street, Dobbs Ferry, NY 10522**\n📞 (914) 693-2840\n📠 Fax: (914) 231-7782\n📧 info@ifcsevals.com\n🕐 Monday–Friday, 9 AM – 5 PM EST\n\n**Director:** Agron Matoshi`,
+    response: `IFCS is located at:\n\n📍 **6 Cedar Street, Dobbs Ferry, NY 10522**\n📞 (914) 693-2840\n📠 Fax: (914) 231-7782\n📧 info@ifcsevals.com\n🕐 Monday–Friday, 9 AM – 5 PM EST`,
     navButtons: [{ label: "Contact Us", path: "/contact" }],
   },
   {
@@ -821,9 +822,7 @@ const AIChatWidget = () => {
     saveChatState(messages);
   }, [messages]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  // Don't auto-scroll to bottom - let user read from top of response
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) setAttachments(prev => [...prev, ...Array.from(e.target.files!)]);
@@ -917,13 +916,16 @@ const AIChatWidget = () => {
 
   const renderMarkdown = (text: string) => {
     return text.split("\n").map((line, i) => {
-      const parts = line.split(/(\*\*.*?\*\*)/).map((part, j) =>
-        part.startsWith("**") && part.endsWith("**") ? (
-          <strong key={j}>{part.slice(2, -2)}</strong>
-        ) : (
-          <span key={j}>{part}</span>
-        )
-      );
+      // Handle italic *text*
+      const parts = line.split(/(\*\*.*?\*\*|\*[^*]+?\*)/).map((part, j) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={j}>{part.slice(2, -2)}</strong>;
+        }
+        if (part.startsWith("*") && part.endsWith("*") && !part.startsWith("**")) {
+          return <em key={j} className="text-muted-foreground text-[10px]">{part.slice(1, -1)}</em>;
+        }
+        return <span key={j}>{part}</span>;
+      });
       return (
         <span key={i}>
           {parts}
@@ -938,10 +940,10 @@ const AIChatWidget = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-accent shadow-lg shadow-accent/40 flex items-center justify-center hover:scale-110 transition-transform duration-200"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[hsl(220,70%,25%)] to-[hsl(220,70%,40%)] shadow-lg shadow-[hsl(220,70%,30%)]/40 flex items-center justify-center hover:scale-110 transition-transform duration-200 border-2 border-white/20"
           aria-label="Open chat"
         >
-          <MessageCircle size={24} className="text-white" />
+          <img src={ifcsLogo} alt="IFCS AI" className="w-9 h-9 rounded-full object-cover" />
         </button>
       )}
 
@@ -956,14 +958,12 @@ const AIChatWidget = () => {
           ) : (
             <>
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-accent text-white">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-gradient-to-r from-[hsl(220,70%,25%)] to-[hsl(220,70%,35%)] text-white">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                    <MessageCircle size={16} />
-                  </div>
+                  <img src={ifcsLogo} alt="IFCS" className="w-9 h-9 rounded-full object-cover border-2 border-white/30" />
                   <div>
-                    <p className="text-sm font-semibold">IFCS AI Assistant</p>
-                    <p className="text-[10px] opacity-80">Multilingual • Ask in any language</p>
+                    <p className="text-sm font-bold tracking-wide">IFCS AI</p>
+                    <p className="text-[10px] opacity-70">Ask in any language</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
@@ -1002,12 +1002,10 @@ const AIChatWidget = () => {
                 {messages.length === 0 && (
                   <div className="space-y-4">
                     <div className="text-center py-3 space-y-2">
-                      <div className="w-12 h-12 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
-                        <MessageCircle size={22} className="text-accent" />
-                      </div>
-                      <p className="text-base font-semibold text-foreground">Welcome to IFCS AI</p>
-                      <p className="text-xs text-muted-foreground max-w-[280px] mx-auto">
-                        Ask in any language — I'll respond in yours!
+                      <img src={ifcsLogo} alt="IFCS" className="w-14 h-14 mx-auto rounded-full object-cover shadow-md" />
+                      <p className="text-base font-bold text-foreground">IFCS AI</p>
+                      <p className="text-xs text-muted-foreground max-w-[260px] mx-auto">
+                        How can we help you today?
                       </p>
                     </div>
                     <div className="grid grid-cols-2 gap-2 px-2">
@@ -1015,7 +1013,7 @@ const AIChatWidget = () => {
                         <button
                           key={i}
                           onClick={() => handleSuggestionClick(s)}
-                          className="px-3 py-2.5 text-xs font-medium rounded-2xl border border-accent/30 text-accent bg-white hover:bg-accent hover:text-white transition-all duration-200 text-center leading-tight"
+                          className="px-3 py-2.5 text-xs font-medium rounded-full border border-[hsl(220,70%,35%)]/30 text-[hsl(220,70%,35%)] bg-white hover:bg-[hsl(220,70%,35%)] hover:text-white transition-all duration-200 text-center leading-tight shadow-sm"
                         >
                           {s}
                         </button>
@@ -1037,13 +1035,20 @@ const AIChatWidget = () => {
                       )}
                       {msg.content && (
                         <div
-                          className={`rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
+                          className={`rounded-2xl px-4 py-3 text-sm leading-relaxed ${
                             msg.role === "user"
-                              ? "bg-accent text-white rounded-br-md"
-                              : "bg-muted text-foreground rounded-bl-md"
+                              ? "bg-gradient-to-br from-[hsl(220,70%,30%)] to-[hsl(220,70%,40%)] text-white rounded-br-md shadow-sm"
+                              : "bg-muted/60 text-foreground rounded-bl-md border border-border/50"
                           }`}
                         >
                           {renderMarkdown(msg.content)}
+                          {msg.role === "assistant" && (
+                            <div className="mt-3 pt-2 border-t border-border/30">
+                              <p className="text-[9px] text-muted-foreground/70 italic leading-tight">
+                                ⚠️ AI-generated responses may contain errors. For verified information, please contact IFCS directly. IFCS is not responsible for inaccuracies.
+                              </p>
+                            </div>
+                          )}
                         </div>
                       )}
                       {msg.navButtons && msg.navButtons.length > 0 && (
@@ -1059,7 +1064,7 @@ const AIChatWidget = () => {
                                   navigate(btn.path);
                                 }
                               }}
-                              className="px-4 py-2 text-xs font-semibold rounded-full bg-accent text-white hover:bg-accent/90 transition-colors shadow-sm"
+                              className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-[hsl(220,70%,30%)] to-[hsl(220,70%,40%)] text-white hover:opacity-90 transition-all shadow-sm"
                             >
                               {btn.label}
                             </button>
@@ -1123,7 +1128,7 @@ const AIChatWidget = () => {
                   <button
                     onClick={sendMessage}
                     disabled={(!input.trim() && attachments.length === 0) || isLoading}
-                    className="w-10 h-10 rounded-full bg-accent text-white flex items-center justify-center hover:bg-accent/90 transition-colors disabled:opacity-50 flex-shrink-0"
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-[hsl(220,70%,25%)] to-[hsl(220,70%,40%)] text-white flex items-center justify-center hover:opacity-90 transition-all disabled:opacity-50 flex-shrink-0 shadow-sm"
                   >
                     <Send size={16} />
                   </button>
