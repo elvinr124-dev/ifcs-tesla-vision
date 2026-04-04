@@ -24,11 +24,57 @@ const SUGGESTIONS = [
 
 const QUICK_PROMPTS = [
   "Check my application status",
-  "Do you have discount codes?",
   "How do I log in?",
   "View pricing",
   "What's in my cart?",
 ];
+
+// Contextual prompts based on last AI response content
+const getContextualPrompts = (lastAssistantMsg: string): string[] => {
+  const lower = lastAssistantMsg.toLowerCase();
+  
+  if (lower.includes("general analysis") && !lower.includes("course-by-course")) {
+    return ["Start General Analysis application", "What documents do I need?", "View pricing", "What about rush processing?"];
+  }
+  if (lower.includes("course-by-course") && lower.includes("health")) {
+    return ["Start Health Professions application", "What documents do I need?", "View pricing", "Do you offer rush?"];
+  }
+  if (lower.includes("course-by-course") && lower.includes("comprehensive")) {
+    return ["Start Comprehensive application", "I have 3+ degrees", "View pricing", "How fast can I get it?"];
+  }
+  if (lower.includes("course-by-course") && lower.includes("professional licensure")) {
+    return ["Start Professional Licensure application", "Is this for CPA?", "View pricing", "What about rush?"];
+  }
+  if (lower.includes("course-by-course") && lower.includes("cosmetology")) {
+    return ["Start Cosmetology application", "View pricing", "What documents do I need?"];
+  }
+  if (lower.includes("course-by-course")) {
+    return ["Start Course-by-Course application", "What documents do I need?", "View pricing", "How fast can I get it?"];
+  }
+  if (lower.includes("translation")) {
+    return ["Start translation order", "Get a translation quote", "How much per page?", "What languages?"];
+  }
+  if (lower.includes("evaluation")) {
+    return ["View all evaluation types", "Which evaluation do I need?", "View pricing", "How do I apply?"];
+  }
+  if (lower.includes("application found") || lower.includes("status")) {
+    return ["Go to my dashboard", "Contact IFCS", "Request duplicate report"];
+  }
+  if (lower.includes("caribbean") || lower.includes("cxc")) {
+    return ["Start application", "View evaluations", "What is CXC?"];
+  }
+  if (lower.includes("waec") || lower.includes("nigeria") || lower.includes("west afric")) {
+    return ["Start application", "View evaluations", "Need translations too"];
+  }
+  if (lower.includes("consult")) {
+    return ["Book a consultation", "View evaluations", "View pricing"];
+  }
+  if (lower.includes("discount") || lower.includes("promo")) {
+    return ["Contact IFCS for codes", "View pricing", "Start application"];
+  }
+  // Default fallback
+  return QUICK_PROMPTS;
+};
 
 interface KBEntry {
   keywords: string[];
