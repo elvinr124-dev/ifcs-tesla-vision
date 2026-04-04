@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MessageCircle, X, Send, Paperclip, RotateCcw, Maximize2, Minimize2, BookOpen, Plus, Trash2, Save, Edit2, ChevronLeft, Sparkles, Wand2, Loader2, Tag, Search } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import ifcsLogo from "@/assets/ifcs-logo.png";
 
 type NavButton = { label: string; path: string; state?: any };
 type Message = {
