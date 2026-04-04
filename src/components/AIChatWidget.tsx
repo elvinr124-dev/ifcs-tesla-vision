@@ -449,6 +449,41 @@ const KNOWLEDGE_BASE: KBEntry[] = [
       { label: "Learn More", path: "/learn-more-evaluations" },
     ],
   },
+  // Cart, Login, Discount Codes
+  {
+    keywords: ["cart", "shopping cart", "add to cart", "my cart", "whats in my cart"],
+    response: `You can add multiple services to your **cart** before checking out! The cart is accessible from the navigation bar.\n\nYou can also apply **discount codes** at checkout:\n• **IFCS10** — 10% off\n• **IFCS20** — 20% off\n• **WELCOME15** — 15% off`,
+    navButtons: [{ label: "View Cart", path: "/cart" }],
+  },
+  {
+    keywords: ["login", "sign in", "log in", "account", "my account", "sign up", "register", "create account"],
+    response: `You can **log in** or **create an account** to track your applications, view order history, and manage your evaluations.\n\nAlready have an account? Log in to access your dashboard.\nNew to IFCS? Create a free account to get started!`,
+    navButtons: [
+      { label: "Log In", path: "/login" },
+      { label: "Sign Up", path: "/signup" },
+      { label: "My Dashboard", path: "/dashboard/client" },
+    ],
+  },
+  {
+    keywords: ["discount", "coupon", "promo", "promo code", "discount code", "save money", "deal"],
+    response: `Yes! IFCS offers **discount codes** you can apply in the cart:\n\n• **IFCS10** — 10% off your order\n• **IFCS20** — 20% off your order\n• **WELCOME15** — 15% off for new clients\n\nSimply add your services to the cart and enter the code at checkout!`,
+    navButtons: [{ label: "View Cart", path: "/cart" }, { label: "View Pricing", path: "/pricing" }],
+  },
+  {
+    keywords: ["privacy policy", "privacy", "data protection", "personal data", "data"],
+    response: `IFCS takes your privacy seriously. Our **Privacy Policy** outlines how we collect, use, and protect your personal information.\n\nAll documents and personal data are handled with strict confidentiality and security measures.`,
+    navButtons: [{ label: "View Privacy Policy", path: "/privacy-policy" }],
+  },
+  {
+    keywords: ["terms of service", "terms", "conditions", "terms and conditions", "tos"],
+    response: `Our **Terms of Service** outline the conditions for using IFCS services, including evaluation policies, payment terms, and service agreements.\n\nWe recommend reviewing them before submitting an application.`,
+    navButtons: [{ label: "View Terms of Service", path: "/terms-of-service" }],
+  },
+  {
+    keywords: ["dashboard", "my orders", "track order", "order history", "my applications"],
+    response: `Your **Dashboard** lets you:\n• Track application status in real-time\n• View staff notes and updates\n• Access receipts and order history\n• Check your IFCS ID\n\nLog in to access your dashboard!`,
+    navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }, { label: "Log In", path: "/login" }],
+  },
   // Albania and Balkans
   {
     keywords: ["albania", "albanian", "albanian diploma", "albanian university", "albanian high school", "tirana", "kosova", "kosovo", "pristina"],
