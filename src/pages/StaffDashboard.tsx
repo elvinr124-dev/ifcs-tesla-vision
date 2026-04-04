@@ -470,8 +470,12 @@ const StaffDashboard = () => {
 
   const handleSaveEdit = async () => {
     if (!editAppData) return;
-    const confirmed = window.confirm("Are you sure you want to save these changes? The client will be notified.");
-    if (!confirmed) return;
+    setSaveConfirmOpen(true);
+  };
+
+  const confirmSaveEdit = async () => {
+    if (!editAppData) return;
+    setSaveConfirmOpen(false);
 
     await (supabase as any).from("applications").update({
       first_name: editFields.first_name, last_name: editFields.last_name, middle_name: editFields.middle_name,
