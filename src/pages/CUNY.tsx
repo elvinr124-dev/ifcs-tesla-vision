@@ -15,8 +15,8 @@ const CUNY = () => {
       {/* Hero Section */}
       <section className="relative h-[80vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
         <div
-          className="absolute inset-0 bg-contain bg-center bg-no-repeat"
-          style={{ backgroundImage: `url(${cunyHeroBg})`, backgroundColor: "#1a2a3a" }}
+          className="absolute inset-0 bg-cover bg-bottom"
+          style={{ backgroundImage: `url(${cunyHeroBg})` }}
         />
         <div className="video-overlay" />
         <div className="relative z-10 text-center px-6 hero-text-shadow">
