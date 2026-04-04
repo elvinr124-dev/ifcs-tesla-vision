@@ -13,7 +13,7 @@ import {
 import {
   Upload, Send, Users, Clock, AlertCircle, CheckCircle2, Package, FileText, Star,
   Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones, Trash2, UserX,
-  Paperclip, Receipt,
+  Paperclip, Receipt, Edit3,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -128,6 +128,15 @@ const StaffDashboard = () => {
 
   // Delete confirmation
   const [deleteDialog, setDeleteDialog] = useState<{ open: boolean; deleteType: "client" | "application" | "both"; orderId: string; label: string; email?: string }>({ open: false, deleteType: "both", orderId: "", label: "" });
+
+  // Edit Application dialog
+  const [editAppOpen, setEditAppOpen] = useState(false);
+  const [editAppData, setEditAppData] = useState<any>(null);
+  const [editFields, setEditFields] = useState({
+    first_name: "", last_name: "", middle_name: "", dob: "", ifcs_id: "", status: "",
+    service_title: "", processing_label: "", evaluator: "", staff_notes: "", verification_source: "",
+    country: "", institution_name: "", cell_phone: "", home_phone: "", gender: "",
+  });
 
   // New Application Entry dialog
   const [newAppOpen, setNewAppOpen] = useState(false);
@@ -438,6 +447,66 @@ const StaffDashboard = () => {
     resetNewAppForm();
   };
 
+  const openEditApp = async (order: DBOrder) => {
+    // Load full application data
+    const { data: app } = await (supabase as any).from("applications").select("*").eq("application_id", order.application_id).maybeSingle();
+    if (!app) {
+      toast({ title: "Not Found", description: "Application not found in database.", variant: "destructive" });
+      return;
+    }
+    setEditAppData(app);
+    setEditFields({
+      first_name: app.first_name || "", last_name: app.last_name || "", middle_name: app.middle_name || "",
+      dob: app.dob || "", ifcs_id: app.ifcs_id || "", status: app.status || "requested",
+      service_title: app.service_title || "", processing_label: app.processing_label || "",
+      evaluator: app.evaluator || "", staff_notes: app.staff_notes || "",
+      verification_source: app.verification_source || "", country: app.country || "",
+      institution_name: app.institution_name || "", cell_phone: app.cell_phone || "",
+      home_phone: app.home_phone || "", gender: app.gender || "",
+    });
+    setEditAppOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editAppData) return;
+    const confirmed = window.confirm("Are you sure you want to save these changes? The client will be notified.");
+    if (!confirmed) return;
+
+    await (supabase as any).from("applications").update({
+      first_name: editFields.first_name, last_name: editFields.last_name, middle_name: editFields.middle_name,
+      dob: editFields.dob, ifcs_id: editFields.ifcs_id, status: editFields.status,
+      service_title: editFields.service_title, processing_label: editFields.processing_label,
+      evaluator: editFields.evaluator, staff_notes: editFields.staff_notes,
+      verification_source: editFields.verification_source, country: editFields.country,
+      institution_name: editFields.institution_name, cell_phone: editFields.cell_phone,
+      home_phone: editFields.home_phone, gender: editFields.gender,
+    }).eq("application_id", editAppData.application_id);
+
+    // Update client_orders too
+    await (supabase as any).from("client_orders").update({
+      ifcs_id: editFields.ifcs_id, status: editFields.status, staff_note: editFields.staff_notes,
+      service: `${editFields.service_title} — ${editFields.processing_label}`,
+    }).eq("application_id", editAppData.application_id);
+
+    // Send notification email to client
+    try {
+      await supabase.functions.invoke("send-application-email", {
+        body: {
+          subject: "Your IFCS Application Has Been Updated",
+          body: `Dear ${editFields.first_name} ${editFields.last_name},\n\nYour application (${editAppData.application_id}) has been updated by our team. Please log in to your dashboard to view the latest details.\n\nBest regards,\nIFCS Team\n\nInstitute of Foreign Credential Services\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: (914) 693-2840\nwww.ifcsevals.com`,
+          recipientEmail: editAppData.client_email,
+        },
+      });
+    } catch {}
+
+    toast({ title: "Application Updated", description: "Changes saved and client notified." });
+    setEditAppOpen(false);
+
+    // Refresh orders
+    const { data: refreshed } = await (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false });
+    if (refreshed) setOrders(refreshed);
+  };
+
   const resetNewAppForm = () => {
     setNewAppOpen(false);
     setNewAppSendTo("applicant");
@@ -706,8 +775,14 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Chat & Delete */}
+                        {/* Edit, Chat & Delete */}
                         <div className="flex gap-2 flex-wrap">
+                          {o.application_id && (
+                            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
+                              onClick={() => openEditApp(o)}>
+                              <Edit3 size={14} /> Edit Application
+                            </button>
+                          )}
                           <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
                             onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
@@ -1023,6 +1098,151 @@ const StaffDashboard = () => {
             <Button variant="outline" onClick={() => setDeleteDialog(prev => ({ ...prev, open: false }))}>Cancel</Button>
             <Button variant="destructive" onClick={handleDelete} className="gap-1"><Trash2 size={14} /> Delete</Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit Application Dialog */}
+      <Dialog open={editAppOpen} onOpenChange={setEditAppOpen}>
+        <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">Edit Application — {editAppData?.application_id}</DialogTitle>
+            <DialogDescription>Update application details. The client will be notified of changes.</DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-5 pt-2">
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">First Name</label>
+                <Input value={editFields.first_name} onChange={e => setEditFields(p => ({ ...p, first_name: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Middle Name</label>
+                <Input value={editFields.middle_name} onChange={e => setEditFields(p => ({ ...p, middle_name: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Last Name</label>
+                <Input value={editFields.last_name} onChange={e => setEditFields(p => ({ ...p, last_name: e.target.value }))} className="rounded-full" />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Date of Birth</label>
+                <Input value={editFields.dob} onChange={e => setEditFields(p => ({ ...p, dob: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Gender</label>
+                <Select value={editFields.gender} onValueChange={v => setEditFields(p => ({ ...p, gender: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="male">Male</SelectItem>
+                    <SelectItem value="female">Female</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">IFCS ID</label>
+                <Input value={editFields.ifcs_id} onChange={e => setEditFields(p => ({ ...p, ifcs_id: e.target.value }))} className="rounded-full" />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Cell Phone</label>
+                <Input value={editFields.cell_phone} onChange={e => setEditFields(p => ({ ...p, cell_phone: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Home Phone</label>
+                <Input value={editFields.home_phone} onChange={e => setEditFields(p => ({ ...p, home_phone: e.target.value }))} className="rounded-full" />
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Service</label>
+                <Select value={editFields.service_title} onValueChange={v => setEditFields(p => ({ ...p, service_title: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="General Analysis">General Analysis</SelectItem>
+                    <SelectItem value="General Analysis + GPA">General Analysis + GPA</SelectItem>
+                    <SelectItem value="Course-by-Course">Course-by-Course</SelectItem>
+                    <SelectItem value="Health Professions Course-by-Course">Health Professions Course-by-Course</SelectItem>
+                    <SelectItem value="Comprehensive Course-by-Course">Comprehensive Course-by-Course</SelectItem>
+                    <SelectItem value="High School and University Course-by-Course">HS & University Course-by-Course</SelectItem>
+                    <SelectItem value="Professional Licensure Course-by-Course">Professional Licensure Course-by-Course</SelectItem>
+                    <SelectItem value="Cosmetology Course-by-Course">Cosmetology Course-by-Course</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Processing Speed</label>
+                <Select value={editFields.processing_label} onValueChange={v => setEditFields(p => ({ ...p, processing_label: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Standard">Standard</SelectItem>
+                    <SelectItem value="Rush 3-Day">Rush 3-Day</SelectItem>
+                    <SelectItem value="Rush 24hr">Rush 24hr</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Status</label>
+                <Select value={editFields.status} onValueChange={v => setEditFields(p => ({ ...p, status: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {Object.entries(statusMeta).map(([key, val]) => (
+                      <SelectItem key={key} value={key}>{val.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Evaluator</label>
+                <Select value={editFields.evaluator} onValueChange={v => setEditFields(p => ({ ...p, evaluator: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                  <SelectContent>
+                    {evaluators.map(ev => <SelectItem key={ev} value={ev}>{ev}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Verification Source</label>
+                <Select value={editFields.verification_source} onValueChange={v => setEditFields(p => ({ ...p, verification_source: v }))}>
+                  <SelectTrigger className="rounded-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                  <SelectContent>
+                    {verificationSources.map(v => <SelectItem key={v} value={v}>{v}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Country</label>
+                <Input value={editFields.country} onChange={e => setEditFields(p => ({ ...p, country: e.target.value }))} className="rounded-full" />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Institution Name</label>
+                <Input value={editFields.institution_name} onChange={e => setEditFields(p => ({ ...p, institution_name: e.target.value }))} className="rounded-full" />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Staff Notes</label>
+              <Textarea value={editFields.staff_notes} onChange={e => setEditFields(p => ({ ...p, staff_notes: e.target.value }))} rows={4} />
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setEditAppOpen(false)} className="rounded-full">Cancel</Button>
+              <Button onClick={handleSaveEdit} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
+                Save Changes
+              </Button>
+            </DialogFooter>
+          </div>
         </DialogContent>
       </Dialog>
 

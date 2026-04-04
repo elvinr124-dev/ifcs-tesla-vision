@@ -948,7 +948,7 @@ const AIChatWidget = () => {
       const prevMsgs = conversationMessages.slice(-6);
       
       // Detect if this looks like a DOB response after an app ID was given
-      const dobMatch = lastMsg.content.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+      const dobMatch = lastMsg.content.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/) || lastMsg.content.match(/\b(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{1,2}(?:st|nd|rd|th)?\s*,?\s*\d{2,4}\b/i) || lastMsg.content.match(/\b\d{1,2}(?:st|nd|rd|th)?\s+(?:jan(?:uary)?|feb(?:ruary)?|mar(?:ch)?|apr(?:il)?|may|june?|july?|aug(?:ust)?|sep(?:t(?:ember)?)?|oct(?:ober)?|nov(?:ember)?|dec(?:ember)?)\s+\d{2,4}\b/i);
       // Also detect if the user provides both app ID and DOB in one message
       const combinedAppIdMatch = lastMsg.content.match(/\b(EE\d{3,}|NE\d{3,}|IFCS-?\d{4,5}|\d{5})\b/i);
       const prevAppIdMsg = prevMsgs.find(m => m.role === "user" && /\b(EE\d{3,}|NE\d{3,}|IFCS-?\d{4,5}|\d{5})\b/i.test(m.content));
@@ -967,11 +967,13 @@ const AIChatWidget = () => {
             body: { action: "lookup-status", applicationId: appIdMatch[1], dob: lastMsg.content.trim() },
           });
           
-          if (!error && data) {
+            if (!error && data) {
             if (data.found) {
+              // Format status: replace underscores and capitalize properly
+              const formatStatus = (s: string) => s.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
               setMessages(prev => [...prev, {
                 role: "assistant",
-                content: `**Application Found**\n\n**Applicant:** ${data.name}\n**Application ID:** ${data.applicationId}\n**IFCS ID:** ${data.ifcsId}\n**Service:** ${data.service}\n**Processing:** ${data.processing}\n**Status:** ${data.status}\n${data.staffNotes ? `**Notes:** ${data.staffNotes}` : ""}\n\nFor detailed information, visit your dashboard.`,
+                content: `**Application Found**\n\n**Applicant:** ${data.name}\n**Application ID:** ${data.applicationId}\n**IFCS ID:** ${data.ifcsId}\n**Service:** ${data.service}\n**Processing:** ${data.processing}\n**Status:** ${formatStatus(data.status)}\n${data.staffNotes ? `**Notes:** ${data.staffNotes}` : ""}\n\nFor detailed information, visit your dashboard.`,
                 navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }],
               }]);
             } else {

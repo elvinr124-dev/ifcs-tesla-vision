@@ -32,16 +32,51 @@ serve(async (req) => {
         });
       }
 
-      // Normalize DOB for comparison: handle MM/DD/YY, MM/DD/YYYY, MM-DD-YYYY etc.
+      // Normalize DOB for comparison: handle many formats
+      const MONTH_MAP: Record<string, string> = {
+        january: "01", jan: "01", february: "02", feb: "02", march: "03", mar: "03",
+        april: "04", apr: "04", may: "05", june: "06", jun: "06", july: "07", jul: "07",
+        august: "08", aug: "08", september: "09", sept: "09", sep: "09",
+        october: "10", oct: "10", november: "11", nov: "11", december: "12", dec: "12",
+      };
+
       const normalizeDob = (d: string): string => {
         if (!d) return "";
-        const cleaned = d.replace(/[-\.]/g, "/").trim();
+        let cleaned = d.trim().replace(/,/g, "").replace(/\s+/g, " ");
+        
+        // Handle text month formats like "September 16th 2002", "Sept 16 02"
+        const textMonthMatch = cleaned.match(/^([a-zA-Z]+)\s+(\d{1,2})(?:st|nd|rd|th)?\s+(\d{2,4})$/i);
+        if (textMonthMatch) {
+          const monthStr = textMonthMatch[1].toLowerCase();
+          const mm = MONTH_MAP[monthStr];
+          if (mm) {
+            const dd = textMonthMatch[2].padStart(2, "0");
+            let yy = textMonthMatch[3];
+            if (yy.length === 4) yy = yy.slice(-2);
+            return `${mm}/${dd}/${yy}`;
+          }
+        }
+        
+        // Handle "16 September 2002" format
+        const textMonthMatch2 = cleaned.match(/^(\d{1,2})(?:st|nd|rd|th)?\s+([a-zA-Z]+)\s+(\d{2,4})$/i);
+        if (textMonthMatch2) {
+          const monthStr = textMonthMatch2[2].toLowerCase();
+          const mm = MONTH_MAP[monthStr];
+          if (mm) {
+            const dd = textMonthMatch2[1].padStart(2, "0");
+            let yy = textMonthMatch2[3];
+            if (yy.length === 4) yy = yy.slice(-2);
+            return `${mm}/${dd}/${yy}`;
+          }
+        }
+        
+        // Handle numeric formats: MM/DD/YYYY, MM-DD-YYYY, MM.DD.YYYY
+        cleaned = cleaned.replace(/[-\.]/g, "/");
         const parts = cleaned.split("/");
         if (parts.length !== 3) return cleaned.toLowerCase();
         let [mm, dd, yy] = parts;
         mm = mm.padStart(2, "0");
         dd = dd.padStart(2, "0");
-        // Normalize year: convert 4-digit to 2-digit and vice versa for comparison
         if (yy.length === 4) yy = yy.slice(-2);
         return `${mm}/${dd}/${yy}`;
       };
