@@ -641,7 +641,7 @@ const TranslationOrder = () => {
               </div>
 
               {/* Payment Details */}
-              <div className="rounded-3xl border border-border bg-card shadow-lg p-8 space-y-6">
+              <div className="space-y-6">
                 <SectionHeading>Payment Details</SectionHeading>
                 <FieldGroup label="Name on Card" required>
                   <GlassInput value={cardName} onChange={e => setCardName(e.target.value)} placeholder="Full name on card" required />
