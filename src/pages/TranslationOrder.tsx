@@ -667,7 +667,7 @@ const TranslationOrder = () => {
                 <button
                   type="submit"
                   disabled={isAnalyzing || hasBlurryFiles}
-                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-3xl bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
+                  className="group inline-flex items-center gap-4 px-12 py-5 rounded-full bg-accent text-accent-foreground font-bold text-lg tracking-wide shadow-2xl shadow-accent/40 hover:shadow-accent/60 hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:hover:scale-100"
                 >
                   <CreditCard size={20} />
                   <span>Place Order — ${total.toFixed(2)}</span>
