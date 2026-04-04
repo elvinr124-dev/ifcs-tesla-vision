@@ -945,14 +945,22 @@ const AIChatWidget = () => {
     try {
       // Check if user is providing an app ID + DOB for status lookup
       const lastMsg = conversationMessages[conversationMessages.length - 1];
-      const prevMsgs = conversationMessages.slice(-4);
+      const prevMsgs = conversationMessages.slice(-6);
       
       // Detect if this looks like a DOB response after an app ID was given
-      const dobMatch = lastMsg.content.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
-      const prevAppIdMsg = prevMsgs.find(m => m.role === "user" && /\b(EE\d{3,}|\d{5})\b/i.test(m.content));
+      const dobMatch = lastMsg.content.match(/(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})/);
+      // Also detect if the user provides both app ID and DOB in one message
+      const combinedAppIdMatch = lastMsg.content.match(/\b(EE\d{3,}|NE\d{3,}|IFCS-?\d{4,5}|\d{5})\b/i);
+      const prevAppIdMsg = prevMsgs.find(m => m.role === "user" && /\b(EE\d{3,}|NE\d{3,}|IFCS-?\d{4,5}|\d{5})\b/i.test(m.content));
+      // Also check if AI asked for DOB in the last assistant message
+      const aiAskedForDob = prevMsgs.some(m => m.role === "assistant" && (m.content.toLowerCase().includes("date of birth") || m.content.toLowerCase().includes("dob")));
       
-      if (dobMatch && prevAppIdMsg) {
-        const appIdMatch = prevAppIdMsg.content.match(/\b(EE\d{3,}|\d{5})\b/i);
+      // Case 1: User provides DOB after previously giving app ID
+      // Case 2: User provides both in one message  
+      const effectiveAppIdMsg = prevAppIdMsg || (combinedAppIdMatch && dobMatch ? lastMsg : null);
+      
+      if (dobMatch && effectiveAppIdMsg) {
+        const appIdMatch = effectiveAppIdMsg.content.match(/\b(EE\d{3,}|NE\d{3,}|IFCS-?\d{4,5}|\d{5})\b/i);
         if (appIdMatch) {
           // Do actual status lookup
           const { data, error } = await supabase.functions.invoke("ai-chat", {
