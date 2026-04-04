@@ -1066,7 +1066,7 @@ const AIChatWidget = () => {
                                   navigate(btn.path);
                                 }
                               }}
-                              className="px-4 py-2 text-xs font-semibold rounded-full bg-accent text-white hover:bg-accent/90 transition-colors shadow-sm"
+                              className="px-4 py-2 text-xs font-semibold rounded-full bg-gradient-to-r from-[hsl(220,70%,30%)] to-[hsl(220,70%,40%)] text-white hover:opacity-90 transition-all shadow-sm"
                             >
                               {btn.label}
                             </button>
