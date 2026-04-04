@@ -608,9 +608,9 @@ const Application = () => {
       </div>
 
       {/* Form */}
-      <section className="py-10 px-6 md:px-12 content-bg">
+      <section className="py-10 px-6 md:px-12 bg-white">
         <div className="max-w-4xl mx-auto">
-          <div className="rounded-3xl border border-border bg-card shadow-xl overflow-hidden">
+          <div className="overflow-hidden">
             <div className="h-1 bg-gradient-to-r from-accent via-accent/60 to-transparent" />
             <div className="p-8 md:p-12 space-y-10">
 
