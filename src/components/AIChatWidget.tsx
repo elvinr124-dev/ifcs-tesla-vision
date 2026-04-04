@@ -914,15 +914,20 @@ const AIChatWidget = () => {
     sessionStorage.removeItem(CHAT_STATE_KEY);
   };
 
+  const AI_DISCLAIMER = "⚠️ *AI-generated responses may contain errors. For verified information, please contact IFCS directly. IFCS is not responsible for inaccuracies in AI responses.*";
+
   const renderMarkdown = (text: string) => {
     return text.split("\n").map((line, i) => {
-      const parts = line.split(/(\*\*.*?\*\*)/).map((part, j) =>
-        part.startsWith("**") && part.endsWith("**") ? (
-          <strong key={j}>{part.slice(2, -2)}</strong>
-        ) : (
-          <span key={j}>{part}</span>
-        )
-      );
+      // Handle italic *text*
+      const parts = line.split(/(\*\*.*?\*\*|\*[^*]+?\*)/).map((part, j) => {
+        if (part.startsWith("**") && part.endsWith("**")) {
+          return <strong key={j}>{part.slice(2, -2)}</strong>;
+        }
+        if (part.startsWith("*") && part.endsWith("*") && !part.startsWith("**")) {
+          return <em key={j} className="text-muted-foreground text-[10px]">{part.slice(1, -1)}</em>;
+        }
+        return <span key={j}>{part}</span>;
+      });
       return (
         <span key={i}>
           {parts}
