@@ -942,10 +942,10 @@ const AIChatWidget = () => {
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-accent shadow-lg shadow-accent/40 flex items-center justify-center hover:scale-110 transition-transform duration-200"
+          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-gradient-to-br from-[hsl(220,70%,25%)] to-[hsl(220,70%,40%)] shadow-lg shadow-[hsl(220,70%,30%)]/40 flex items-center justify-center hover:scale-110 transition-transform duration-200 border-2 border-white/20"
           aria-label="Open chat"
         >
-          <MessageCircle size={24} className="text-white" />
+          <img src={ifcsLogo} alt="IFCS AI" className="w-9 h-9 rounded-full object-cover" />
         </button>
       )}
 
