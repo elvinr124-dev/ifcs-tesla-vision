@@ -879,6 +879,7 @@ const AIChatWidget = () => {
           content: data?.content || "I'm sorry, I couldn't process that. Please try again.",
           navButtons: data?.navButtons || [],
         }]);
+        setPendingScroll("assistant");
       }
     } catch (e) {
       console.error("AI chat error:", e);
