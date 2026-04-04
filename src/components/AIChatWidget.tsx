@@ -862,6 +862,43 @@ const AIChatWidget = () => {
 
   const sendToAI = async (conversationMessages: Message[]) => {
     try {
+      // Check if user is providing an app ID + DOB for status lookup
+      const lastMsg = conversationMessages[conversationMessages.length - 1];
+      const prevMsgs = conversationMessages.slice(-4);
+      
+      // Detect if this looks like a DOB response after an app ID was given
+      const dobMatch = lastMsg.content.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{2,4})/);
+      const prevAppIdMsg = prevMsgs.find(m => m.role === "user" && /\b(EE\d{3,}|\d{5})\b/i.test(m.content));
+      
+      if (dobMatch && prevAppIdMsg) {
+        const appIdMatch = prevAppIdMsg.content.match(/\b(EE\d{3,}|\d{5})\b/i);
+        if (appIdMatch) {
+          // Do actual status lookup
+          const { data, error } = await supabase.functions.invoke("ai-chat", {
+            body: { action: "lookup-status", applicationId: appIdMatch[1], dob: lastMsg.content.trim() },
+          });
+          
+          if (!error && data) {
+            if (data.found) {
+              setMessages(prev => [...prev, {
+                role: "assistant",
+                content: `**Application Found**\n\n**Applicant:** ${data.name}\n**Application ID:** ${data.applicationId}\n**IFCS ID:** ${data.ifcsId}\n**Service:** ${data.service}\n**Processing:** ${data.processing}\n**Status:** ${data.status}\n${data.staffNotes ? `**Notes:** ${data.staffNotes}` : ""}\n\nFor detailed information, visit your dashboard.`,
+                navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }],
+              }]);
+            } else {
+              setMessages(prev => [...prev, {
+                role: "assistant",
+                content: data.message || "No application found. Please verify your Application ID and Date of Birth.",
+                navButtons: [{ label: "Contact Us", path: "/contact" }],
+              }]);
+            }
+            setPendingScroll("assistant");
+            setIsLoading(false);
+            return;
+          }
+        }
+      }
+
       const allKB = [...customEntries, ...KNOWLEDGE_BASE];
       const { data, error } = await supabase.functions.invoke("ai-chat", {
         body: {
@@ -878,7 +915,7 @@ const AIChatWidget = () => {
         console.error("AI chat error:", error);
         setMessages(prev => [...prev, {
           role: "assistant",
-          content: "I'm sorry, I'm having trouble connecting right now. Please try again or contact us directly:\n\n📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**",
+          content: "I'm sorry, I'm having trouble connecting right now. Please try again or contact us directly:\n\n(914) 693-2840 | info@ifcsevals.com",
           navButtons: [{ label: "Contact Us", path: "/contact" }],
         }]);
       } else {
@@ -893,7 +930,7 @@ const AIChatWidget = () => {
       console.error("AI chat error:", e);
       setMessages(prev => [...prev, {
         role: "assistant",
-        content: "I'm experiencing technical difficulties. Please contact us directly:\n\n📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**",
+        content: "I'm experiencing technical difficulties. Please contact us directly:\n\n(914) 693-2840 | info@ifcsevals.com",
         navButtons: [{ label: "Contact Us", path: "/contact" }],
       }]);
     } finally {
