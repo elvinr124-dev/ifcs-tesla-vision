@@ -992,8 +992,8 @@ const StaffDashboard = () => {
               </div>
 
               <DialogFooter>
-                <Button variant="outline" onClick={() => setNewAppOpen(false)}>Cancel</Button>
-                <Button onClick={handleInstitutionSend} className="gap-2 bg-foreground text-background hover:bg-foreground/90">
+                <Button variant="outline" onClick={() => setNewAppOpen(false)} className="rounded-full">Cancel</Button>
+                <Button onClick={handleInstitutionSend} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
                   <Send size={16} /> Send Report
                 </Button>
               </DialogFooter>
