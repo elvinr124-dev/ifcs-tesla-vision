@@ -127,7 +127,7 @@ const Translations = () => {
               )}
             </div>
             <span className="text-sm font-medium opacity-90" style={{ color: "white" }}>
-              {translate("4.9 · Trusted by thousands of clients")}
+              {translate("5.0 · Trusted by thousands of clients")}
             </span>
           </div>
         </div>
