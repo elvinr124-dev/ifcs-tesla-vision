@@ -303,8 +303,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["check status", "track", "status of", "my evaluation", "order status"],
-    response: `You can check the status of your evaluation through your **My Dashboard**.\n\nYou'll need:\n• Your **Application ID** (starts with "EE")\n• Your **Date of Birth**`,
+    keywords: ["check status", "track", "status of", "my evaluation", "order status", "where is my evaluation", "application status", "EE0", "EE1", "EE2", "EE3", "EE4", "EE5", "EE6", "EE7", "EE8", "EE9"],
+    response: `I can help you check your application status! Please provide:\n\n• Your **Application ID** (e.g., EE0788)\n• Your **Date of Birth** (for verification)\n\nOnce verified, I'll share your current status and direct you to your dashboard.`,
     navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }],
   },
   {
