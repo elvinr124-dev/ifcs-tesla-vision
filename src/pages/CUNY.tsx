@@ -15,7 +15,7 @@ const CUNY = () => {
       {/* Hero Section */}
       <section className="relative h-[80vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 bg-cover bg-[center_70%]"
           style={{ backgroundImage: `url(${cunyHeroBg})` }}
         />
         <div className="video-overlay" />
@@ -50,31 +50,41 @@ const CUNY = () => {
           {/* Discount Info */}
           <div className="bg-muted/30 rounded-3xl p-8 md:p-12 mb-12">
             <p className="text-lg md:text-xl leading-relaxed" style={{ color: "hsl(var(--foreground))" }}>
-              You can receive a <span className="font-bold text-xl" style={{ color: "hsl(var(--accent))" }}>$20 discount</span> on our course-by-course analysis
-              (the fee for 8-10 working days would be <span className="font-bold">$170</span>) by entering the following code:
+              {translate("As a CUNY prospective student, you can receive a")}{" "}
+              <span className="font-bold text-xl" style={{ color: "hsl(var(--accent))" }}>$20 {translate("discount")}</span>{" "}
+              {translate("on your Course-by-Course or High School & University Course-by-Course evaluation — any processing speed — by entering the following code:")}
             </p>
             <div className="mt-6 inline-block px-8 py-3 rounded-full font-bold text-2xl tracking-widest" style={{ background: "hsl(var(--accent))", color: "white" }}>
               CUNY
             </div>
           </div>
 
-          {/* Start Application */}
+          {/* Start Application - Two Buttons */}
           <div className="mb-12">
-            <p className="text-lg mb-6" style={{ color: "hsl(var(--foreground))" }}>
-              To start your application, click the following link:
+            <p className="text-lg mb-8" style={{ color: "hsl(var(--foreground))" }}>
+              {translate("Choose the evaluation that fits your academic needs and begin your application today.")}
             </p>
-            <Link
-              to="/application?toa=CBC&tf=8d"
-              className="inline-flex items-center justify-center px-14 py-5 text-base font-semibold tracking-wide rounded-full transition-all duration-200 shadow-2xl hover:scale-105"
-              style={{ background: "hsl(var(--accent))", color: "white", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.5)" }}
-            >
-              Start Application
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <Link
+                to="/application?toa=CBC&tf=8d"
+                className="inline-flex items-center justify-center px-10 py-4 text-base font-semibold tracking-wide rounded-full transition-all duration-200 shadow-2xl hover:scale-105"
+                style={{ background: "hsl(var(--accent))", color: "white", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.5)" }}
+              >
+                {translate("Course-by-Course (CBC)")}
+              </Link>
+              <Link
+                to="/application?toa=HSCBC&tf=8d"
+                className="inline-flex items-center justify-center px-10 py-4 text-base font-semibold tracking-wide rounded-full transition-all duration-200 shadow-2xl hover:scale-105 border-2"
+                style={{ background: "white", color: "hsl(var(--accent))", borderColor: "hsl(var(--accent))", boxShadow: "0 8px 32px hsl(217 91% 50% / 0.2)" }}
+              >
+                {translate("HS & University CBC")}
+              </Link>
+            </div>
           </div>
 
           {/* Contact */}
           <p className="text-base" style={{ color: "hsl(var(--muted-foreground))" }}>
-            If you have any questions, please send an email to{" "}
+            {translate("If you have any questions, please send an email to")}{" "}
             <a
               href="mailto:info@ifcsevals.com"
               className="font-semibold underline"

@@ -30,6 +30,7 @@ const VALID_CODES: Record<string, number> = {
   "IFCS10": 10,
   "IFCS20": 20,
   "WELCOME15": 15,
+  "CUNY": 20,
 };
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
