@@ -13,7 +13,7 @@ import {
 import {
   Upload, Send, Users, Clock, AlertCircle, CheckCircle2, Package, FileText, Star,
   Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones, Trash2, UserX,
-  Paperclip, Receipt,
+  Paperclip, Receipt, Edit3,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
