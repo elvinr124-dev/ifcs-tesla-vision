@@ -99,6 +99,7 @@ const App = () => (
                 <Route path="/payment" element={<Payment />} />
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
                 <Route path="/learn-more-evaluations" element={<LearnMoreEvaluations />} />
+                <Route path="/cuny" element={<CUNY />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               <AIChatWidget />
