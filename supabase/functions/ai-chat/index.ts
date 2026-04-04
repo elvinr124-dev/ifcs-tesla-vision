@@ -58,16 +58,17 @@ serve(async (req) => {
         }
       }
 
+      const matchedApp = app || apps.find((a: any) => a.dob === dob)!;
       return new Response(JSON.stringify({
         found: true,
-        status: app.status || "Requested",
-        service: app.service_title || "N/A",
-        processing: app.processing_label || "Standard",
-        name: `${app.first_name} ${app.last_name}`,
-        applicationId: app.application_id,
-        ifcsId: app.ifcs_id || "Not yet assigned",
-        staffNotes: app.staff_notes || "",
-        createdAt: app.created_at,
+        status: matchedApp.status || "Requested",
+        service: matchedApp.service_title || "N/A",
+        processing: matchedApp.processing_label || "Standard",
+        name: `${matchedApp.first_name} ${matchedApp.last_name}`,
+        applicationId: matchedApp.application_id,
+        ifcsId: matchedApp.ifcs_id || "Not yet assigned",
+        staffNotes: matchedApp.staff_notes || "",
+        createdAt: matchedApp.created_at,
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
