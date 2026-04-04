@@ -78,9 +78,9 @@ const AddonRenewal = () => {
           </div>
 
           <form onSubmit={handlePay} className="space-y-8">
-            <Card className="border-border bg-card">
-              <CardHeader><CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Your Information & Payment")}</CardTitle></CardHeader>
-              <CardContent className="grid sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
+              <h3 className="flex items-center gap-2 text-lg font-semibold"><CreditCard size={20} className="text-accent" /> {translateDual("Your Information & Payment")}</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Name on Documents")} *</label><Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("IFCS ID")} *</label><Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Email")} *</label><Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} /></div>
@@ -90,8 +90,8 @@ const AddonRenewal = () => {
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Month")} *</label><Input required value={payment.month} onChange={(e) => setPayment({ ...payment, month: e.target.value })} placeholder="MM" /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Year")} *</label><Input required value={payment.year} onChange={(e) => setPayment({ ...payment, year: e.target.value })} placeholder="YYYY" /></div>
                 <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("CVV")} *</label><Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" /></div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             <Card className="border-border bg-card">
               <CardContent className="pt-6 space-y-4">
