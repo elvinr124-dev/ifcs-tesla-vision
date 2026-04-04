@@ -373,7 +373,7 @@ const TranslationQuote = () => {
             <div className="space-y-6">
 
               {/* Document Summary */}
-              <div className="rounded-3xl border border-accent/30 bg-card shadow-lg p-8 space-y-5 sticky top-24">
+              <div className="rounded-3xl border border-accent/30 bg-white shadow-lg p-8 space-y-5 sticky top-24">
                 <SectionHeading>{translateDual("Document Summary")}</SectionHeading>
 
                 {fileAnalyses.length === 0 ? (
