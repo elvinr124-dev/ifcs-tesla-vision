@@ -375,7 +375,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["about", "who is ifcs", "about ifcs", "history"],
-    response: `**IFCS** — the Institute of Foreign Credential Services — is based in Dobbs Ferry, NY and is led by **Director Agron Matoshi**.\n\n**What makes IFCS unique:**\n• **Expert evaluators** — recognized industry leaders\n• Regular contributors to **NAFSA**, **AACRAO**, and **IAU**\n• **Personal attention** applied to every account\n• Trusted by universities, government agencies, employers, and licensure boards`,
+    response: `**IFCS** — the Institute of Foreign Credential Services — is based in Dobbs Ferry, NY.\n\n**What makes IFCS unique:**\n• **Expert evaluators** — recognized industry leaders\n• Regular contributors to leading international education organizations\n• **Personal attention** applied to every account\n• Trusted by universities, government agencies, employers, and licensure boards`,
     navButtons: [{ label: "About Us", path: "/about" }],
   },
   {
