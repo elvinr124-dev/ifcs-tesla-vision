@@ -960,14 +960,12 @@ const AIChatWidget = () => {
           ) : (
             <>
               {/* Header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-accent text-white">
+              <div className="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-gradient-to-r from-[hsl(220,70%,25%)] to-[hsl(220,70%,35%)] text-white">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
-                    <MessageCircle size={16} />
-                  </div>
+                  <img src={ifcsLogo} alt="IFCS" className="w-9 h-9 rounded-full object-cover border-2 border-white/30" />
                   <div>
-                    <p className="text-sm font-semibold">IFCS AI Assistant</p>
-                    <p className="text-[10px] opacity-80">Multilingual • Ask in any language</p>
+                    <p className="text-sm font-bold tracking-wide">IFCS AI</p>
+                    <p className="text-[10px] opacity-70">Ask in any language</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-1">
