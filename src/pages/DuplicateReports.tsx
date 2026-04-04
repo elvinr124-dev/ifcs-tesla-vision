@@ -137,10 +137,8 @@ const DuplicateReports = () => {
 
           <form onSubmit={handlePay} className="space-y-8">
             {/* Delivery Options */}
-            <div>
-              <CardHeader>
+            <div className="space-y-4">
               <h3 className="flex items-center gap-2 text-lg font-semibold"><FileText size={20} className="text-accent" /> {translateDual("Report Delivery Options")} *</h3>
-              <div className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <button type="button" onClick={() => { setDelivery("electronic"); setShippingMethod(""); }}
                     className={`rounded-xl border-2 p-6 text-left transition-all ${delivery === "electronic" ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}>
@@ -156,32 +154,22 @@ const DuplicateReports = () => {
                   </button>
                 </div>
 
-                {/* Electronic — email field */}
                 {delivery === "electronic" && (
                   <div className="rounded-xl border border-border bg-muted/30 p-5 space-y-3 animate-fade-in">
                     <div className="flex items-center gap-2 text-foreground font-medium">
                       <Mail size={18} className="text-accent" />
                       {translateDual("Send my Electronic Report to the following email address:")}
                     </div>
-                    <Input
-                      type="email"
-                      required
-                      placeholder="recipient@example.com"
-                      value={electronicEmail}
-                      onChange={(e) => setElectronicEmail(e.target.value)}
-                    />
+                    <Input type="email" required placeholder="recipient@example.com" value={electronicEmail} onChange={(e) => setElectronicEmail(e.target.value)} />
                   </div>
                 )}
 
-                {/* Hard copy — quantity + shipping */}
                 {delivery === "hardcopy" && (
                   <div className="space-y-4 animate-fade-in">
                     <div className="flex items-center gap-3">
                       <label className="text-sm font-medium text-foreground">{translateDual("Quantity")}:</label>
                       <Input type="number" min={1} max={10} value={hardCopyQty} onChange={(e) => setHardCopyQty(Number(e.target.value))} className="w-20" />
                     </div>
-
-                    {/* Shipping method */}
                     <div className="rounded-xl border border-border bg-muted/30 p-5 space-y-3">
                       <div className="flex items-center gap-2 text-foreground font-medium">
                         <Truck size={18} className="text-accent" />
@@ -189,12 +177,8 @@ const DuplicateReports = () => {
                       </div>
                       <div className="grid gap-2">
                         {SHIPPING_OPTIONS.map((opt) => (
-                          <button
-                            key={opt.label}
-                            type="button"
-                            onClick={() => setShippingMethod(opt.label)}
-                            className={`rounded-lg border-2 p-4 text-left transition-all flex items-center justify-between ${shippingMethod === opt.label ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}
-                          >
+                          <button key={opt.label} type="button" onClick={() => setShippingMethod(opt.label)}
+                            className={`rounded-lg border-2 p-4 text-left transition-all flex items-center justify-between ${shippingMethod === opt.label ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}>
                             <span className="text-sm text-foreground">{opt.label}</span>
                             <span className="font-bold text-accent">${opt.price}</span>
                           </button>
@@ -203,120 +187,65 @@ const DuplicateReports = () => {
                     </div>
                   </div>
                 )}
-              </CardContent>
-            </Card>
+            </div>
 
-            {/* Address — only for hard copy */}
             {delivery === "hardcopy" && (
-              <Card className="border-border bg-card animate-fade-in">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2"><MapPin size={20} className="text-accent" /> {translateDual("Delivery Address")}</CardTitle>
-                </CardHeader>
-                <CardContent className="grid sm:grid-cols-2 gap-4">
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="text-sm font-medium text-foreground">{translateDual("Address Line One")} *</label>
-                    <Input required value={address.line1} onChange={(e) => setAddress({ ...address, line1: e.target.value })} />
-                  </div>
-                  <div className="sm:col-span-2 space-y-1">
-                    <label className="text-sm font-medium text-foreground">{translateDual("Address Line Two")}</label>
-                    <Input value={address.line2} onChange={(e) => setAddress({ ...address, line2: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">{translateDual("City")} *</label>
-                    <Input required value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">{translateDual("State")} *</label>
-                    <Input required value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">{translateDual("Zip")} *</label>
-                    <Input required value={address.zip} onChange={(e) => setAddress({ ...address, zip: e.target.value })} />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-sm font-medium text-foreground">{translateDual("Country")} *</label>
+              <div className="space-y-4 animate-fade-in">
+                <h3 className="flex items-center gap-2 text-lg font-semibold"><MapPin size={20} className="text-accent" /> {translateDual("Delivery Address")}</h3>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Address Line One")} *</label><Input required value={address.line1} onChange={(e) => setAddress({ ...address, line1: e.target.value })} /></div>
+                  <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Address Line Two")}</label><Input value={address.line2} onChange={(e) => setAddress({ ...address, line2: e.target.value })} /></div>
+                  <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("City")} *</label><Input required value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value })} /></div>
+                  <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("State")} *</label><Input required value={address.state} onChange={(e) => setAddress({ ...address, state: e.target.value })} /></div>
+                  <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Zip")} *</label><Input required value={address.zip} onChange={(e) => setAddress({ ...address, zip: e.target.value })} /></div>
+                  <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Country")} *</label>
                     <Select value={address.country} onValueChange={(v) => setAddress({ ...address, country: v })}>
                       <SelectTrigger><SelectValue placeholder="Please Select..." /></SelectTrigger>
                       <SelectContent>{COUNTRIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
                     </Select>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )}
 
-            {/* Payment */}
-            <Card className="border-border bg-card">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2"><CreditCard size={20} className="text-accent" /> {translateDual("Payment")}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid sm:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">{translateDual("Name on Documents")} *</label>
-                  <Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} />
+            <div className="space-y-4">
+              <h3 className="flex items-center gap-2 text-lg font-semibold"><CreditCard size={20} className="text-accent" /> {translateDual("Payment")}</h3>
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Name on Documents")} *</label><Input required value={payment.name} onChange={(e) => setPayment({ ...payment, name: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("IFCS ID")} *</label><Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Email Address")} *</label><Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Phone Number")} *</label><Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} /></div>
+                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Name of the Credit Card Holder")} *</label><Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} /></div>
+                <div className="sm:col-span-2 space-y-1"><label className="text-sm font-medium text-foreground">{translateDual("Card Number")} *</label><Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" /></div>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Month *</label>
+                  <Select value={payment.month} onValueChange={(v) => setPayment({ ...payment, month: v })}><SelectTrigger><SelectValue placeholder="MM" /></SelectTrigger><SelectContent>{Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")).map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent></Select>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">{translateDual("IFCS ID")} *</label>
-                  <Input required value={payment.ifcsId} onChange={(e) => setPayment({ ...payment, ifcsId: e.target.value })} placeholder="IFCS-XXXXX" />
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">Year *</label>
+                  <Select value={payment.year} onValueChange={(v) => setPayment({ ...payment, year: v })}><SelectTrigger><SelectValue placeholder="YYYY" /></SelectTrigger><SelectContent>{Array.from({ length: 16 }, (_, i) => String(2026 + i)).map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent></Select>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">{translateDual("Email Address")} *</label>
-                  <Input type="email" required value={payment.email} onChange={(e) => setPayment({ ...payment, email: e.target.value })} />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">{translateDual("Phone Number")} *</label>
-                  <Input type="tel" required value={payment.phone} onChange={(e) => setPayment({ ...payment, phone: e.target.value })} />
-                </div>
-                <div className="sm:col-span-2 space-y-1">
-                  <label className="text-sm font-medium text-foreground">{translateDual("Name of the Credit Card Holder")} *</label>
-                  <Input required value={payment.cardHolder} onChange={(e) => setPayment({ ...payment, cardHolder: e.target.value })} />
-                </div>
-                <div className="sm:col-span-2 space-y-1">
-                  <label className="text-sm font-medium text-foreground">{translateDual("Card Number")} *</label>
-                  <Input required value={payment.cardNumber} onChange={(e) => setPayment({ ...payment, cardNumber: e.target.value })} placeholder="•••• •••• •••• ••••" />
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Month *</label>
-                  <Select value={payment.month} onValueChange={(v) => setPayment({ ...payment, month: v })}>
-                    <SelectTrigger><SelectValue placeholder="MM" /></SelectTrigger>
-                    <SelectContent>{Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0")).map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">Year *</label>
-                  <Select value={payment.year} onValueChange={(v) => setPayment({ ...payment, year: v })}>
-                    <SelectTrigger><SelectValue placeholder="YYYY" /></SelectTrigger>
-                    <SelectContent>{Array.from({ length: 16 }, (_, i) => String(2026 + i)).map((y) => <SelectItem key={y} value={y}>{y}</SelectItem>)}</SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1">
-                  <label className="text-sm font-medium text-foreground">CVV *</label>
-                  <Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" />
-                </div>
-              </CardContent>
-            </Card>
+                <div className="space-y-1"><label className="text-sm font-medium text-foreground">CVV *</label><Input required value={payment.cvv} onChange={(e) => setPayment({ ...payment, cvv: e.target.value })} placeholder="•••" className="w-28" /></div>
+              </div>
+            </div>
 
-            {/* Agreements with e-signature */}
-            <Card className="border-border bg-card">
-              <CardContent className="pt-6 space-y-4">
-                <p className="text-sm font-medium text-foreground mb-2">Please read and agree to the terms and conditions & privacy policy:</p>
-                <div className="flex items-start gap-3">
-                  <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
-                  <label htmlFor="terms" className="text-sm text-muted-foreground">
-                    I agree to the <Link to="/terms" className="text-accent underline">Terms and Conditions</Link>
-                    {agreeTerms && termsSignature && <span className="ml-2 text-xs text-accent">✓ Signed: {termsSignature}</span>}
-                  </label>
-                </div>
-                <div className="flex items-start gap-3">
-                  <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={handlePrivacyCheck} />
-                  <label htmlFor="privacy" className="text-sm text-muted-foreground">
-                    I agree to the <Link to="/privacy" className="text-accent underline">Privacy Policy</Link>
-                    {agreePrivacy && privacySignature && <span className="ml-2 text-xs text-accent">✓ Signed: {privacySignature}</span>}
-                  </label>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="space-y-4">
+              <p className="text-sm font-medium text-foreground mb-2">Please read and agree to the terms and conditions & privacy policy:</p>
+              <div className="flex items-start gap-3">
+                <Checkbox id="terms" checked={agreeTerms} onCheckedChange={handleTermsCheck} />
+                <label htmlFor="terms" className="text-sm text-muted-foreground">
+                  I agree to the <Link to="/terms" className="text-accent underline">Terms and Conditions</Link>
+                  {agreeTerms && termsSignature && <span className="ml-2 text-xs text-accent">✓ Signed: {termsSignature}</span>}
+                </label>
+              </div>
+              <div className="flex items-start gap-3">
+                <Checkbox id="privacy" checked={agreePrivacy} onCheckedChange={handlePrivacyCheck} />
+                <label htmlFor="privacy" className="text-sm text-muted-foreground">
+                  I agree to the <Link to="/privacy" className="text-accent underline">Privacy Policy</Link>
+                  {agreePrivacy && privacySignature && <span className="ml-2 text-xs text-accent">✓ Signed: {privacySignature}</span>}
+                </label>
+              </div>
+            </div>
 
-            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-2xl">
+            <Button type="submit" size="lg" className="w-full py-6 text-lg rounded-full">
               Pay ${total.toFixed(2)}
             </Button>
           </form>
