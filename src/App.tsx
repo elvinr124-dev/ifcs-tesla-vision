@@ -47,6 +47,7 @@ import Account from "./pages/Account";
 import Payment from "./pages/Payment";
 import OrderConfirmation from "./pages/OrderConfirmation";
 import LearnMoreEvaluations from "./pages/LearnMoreEvaluations";
+import CUNY from "./pages/CUNY";
 
 const queryClient = new QueryClient();
 
