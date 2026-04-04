@@ -408,8 +408,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["original document", "do i need original", "send original"],
-    response: `**No, you do not need to send originals to start!** Legible uploaded copies of your transcripts and diplomas are sufficient to begin your application.`,
+    keywords: ["original document", "do i need original", "send original", "mail documents", "send documents", "official documents"],
+    response: `**No, you do not need to send originals to start!** Legible uploaded copies of your transcripts and diplomas are sufficient to begin your application.\n\n**Sending Official Documents:**\nOnce your application is submitted, you will receive an **IFCS ID** (a 5-digit reference number). At that point, you may contact your issuing institution and request that official documents be sent directly to IFCS. You will be provided with the appropriate mailing address and instructions.\n\n**Note:** In some cases, IFCS may require the original documents to be mailed directly to our office for verification purposes.`,
     navButtons: [{ label: "Start Application", path: "/application" }],
   },
   {
