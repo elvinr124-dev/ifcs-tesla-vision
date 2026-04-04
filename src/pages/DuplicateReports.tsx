@@ -139,9 +139,8 @@ const DuplicateReports = () => {
             {/* Delivery Options */}
             <div>
               <CardHeader>
-                <CardTitle className="flex items-center gap-2"><FileText size={20} className="text-accent" /> {translateDual("Report Delivery Options")} *</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+              <h3 className="flex items-center gap-2 text-lg font-semibold"><FileText size={20} className="text-accent" /> {translateDual("Report Delivery Options")} *</h3>
+              <div className="space-y-4">
                 <div className="grid sm:grid-cols-2 gap-4">
                   <button type="button" onClick={() => { setDelivery("electronic"); setShippingMethod(""); }}
                     className={`rounded-xl border-2 p-6 text-left transition-all ${delivery === "electronic" ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"}`}>

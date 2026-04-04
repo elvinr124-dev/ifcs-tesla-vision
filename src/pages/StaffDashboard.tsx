@@ -1251,7 +1251,21 @@ const StaffDashboard = () => {
         </DialogContent>
       </Dialog>
 
-      <BackToHome />
+      {/* Save Confirmation Dialog */}
+      <Dialog open={saveConfirmOpen} onOpenChange={setSaveConfirmOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm Changes</DialogTitle>
+            <DialogDescription>Are you sure you want to save these changes? The client will be notified.</DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="gap-2 sm:gap-2">
+            <Button variant="outline" onClick={() => setSaveConfirmOpen(false)} className="rounded-full">Cancel</Button>
+            <Button onClick={confirmSaveEdit} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90">Save Changes</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
       <Footer />
     </div>
   );
