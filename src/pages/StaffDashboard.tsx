@@ -447,6 +447,67 @@ const StaffDashboard = () => {
     resetNewAppForm();
   };
 
+  const openEditApp = async (order: DBOrder) => {
+    // Load full application data
+    const { data: app } = await (supabase as any).from("applications").select("*").eq("application_id", order.application_id).maybeSingle();
+    if (!app) {
+      toast({ title: "Not Found", description: "Application not found in database.", variant: "destructive" });
+      return;
+    }
+    setEditAppData(app);
+    setEditFields({
+      first_name: app.first_name || "", last_name: app.last_name || "", middle_name: app.middle_name || "",
+      dob: app.dob || "", ifcs_id: app.ifcs_id || "", status: app.status || "requested",
+      service_title: app.service_title || "", processing_label: app.processing_label || "",
+      evaluator: app.evaluator || "", staff_notes: app.staff_notes || "",
+      verification_source: app.verification_source || "", country: app.country || "",
+      institution_name: app.institution_name || "", cell_phone: app.cell_phone || "",
+      home_phone: app.home_phone || "", gender: app.gender || "",
+    });
+    setEditAppOpen(true);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editAppData) return;
+    const confirmed = window.confirm("Are you sure you want to save these changes? The client will be notified.");
+    if (!confirmed) return;
+
+    await (supabase as any).from("applications").update({
+      first_name: editFields.first_name, last_name: editFields.last_name, middle_name: editFields.middle_name,
+      dob: editFields.dob, ifcs_id: editFields.ifcs_id, status: editFields.status,
+      service_title: editFields.service_title, processing_label: editFields.processing_label,
+      evaluator: editFields.evaluator, staff_notes: editFields.staff_notes,
+      verification_source: editFields.verification_source, country: editFields.country,
+      institution_name: editFields.institution_name, cell_phone: editFields.cell_phone,
+      home_phone: editFields.home_phone, gender: editFields.gender,
+    }).eq("application_id", editAppData.application_id);
+
+    // Update client_orders too
+    await (supabase as any).from("client_orders").update({
+      ifcs_id: editFields.ifcs_id, status: editFields.status, staff_note: editFields.staff_notes,
+      service: `${editFields.service_title} — ${editFields.processing_label}`,
+    }).eq("application_id", editAppData.application_id);
+
+    // Send notification email to client
+    try {
+      await supabase.functions.invoke("send-application-email", {
+        body: {
+          type: "application_updated",
+          recipientEmail: editAppData.client_email,
+          applicantName: `${editFields.first_name} ${editFields.last_name}`,
+          noteContent: "Your application has been updated. Please log in to your dashboard to view the latest details.",
+        },
+      });
+    } catch {}
+
+    toast({ title: "Application Updated", description: "Changes saved and client notified." });
+    setEditAppOpen(false);
+
+    // Refresh orders
+    const { data: refreshed } = await (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false });
+    if (refreshed) setOrders(refreshed);
+  };
+
   const resetNewAppForm = () => {
     setNewAppOpen(false);
     setNewAppSendTo("applicant");
