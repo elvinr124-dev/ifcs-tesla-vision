@@ -378,7 +378,18 @@ Liability: The applicant releases IFCS from any liability for damages resulting 
               <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-3">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Privacy Policy — Agreed</p>
                 <div className="text-xs text-muted-foreground leading-relaxed max-h-40 overflow-y-auto pr-2">
-                  <p>The applicant acknowledges and consents to the Privacy Policy of IFCS. Personal information collected — including name, date of birth, contact details, and academic records — is used solely for credential evaluation purposes. IFCS may share applicant information with designated institutions and employers as requested. Data is securely stored and will not be sold or distributed to third parties beyond the scope of the evaluation. The applicant has the right to request access to, correction of, or deletion of their personal data at any time by contacting IFCS.</p>
+                  <p className="whitespace-pre-wrap">Online Privacy Policy
+Through the use of ifcsevals.com, the applicant consents to the following:
+
+Information Collection: The applicant agrees to provide personal information (name, address, billing, academic records) voluntarily for the purpose of delivering requested services.
+
+Data Usage: The applicant understands that IFCS uses this data to operate its website and deliver services. IFCS does not sell, rent, or lease customer lists to third parties.
+
+Security: The applicant acknowledges that IFCS takes precautions to maintain physical and technical security to prevent unauthorized access or disclosure of personal information.
+
+Opt-Out Rights: The applicant reserves the right to discontinue receiving communications by emailing info@ifcsevals.com.
+
+Acceptance: The applicant’s continued use of the website following any updates to these terms constitutes acceptance of those changes.</p>
                 </div>
                 <div className="border-t border-border pt-3">
                   <p className="text-xs text-muted-foreground font-semibold mb-1">Digital Signature</p>
