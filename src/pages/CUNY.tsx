@@ -30,15 +30,12 @@ const CUNY = () => {
 
       <section className="relative h-[80vh] min-h-[600px] w-full flex flex-col items-center justify-center overflow-hidden">
         <div
-          className="absolute inset-0 bg-cover bg-bottom scale-105"
-          style={{ backgroundImage: `url(${cunyHeroBg})` }}
-        />
-        <div
-          className="absolute inset-0 bg-no-repeat"
+          className="absolute inset-0"
           style={{
             backgroundImage: `url(${cunyHeroBg})`,
-            backgroundPosition: "center bottom",
-            backgroundSize: "auto 100%",
+            backgroundPosition: "center center",
+            backgroundSize: "cover",
+            backgroundRepeat: "no-repeat",
           }}
         />
         <div className="video-overlay" />

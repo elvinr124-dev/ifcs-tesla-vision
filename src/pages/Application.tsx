@@ -258,7 +258,7 @@ const Application = () => {
       if (!dobMonth) return "Date of birth month is required.";
       if (!dobDay) return "Date of birth day is required.";
       if (!dobYear) return "Date of birth year is required.";
-      if (!gender) return "Please select a gender.";
+      // gender is optional
       if (!email.trim()) return "E-mail address is required.";
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return "Please enter a valid e-mail address.";
       if (!cellPhone.trim()) return "Cell phone is required.";
