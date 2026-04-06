@@ -389,8 +389,9 @@ Remember: DEFAULT is English. Only switch when user writes in another language. 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: aiMessages,
+        max_tokens: 500,
       }),
     });
 
