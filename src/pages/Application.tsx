@@ -4,7 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
 import DocumentScanner from "@/components/DocumentScanner";
-import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard, X, AlertTriangle } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle2, User, BookOpen, Target, Package, CreditCard, Upload, X, AlertTriangle } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
