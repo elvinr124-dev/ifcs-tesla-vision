@@ -45,9 +45,13 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
     }
   }, [propConvId]);
 
-  // Scroll to bottom
+  // Scroll to bottom — use container scrollTop to avoid page-level scroll on staff side
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages]);
 
   // Load messages when conversation exists
