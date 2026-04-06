@@ -462,8 +462,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["naces", "member", "accredit", "legitimate", "recognized", "credible", "trusted", "accepted everywhere"],
-    response: `**IFCS is a proud member of NACES** — the gold standard for credential evaluation in the United States.\n\n**What this means:**\n✅ Evaluations accepted by **USCIS**, the **U.S. Military**, and **thousands of universities**\n✅ Adheres to the highest ethical and professional standards\n✅ Uses industry-standard research databases used by top university registrars\n\n**Also recognized by:** NAFSA, IAU, UNESCO`,
+    keywords: ["naces", "member", "accredit", "legitimate", "recognized", "credible", "trusted", "accepted", "accepted everywhere"],
+    response: `**IFCS is a proud member of NACES** — the gold standard for credential evaluation in the United States.\n\n**Accepted by:**\n✅ Universities and colleges nationwide\n✅ Federal and state government agencies\n✅ USCIS (immigration)\n✅ U.S. Military branches & professional boards\n✅ Employers across all industries\n✅ Professional licensure boards\n\n**Also recognized by:** NAFSA, IAU, UNESCO`,
     navButtons: [
       { label: "About Us", path: "/about" },
       { label: "Learn More", path: "/learn-more-evaluations" },
