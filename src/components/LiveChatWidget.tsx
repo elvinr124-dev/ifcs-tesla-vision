@@ -269,6 +269,7 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
           onFileSelect={handleFileSelect}
           setAttachments={setAttachments}
           messagesEndRef={messagesEndRef}
+          messagesContainerRef={messagesContainerRef}
           isStaff={isStaff}
           waitingForAgent={false}
         />
