@@ -137,6 +137,14 @@ const StaffCartView = () => {
   };
 
   const handleFromChange = (newFrom: string) => {
+    // Update signature in content if already attached
+    if (signatureAttached) {
+      setEmailContent((prev) => {
+        const sigIndex = prev.lastIndexOf("\n\n—\nInstitute of Foreign Credential Services");
+        const base = sigIndex !== -1 ? prev.substring(0, sigIndex) : prev;
+        return base + getSignatureText(newFrom);
+      });
+    }
     setEmailFrom(newFrom);
   };
 
