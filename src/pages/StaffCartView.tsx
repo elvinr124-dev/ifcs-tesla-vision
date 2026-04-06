@@ -350,7 +350,19 @@ const StaffCartView = () => {
               <div className="rounded-2xl border border-border bg-muted/30 p-5 space-y-3">
                 <p className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Terms & Conditions — Agreed</p>
                 <div className="text-xs text-muted-foreground leading-relaxed max-h-40 overflow-y-auto pr-2">
-                  <p>By submitting this application, the applicant agrees to be bound by the Terms of Service of the Institute of Foreign Credential Services (IFCS). The applicant acknowledges that IFCS evaluations are advisory in nature, that processing times are estimates, and that all fees are non-refundable once evaluation has begun. IFCS is not responsible for delays caused by incomplete or inaccurate documentation provided by the applicant. The applicant grants IFCS permission to contact issuing institutions for document verification purposes.</p>
+                  <p className="whitespace-pre-wrap">By submitting this application, the applicant agrees to the following:
+
+Accuracy of Information: The applicant certifies that all information provided is true and correct.
+
+Forgery & Alterations: The applicant acknowledges that no evaluation will be prepared and no refunds issued if documents are found to be altered or forged. IFCS will notify all relevant institutions of such findings.
+
+Payments & Fees: The applicant agrees to pay in U.S. dollars. A $40 fee applies to returned checks. The applicant understands that fees are subject to change without notice.
+
+Refund Policy: The applicant understands that refunds are only issued for overpayment. 8-10 day service cancellations must occur within 24 hours and incur a $50 fee. No refunds are available for 24-hour or 3-day services.
+
+Verification Rights: The applicant grants IFCS the right to request additional documentation and contact issuing institutions to authenticate educational credentials.
+
+Liability: The applicant releases IFCS from any liability for damages resulting from the use of an evaluation or translation by the applicant or a third party.</p>
                 </div>
                 <div className="border-t border-border pt-3">
                   <p className="text-xs text-muted-foreground font-semibold mb-1">Digital Signature</p>
