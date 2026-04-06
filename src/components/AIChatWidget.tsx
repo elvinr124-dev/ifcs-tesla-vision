@@ -370,11 +370,19 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["uscis", "accepted", "immigration", "recognized", "green card", "h1b", "h-1b", "work visa", "immigrant"],
-    response: `Yes! As a **NACES member**, IFCS evaluations are recognized at the highest level:\n\n✅ **USCIS** (U.S. Citizenship and Immigration Services)\n✅ **U.S. Military** branches\n✅ Universities and colleges nationwide\n✅ Federal and state government agencies\n✅ Employers across all industries\n✅ Professional licensure boards\n\nFor **immigration and employment purposes**, we recommend the **General Analysis ($100)** which provides the U.S. equivalency statement accepted by USCIS.\n\nNACES membership ensures our evaluations meet the gold standard of credential evaluation in the United States.`,
+    keywords: ["uscis", "immigration", "green card", "h1b", "h-1b", "work visa", "immigrant"],
+    response: `Yes! As a **NACES member**, IFCS evaluations are widely recognized:\n\n✅ **USCIS** (U.S. Citizenship and Immigration Services)\n✅ Universities and colleges nationwide\n✅ Federal and state government agencies\n✅ Employers across all industries\n✅ Professional licensure boards\n\nFor **immigration purposes**, we recommend the **General Analysis ($100)** which provides the U.S. equivalency statement accepted by USCIS.`,
     navButtons: [
       { label: "Start Application", path: "/application", state: { serviceTitle: "General Analysis", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 100 } },
       { label: "Learn More", path: "/learn-more-evaluations" },
+    ],
+  },
+  {
+    keywords: ["military", "u.s. military", "armed forces", "army", "navy", "air force", "marines", "coast guard", "veteran", "gi bill", "military professional boards", "military evaluation"],
+    response: `Yes! IFCS evaluations are accepted by all **U.S. Military branches** and military professional boards:\n\n✅ **U.S. Army, Navy, Air Force, Marines, Coast Guard**\n✅ **Military professional licensing boards**\n✅ **GI Bill** education benefit programs\n\nFor **military purposes**, we recommend the **General Analysis ($100)** which provides the U.S. equivalency statement.\n\n📞 **(914) 693-2840** | 📧 **info@ifcsevals.com**`,
+    navButtons: [
+      { label: "Start Application", path: "/application", state: { serviceTitle: "General Analysis", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 100 } },
+      { label: "View Evaluations", path: "/evaluations" },
     ],
   },
   {
