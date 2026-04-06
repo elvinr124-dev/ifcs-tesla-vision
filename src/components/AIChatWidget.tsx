@@ -1134,6 +1134,18 @@ const AIChatWidget = () => {
     return "";
   };
 
+  // Application step detection for contextual tooltip
+  const [appStep, setAppStep] = useState(0);
+  useEffect(() => {
+    if (location.pathname !== "/application") { setAppStep(0); return; }
+    const observer = new MutationObserver(() => {
+      const stepEl = document.querySelector('[data-current-step]');
+      if (stepEl) setAppStep(Number(stepEl.getAttribute('data-current-step')) || 0);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [location.pathname]);
+
   const currentTooltipKey = location.pathname === "/application" ? `/application-step-${appStep || 1}` : location.pathname;
 
   // Show tooltip after a short delay, resets per route/step
