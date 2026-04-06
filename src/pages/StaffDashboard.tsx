@@ -687,9 +687,6 @@ const StaffDashboard = () => {
                   <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold">{orders.length}</span>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => setNewAppOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-white text-sm font-semibold hover:bg-accent/90 transition-all shadow-sm">
-                    <Plus size={16} /> New Application Entry
-                  </button>
                   <Select value={filter} onValueChange={setFilter}>
                     <SelectTrigger className="w-48 rounded-2xl"><SelectValue placeholder="Filter by status" /></SelectTrigger>
                     <SelectContent>
