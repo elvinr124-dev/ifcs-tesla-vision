@@ -515,9 +515,14 @@ const Application = () => {
     }
   };
 
+  // Staff can skip steps via ?staff=true query param
+  const isStaffMode = new URLSearchParams(location.search).get("staff") === "true";
+
   const next = () => {
-    const err = validateStep(step);
-    if (err) { setStepError(err); return; }
+    if (!isStaffMode) {
+      const err = validateStep(step);
+      if (err) { setStepError(err); return; }
+    }
     setStepError("");
     setStep((s) => Math.min(s + 1, 5));
   };

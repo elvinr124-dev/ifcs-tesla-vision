@@ -45,9 +45,13 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
     }
   }, [propConvId]);
 
-  // Scroll to bottom
+  // Scroll to bottom — use container scrollTop to avoid page-level scroll on staff side
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = messagesContainerRef.current;
+    if (container) {
+      container.scrollTop = container.scrollHeight;
+    }
   }, [messages]);
 
   // Load messages when conversation exists
@@ -265,6 +269,7 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
           onFileSelect={handleFileSelect}
           setAttachments={setAttachments}
           messagesEndRef={messagesEndRef}
+          messagesContainerRef={messagesContainerRef}
           isStaff={isStaff}
           waitingForAgent={false}
         />
@@ -334,6 +339,7 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
             onFileSelect={handleFileSelect}
             setAttachments={setAttachments}
             messagesEndRef={messagesEndRef}
+            messagesContainerRef={messagesContainerRef}
             isStaff={false}
             waitingForAgent={waitingForAgent}
           />
@@ -355,6 +361,7 @@ interface ChatBodyProps {
   onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
   messagesEndRef: React.RefObject<HTMLDivElement>;
+  messagesContainerRef: React.RefObject<HTMLDivElement>;
   isStaff: boolean;
   waitingForAgent: boolean;
 }
@@ -362,14 +369,14 @@ interface ChatBodyProps {
 const ChatBody = ({
   messages, input, setInput, onSend, onKeyDown,
   attachments, fileInputRef, onFileSelect, setAttachments,
-  messagesEndRef, isStaff, waitingForAgent,
+  messagesEndRef, messagesContainerRef, isStaff, waitingForAgent,
 }: ChatBodyProps) => {
   const myType = isStaff ? "staff" : "client";
 
   return (
     <>
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
         {waitingForAgent && messages.length === 0 && (
           <div className="text-center py-8">
             <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
