@@ -1119,16 +1119,13 @@ const AIChatWidget = () => {
   const lastUserMsgIndex = messages.reduce((acc, msg, i) => msg.role === "user" ? i : acc, -1);
 
   const location = useLocation();
-  const [tooltipDismissed, setTooltipDismissed] = useState(false);
+  const [dismissedRoutes, setDismissedRoutes] = useState<Set<string>>(new Set());
   const [tooltipVisible, setTooltipVisible] = useState(false);
 
   // Contextual tooltip message based on current route
   const getTooltipMessage = () => {
     const path = location.pathname;
-    if (path === "/application") {
-      // Try to detect step from URL or just show generic
-      return "Need help with your application? Click here and ask!";
-    }
+    if (path === "/application") return "Need help with your application? Click here and ask!";
     if (path === "/evaluations") return "Have questions about evaluations? Ask IFCS AI!";
     if (path === "/translations" || path === "/translations/order") return "Need help with translations? Ask IFCS AI!";
     if (path === "/pricing") return "Questions about pricing? Ask IFCS AI!";
@@ -1137,17 +1134,20 @@ const AIChatWidget = () => {
     return "";
   };
 
-  // Show tooltip after a short delay, only on certain pages
+  const currentTooltipKey = location.pathname === "/application" ? `/application-step-${appStep || 1}` : location.pathname;
+
+  // Show tooltip after a short delay, resets per route/step
   useEffect(() => {
     const msg = getTooltipMessage();
-    if (!msg || isOpen || tooltipDismissed) {
+    if (!msg || isOpen || dismissedRoutes.has(currentTooltipKey)) {
       setTooltipVisible(false);
       return;
     }
+    setTooltipVisible(false); // reset before delay
     const timer = setTimeout(() => setTooltipVisible(true), 1500);
-    const hideTimer = setTimeout(() => setTooltipVisible(false), 90000); // 90 seconds
+    const hideTimer = setTimeout(() => setTooltipVisible(false), 90000);
     return () => { clearTimeout(timer); clearTimeout(hideTimer); };
-  }, [location.pathname, isOpen, tooltipDismissed]);
+  }, [currentTooltipKey, isOpen]);
 
   // Application step detection for contextual tooltip
   const [appStep, setAppStep] = useState(0);
