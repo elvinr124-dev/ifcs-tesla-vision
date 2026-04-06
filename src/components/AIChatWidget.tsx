@@ -422,7 +422,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["hello", "hi", "hey", "good morning", "good afternoon", "good evening"],
-    response: `Hello! 👋 Welcome to **IFCS** — the Institute of Foreign Credential Services.\n\nI can help you with:\n• **Evaluations** — pricing, types, and how to apply\n• **Translations** — certified translations in 150+ languages\n• **Consulting** — free evaluation consultations\n• **Status** — checking your evaluation progress\n\nWhat would you like to know?`,
+    response: `Hello! 👋 Welcome to **IFCS** — the Institute of Foreign Credential Services.\n\nI can help you with:\n• **Evaluations** — pricing, types, and how to apply\n• **Translations** — ATA certified translations in 150+ languages\n• **Consulting** — free evaluation consultations\n• **Status** — checking your evaluation progress\n\nWhat would you like to know?`,
     navButtons: [],
   },
   {

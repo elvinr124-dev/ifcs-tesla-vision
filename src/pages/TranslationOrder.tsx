@@ -411,7 +411,7 @@ const TranslationOrder = () => {
             {translate("Translation Order")}
           </h1>
           <p className="mt-4 text-base md:text-lg text-white/80 font-light max-w-xl">
-            {translate("Upload your documents, our AI calculates pricing, and pay securely. Certified translations starting at $50/page.")}
+            {translate("Upload your documents, our AI calculates pricing, and pay securely. ATA certified translations starting at $50/page.")}
           </p>
         </div>
       </section>
