@@ -395,7 +395,10 @@ const Navbar = () => {
         </SheetTrigger>
         <SheetContent side="right" className="w-80 bg-background border-l border-border p-0">
           <SheetHeader className="p-6 border-b border-border">
-            <SheetTitle className="text-xl font-bold tracking-widest text-foreground">TFCS</SheetTitle>
+            <SheetTitle className="flex items-center gap-2">
+              <img src={ifcsOrigLogo} alt="IFCS" className="w-8 h-8 rounded-full object-cover" />
+              <span className="text-xl font-bold tracking-widest text-foreground">IFCS</span>
+            </SheetTitle>
           </SheetHeader>
           <div className="flex flex-col py-4">
             {allLinks.map((link) => {
