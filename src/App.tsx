@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -9,45 +10,49 @@ import { LocaleProvider } from "@/context/LocaleContext";
 import AIChatWidget from "@/components/AIChatWidget";
 import ScrollToTop from "@/components/ScrollToTop";
 import CookieConsent from "@/components/CookieConsent";
+
+// Eager-load homepage for fast initial render
 import Index from "./pages/Index";
-import Translations from "./pages/Translations";
-import Evaluations from "./pages/Evaluations";
-import Application from "./pages/Application";
-import Consulting from "./pages/Consulting";
-import BookConsultation from "./pages/BookConsultation";
-import About from "./pages/About";
-import FAQ from "./pages/FAQ";
-import Contact from "./pages/Contact";
-import NotFound from "./pages/NotFound";
-import Login from "./pages/Login";
-import ClientLogin from "./pages/ClientLogin";
-import StaffLogin from "./pages/StaffLogin";
-import Signup from "./pages/Signup";
-import Cart from "./pages/Cart";
-import StaffCartView from "./pages/StaffCartView";
-import ForIndividuals from "./pages/ForIndividuals";
-import ForInstitutions from "./pages/ForInstitutions";
-import TranslationOrder from "./pages/TranslationOrder";
-import TranslationQuote from "./pages/TranslationQuote";
-import ClientDashboard from "./pages/ClientDashboard";
-import StaffDashboard from "./pages/StaffDashboard";
-import DuplicateReports from "./pages/DuplicateReports";
-import Blog from "./pages/Blog";
-import BlogPost from "./pages/BlogPost";
-import AddonElectronicSharing from "./pages/AddonElectronicSharing";
-import AddonHardCopy from "./pages/AddonHardCopy";
-import AddonDomesticShipping from "./pages/AddonDomesticShipping";
-import AddonInternationalShipping from "./pages/AddonInternationalShipping";
-import AddonRenewal from "./pages/AddonRenewal";
-import TermsOfService from "./pages/TermsOfService";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TranscriptViewer from "./pages/TranscriptViewer";
-import Pricing from "./pages/Pricing";
-import Account from "./pages/Account";
-import Payment from "./pages/Payment";
-import OrderConfirmation from "./pages/OrderConfirmation";
-import LearnMoreEvaluations from "./pages/LearnMoreEvaluations";
-import CUNY from "./pages/CUNY";
+
+// Lazy-load all other pages
+const Translations = lazy(() => import("./pages/Translations"));
+const Evaluations = lazy(() => import("./pages/Evaluations"));
+const Application = lazy(() => import("./pages/Application"));
+const Consulting = lazy(() => import("./pages/Consulting"));
+const BookConsultation = lazy(() => import("./pages/BookConsultation"));
+const About = lazy(() => import("./pages/About"));
+const FAQ = lazy(() => import("./pages/FAQ"));
+const Contact = lazy(() => import("./pages/Contact"));
+const NotFound = lazy(() => import("./pages/NotFound"));
+const Login = lazy(() => import("./pages/Login"));
+const ClientLogin = lazy(() => import("./pages/ClientLogin"));
+const StaffLogin = lazy(() => import("./pages/StaffLogin"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Cart = lazy(() => import("./pages/Cart"));
+const StaffCartView = lazy(() => import("./pages/StaffCartView"));
+const ForIndividuals = lazy(() => import("./pages/ForIndividuals"));
+const ForInstitutions = lazy(() => import("./pages/ForInstitutions"));
+const TranslationOrder = lazy(() => import("./pages/TranslationOrder"));
+const TranslationQuote = lazy(() => import("./pages/TranslationQuote"));
+const ClientDashboard = lazy(() => import("./pages/ClientDashboard"));
+const StaffDashboard = lazy(() => import("./pages/StaffDashboard"));
+const DuplicateReports = lazy(() => import("./pages/DuplicateReports"));
+const Blog = lazy(() => import("./pages/Blog"));
+const BlogPost = lazy(() => import("./pages/BlogPost"));
+const AddonElectronicSharing = lazy(() => import("./pages/AddonElectronicSharing"));
+const AddonHardCopy = lazy(() => import("./pages/AddonHardCopy"));
+const AddonDomesticShipping = lazy(() => import("./pages/AddonDomesticShipping"));
+const AddonInternationalShipping = lazy(() => import("./pages/AddonInternationalShipping"));
+const AddonRenewal = lazy(() => import("./pages/AddonRenewal"));
+const TermsOfService = lazy(() => import("./pages/TermsOfService"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
+const TranscriptViewer = lazy(() => import("./pages/TranscriptViewer"));
+const Pricing = lazy(() => import("./pages/Pricing"));
+const Account = lazy(() => import("./pages/Account"));
+const Payment = lazy(() => import("./pages/Payment"));
+const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
+const LearnMoreEvaluations = lazy(() => import("./pages/LearnMoreEvaluations"));
+const CUNY = lazy(() => import("./pages/CUNY"));
 
 const queryClient = new QueryClient();
 
@@ -61,6 +66,7 @@ const App = () => (
             <Sonner />
             <BrowserRouter>
               <ScrollToTop />
+              <Suspense fallback={<div className="min-h-screen flex items-center justify-center"><div className="w-8 h-8 border-4 border-accent border-t-transparent rounded-full animate-spin" /></div>}>
               <Routes>
                 <Route path="/" element={<Index />} />
                 <Route path="/translations" element={<Translations />} />
@@ -102,6 +108,7 @@ const App = () => (
                 <Route path="/cuny" element={<CUNY />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </Suspense>
               <AIChatWidget />
               <CookieConsent />
             </BrowserRouter>
