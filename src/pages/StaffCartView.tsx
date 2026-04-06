@@ -119,8 +119,21 @@ const StaffCartView = () => {
     setEmailOpen(true);
   };
 
+  const getSignatureText = (from: string) =>
+    `\n\n—\nInstitute of Foreign Credential Services\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: 914-693-2840\nFax: 914-231-7782\nEmail: ${from || "info@ifcsevals.com"}\nwww.ifcsevals.com`;
+
   const handleAttachSignature = () => {
-    setSignatureAttached((prev) => !prev);
+    if (!signatureAttached) {
+      setEmailContent((prev) => prev + getSignatureText(emailFrom));
+      setSignatureAttached(true);
+    } else {
+      // Remove any previously appended signature
+      setEmailContent((prev) => {
+        const sigIndex = prev.lastIndexOf("\n\n—\nInstitute of Foreign Credential Services");
+        return sigIndex !== -1 ? prev.substring(0, sigIndex) : prev;
+      });
+      setSignatureAttached(false);
+    }
   };
 
   const handleFromChange = (newFrom: string) => {
