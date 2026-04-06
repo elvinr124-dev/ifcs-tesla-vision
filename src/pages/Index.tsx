@@ -33,7 +33,7 @@ const Index = () => {
 
       <ServiceSection
         id="translations"
-        title="Certified Translations"
+        title="ATA Certified Translations"
         subtitle="Break Language Barriers"
         description="Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English."
         backgroundImage={translationsBg}
