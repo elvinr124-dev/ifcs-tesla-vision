@@ -369,7 +369,7 @@ interface ChatBodyProps {
 const ChatBody = ({
   messages, input, setInput, onSend, onKeyDown,
   attachments, fileInputRef, onFileSelect, setAttachments,
-  messagesEndRef, isStaff, waitingForAgent,
+  messagesEndRef, messagesContainerRef, isStaff, waitingForAgent,
 }: ChatBodyProps) => {
   const myType = isStaff ? "staff" : "client";
 
