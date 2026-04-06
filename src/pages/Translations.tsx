@@ -107,7 +107,7 @@ const Translations = () => {
             {translate("Break Language Barriers")}
           </p>
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-semibold tracking-tight" style={{ color: "white" }}>
-            {translate("Certified Translations")}
+            {translate("ATA Certified Translations")}
           </h1>
           <p className="mt-6 text-base md:text-lg max-w-xl font-semibold" style={{ color: "white" }}>
             {translate("Eliminate any language barrier between you and your next opportunity. We can translate any document from or into English.")}
