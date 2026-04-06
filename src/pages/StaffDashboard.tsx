@@ -319,11 +319,40 @@ const StaffDashboard = () => {
 
     if (type === "receipt" && order.application_id) {
       await (supabase as any).from("applications").update({ receipt_url: urlData.publicUrl }).eq("application_id", order.application_id);
+
+      // Try to extract IFCS Reference Number from receipt image/PDF using OCR
+      try {
+        const { data: ocrResult } = await supabase.functions.invoke("analyze-document", {
+          body: { imageBase64: await fileToBase64(file), extractReference: true },
+        });
+        if (ocrResult?.referenceNumber) {
+          const ifcsId = ocrResult.referenceNumber;
+          await (supabase as any).from("applications").update({ ifcs_id: ifcsId }).eq("application_id", order.application_id);
+          await (supabase as any).from("client_orders").update({ ifcs_id: ifcsId }).eq("id", orderId);
+          setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ifcs_id: ifcsId } : o));
+          toast({ title: "Receipt Uploaded & IFCS ID Extracted", description: `IFCS Reference #${ifcsId} has been linked.` });
+          return;
+        }
+      } catch {}
+
       toast({ title: "Receipt Uploaded", description: "Client can now view the receipt." });
     } else {
       const noteWithAttachment = `${order.staff_note || ""}\n📎 Attachment: ${file.name} - ${urlData.publicUrl}`;
       await handleUpdateNote(orderId, noteWithAttachment);
     }
+  };
+
+  // Helper to convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result.split(",")[1] || result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   // New Application Entry handler (Applicant mode)
