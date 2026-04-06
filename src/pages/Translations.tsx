@@ -190,7 +190,7 @@ const Translations = () => {
                   <div className="flex items-start justify-between gap-4">
                     <div>
                       <h4 className="text-sm font-semibold text-foreground">{translate("Hard Copy")}</h4>
-                      <p className="text-xs text-muted-foreground font-light mt-1">{translate("Printed original shipped via FedEx with tracking.")}</p>
+                      <p className="text-xs text-muted-foreground font-light mt-1">{translate("Printed original shipped via USPS Priority Mail with tracking.")}</p>
                     </div>
                     <span className="text-sm font-semibold text-foreground whitespace-nowrap">$25.00</span>
                   </div>
