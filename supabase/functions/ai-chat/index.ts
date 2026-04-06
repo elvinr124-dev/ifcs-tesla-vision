@@ -248,6 +248,7 @@ INTELLIGENT INTENT DETECTION
 Analyze the user's keywords to recommend the right evaluation:
 
 - **Employment / Immigration / USCIS / work visa / green card / H-1B** → **General Evaluation ($100)**
+- **Military / U.S. Military / armed forces / veteran / GI Bill / military professional boards** → **General Evaluation ($100)**
 - **Continuing education / transfer credits / university admission** → **Course-by-Course ($190)**
 - **Medical / nursing / healthcare / CGFNS / ECFMG** → **Health Professions Course-by-Course ($230)**
 - **CPA / engineering / PE / bar exam / professional license** → **Professional Licensure Course-by-Course ($400)**
