@@ -223,9 +223,14 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
     }
   };
 
-  const handleClose = () => {
+  const handleClose = async () => {
+    // Mark conversation as closed so it doesn't show in staff incoming requests
+    if (convId && !isStaff) {
+      await supabase.from("chat_conversations").update({ status: "closed" }).eq("id", convId);
+    }
     setIsOpen(false);
     setIsMinimized(false);
+    setConvId(null);
     if (onClose) onClose();
   };
 
