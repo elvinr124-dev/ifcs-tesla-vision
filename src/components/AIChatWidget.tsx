@@ -1118,16 +1118,77 @@ const AIChatWidget = () => {
   // Find the index of the last user message for scroll ref
   const lastUserMsgIndex = messages.reduce((acc, msg, i) => msg.role === "user" ? i : acc, -1);
 
+  const location = useLocation();
+  const [tooltipDismissed, setTooltipDismissed] = useState(false);
+  const [tooltipVisible, setTooltipVisible] = useState(false);
+
+  // Contextual tooltip message based on current route
+  const getTooltipMessage = () => {
+    const path = location.pathname;
+    if (path === "/application") {
+      // Try to detect step from URL or just show generic
+      return "Need help with your application? Click here and ask!";
+    }
+    if (path === "/evaluations") return "Have questions about evaluations? Ask IFCS AI!";
+    if (path === "/translations" || path === "/translations/order") return "Need help with translations? Ask IFCS AI!";
+    if (path === "/pricing") return "Questions about pricing? Ask IFCS AI!";
+    if (path === "/cart") return "Need help with your order? Ask IFCS AI!";
+    if (path === "/") return "Try IFCS AI — Ask any questions or concerns!";
+    return "";
+  };
+
+  // Show tooltip after a short delay, only on certain pages
+  useEffect(() => {
+    const msg = getTooltipMessage();
+    if (!msg || isOpen || tooltipDismissed) {
+      setTooltipVisible(false);
+      return;
+    }
+    const timer = setTimeout(() => setTooltipVisible(true), 1500);
+    const hideTimer = setTimeout(() => setTooltipVisible(false), 90000); // 90 seconds
+    return () => { clearTimeout(timer); clearTimeout(hideTimer); };
+  }, [location.pathname, isOpen, tooltipDismissed]);
+
+  // Application step detection for contextual tooltip
+  const [appStep, setAppStep] = useState(0);
+  useEffect(() => {
+    if (location.pathname !== "/application") { setAppStep(0); return; }
+    const observer = new MutationObserver(() => {
+      const stepEl = document.querySelector('[data-current-step]');
+      if (stepEl) setAppStep(Number(stepEl.getAttribute('data-current-step')) || 0);
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [location.pathname]);
+
+  const getAppStepTooltip = () => {
+    if (location.pathname !== "/application" || appStep === 0) return getTooltipMessage();
+    return `Need help with Step ${appStep} of your application? Click here!`;
+  };
+
+  const tooltipMsg = location.pathname === "/application" ? getAppStepTooltip() : getTooltipMessage();
+
   return (
     <>
       {!isOpen && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full bg-accent shadow-lg shadow-accent/40 flex items-center justify-center hover:scale-110 transition-transform duration-200 border-2 border-white/20"
-          aria-label="Open chat"
-        >
-          <img src={ifcsLogo} alt="IFCS AI" className="w-9 h-9 rounded-full object-cover" />
-        </button>
+        <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
+          {tooltipVisible && tooltipMsg && (
+            <div
+              className="mb-1 max-w-[240px] px-4 py-3 rounded-2xl bg-white border border-accent/30 shadow-lg text-xs font-medium text-foreground animate-fade-in-up cursor-pointer"
+              onClick={() => { setTooltipDismissed(true); setTooltipVisible(false); setIsOpen(true); }}
+            >
+              <p>{tooltipMsg}</p>
+              <div className="absolute -right-2 bottom-4 w-3 h-3 bg-white border-r border-b border-accent/30 rotate-[-45deg]" />
+            </div>
+          )}
+          <button
+            onClick={() => { setIsOpen(true); setTooltipDismissed(true); setTooltipVisible(false); }}
+            className="w-14 h-14 rounded-full bg-accent shadow-lg shadow-accent/40 flex items-center justify-center hover:scale-110 transition-transform duration-200 border-2 border-white/20"
+            aria-label="Open chat"
+          >
+            <MessageCircle size={26} className="text-white" />
+          </button>
+        </div>
       )}
 
       {isOpen && (
