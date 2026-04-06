@@ -173,7 +173,16 @@ const StaffDashboard = () => {
       ]);
       if (ordersRes.data) setOrders(ordersRes.data);
       if (clientsRes.data) setClients(clientsRes.data);
-      if (chatsRes.data) setPendingChats(chatsRes.data as PendingChat[]);
+      if (chatsRes.data) {
+        // Deduplicate: only show the most recent pending chat per client
+        const seen = new Set<string>();
+        const unique = (chatsRes.data as PendingChat[]).filter(c => {
+          if (seen.has(c.client_identifier)) return false;
+          seen.add(c.client_identifier);
+          return true;
+        });
+        setPendingChats(unique);
+      }
     };
     loadAll();
 
