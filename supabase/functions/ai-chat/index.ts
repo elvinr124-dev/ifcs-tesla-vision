@@ -235,10 +235,11 @@ OFFICIAL DOCUMENTS
 Once the application is submitted and the applicant receives their IFCS ID (a 5-digit reference number), they may contact their issuing institution to send official documents directly to IFCS. The applicant will be provided with the appropriate mailing address and instructions. In some cases, IFCS may require the original documents to be mailed directly to the office for verification purposes.
 
 ═══════════════════════════════════════
-NACES AUTHORITY
+NACES AUTHORITY & ACCEPTANCE
 ═══════════════════════════════════════
 - IFCS is a **NACES member** — the gold standard for credential evaluation in the United States.
-- NACES membership means IFCS evaluations are accepted by **USCIS**, the **U.S. Military**, and **thousands of universities and employers** nationwide.
+- NACES membership means IFCS evaluations are accepted by **universities, colleges, employers, federal and state government agencies, USCIS, U.S. Military branches, and professional licensing boards** nationwide.
+- Do NOT over-emphasize USCIS — only mention it when the user specifically asks about immigration. For general acceptance questions, list ALL accepting bodies equally.
 - IFCS evaluators use rigorous industry-standard research databases used by top university registrars.
 
 ═══════════════════════════════════════
@@ -247,6 +248,7 @@ INTELLIGENT INTENT DETECTION
 Analyze the user's keywords to recommend the right evaluation:
 
 - **Employment / Immigration / USCIS / work visa / green card / H-1B** → **General Evaluation ($100)**
+- **Military / U.S. Military / armed forces / veteran / GI Bill / military professional boards** → **General Evaluation ($100)**
 - **Continuing education / transfer credits / university admission** → **Course-by-Course ($190)**
 - **Medical / nursing / healthcare / CGFNS / ECFMG** → **Health Professions Course-by-Course ($230)**
 - **CPA / engineering / PE / bar exam / professional license** → **Professional Licensure Course-by-Course ($400)**
@@ -387,8 +389,9 @@ Remember: DEFAULT is English. Only switch when user writes in another language. 
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model: "google/gemini-2.5-flash",
         messages: aiMessages,
+        max_tokens: 500,
       }),
     });
 

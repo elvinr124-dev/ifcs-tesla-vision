@@ -61,13 +61,16 @@ const addOns = [
 ];
 
 const statusMeta: Record<string, { label: string; color: string; icon: React.ReactNode }> = {
-  requested:  { label: "Requested",  color: "bg-muted text-muted-foreground",       icon: <Clock size={14} /> },
-  in_review:  { label: "In Review",  color: "bg-accent/20 text-accent",             icon: <Package size={14} /> },
-  on_hold:    { label: "On Hold",    color: "bg-destructive/20 text-destructive",    icon: <AlertCircle size={14} /> },
-  delivered:  { label: "Delivered",  color: "bg-emerald-500/20 text-emerald-600",    icon: <CheckCircle2 size={14} /> },
+  requested:    { label: "Requested",            color: "bg-muted text-muted-foreground",       icon: <Clock size={14} /> },
+  in_process:   { label: "In Process",           color: "bg-blue-500/20 text-blue-600",         icon: <Package size={14} /> },
+  in_review:    { label: "In Review",            color: "bg-accent/20 text-accent",             icon: <Package size={14} /> },
+  need_info:    { label: "Need Additional Info", color: "bg-amber-500/20 text-amber-600",       icon: <AlertCircle size={14} /> },
+  on_hold:      { label: "On Hold",              color: "bg-destructive/20 text-destructive",   icon: <AlertCircle size={14} /> },
+  completed:    { label: "Completed",            color: "bg-emerald-500/20 text-emerald-600",   icon: <CheckCircle2 size={14} /> },
+  delivered:    { label: "Delivered",             color: "bg-emerald-500/20 text-emerald-600",   icon: <CheckCircle2 size={14} /> },
 };
 
-const statusSteps = ["requested", "in_review", "on_hold", "delivered"];
+const statusSteps = ["requested", "in_process", "in_review", "need_info", "on_hold", "completed", "delivered"];
 
 const reportStatusColor: Record<string, string> = {
   active:  "text-emerald-500",

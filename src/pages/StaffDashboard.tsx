@@ -173,7 +173,16 @@ const StaffDashboard = () => {
       ]);
       if (ordersRes.data) setOrders(ordersRes.data);
       if (clientsRes.data) setClients(clientsRes.data);
-      if (chatsRes.data) setPendingChats(chatsRes.data as PendingChat[]);
+      if (chatsRes.data) {
+        // Deduplicate: only show the most recent pending chat per client
+        const seen = new Set<string>();
+        const unique = (chatsRes.data as PendingChat[]).filter(c => {
+          if (seen.has(c.client_identifier)) return false;
+          seen.add(c.client_identifier);
+          return true;
+        });
+        setPendingChats(unique);
+      }
     };
     loadAll();
 
@@ -186,7 +195,17 @@ const StaffDashboard = () => {
         (supabase as any).from("client_accounts").select("*").order("created_at", { ascending: false }).then((r: any) => { if (r.data) setClients(r.data); });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "chat_conversations" }, () => {
-        supabase.from("chat_conversations").select("*").eq("status", "pending").order("created_at", { ascending: false }).then((r) => { if (r.data) setPendingChats(r.data as PendingChat[]); });
+        supabase.from("chat_conversations").select("*").eq("status", "pending").order("created_at", { ascending: false }).then((r) => {
+          if (r.data) {
+            const seen = new Set<string>();
+            const unique = (r.data as PendingChat[]).filter(c => {
+              if (seen.has(c.client_identifier)) return false;
+              seen.add(c.client_identifier);
+              return true;
+            });
+            setPendingChats(unique);
+          }
+        });
       })
       .subscribe();
 

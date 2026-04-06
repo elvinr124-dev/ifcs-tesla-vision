@@ -165,6 +165,14 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
     setConvId(data.id);
     setWaitingForAgent(true);
     setIsOpen(true);
+
+    // Auto-send connecting message from client side
+    await supabase.from("chat_messages").insert({
+      conversation_id: data.id,
+      sender_type: "system",
+      sender_name: "IFCS",
+      content: "Connecting you to a live agent... For faster responses, you can also reach us at 📞 (914) 693-2840. An agent will be with you shortly.",
+    });
   };
 
   const handleSend = async () => {
@@ -215,9 +223,14 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
     }
   };
 
-  const handleClose = () => {
+  const handleClose = async () => {
+    // Mark conversation as closed so it doesn't show in staff incoming requests
+    if (convId && !isStaff) {
+      await supabase.from("chat_conversations").update({ status: "closed" }).eq("id", convId);
+    }
     setIsOpen(false);
     setIsMinimized(false);
+    setConvId(null);
     if (onClose) onClose();
   };
 
