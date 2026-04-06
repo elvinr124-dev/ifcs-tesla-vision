@@ -1166,6 +1166,8 @@ const AIChatWidget = () => {
     setDismissedRoutes(prev => new Set(prev).add(currentTooltipKey));
     setTooltipVisible(false);
   };
+
+  const getAppStepTooltip = () => {
     if (location.pathname !== "/application" || appStep === 0) return getTooltipMessage();
     return `Need help with Step ${appStep} of your application? Click here!`;
   };
@@ -1179,14 +1181,14 @@ const AIChatWidget = () => {
           {tooltipVisible && tooltipMsg && (
             <div
               className="mb-1 max-w-[240px] px-4 py-3 rounded-2xl bg-white border border-accent/30 shadow-lg text-xs font-medium text-foreground animate-fade-in-up cursor-pointer"
-              onClick={() => { setTooltipDismissed(true); setTooltipVisible(false); setIsOpen(true); }}
+              onClick={() => { dismissTooltip(); setIsOpen(true); }}
             >
               <p>{tooltipMsg}</p>
               <div className="absolute -right-2 bottom-4 w-3 h-3 bg-white border-r border-b border-accent/30 rotate-[-45deg]" />
             </div>
           )}
           <button
-            onClick={() => { setIsOpen(true); setTooltipDismissed(true); setTooltipVisible(false); }}
+            onClick={() => { setIsOpen(true); dismissTooltip(); }}
             className="w-14 h-14 rounded-full bg-accent shadow-lg shadow-accent/40 flex items-center justify-center hover:scale-110 transition-transform duration-200 border-2 border-white/20"
             aria-label="Open chat"
           >
