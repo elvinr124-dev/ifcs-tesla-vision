@@ -114,6 +114,22 @@ const ClientDashboard = () => {
 
   const clientEmail = user?.email || user?.username || "";
 
+  // Helper to load application data for a set of orders
+  const loadAppDataForOrders = async (ordersList: ClientOrder[]) => {
+    const appIds = ordersList.filter((o: any) => o.application_id).map((o: any) => o.application_id);
+    if (appIds.length > 0) {
+      const { data: apps } = await (supabase as any)
+        .from("applications")
+        .select("id, application_id, application_data, staff_notes, receipt_url, ifcs_id")
+        .in("application_id", appIds);
+      if (apps) {
+        const map: Record<string, ApplicationData> = {};
+        apps.forEach((a: ApplicationData) => { map[a.application_id] = a; });
+        setAppDataMap(prev => ({ ...prev, ...map }));
+      }
+    }
+  };
+
   // Load orders from DB
   useEffect(() => {
     if (!clientEmail) return;
@@ -126,19 +142,7 @@ const ClientDashboard = () => {
         .order("created_at", { ascending: false });
       if (data) {
         setOrders(data);
-        // Load application data for orders with application_id
-        const appIds = data.filter((o: any) => o.application_id).map((o: any) => o.application_id);
-        if (appIds.length > 0) {
-          const { data: apps } = await (supabase as any)
-            .from("applications")
-            .select("id, application_id, application_data, staff_notes, receipt_url, ifcs_id")
-            .in("application_id", appIds);
-          if (apps) {
-            const map: Record<string, ApplicationData> = {};
-            apps.forEach((a: ApplicationData) => { map[a.application_id] = a; });
-            setAppDataMap(map);
-          }
-        }
+        await loadAppDataForOrders(data);
       }
     };
     loadOrders();
