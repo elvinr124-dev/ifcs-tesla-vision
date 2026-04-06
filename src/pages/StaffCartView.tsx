@@ -428,19 +428,7 @@ const StaffCartView = () => {
               />
             </div>
 
-            {/* Signature preview when attached — plain text only */}
-            {signatureAttached && (
-              <div className="rounded-2xl border border-border bg-muted/20 p-5">
-                <pre className="text-sm leading-relaxed text-foreground whitespace-pre-wrap" style={{ fontFamily: "Arial, sans-serif" }}>
-{`Institute of Foreign Credential Services
-6 Cedar St, Dobbs Ferry, NY 10522
-Phone: 914-693-2840
-Fax: 914-231-7782
-Email: ${emailFrom || "info@ifcsevals.com"}
-www.ifcsevals.com`}
-                </pre>
-              </div>
-            )}
+            {/* Signature is now appended directly into the content textarea */}
 
             {/* Toolbar row: Attach, Signature, Smart Rewrite, Grammar Check */}
             <div className="flex items-center justify-between gap-3 flex-wrap">
