@@ -1,0 +1,1 @@
+ALTER TABLE public.client_orders ADD COLUMN IF NOT EXISTS verification_source TEXT;

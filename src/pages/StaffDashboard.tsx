@@ -13,7 +13,7 @@ import {
 import {
   Upload, Send, Users, Clock, AlertCircle, CheckCircle2, Package, FileText, Star,
   Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones, Trash2, UserX,
-  Paperclip, Receipt, Edit3,
+  Paperclip, Receipt, Edit3, Mail,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -139,11 +139,11 @@ const StaffDashboard = () => {
     country: "", institution_name: "", cell_phone: "", home_phone: "", gender: "",
   });
 
-  // New Application Entry dialog
+  // Email Client / Institution dialog
   const [newAppOpen, setNewAppOpen] = useState(false);
   const [newAppSendTo, setNewAppSendTo] = useState("applicant");
 
-  // Applicant fields
+  // Email Client fields
   const [newAppIfcsId, setNewAppIfcsId] = useState("IFCS-");
   const [newAppEmail, setNewAppEmail] = useState("");
   const [newAppVerification, setNewAppVerification] = useState("");
@@ -153,6 +153,7 @@ const StaffDashboard = () => {
   const [newAppNotes, setNewAppNotes] = useState("");
   const [newAppAttachment, setNewAppAttachment] = useState<File | null>(null);
   const [newAppReceipt, setNewAppReceipt] = useState<File | null>(null);
+  const [emailClientSubject, setEmailClientSubject] = useState("");
 
   // Institution fields
   const [instAppNumber, setInstAppNumber] = useState("");
@@ -319,11 +320,40 @@ const StaffDashboard = () => {
 
     if (type === "receipt" && order.application_id) {
       await (supabase as any).from("applications").update({ receipt_url: urlData.publicUrl }).eq("application_id", order.application_id);
+
+      // Try to extract IFCS Reference Number from receipt image/PDF using OCR
+      try {
+        const { data: ocrResult } = await supabase.functions.invoke("analyze-document", {
+          body: { imageBase64: await fileToBase64(file), extractReference: true },
+        });
+        if (ocrResult?.referenceNumber) {
+          const ifcsId = ocrResult.referenceNumber;
+          await (supabase as any).from("applications").update({ ifcs_id: ifcsId }).eq("application_id", order.application_id);
+          await (supabase as any).from("client_orders").update({ ifcs_id: ifcsId }).eq("id", orderId);
+          setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ifcs_id: ifcsId } : o));
+          toast({ title: "Receipt Uploaded & IFCS ID Extracted", description: `IFCS Reference #${ifcsId} has been linked.` });
+          return;
+        }
+      } catch {}
+
       toast({ title: "Receipt Uploaded", description: "Client can now view the receipt." });
     } else {
       const noteWithAttachment = `${order.staff_note || ""}\n📎 Attachment: ${file.name} - ${urlData.publicUrl}`;
       await handleUpdateNote(orderId, noteWithAttachment);
     }
+  };
+
+  // Helper to convert file to base64
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const result = reader.result as string;
+        resolve(result.split(",")[1] || result);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
   };
 
   // New Application Entry handler (Applicant mode)
@@ -543,6 +573,8 @@ const StaffDashboard = () => {
     setNewAppNotes("");
     setNewAppAttachment(null);
     setNewAppReceipt(null);
+    setEmailClientSubject("");
+    setNewAppReceipt(null);
     setInstAppNumber("");
     setInstApplicantEmail("");
     setInstInstitutionEmail("");
@@ -687,9 +719,6 @@ const StaffDashboard = () => {
                   <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold">{orders.length}</span>
                 </div>
                 <div className="flex gap-2">
-                  <button onClick={() => setNewAppOpen(true)} className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-accent text-white text-sm font-semibold hover:bg-accent/90 transition-all shadow-sm">
-                    <Plus size={16} /> New Application Entry
-                  </button>
                   <Select value={filter} onValueChange={setFilter}>
                     <SelectTrigger className="w-48 rounded-2xl"><SelectValue placeholder="Filter by status" /></SelectTrigger>
                     <SelectContent>
@@ -754,6 +783,29 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
+                        {/* Verification Source */}
+                        <div>
+                          <p className="text-sm font-medium text-foreground mb-2">Verification Source</p>
+                          <Select
+                            value={(orders.find(ord => ord.id === o.id) as any)?.verification_source || ""}
+                            onValueChange={async (val) => {
+                              await (supabase as any).from("client_orders").update({ verification_source: val }).eq("id", o.id);
+                              if (o.application_id) {
+                                await (supabase as any).from("applications").update({ verification_source: val }).eq("application_id", o.application_id);
+                              }
+                              setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, verification_source: val } as any : ord));
+                              toast({ title: "Verification Source Updated" });
+                            }}
+                          >
+                            <SelectTrigger className="w-full max-w-md rounded-2xl"><SelectValue placeholder="Select verification source..." /></SelectTrigger>
+                            <SelectContent>
+                              {verificationSources.map((v) => (
+                                <SelectItem key={v} value={v}>{v}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
                         {/* Notes section - no dropdown, always sends to applicant */}
                         <div>
                           <p className="text-sm font-medium text-foreground mb-2">Notes</p>
@@ -799,7 +851,7 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Edit, Chat & Delete */}
+                        {/* Edit, Email, Chat & Delete */}
                         <div className="flex gap-2 flex-wrap">
                           {o.application_id && (
                             <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
@@ -807,6 +859,25 @@ const StaffDashboard = () => {
                               <Edit3 size={14} /> Edit Application
                             </button>
                           )}
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
+                            onClick={() => {
+                              setNewAppSendTo("applicant");
+                              setNewAppEmail(o.client_email);
+                              setInstAppNumber(o.application_id || o.reference_id);
+                              setNewAppOpen(true);
+                            }}>
+                            <Mail size={14} /> Email Client
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
+                            onClick={() => {
+                              setNewAppSendTo("institution");
+                              setInstApplicantEmail(o.client_email);
+                              setInstAppNumber(o.application_id || o.reference_id);
+                              setInstNotes(institutionQuickNote);
+                              setNewAppOpen(true);
+                            }}>
+                            <Send size={14} /> Email Institution
+                          </button>
                           <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
                             onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
@@ -880,23 +951,29 @@ const StaffDashboard = () => {
         </div>
       </div>
 
-      {/* ── New Application Entry Dialog ── */}
+      {/* ── Email Client / Email Institution Dialog ── */}
       <Dialog open={newAppOpen} onOpenChange={setNewAppOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">New Application Entry</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">
+              {newAppSendTo === "applicant" ? "Email Client" : "Email Institution"}
+            </DialogTitle>
           </DialogHeader>
 
-          {/* Send To selector at top */}
-          <div className="space-y-1.5 pb-2 border-b border-border">
-            <label className="text-xs font-semibold uppercase tracking-widest text-accent">Send To</label>
-            <Select value={newAppSendTo} onValueChange={setNewAppSendTo}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="applicant">Applicant</SelectItem>
-                <SelectItem value="institution">Institution</SelectItem>
-              </SelectContent>
-            </Select>
+          {/* Tab selector */}
+          <div className="flex gap-2 pb-2 border-b border-border">
+            <button
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${newAppSendTo === "applicant" ? "bg-accent text-white" : "border border-border text-foreground hover:bg-muted"}`}
+              onClick={() => setNewAppSendTo("applicant")}
+            >
+              <Mail size={14} className="inline mr-1.5" /> Email Client
+            </button>
+            <button
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${newAppSendTo === "institution" ? "bg-accent text-white" : "border border-border text-foreground hover:bg-muted"}`}
+              onClick={() => setNewAppSendTo("institution")}
+            >
+              <Send size={14} className="inline mr-1.5" /> Email Institution
+            </button>
           </div>
 
           {/* ── APPLICANT MODE ── */}
@@ -904,79 +981,51 @@ const StaffDashboard = () => {
             <div className="space-y-6 pt-2">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Application Number *</label>
-                  <Input value={newAppIfcsId} onChange={(e) => setNewAppIfcsId(e.target.value)} placeholder="IFCS-45001" />
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Application Number</label>
+                  <Input value={instAppNumber} onChange={(e) => setInstAppNumber(e.target.value)} placeholder="e.g. EE2323" />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
-                  <Input type="email" value={newAppEmail} onChange={(e) => setNewAppEmail(e.target.value)} placeholder="client@email.com" />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-widest text-accent">Date Entered</label>
                   <Input value={new Date().toLocaleDateString()} disabled className="bg-muted/40" />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Verification Source</label>
-                  <Select value={newAppVerification} onValueChange={setNewAppVerification}>
-                    <SelectTrigger><SelectValue placeholder="Select source..." /></SelectTrigger>
-                    <SelectContent>
-                      {verificationSources.map((v) => (
-                        <SelectItem key={v} value={v}>{v}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Status</label>
-                  <Select value={newAppStatus} onValueChange={setNewAppStatus}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="in_process">In Process</SelectItem>
-                      <SelectItem value="in_review">In Review</SelectItem>
-                      <SelectItem value="need_info">Need Additional Information</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
+                <Input type="email" value={newAppEmail} onChange={(e) => setNewAppEmail(e.target.value)} placeholder="client@email.com" />
               </div>
 
+              {/* CC Emails */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Assign Evaluator</label>
-                <Select value={newAppEvaluator} onValueChange={setNewAppEvaluator}>
-                  <SelectTrigger><SelectValue placeholder="Select evaluator..." /></SelectTrigger>
-                  <SelectContent>
-                    {evaluators.map((ev) => (
-                      <SelectItem key={ev} value={ev}>{ev}</SelectItem>
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">CC Emails</label>
+                <div className="flex gap-2">
+                  <Input value={instCcInput} onChange={(e) => setInstCcInput(e.target.value)} placeholder="additional@email.com"
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCc(); } }} />
+                  <Button type="button" size="sm" variant="outline" onClick={handleAddCc} className="shrink-0">
+                    <Plus size={14} /> Add
+                  </Button>
+                </div>
+                {instCcEmails.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {instCcEmails.map((email, i) => (
+                      <Badge key={i} variant="secondary" className="gap-1 pr-1">
+                        {email}
+                        <button onClick={() => setInstCcEmails(prev => prev.filter((_, idx) => idx !== i))} className="ml-1 hover:text-destructive">
+                          <X size={12} />
+                        </button>
+                      </Badge>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Rush Service</label>
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { value: "standard", label: "Standard", desc: "Regular processing", border: "border-foreground" },
-                    { value: "3day", label: "🔥 3-Day Rush", desc: "Priority processing", border: "border-amber-500/40" },
-                    { value: "24hour", label: "⚡ 24-Hour Rush", desc: "Urgent processing", border: "border-red-500/40" },
-                  ].map((r) => (
-                    <button key={r.value} type="button" onClick={() => setNewAppRush(r.value)}
-                      className={`rounded-xl border-2 p-4 text-left transition-all ${newAppRush === r.value ? `${r.border} bg-muted/30` : "border-border hover:border-muted-foreground/30"}`}>
-                      <p className="font-semibold text-sm text-foreground">{r.label}</p>
-                      <p className="text-xs text-muted-foreground">{r.desc}</p>
-                    </button>
-                  ))}
-                </div>
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Subject</label>
+                <Input value={emailClientSubject} onChange={(e) => setEmailClientSubject(e.target.value)} placeholder={`IFCS Application Update${instAppNumber ? ` — #${instAppNumber}` : ""}`} />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Notes</label>
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Message</label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {quickNotes.map((qn) => (
                     <Button key={qn} type="button" size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
@@ -985,24 +1034,66 @@ const StaffDashboard = () => {
                     </Button>
                   ))}
                 </div>
-                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Add any notes about this application..." rows={4} />
+                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Type your message to the client..." rows={8} />
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Attach File</label>
-                  <Input type="file" onChange={(e) => setNewAppAttachment(e.target.files?.[0] || null)} />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Upload Receipt</label>
-                  <Input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setNewAppReceipt(e.target.files?.[0] || null)} />
-                </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Attach Files</label>
+                <Input type="file" multiple onChange={(e) => {
+                  const files = e.target.files;
+                  if (files) setInstAttachments(prev => [...prev, ...Array.from(files)]);
+                }} />
+                {instAttachments.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {instAttachments.map((file, i) => (
+                      <Badge key={i} variant="secondary" className="gap-1 pr-1">
+                        <Paperclip size={12} /> {file.name}
+                        <button onClick={() => setInstAttachments(prev => prev.filter((_, idx) => idx !== i))} className="ml-1 hover:text-destructive">
+                          <X size={12} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <DialogFooter>
                 <Button variant="outline" onClick={() => setNewAppOpen(false)} className="rounded-full">Cancel</Button>
-                <Button onClick={handleNewApplication} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
-                  <Plus size={16} /> Add Application
+                <Button onClick={async () => {
+                  if (!newAppEmail.trim()) {
+                    toast({ title: "Missing Email", description: "Please enter the client's email.", variant: "destructive" });
+                    return;
+                  }
+                  // Upload attachments
+                  const attachmentUrls: string[] = [];
+                  for (const file of instAttachments) {
+                    const filePath = `client-emails/${instAppNumber || "general"}-${Date.now()}-${file.name}`;
+                    const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, file);
+                    if (!upErr) {
+                      const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+                      attachmentUrls.push(urlData.publicUrl);
+                    }
+                  }
+                  const attachmentLinks = attachmentUrls.length > 0 ? `\n\nAttached files:\n${attachmentUrls.map((url, i) => `${i + 1}. ${url}`).join("\n")}` : "";
+                  const emailBody = `${newAppNotes}${attachmentLinks}`;
+                  const allCc = instCcEmails.filter(e => e.trim());
+
+                  try {
+                    await supabase.functions.invoke("send-application-email", {
+                      body: {
+                        subject: emailClientSubject.trim() || `IFCS Application Update${instAppNumber ? ` — #${instAppNumber}` : ""}`,
+                        body: emailBody,
+                        recipientEmail: newAppEmail.trim(),
+                        applicantEmail: allCc.length > 0 ? allCc.join(",") : undefined,
+                      },
+                    });
+                    toast({ title: "Email Sent", description: `Email sent to ${newAppEmail.trim()}.` });
+                  } catch {
+                    toast({ title: "Send Failed", variant: "destructive" });
+                  }
+                  resetNewAppForm();
+                }} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
+                  <Send size={16} /> Send Email
                 </Button>
               </DialogFooter>
             </div>

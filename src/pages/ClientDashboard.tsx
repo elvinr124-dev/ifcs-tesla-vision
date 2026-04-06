@@ -114,6 +114,22 @@ const ClientDashboard = () => {
 
   const clientEmail = user?.email || user?.username || "";
 
+  // Helper to load application data for a set of orders
+  const loadAppDataForOrders = async (ordersList: ClientOrder[]) => {
+    const appIds = ordersList.filter((o: any) => o.application_id).map((o: any) => o.application_id);
+    if (appIds.length > 0) {
+      const { data: apps } = await (supabase as any)
+        .from("applications")
+        .select("id, application_id, application_data, staff_notes, receipt_url, ifcs_id")
+        .in("application_id", appIds);
+      if (apps) {
+        const map: Record<string, ApplicationData> = {};
+        apps.forEach((a: ApplicationData) => { map[a.application_id] = a; });
+        setAppDataMap(prev => ({ ...prev, ...map }));
+      }
+    }
+  };
+
   // Load orders from DB
   useEffect(() => {
     if (!clientEmail) return;
@@ -126,19 +142,7 @@ const ClientDashboard = () => {
         .order("created_at", { ascending: false });
       if (data) {
         setOrders(data);
-        // Load application data for orders with application_id
-        const appIds = data.filter((o: any) => o.application_id).map((o: any) => o.application_id);
-        if (appIds.length > 0) {
-          const { data: apps } = await (supabase as any)
-            .from("applications")
-            .select("id, application_id, application_data, staff_notes, receipt_url, ifcs_id")
-            .in("application_id", appIds);
-          if (apps) {
-            const map: Record<string, ApplicationData> = {};
-            apps.forEach((a: ApplicationData) => { map[a.application_id] = a; });
-            setAppDataMap(map);
-          }
-        }
+        await loadAppDataForOrders(data);
       }
     };
     loadOrders();
@@ -253,7 +257,7 @@ const ClientDashboard = () => {
         .maybeSingle();
 
       if (app) {
-        // Check if already in orders
+        // Check if already in orders for THIS client
         const existing = orders.find(o => o.application_id === app.application_id || o.reference_id === app.application_id);
         if (existing) {
           toast({ title: "Already Tracked", description: "This order is already in your dashboard.", variant: "destructive" });
@@ -261,7 +265,7 @@ const ClientDashboard = () => {
           return;
         }
 
-        // Create a client_orders entry for this
+        // Create a client_orders entry for this client (even if different account)
         const { data: newOrder } = await (supabase as any)
           .from("client_orders")
           .insert({
@@ -271,20 +275,76 @@ const ClientDashboard = () => {
             status: app.status || "requested",
             application_id: app.application_id,
             dob: dobFormatted,
+            ifcs_id: app.ifcs_id || null,
           })
           .select()
           .single();
 
         if (newOrder) {
           setOrders(prev => [newOrder, ...prev]);
+          // Load app data for this tracked order
           setAppDataMap(prev => ({
             ...prev,
-            [app.application_id]: { id: app.id, application_id: app.application_id, application_data: app.application_data, staff_notes: app.staff_notes },
+            [app.application_id]: {
+              id: app.id,
+              application_id: app.application_id,
+              application_data: app.application_data,
+              staff_notes: app.staff_notes,
+              receipt_url: app.receipt_url,
+              ifcs_id: app.ifcs_id,
+            },
           }));
           toast({ title: "Order Found", description: `Order #${searchVal} has been added to your dashboard.` });
         }
       } else {
-        toast({ title: "Order Not Found", description: "No order matches the provided ID and date of birth. Please check and try again.", variant: "destructive" });
+        // Also try by ifcs_id in applications
+        const { data: appByIfcs } = await (supabase as any)
+          .from("applications")
+          .select("*")
+          .eq("ifcs_id", searchVal)
+          .eq("dob", dobFormatted)
+          .maybeSingle();
+
+        if (appByIfcs) {
+          const existing = orders.find(o => o.application_id === appByIfcs.application_id);
+          if (existing) {
+            toast({ title: "Already Tracked", description: "This order is already in your dashboard.", variant: "destructive" });
+            setTracking(false);
+            return;
+          }
+
+          const { data: newOrder } = await (supabase as any)
+            .from("client_orders")
+            .insert({
+              reference_id: appByIfcs.application_id,
+              client_email: clientEmail,
+              service: `${appByIfcs.service_title} — ${appByIfcs.processing_label}`,
+              status: appByIfcs.status || "requested",
+              application_id: appByIfcs.application_id,
+              dob: dobFormatted,
+              ifcs_id: appByIfcs.ifcs_id || null,
+            })
+            .select()
+            .single();
+
+          if (newOrder) {
+            setOrders(prev => [newOrder, ...prev]);
+            setAppDataMap(prev => ({
+              ...prev,
+              [appByIfcs.application_id]: {
+                id: appByIfcs.id,
+                application_id: appByIfcs.application_id,
+                application_data: appByIfcs.application_data,
+                staff_notes: appByIfcs.staff_notes,
+                receipt_url: appByIfcs.receipt_url,
+                ifcs_id: appByIfcs.ifcs_id,
+              },
+            }));
+            toast({ title: "Order Found", description: `Order #${searchVal} has been added to your dashboard.` });
+          }
+        } else {
+          toast({ title: "Order Not Found", description: "No order matches the provided ID and date of birth. Please check and try again.", variant: "destructive" });
+        }
       }
     } else {
       // Already exists check
@@ -293,6 +353,10 @@ const ClientDashboard = () => {
         toast({ title: "Already Tracked", description: "This order is already in your dashboard.", variant: "destructive" });
       } else {
         setOrders(prev => [found, ...prev]);
+        // Load app data for this found order
+        if (found.application_id) {
+          await loadAppDataForOrders([found]);
+        }
         toast({ title: "Order Found", description: `Order #${searchVal} has been added to your dashboard.` });
       }
     }

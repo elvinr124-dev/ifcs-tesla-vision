@@ -280,6 +280,7 @@ export type Database = {
           status: string
           submitted_at: string
           updated_at: string
+          verification_source: string | null
         }
         Insert: {
           application_id?: string | null
@@ -295,6 +296,7 @@ export type Database = {
           status?: string
           submitted_at?: string
           updated_at?: string
+          verification_source?: string | null
         }
         Update: {
           application_id?: string | null
@@ -310,6 +312,7 @@ export type Database = {
           status?: string
           submitted_at?: string
           updated_at?: string
+          verification_source?: string | null
         }
         Relationships: [
           {

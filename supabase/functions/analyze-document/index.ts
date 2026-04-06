@@ -9,7 +9,7 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { imageBase64, fileName } = await req.json();
+    const { imageBase64, fileName, extractReference } = await req.json();
     
     if (!imageBase64) {
       return new Response(JSON.stringify({ error: "No image provided" }), {
@@ -129,6 +129,67 @@ You MUST respond using the analyze_document tool.`
     }
 
     const data = await response.json();
+
+    // If extractReference mode, try to find reference number from the response
+    if (extractReference) {
+      const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
+      const textContent = data.choices?.[0]?.message?.content || "";
+      const argsStr = toolCall?.function?.arguments || textContent;
+      
+      // Try parsing tool call result
+      try {
+        const analysis = JSON.parse(typeof argsStr === 'string' ? argsStr : JSON.stringify(argsStr));
+        // Look for reference number in documentType or other fields
+        const allText = JSON.stringify(analysis);
+        const refMatch = allText.match(/(?:Reference\s*(?:No\.?|Number|#)\s*[:\s]*|IFCS[.\s]*Reference[.\s]*(?:No\.?|Number|#)?[:\s]*|Ref\.?\s*(?:No\.?|#)\s*[:\s]*)(\d{3,6})/i);
+        if (refMatch) {
+          return new Response(JSON.stringify({ referenceNumber: refMatch[1] }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      } catch {}
+
+      // Fallback: do a separate simpler call to extract reference number
+      const refResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "google/gemini-2.5-flash",
+          messages: [
+            {
+              role: "system",
+              content: "You are a document reader. Extract the IFCS Reference Number from the receipt image. Look for text like 'IFCS. Reference No.' or 'Reference Number' followed by a number. Return ONLY the number, nothing else. If you can't find it, return 'NONE'."
+            },
+            {
+              role: "user",
+              content: [
+                { type: "text", text: "Extract the IFCS Reference Number from this receipt." },
+                { type: "image_url", image_url: { url: `data:image/jpeg;base64,${imageBase64}` } }
+              ]
+            }
+          ],
+        }),
+      });
+
+      if (refResponse.ok) {
+        const refData = await refResponse.json();
+        const refText = refData.choices?.[0]?.message?.content?.trim() || "";
+        const numMatch = refText.match(/(\d{3,6})/);
+        if (numMatch && refText !== "NONE") {
+          return new Response(JSON.stringify({ referenceNumber: numMatch[1] }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
+      }
+
+      return new Response(JSON.stringify({ referenceNumber: null }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
     
     if (toolCall?.function?.arguments) {
