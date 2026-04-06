@@ -94,8 +94,8 @@ const Navbar = () => {
 
   return (
     <nav className={`tesla-nav ${useScrolledStyle ? "tesla-nav-scrolled" : ""}`}>
-      <Link to="/" className="text-2xl font-bold tracking-widest shrink-0" style={{ color: textColor }}>
-        TFCS
+      <Link to="/" className="shrink-0 flex items-center gap-2 hover:opacity-90 transition-opacity">
+        <img src={ifcsOrigLogo} alt="IFCS" className="w-10 h-10 rounded-full object-cover" />
       </Link>
 
       {/* Search Bar - right next to logo */}
