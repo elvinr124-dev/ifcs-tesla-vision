@@ -948,23 +948,29 @@ const StaffDashboard = () => {
         </div>
       </div>
 
-      {/* ── New Application Entry Dialog ── */}
+      {/* ── Email Client / Email Institution Dialog ── */}
       <Dialog open={newAppOpen} onOpenChange={setNewAppOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">New Application Entry</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">
+              {newAppSendTo === "applicant" ? "Email Client" : "Email Institution"}
+            </DialogTitle>
           </DialogHeader>
 
-          {/* Send To selector at top */}
-          <div className="space-y-1.5 pb-2 border-b border-border">
-            <label className="text-xs font-semibold uppercase tracking-widest text-accent">Send To</label>
-            <Select value={newAppSendTo} onValueChange={setNewAppSendTo}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="applicant">Applicant</SelectItem>
-                <SelectItem value="institution">Institution</SelectItem>
-              </SelectContent>
-            </Select>
+          {/* Tab selector */}
+          <div className="flex gap-2 pb-2 border-b border-border">
+            <button
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${newAppSendTo === "applicant" ? "bg-accent text-white" : "border border-border text-foreground hover:bg-muted"}`}
+              onClick={() => setNewAppSendTo("applicant")}
+            >
+              <Mail size={14} className="inline mr-1.5" /> Email Client
+            </button>
+            <button
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${newAppSendTo === "institution" ? "bg-accent text-white" : "border border-border text-foreground hover:bg-muted"}`}
+              onClick={() => setNewAppSendTo("institution")}
+            >
+              <Send size={14} className="inline mr-1.5" /> Email Institution
+            </button>
           </div>
 
           {/* ── APPLICANT MODE ── */}
