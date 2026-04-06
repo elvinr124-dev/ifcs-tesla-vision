@@ -409,18 +409,18 @@ const StaffCartView = () => {
 
             {/* Signature preview when attached */}
             {signatureAttached && (
-              <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
-                <div className="flex items-center gap-4">
-                  <img src={ifcsLogo} alt="IFCS Logo" className="w-24 h-auto object-contain flex-shrink-0" />
-                  <div className="text-xs leading-relaxed" style={{ fontFamily: "Arial, sans-serif", color: "#333" }}>
-                    <p className="font-bold text-sm" style={{ color: "#1a3a5c" }}>
-                      Institute of Foreign Credential Services |<br />NACES Member| ATA Member
+              <div className="rounded-2xl border border-border bg-muted/20 p-4">
+                <div className="flex items-start gap-4">
+                  <img src={ifcsLogo} alt="IFCS Logo" className="w-16 h-auto object-contain flex-shrink-0 mt-1" />
+                  <div className="text-sm leading-relaxed text-foreground" style={{ fontFamily: "Arial, sans-serif" }}>
+                    <p className="font-bold text-base text-foreground">
+                      Institute of Foreign Credential Services |<br />NACES Member | ATA Member
                     </p>
-                    <p className="mt-0.5">6 Cedar St, Dobbs Ferry, NY 10522</p>
+                    <p className="mt-1">6 Cedar St, Dobbs Ferry, NY 10522</p>
                     <p>Phone: 914.693.2840</p>
-                    <p>Fax: 914. 231-7782</p>
-                    <p>E-mail: <a href={`mailto:${emailFrom || "info@ifcsevals.com"}`} className="text-primary underline">{emailFrom || "info@ifcsevals.com"}</a></p>
-                    <p><a href="https://www.ifcsevals.com" className="text-primary underline">www.ifcsevals.com</a></p>
+                    <p>Fax: 914.231-7782</p>
+                    <p>E-mail: <a href={`mailto:${emailFrom || "info@ifcsevals.com"}`} className="text-accent underline">{emailFrom || "info@ifcsevals.com"}</a></p>
+                    <p><a href="https://www.ifcsevals.com" className="text-accent underline">www.ifcsevals.com</a></p>
                   </div>
                 </div>
               </div>
