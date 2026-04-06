@@ -162,17 +162,33 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
       toast({ title: "Error", description: "Could not start chat.", variant: "destructive" });
       return;
     }
-    setConvId(data.id);
+
+    // Set state FIRST, then send the message so the realtime subscription is active
+    const newConvId = data.id;
+    setConvId(newConvId);
     setWaitingForAgent(true);
     setIsOpen(true);
 
-    // Auto-send connecting message from client side
-    await supabase.from("chat_messages").insert({
-      conversation_id: data.id,
+    // Small delay to ensure subscription is set up before inserting
+    await new Promise(r => setTimeout(r, 300));
+
+    // Auto-send connecting message
+    const { error: msgErr } = await supabase.from("chat_messages").insert({
+      conversation_id: newConvId,
       sender_type: "system",
       sender_name: "IFCS",
       content: "Connecting you to a live agent... For faster responses, you can also reach us at 📞 (914) 693-2840. An agent will be with you shortly.",
     });
+
+    // If the realtime didn't catch it, load messages manually
+    if (!msgErr) {
+      const { data: msgs } = await supabase
+        .from("chat_messages")
+        .select("*")
+        .eq("conversation_id", newConvId)
+        .order("created_at", { ascending: true });
+      if (msgs) setMessages(msgs as ChatMessage[]);
+    }
   };
 
   const handleSend = async () => {
