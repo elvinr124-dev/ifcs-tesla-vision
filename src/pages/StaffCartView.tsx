@@ -119,11 +119,32 @@ const StaffCartView = () => {
     setEmailOpen(true);
   };
 
+  const getSignatureText = (from: string) =>
+    `\n\n—\nInstitute of Foreign Credential Services\n6 Cedar St, Dobbs Ferry, NY 10522\nPhone: 914-693-2840\nFax: 914-231-7782\nEmail: ${from || "info@ifcsevals.com"}\nwww.ifcsevals.com`;
+
   const handleAttachSignature = () => {
-    setSignatureAttached((prev) => !prev);
+    if (!signatureAttached) {
+      setEmailContent((prev) => prev + getSignatureText(emailFrom));
+      setSignatureAttached(true);
+    } else {
+      // Remove any previously appended signature
+      setEmailContent((prev) => {
+        const sigIndex = prev.lastIndexOf("\n\n—\nInstitute of Foreign Credential Services");
+        return sigIndex !== -1 ? prev.substring(0, sigIndex) : prev;
+      });
+      setSignatureAttached(false);
+    }
   };
 
   const handleFromChange = (newFrom: string) => {
+    // Update signature in content if already attached
+    if (signatureAttached) {
+      setEmailContent((prev) => {
+        const sigIndex = prev.lastIndexOf("\n\n—\nInstitute of Foreign Credential Services");
+        const base = sigIndex !== -1 ? prev.substring(0, sigIndex) : prev;
+        return base + getSignatureText(newFrom);
+      });
+    }
     setEmailFrom(newFrom);
   };
 
@@ -407,19 +428,7 @@ const StaffCartView = () => {
               />
             </div>
 
-            {/* Signature preview when attached — plain text only */}
-            {signatureAttached && (
-              <div className="rounded-2xl border border-border bg-muted/20 p-5">
-                <pre className="text-sm leading-relaxed text-foreground whitespace-pre-wrap" style={{ fontFamily: "Arial, sans-serif" }}>
-{`Institute of Foreign Credential Services
-6 Cedar St, Dobbs Ferry, NY 10522
-Phone: 914-693-2840
-Fax: 914-231-7782
-Email: ${emailFrom || "info@ifcsevals.com"}
-www.ifcsevals.com`}
-                </pre>
-              </div>
-            )}
+            {/* Signature is now appended directly into the content textarea */}
 
             {/* Toolbar row: Attach, Signature, Smart Rewrite, Grammar Check */}
             <div className="flex items-center justify-between gap-3 flex-wrap">
