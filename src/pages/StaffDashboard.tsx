@@ -139,11 +139,11 @@ const StaffDashboard = () => {
     country: "", institution_name: "", cell_phone: "", home_phone: "", gender: "",
   });
 
-  // New Application Entry dialog
+  // Email Client / Institution dialog
   const [newAppOpen, setNewAppOpen] = useState(false);
   const [newAppSendTo, setNewAppSendTo] = useState("applicant");
 
-  // Applicant fields
+  // Email Client fields
   const [newAppIfcsId, setNewAppIfcsId] = useState("IFCS-");
   const [newAppEmail, setNewAppEmail] = useState("");
   const [newAppVerification, setNewAppVerification] = useState("");
@@ -153,6 +153,7 @@ const StaffDashboard = () => {
   const [newAppNotes, setNewAppNotes] = useState("");
   const [newAppAttachment, setNewAppAttachment] = useState<File | null>(null);
   const [newAppReceipt, setNewAppReceipt] = useState<File | null>(null);
+  const [emailClientSubject, setEmailClientSubject] = useState("");
 
   // Institution fields
   const [instAppNumber, setInstAppNumber] = useState("");
