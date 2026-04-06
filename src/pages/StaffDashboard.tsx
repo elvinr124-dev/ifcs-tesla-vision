@@ -573,6 +573,8 @@ const StaffDashboard = () => {
     setNewAppNotes("");
     setNewAppAttachment(null);
     setNewAppReceipt(null);
+    setEmailClientSubject("");
+    setNewAppReceipt(null);
     setInstAppNumber("");
     setInstApplicantEmail("");
     setInstInstitutionEmail("");
