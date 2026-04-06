@@ -233,7 +233,7 @@ const Translations = () => {
                 <div className="absolute top-0 left-0 right-0 h-1 bg-accent" />
                 <div className="flex items-start justify-between mb-2">
                   <div>
-                    <h3 className="text-xl font-semibold text-foreground">{translate("Certified Translation")}</h3>
+                    <h3 className="text-xl font-semibold text-foreground">{translate("ATA Certified Translation")}</h3>
                     <p className="text-sm text-muted-foreground mt-1">
                       {translate("Word-for-word document translation with certification letter for official use.")}
                     </p>
