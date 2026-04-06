@@ -361,6 +361,7 @@ interface ChatBodyProps {
   onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
   setAttachments: React.Dispatch<React.SetStateAction<File[]>>;
   messagesEndRef: React.RefObject<HTMLDivElement>;
+  messagesContainerRef: React.RefObject<HTMLDivElement>;
   isStaff: boolean;
   waitingForAgent: boolean;
 }
