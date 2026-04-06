@@ -376,7 +376,7 @@ const ChatBody = ({
   return (
     <>
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-3">
         {waitingForAgent && messages.length === 0 && (
           <div className="text-center py-8">
             <div className="w-12 h-12 rounded-full bg-emerald-500/20 flex items-center justify-center mx-auto mb-3">
