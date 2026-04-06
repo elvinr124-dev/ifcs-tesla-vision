@@ -189,7 +189,7 @@ const DocumentScanner = ({ onFilesProcessed, existingFiles = [] }: DocumentScann
           <Upload size={24} className="text-accent" />
         </div>
         <p className="text-sm font-semibold text-foreground">Drag & drop documents or click to upload</p>
-        <p className="text-xs text-muted-foreground mt-1">Images auto-enhanced & converted to PDF — like CamScanner</p>
+        <p className="text-xs text-muted-foreground mt-1">Images auto-enhanced & converted to PDF</p>
         <input
           ref={fileInputRef}
           type="file"

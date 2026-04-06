@@ -789,7 +789,7 @@ const Application = () => {
                     <p className="text-xs text-muted-foreground -mt-2">
                       {translateDual("Upload clear, legible copies of your documents.")} {selectedServiceTitle === "High School and University Course-by-Course"
                         ? translateDual("You need to upload 4 documents: High School Diploma, High School Transcript, University Degree Certificate, and University Transcript.")
-                        : translateDual("You need to upload 2 documents: your Transcript/Marksheets and Diploma Certificate.")}
+                        : translateDual("You need to upload 2 documents: your Transcript/Marksheets/Diploma Supplement/Grade Sheet")}
                     </p>
                     <DocumentScanner onFilesProcessed={handleFilesProcessed} existingFiles={files} />
 
