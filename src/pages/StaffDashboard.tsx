@@ -751,6 +751,29 @@ const StaffDashboard = () => {
                           </div>
                         </div>
 
+                        {/* Verification Source */}
+                        <div>
+                          <p className="text-sm font-medium text-foreground mb-2">Verification Source</p>
+                          <Select
+                            value={(orders.find(ord => ord.id === o.id) as any)?.verification_source || ""}
+                            onValueChange={async (val) => {
+                              await (supabase as any).from("client_orders").update({ verification_source: val }).eq("id", o.id);
+                              if (o.application_id) {
+                                await (supabase as any).from("applications").update({ verification_source: val }).eq("application_id", o.application_id);
+                              }
+                              setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, verification_source: val } as any : ord));
+                              toast({ title: "Verification Source Updated" });
+                            }}
+                          >
+                            <SelectTrigger className="w-full max-w-md rounded-2xl"><SelectValue placeholder="Select verification source..." /></SelectTrigger>
+                            <SelectContent>
+                              {verificationSources.map((v) => (
+                                <SelectItem key={v} value={v}>{v}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
                         {/* Notes section - no dropdown, always sends to applicant */}
                         <div>
                           <p className="text-sm font-medium text-foreground mb-2">Notes</p>
