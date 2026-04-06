@@ -1079,7 +1079,7 @@ const StaffDashboard = () => {
                   try {
                     await supabase.functions.invoke("send-application-email", {
                       body: {
-                        subject: `IFCS Application Update${instAppNumber ? ` — #${instAppNumber}` : ""}`,
+                        subject: emailClientSubject.trim() || `IFCS Application Update${instAppNumber ? ` — #${instAppNumber}` : ""}`,
                         body: emailBody,
                         recipientEmail: newAppEmail.trim(),
                         applicantEmail: allCc.length > 0 ? allCc.join(",") : undefined,
