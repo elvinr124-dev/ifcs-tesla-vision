@@ -978,79 +978,51 @@ const StaffDashboard = () => {
             <div className="space-y-6 pt-2">
               <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Application Number *</label>
-                  <Input value={newAppIfcsId} onChange={(e) => setNewAppIfcsId(e.target.value)} placeholder="IFCS-45001" />
+                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Application Number</label>
+                  <Input value={instAppNumber} onChange={(e) => setInstAppNumber(e.target.value)} placeholder="e.g. EE2323" />
                 </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
-                  <Input type="email" value={newAppEmail} onChange={(e) => setNewAppEmail(e.target.value)} placeholder="client@email.com" />
-                </div>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold uppercase tracking-widest text-accent">Date Entered</label>
                   <Input value={new Date().toLocaleDateString()} disabled className="bg-muted/40" />
                 </div>
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Verification Source</label>
-                  <Select value={newAppVerification} onValueChange={setNewAppVerification}>
-                    <SelectTrigger><SelectValue placeholder="Select source..." /></SelectTrigger>
-                    <SelectContent>
-                      {verificationSources.map((v) => (
-                        <SelectItem key={v} value={v}>{v}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Status</label>
-                  <Select value={newAppStatus} onValueChange={setNewAppStatus}>
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="in_process">In Process</SelectItem>
-                      <SelectItem value="in_review">In Review</SelectItem>
-                      <SelectItem value="need_info">Need Additional Information</SelectItem>
-                      <SelectItem value="completed">Completed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
+                <Input type="email" value={newAppEmail} onChange={(e) => setNewAppEmail(e.target.value)} placeholder="client@email.com" />
               </div>
 
+              {/* CC Emails */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Assign Evaluator</label>
-                <Select value={newAppEvaluator} onValueChange={setNewAppEvaluator}>
-                  <SelectTrigger><SelectValue placeholder="Select evaluator..." /></SelectTrigger>
-                  <SelectContent>
-                    {evaluators.map((ev) => (
-                      <SelectItem key={ev} value={ev}>{ev}</SelectItem>
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">CC Emails</label>
+                <div className="flex gap-2">
+                  <Input value={instCcInput} onChange={(e) => setInstCcInput(e.target.value)} placeholder="additional@email.com"
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); handleAddCc(); } }} />
+                  <Button type="button" size="sm" variant="outline" onClick={handleAddCc} className="shrink-0">
+                    <Plus size={14} /> Add
+                  </Button>
+                </div>
+                {instCcEmails.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {instCcEmails.map((email, i) => (
+                      <Badge key={i} variant="secondary" className="gap-1 pr-1">
+                        {email}
+                        <button onClick={() => setInstCcEmails(prev => prev.filter((_, idx) => idx !== i))} className="ml-1 hover:text-destructive">
+                          <X size={12} />
+                        </button>
+                      </Badge>
                     ))}
-                  </SelectContent>
-                </Select>
+                  </div>
+                )}
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Rush Service</label>
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { value: "standard", label: "Standard", desc: "Regular processing", border: "border-foreground" },
-                    { value: "3day", label: "🔥 3-Day Rush", desc: "Priority processing", border: "border-amber-500/40" },
-                    { value: "24hour", label: "⚡ 24-Hour Rush", desc: "Urgent processing", border: "border-red-500/40" },
-                  ].map((r) => (
-                    <button key={r.value} type="button" onClick={() => setNewAppRush(r.value)}
-                      className={`rounded-xl border-2 p-4 text-left transition-all ${newAppRush === r.value ? `${r.border} bg-muted/30` : "border-border hover:border-muted-foreground/30"}`}>
-                      <p className="font-semibold text-sm text-foreground">{r.label}</p>
-                      <p className="text-xs text-muted-foreground">{r.desc}</p>
-                    </button>
-                  ))}
-                </div>
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Subject</label>
+                <Input value={newAppNotes ? "" : ""} onChange={() => {}} placeholder={`IFCS Application Update${instAppNumber ? ` — #${instAppNumber}` : ""}`} />
               </div>
 
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Notes</label>
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Message</label>
                 <div className="flex flex-wrap gap-2 mb-2">
                   {quickNotes.map((qn) => (
                     <Button key={qn} type="button" size="sm" variant="outline" className="gap-1 text-xs rounded-full border-accent/40 text-accent hover:bg-accent/10"
@@ -1059,24 +1031,66 @@ const StaffDashboard = () => {
                     </Button>
                   ))}
                 </div>
-                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Add any notes about this application..." rows={4} />
+                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Type your message to the client..." rows={8} />
               </div>
 
-              <div className="grid md:grid-cols-2 gap-4">
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Attach File</label>
-                  <Input type="file" onChange={(e) => setNewAppAttachment(e.target.files?.[0] || null)} />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-widest text-accent">Upload Receipt</label>
-                  <Input type="file" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => setNewAppReceipt(e.target.files?.[0] || null)} />
-                </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Attach Files</label>
+                <Input type="file" multiple onChange={(e) => {
+                  const files = e.target.files;
+                  if (files) setInstAttachments(prev => [...prev, ...Array.from(files)]);
+                }} />
+                {instAttachments.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {instAttachments.map((file, i) => (
+                      <Badge key={i} variant="secondary" className="gap-1 pr-1">
+                        <Paperclip size={12} /> {file.name}
+                        <button onClick={() => setInstAttachments(prev => prev.filter((_, idx) => idx !== i))} className="ml-1 hover:text-destructive">
+                          <X size={12} />
+                        </button>
+                      </Badge>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <DialogFooter>
                 <Button variant="outline" onClick={() => setNewAppOpen(false)} className="rounded-full">Cancel</Button>
-                <Button onClick={handleNewApplication} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
-                  <Plus size={16} /> Add Application
+                <Button onClick={async () => {
+                  if (!newAppEmail.trim()) {
+                    toast({ title: "Missing Email", description: "Please enter the client's email.", variant: "destructive" });
+                    return;
+                  }
+                  // Upload attachments
+                  const attachmentUrls: string[] = [];
+                  for (const file of instAttachments) {
+                    const filePath = `client-emails/${instAppNumber || "general"}-${Date.now()}-${file.name}`;
+                    const { error: upErr } = await supabase.storage.from("evaluation-reports").upload(filePath, file);
+                    if (!upErr) {
+                      const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+                      attachmentUrls.push(urlData.publicUrl);
+                    }
+                  }
+                  const attachmentLinks = attachmentUrls.length > 0 ? `\n\nAttached files:\n${attachmentUrls.map((url, i) => `${i + 1}. ${url}`).join("\n")}` : "";
+                  const emailBody = `${newAppNotes}${attachmentLinks}`;
+                  const allCc = instCcEmails.filter(e => e.trim());
+
+                  try {
+                    await supabase.functions.invoke("send-application-email", {
+                      body: {
+                        subject: `IFCS Application Update${instAppNumber ? ` — #${instAppNumber}` : ""}`,
+                        body: emailBody,
+                        recipientEmail: newAppEmail.trim(),
+                        applicantEmail: allCc.length > 0 ? allCc.join(",") : undefined,
+                      },
+                    });
+                    toast({ title: "Email Sent", description: `Email sent to ${newAppEmail.trim()}.` });
+                  } catch {
+                    toast({ title: "Send Failed", variant: "destructive" });
+                  }
+                  resetNewAppForm();
+                }} className="gap-2 bg-accent text-white hover:bg-accent/90 rounded-full">
+                  <Send size={16} /> Send Email
                 </Button>
               </DialogFooter>
             </div>
