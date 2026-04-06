@@ -1019,7 +1019,7 @@ const StaffDashboard = () => {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold uppercase tracking-widest text-accent">Subject</label>
-                <Input value={newAppNotes ? "" : ""} onChange={() => {}} placeholder={`IFCS Application Update${instAppNumber ? ` — #${instAppNumber}` : ""}`} />
+                <Input value={emailClientSubject} onChange={(e) => setEmailClientSubject(e.target.value)} placeholder={`IFCS Application Update${instAppNumber ? ` — #${instAppNumber}` : ""}`} />
               </div>
 
               <div className="space-y-1.5">
