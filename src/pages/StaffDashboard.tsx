@@ -164,6 +164,20 @@ const StaffDashboard = () => {
   const [instNotes, setInstNotes] = useState("");
   const [instAttachments, setInstAttachments] = useState<File[]>([]);
 
+  // Career management
+  const [careerListings, setCareerListings] = useState<any[]>([]);
+  const [careerApps, setCareerApps] = useState<any[]>([]);
+  const [careerDialogOpen, setCareerDialogOpen] = useState(false);
+  const [careerEditId, setCareerEditId] = useState<string | null>(null);
+  const [careerTitle, setCareerTitle] = useState("");
+  const [careerDesc, setCareerDesc] = useState("");
+  const [careerReqs, setCareerReqs] = useState("");
+  const [careerLocation, setCareerLocation] = useState("Dobbs Ferry, NY");
+  const [careerType, setCareerType] = useState("Full-time");
+  const [careerActive, setCareerActive] = useState(true);
+  const [careerAppsDialogOpen, setCareerAppsDialogOpen] = useState(false);
+  const [careerViewJobId, setCareerViewJobId] = useState<string | null>(null);
+
   // Load all data
   useEffect(() => {
     const loadAll = async () => {
