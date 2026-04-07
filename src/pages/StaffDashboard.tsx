@@ -948,6 +948,66 @@ const StaffDashboard = () => {
               </div>
             </form>
           </div>
+
+          {/* ── Career / Job Listings Management ── */}
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                  <Users size={20} className="text-accent" />
+                </div>
+                <h2 className="text-xl font-bold text-foreground">Career Listings</h2>
+              </div>
+              <Button
+                className="rounded-full gap-2 bg-accent hover:bg-accent/90 text-accent-foreground"
+                onClick={() => {
+                  setCareerEditId(null);
+                  setCareerTitle(""); setCareerDesc(""); setCareerReqs(""); setCareerLocation("Dobbs Ferry, NY"); setCareerType("Full-time"); setCareerActive(true);
+                  setCareerDialogOpen(true);
+                }}
+              >
+                <Plus size={16} /> Add Career
+              </Button>
+            </div>
+            {careerListings.length === 0 ? (
+              <p className="text-muted-foreground text-sm">No career listings yet.</p>
+            ) : (
+              <div className="space-y-4">
+                {careerListings.map((job: any) => (
+                  <div key={job.id} className="flex items-center justify-between p-4 rounded-2xl border border-border">
+                    <div>
+                      <p className="font-semibold text-foreground">{job.title}</p>
+                      <p className="text-sm text-muted-foreground">{job.location} · {job.type} {!job.is_active && <span className="text-destructive">(Inactive)</span>}</p>
+                      <p className="text-xs text-muted-foreground mt-1">Applications: {careerApps.filter((a: any) => a.job_id === job.id).length}</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="rounded-full" onClick={() => {
+                        setCareerEditId(job.id);
+                        setCareerTitle(job.title); setCareerDesc(job.description); setCareerReqs(job.requirements);
+                        setCareerLocation(job.location); setCareerType(job.type); setCareerActive(job.is_active);
+                        setCareerDialogOpen(true);
+                      }}>
+                        <Edit3 size={14} />
+                      </Button>
+                      <Button variant="outline" size="sm" className="rounded-full" onClick={() => {
+                        setCareerViewJobId(job.id);
+                        setCareerAppsDialogOpen(true);
+                      }}>
+                        View Applicants
+                      </Button>
+                      <Button variant="outline" size="sm" className="rounded-full text-destructive" onClick={async () => {
+                        await (supabase as any).from("job_listings").delete().eq("id", job.id);
+                        setCareerListings((prev: any[]) => prev.filter((j: any) => j.id !== job.id));
+                        toast({ title: "Deleted", description: "Job listing removed." });
+                      }}>
+                        <Trash2 size={14} />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
