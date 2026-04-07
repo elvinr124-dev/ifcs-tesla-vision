@@ -53,6 +53,9 @@ const Payment = lazy(() => import("./pages/Payment"));
 const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
 const LearnMoreEvaluations = lazy(() => import("./pages/LearnMoreEvaluations"));
 const CUNY = lazy(() => import("./pages/CUNY"));
+const Careers = lazy(() => import("./pages/Careers"));
+const JobListings = lazy(() => import("./pages/JobListings"));
+const JobApplication = lazy(() => import("./pages/JobApplication"));
 
 const queryClient = new QueryClient();
 
