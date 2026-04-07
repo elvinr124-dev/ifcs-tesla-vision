@@ -1545,6 +1545,7 @@ const StaffDashboard = () => {
       </Dialog>
 
 
+      <Footer />
     </div>
   );
 };
