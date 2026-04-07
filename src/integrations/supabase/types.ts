@@ -372,6 +372,125 @@ export type Database = {
         }
         Relationships: []
       }
+      job_applications: {
+        Row: {
+          address: string
+          applicant_email: string
+          city: string
+          country: string
+          cover_letter_url: string | null
+          created_at: string
+          education: string
+          first_name: string
+          how_heard: string
+          id: string
+          job_id: string
+          languages: string
+          last_name: string
+          phone: string
+          referred_by_employee: boolean | null
+          resume_url: string | null
+          skills: string
+          start_date: string
+          status: string
+          updated_at: string
+          work_experience: string
+          zip: string
+        }
+        Insert: {
+          address?: string
+          applicant_email: string
+          city?: string
+          country?: string
+          cover_letter_url?: string | null
+          created_at?: string
+          education?: string
+          first_name: string
+          how_heard?: string
+          id?: string
+          job_id: string
+          languages?: string
+          last_name: string
+          phone?: string
+          referred_by_employee?: boolean | null
+          resume_url?: string | null
+          skills?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+          work_experience?: string
+          zip?: string
+        }
+        Update: {
+          address?: string
+          applicant_email?: string
+          city?: string
+          country?: string
+          cover_letter_url?: string | null
+          created_at?: string
+          education?: string
+          first_name?: string
+          how_heard?: string
+          id?: string
+          job_id?: string
+          languages?: string
+          last_name?: string
+          phone?: string
+          referred_by_employee?: boolean | null
+          resume_url?: string | null
+          skills?: string
+          start_date?: string
+          status?: string
+          updated_at?: string
+          work_experience?: string
+          zip?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "job_listings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_listings: {
+        Row: {
+          created_at: string
+          description: string
+          id: string
+          is_active: boolean
+          location: string
+          requirements: string
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          location?: string
+          requirements?: string
+          title: string
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          id?: string
+          is_active?: boolean
+          location?: string
+          requirements?: string
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       password_reset_codes: {
         Row: {
           code: string
