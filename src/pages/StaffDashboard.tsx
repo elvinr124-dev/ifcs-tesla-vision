@@ -1454,7 +1454,96 @@ const StaffDashboard = () => {
       </Dialog>
 
 
-      <Footer />
+      {/* ── Career Add/Edit Dialog ── */}
+      <Dialog open={careerDialogOpen} onOpenChange={setCareerDialogOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>{careerEditId ? "Edit Job Listing" : "Add Job Listing"}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div><Label className="text-sm font-medium">Title *</Label><Input value={careerTitle} onChange={e => setCareerTitle(e.target.value)} placeholder="e.g. Junior Evaluator" /></div>
+            <div><Label className="text-sm font-medium">Description *</Label><Textarea rows={4} value={careerDesc} onChange={e => setCareerDesc(e.target.value)} /></div>
+            <div><Label className="text-sm font-medium">Requirements</Label><Textarea rows={3} value={careerReqs} onChange={e => setCareerReqs(e.target.value)} /></div>
+            <div className="grid grid-cols-2 gap-4">
+              <div><Label className="text-sm font-medium">Location</Label><Input value={careerLocation} onChange={e => setCareerLocation(e.target.value)} /></div>
+              <div><Label className="text-sm font-medium">Type</Label>
+                <Select value={careerType} onValueChange={setCareerType}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>
+                  <SelectItem value="Full-time">Full-time</SelectItem><SelectItem value="Part-time">Part-time</SelectItem><SelectItem value="Contract">Contract</SelectItem><SelectItem value="Internship">Internship</SelectItem>
+                </SelectContent></Select>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <input type="checkbox" checked={careerActive} onChange={e => setCareerActive(e.target.checked)} id="career-active" />
+              <Label htmlFor="career-active">Active (visible to applicants)</Label>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setCareerDialogOpen(false)} className="rounded-full">Cancel</Button>
+            <Button className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={async () => {
+              if (!careerTitle || !careerDesc) { toast({ title: "Missing fields", variant: "destructive" }); return; }
+              if (careerEditId) {
+                await (supabase as any).from("job_listings").update({ title: careerTitle, description: careerDesc, requirements: careerReqs, location: careerLocation, type: careerType, is_active: careerActive, updated_at: new Date().toISOString() }).eq("id", careerEditId);
+                setCareerListings((prev: any[]) => prev.map((j: any) => j.id === careerEditId ? { ...j, title: careerTitle, description: careerDesc, requirements: careerReqs, location: careerLocation, type: careerType, is_active: careerActive } : j));
+              } else {
+                const { data } = await (supabase as any).from("job_listings").insert({ title: careerTitle, description: careerDesc, requirements: careerReqs, location: careerLocation, type: careerType, is_active: careerActive }).select().single();
+                if (data) setCareerListings((prev: any[]) => [data, ...prev]);
+              }
+              setCareerDialogOpen(false);
+              toast({ title: careerEditId ? "Job Updated" : "Job Created" });
+            }}>
+              {careerEditId ? "Save Changes" : "Create Listing"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── View Applicants Dialog ── */}
+      <Dialog open={careerAppsDialogOpen} onOpenChange={setCareerAppsDialogOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Applicants for {careerListings.find((j: any) => j.id === careerViewJobId)?.title || "Job"}</DialogTitle>
+          </DialogHeader>
+          {careerApps.filter((a: any) => a.job_id === careerViewJobId).length === 0 ? (
+            <p className="text-muted-foreground text-sm py-4">No applications yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {careerApps.filter((a: any) => a.job_id === careerViewJobId).map((app: any) => (
+                <div key={app.id} className="border border-border rounded-xl p-4">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <p className="font-semibold text-foreground">{app.first_name} {app.last_name}</p>
+                      <p className="text-sm text-muted-foreground">{app.applicant_email}</p>
+                      {app.phone && <p className="text-sm text-muted-foreground">{app.phone}</p>}
+                    </div>
+                    <Badge variant="secondary">{app.status}</Badge>
+                  </div>
+                  {app.resume_url && <a href={app.resume_url} target="_blank" rel="noreferrer" className="text-accent text-sm hover:underline mt-2 inline-block">View Resume</a>}
+                  {app.work_experience && <div className="mt-2"><p className="text-xs font-semibold text-muted-foreground">Work Experience</p><p className="text-sm text-foreground">{app.work_experience}</p></div>}
+                  {app.education && <div className="mt-2"><p className="text-xs font-semibold text-muted-foreground">Education</p><p className="text-sm text-foreground">{app.education}</p></div>}
+                  {app.languages && <div className="mt-2"><p className="text-xs font-semibold text-muted-foreground">Languages</p><p className="text-sm text-foreground">{app.languages}</p></div>}
+                  <div className="mt-3 flex gap-2">
+                    <Select defaultValue={app.status} onValueChange={async (v) => {
+                      await (supabase as any).from("job_applications").update({ status: v }).eq("id", app.id);
+                      setCareerApps((prev: any[]) => prev.map((a: any) => a.id === app.id ? { ...a, status: v } : a));
+                    }}>
+                      <SelectTrigger className="w-40 h-8 text-xs"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="submitted">Submitted</SelectItem>
+                        <SelectItem value="reviewing">Reviewing</SelectItem>
+                        <SelectItem value="interview">Interview</SelectItem>
+                        <SelectItem value="hired">Hired</SelectItem>
+                        <SelectItem value="rejected">Rejected</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+
     </div>
   );
 };
