@@ -200,6 +200,8 @@ const StaffDashboard = () => {
         });
         setPendingChats(unique);
       }
+      if (jobsRes.data) setCareerListings(jobsRes.data);
+      if (jobAppsRes.data) setCareerApps(jobAppsRes.data);
     };
     loadAll();
 
