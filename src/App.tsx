@@ -109,6 +109,9 @@ const App = () => (
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
                 <Route path="/learn-more-evaluations" element={<LearnMoreEvaluations />} />
                 <Route path="/cuny" element={<CUNY />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/careers/jobs" element={<JobListings />} />
+                <Route path="/careers/apply/:jobId" element={<JobApplication />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>

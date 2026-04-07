@@ -39,6 +39,7 @@ const allLinks = [
   { label: "FAQ", href: "/faq", icon: HelpCircle },
   { label: "Contact", href: "/contact", icon: Mail },
   { label: "Payment", href: "/payment", icon: CreditCard },
+  { label: "Career Opportunities", href: "/careers", icon: UserCheck },
   { label: "Cart", href: "/cart", icon: ShoppingCart },
   { label: "Login", href: "/login", icon: LogIn },
 ];
