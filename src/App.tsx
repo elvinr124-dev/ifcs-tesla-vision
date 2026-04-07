@@ -53,6 +53,9 @@ const Payment = lazy(() => import("./pages/Payment"));
 const OrderConfirmation = lazy(() => import("./pages/OrderConfirmation"));
 const LearnMoreEvaluations = lazy(() => import("./pages/LearnMoreEvaluations"));
 const CUNY = lazy(() => import("./pages/CUNY"));
+const Careers = lazy(() => import("./pages/Careers"));
+const JobListings = lazy(() => import("./pages/JobListings"));
+const JobApplication = lazy(() => import("./pages/JobApplication"));
 
 const queryClient = new QueryClient();
 
@@ -106,6 +109,9 @@ const App = () => (
                 <Route path="/order-confirmation" element={<OrderConfirmation />} />
                 <Route path="/learn-more-evaluations" element={<LearnMoreEvaluations />} />
                 <Route path="/cuny" element={<CUNY />} />
+                <Route path="/careers" element={<Careers />} />
+                <Route path="/careers/jobs" element={<JobListings />} />
+                <Route path="/careers/apply/:jobId" element={<JobApplication />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
               </Suspense>

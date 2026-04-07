@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import ifcsOrigLogo from "@/assets/ifcs-orig-logo.png";
-import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User, ChevronDown, DollarSign, Headphones, CreditCard } from "lucide-react";
+import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User, ChevronDown, DollarSign, Headphones, CreditCard, UserCheck } from "lucide-react";
 import NavSearchBar from "@/components/NavSearchBar";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useCart } from "@/context/CartContext";
@@ -39,6 +39,7 @@ const allLinks = [
   { label: "FAQ", href: "/faq", icon: HelpCircle },
   { label: "Contact", href: "/contact", icon: Mail },
   { label: "Payment", href: "/payment", icon: CreditCard },
+  { label: "Career Opportunities", href: "/careers", icon: UserCheck },
   { label: "Cart", href: "/cart", icon: ShoppingCart },
   { label: "Login", href: "/login", icon: LogIn },
 ];
