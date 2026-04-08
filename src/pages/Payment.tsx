@@ -235,6 +235,9 @@ const Payment = () => {
             {/* Amount Section */}
             <div className="space-y-2">
               <Label htmlFor="amount" className="text-foreground text-xs uppercase tracking-wider">Amount to pay *</Label>
+              {isLockedAmount && (
+                <p className="text-xs text-muted-foreground mb-1">This amount was set by IFCS staff and cannot be changed.</p>
+              )}
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold text-lg">$</span>
                 <Input
@@ -245,8 +248,9 @@ const Payment = () => {
                   value={form.amount}
                   onChange={set("amount")}
                   required
+                  readOnly={isLockedAmount}
                   placeholder="0.00"
-                  className="bg-muted/30 border-border h-14 rounded-xl pl-9 text-xl font-semibold tabular-nums"
+                  className={`bg-muted/30 border-border h-14 rounded-xl pl-9 text-xl font-semibold tabular-nums ${isLockedAmount ? "opacity-70 cursor-not-allowed" : ""}`}
                 />
               </div>
             </div>
