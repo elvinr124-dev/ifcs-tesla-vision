@@ -7,6 +7,7 @@ import BackToHome from "@/components/BackToHome";
 import { useLocale } from "@/context/LocaleContext";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import * as pdfjsLib from "pdfjs-dist";
 
 // Set the worker source
