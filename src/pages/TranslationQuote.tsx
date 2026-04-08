@@ -173,9 +173,10 @@ const TranslationQuote = () => {
       await supabase.functions.invoke("send-application-email", {
         body: {
           to: "translations@ifcsevals.com",
-          subject: `Translation Quote Request — ${name}`,
+          subject: `Translation Quote Request — ${name} (${quoteAppId})`,
           html: `
             <h2>Translation Quote Request</h2>
+            <p><strong>Application ID:</strong> ${quoteAppId}</p>
             <p><strong>Name:</strong> ${name}</p>
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Phone:</strong> ${phone || "N/A"}</p>
@@ -186,6 +187,20 @@ const TranslationQuote = () => {
           `,
         },
       });
+
+      // Save quote to client_orders
+      try {
+        await supabase.from("client_orders").insert({
+          reference_id: quoteAppId,
+          client_email: email,
+          service: `Translation Quote: ${transFrom} → ${transTo}`,
+          status: "requested",
+          application_id: quoteAppId,
+          dob: "",
+        });
+      } catch (err) {
+        console.error("Failed to save quote order:", err);
+      }
 
       setSubmitted(true);
     } catch {
