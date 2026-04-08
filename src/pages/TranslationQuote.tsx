@@ -64,15 +64,14 @@ const TranslationQuote = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Payment if already quoted
-  const [showPayment, setShowPayment] = useState(false);
-  const [payName, setPayName] = useState("");
-  const [payEmail, setPayEmail] = useState("");
-  const [payAmount, setPayAmount] = useState("");
-  const [payCardNumber, setPayCardNumber] = useState("");
-  const [payExpiry, setPayExpiry] = useState("");
-  const [payCvc, setPayCvc] = useState("");
-  const [payZip, setPayZip] = useState("");
+  // Generate T-prefix application ID for quotes
+  const [appIdSeed] = useState(() => Math.floor(1000 + Math.random() * 9000));
+  const quoteAppId = useMemo(() => {
+    const nameParts = name.trim().split(/\s+/);
+    const f = (nameParts[0]?.[0] || "X").toUpperCase();
+    const l = (nameParts[nameParts.length - 1]?.[0] || "X").toUpperCase();
+    return `T${f}${l}${String(appIdSeed).padStart(4, "0")}`;
+  }, [name, appIdSeed]);
 
   const [fileAnalyses, setFileAnalyses] = useState<FileAnalysis[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
