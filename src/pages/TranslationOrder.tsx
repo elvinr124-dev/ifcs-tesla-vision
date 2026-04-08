@@ -400,6 +400,21 @@ const TranslationOrder = () => {
       return;
     }
     setError("");
+    
+    // Save translation order to database
+    try {
+      await supabase.from("client_orders").insert({
+        reference_id: translationAppId,
+        client_email: emailVal,
+        service: `Translation: ${transFrom} → ${transTo}`,
+        status: "requested",
+        application_id: translationAppId,
+        dob: "",
+      });
+    } catch (err) {
+      console.error("Failed to save translation order:", err);
+    }
+    
     setSubmitted(true);
   };
 
