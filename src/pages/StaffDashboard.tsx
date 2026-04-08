@@ -897,7 +897,16 @@ const StaffDashboard = () => {
                             }}>
                             <Send size={14} /> Email Institution
                           </button>
-                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
+                            onClick={() => {
+                              const amount = prompt("Enter payment amount for the client (e.g. 150.00):");
+                              if (amount && !isNaN(Number(amount))) {
+                                const paymentUrl = `${window.location.origin}/payment?amount=${amount}`;
+                                navigator.clipboard.writeText(paymentUrl);
+                                toast({ title: "Payment Link Copied", description: `Link with $${amount} amount copied to clipboard. You can paste it in an email to the client.` });
+                              }
+                            }}>
+                            <CreditCard size={14} /> Send Payment Link
                             onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
                             <MessageCircle size={14} /> Chat with {applicantName}
                           </button>
