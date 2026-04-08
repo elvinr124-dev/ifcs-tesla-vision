@@ -14,7 +14,7 @@ import {
 import {
   Upload, Send, Users, Clock, AlertCircle, CheckCircle2, Package, FileText, Star,
   Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones, Trash2, UserX,
-  Paperclip, Receipt, Edit3, Mail,
+  Paperclip, Receipt, Edit3, Mail, CreditCard,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -896,6 +896,17 @@ const StaffDashboard = () => {
                               setNewAppOpen(true);
                             }}>
                             <Send size={14} /> Email Institution
+                          </button>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
+                            onClick={() => {
+                              const amount = prompt("Enter payment amount for the client (e.g. 150.00):");
+                              if (amount && !isNaN(Number(amount))) {
+                                const paymentUrl = `${window.location.origin}/payment?amount=${amount}`;
+                                navigator.clipboard.writeText(paymentUrl);
+                                toast({ title: "Payment Link Copied", description: `Link with $${amount} amount copied to clipboard. You can paste it in an email to the client.` });
+                              }
+                            }}>
+                            <CreditCard size={14} /> Send Payment Link
                           </button>
                           <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
                             onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>

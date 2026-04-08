@@ -1,5 +1,5 @@
-import { useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { useState, useRef, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import BackToHome from "@/components/BackToHome";
 import Footer from "@/components/Footer";
@@ -18,12 +18,16 @@ const years = Array.from({ length: 14 }, (_, i) => currentYear + i);
 const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
 
 const Payment = () => {
+  const [searchParams] = useSearchParams();
+  const presetAmount = searchParams.get("amount") || "";
+  const isLockedAmount = !!presetAmount;
+
   const [form, setForm] = useState({
     docName: "",
     email: "",
     phone: "",
     ifcsId: "",
-    amount: "",
+    amount: presetAmount,
     cardHolder: "",
     cardNumber: "",
     expMonth: "",
@@ -231,6 +235,9 @@ const Payment = () => {
             {/* Amount Section */}
             <div className="space-y-2">
               <Label htmlFor="amount" className="text-foreground text-xs uppercase tracking-wider">Amount to pay *</Label>
+              {isLockedAmount && (
+                <p className="text-xs text-muted-foreground mb-1">This amount was set by IFCS staff and cannot be changed.</p>
+              )}
               <div className="relative">
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold text-lg">$</span>
                 <Input
@@ -241,8 +248,9 @@ const Payment = () => {
                   value={form.amount}
                   onChange={set("amount")}
                   required
+                  readOnly={isLockedAmount}
                   placeholder="0.00"
-                  className="bg-muted/30 border-border h-14 rounded-xl pl-9 text-xl font-semibold tabular-nums"
+                  className={`bg-muted/30 border-border h-14 rounded-xl pl-9 text-xl font-semibold tabular-nums ${isLockedAmount ? "opacity-70 cursor-not-allowed" : ""}`}
                 />
               </div>
             </div>

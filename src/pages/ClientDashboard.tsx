@@ -441,21 +441,21 @@ const ClientDashboard = () => {
             </div>
           </div>
 
-          {/* ── My Orders ── */}
+          {/* ── Evaluation Orders ── */}
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
                 <Package size={20} className="text-accent" />
               </div>
-              <h2 className="text-xl font-bold text-foreground">{translate("My Orders")}</h2>
+              <h2 className="text-xl font-bold text-foreground">{translate("Evaluation Orders")}</h2>
             </div>
             <div className="space-y-4">
-              {orders.length === 0 && (
+              {orders.filter(o => !o.application_id?.startsWith("T")).length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-8">
-                  {translate("No orders yet. Use the Track Order section above to find your order.")}
+                  {translate("No evaluation orders yet.")}
                 </p>
               )}
-              {orders.map((order) => {
+              {orders.filter(o => !o.application_id?.startsWith("T")).map((order) => {
                 const meta = statusMeta[order.status] ?? statusMeta.requested;
                 const isExpanded = expandedOrder === order.id;
                 const currentIdx = statusSteps.indexOf(order.status);
@@ -491,7 +491,6 @@ const ClientDashboard = () => {
 
                     {isExpanded && (
                       <div className="border-t border-border p-5 space-y-6">
-                        {/* Action buttons */}
                         <div className="flex flex-wrap gap-2">
                           {hasAppData && (
                             <button
@@ -511,7 +510,6 @@ const ClientDashboard = () => {
                           )}
                         </div>
 
-                        {/* Status timeline */}
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3">{translate("Track Order")}</p>
                           <div className="flex items-center gap-2">
@@ -528,7 +526,6 @@ const ClientDashboard = () => {
                           </div>
                         </div>
 
-                        {/* Staff Notes — combined view */}
                         {(order.staff_note || staffNotes) && (
                           <div className="rounded-xl border border-border p-5 bg-muted/20">
                             <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
@@ -540,24 +537,20 @@ const ClientDashboard = () => {
                           </div>
                         )}
 
-                        {/* Delivery Approval — shown when delivered */}
                         {order.status === "delivered" && (
                           <div className="rounded-xl border-2 border-accent/30 bg-accent/5 p-6">
-                            <div className="space-y-4">
-                              <div className="flex items-center gap-3">
-                                <Package size={24} className="text-accent" />
-                                <div>
-                                   <p className="font-semibold text-foreground text-lg">{translate("Your report is ready!")}</p>
-                                   <p className="text-sm text-muted-foreground">
-                                     {translate("Check the Shared Evaluation Reports section below for your report.")}
-                                   </p>
-                                </div>
+                            <div className="flex items-center gap-3">
+                              <Package size={24} className="text-accent" />
+                              <div>
+                                <p className="font-semibold text-foreground text-lg">{translate("Your report is ready!")}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {translate("Check the Shared Evaluation Reports section below for your report.")}
+                                </p>
                               </div>
                             </div>
                           </div>
                         )}
 
-                        {/* Staff requirements */}
                         {requirements.length > 0 && (
                           <div>
                             <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
@@ -593,7 +586,6 @@ const ClientDashboard = () => {
                           </div>
                         )}
 
-                        {/* Add-Ons */}
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
                             <Plus size={16} className="text-accent" /> {translate("Add-Ons")}
@@ -622,7 +614,7 @@ const ClientDashboard = () => {
             </div>
           </div>
 
-          {/* ── Credential Vault ── */}
+          {/* ── Shared Evaluation Reports ── */}
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
@@ -675,7 +667,112 @@ const ClientDashboard = () => {
             </div>
           </div>
 
-          {/* ── Contact IFCS ── */}
+          {/* ── Translation Orders ── */}
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Languages size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">{translate("Translation Orders")}</h2>
+            </div>
+            <div className="space-y-4">
+              {orders.filter(o => o.application_id?.startsWith("T")).length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  {translate("No translation orders yet.")}
+                </p>
+              )}
+              {orders.filter(o => o.application_id?.startsWith("T")).map((order) => {
+                const meta = statusMeta[order.status] ?? statusMeta.requested;
+                const isExpanded = expandedOrder === order.id;
+                const currentIdx = statusSteps.indexOf(order.status);
+
+                return (
+                  <div key={order.id} className="rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                    <button
+                      onClick={() => setExpandedOrder(isExpanded ? null : order.id)}
+                      className="w-full flex items-center justify-between p-5 hover:bg-muted/20 transition-colors text-left"
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 flex-wrap">
+                          <p className="font-bold text-foreground">App ID {order.application_id || order.reference_id}</p>
+                          {(order.ifcs_id) && (
+                            <p className="font-bold text-accent">— IFCS ID {order.ifcs_id}</p>
+                          )}
+                          <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${meta.color}`}>
+                            {meta.icon} {meta.label}
+                          </span>
+                        </div>
+                        {order.service && <p className="text-sm text-muted-foreground mt-1.5 truncate">{order.service}</p>}
+                        <p className="text-xs text-muted-foreground mt-0.5">Added {new Date(order.submitted_at).toLocaleDateString()}</p>
+                      </div>
+                      <div className="ml-4 flex-shrink-0">
+                        {isExpanded ? <ChevronUp size={20} className="text-muted-foreground" /> : <ChevronDown size={20} className="text-muted-foreground" />}
+                      </div>
+                    </button>
+
+                    {isExpanded && (
+                      <div className="border-t border-border p-5 space-y-6">
+                        <div>
+                          <p className="text-sm font-medium text-foreground mb-3">{translate("Track Order")}</p>
+                          <div className="flex items-center gap-2">
+                            {statusSteps.map((s, i) => {
+                              const filled = i <= currentIdx;
+                              const label = statusMeta[s]?.label;
+                              return (
+                                <div key={s} className="flex-1 text-center">
+                                  <div className={`h-2 rounded-full transition-colors ${filled ? "bg-accent" : "bg-muted"}`} />
+                                  <p className={`text-[10px] mt-1 ${filled ? "text-accent font-medium" : "text-muted-foreground"}`}>{label}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {order.staff_note && (
+                          <div className="rounded-xl border border-border p-5 bg-muted/20">
+                            <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
+                              <MessageSquare size={16} className="text-accent" /> {translate("Staff Notes")}
+                            </p>
+                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
+                              {order.staff_note}
+                            </p>
+                          </div>
+                        )}
+
+                        {order.status === "delivered" && (
+                          <div className="rounded-xl border-2 border-accent/30 bg-accent/5 p-6">
+                            <div className="flex items-center gap-3">
+                              <Languages size={24} className="text-accent" />
+                              <div>
+                                <p className="font-semibold text-foreground text-lg">{translate("Your translation is ready!")}</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {translate("Check the Shared Translation Reports section below.")}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* ── Shared Translation Reports ── */}
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-5">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Languages size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">{translate("Shared Translation Reports")}</h2>
+            </div>
+            <p className="text-sm text-muted-foreground text-center py-4">
+              {translate("Translation reports shared by IFCS staff will appear here.")}
+            </p>
+          </div>
+
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">

@@ -1,6 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTriangle, FileText } from "lucide-react";
+import { ArrowLeft, Upload, X, CheckCircle, Send, Loader2, AlertTriangle, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
@@ -64,15 +64,14 @@ const TranslationQuote = () => {
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  // Payment if already quoted
-  const [showPayment, setShowPayment] = useState(false);
-  const [payName, setPayName] = useState("");
-  const [payEmail, setPayEmail] = useState("");
-  const [payAmount, setPayAmount] = useState("");
-  const [payCardNumber, setPayCardNumber] = useState("");
-  const [payExpiry, setPayExpiry] = useState("");
-  const [payCvc, setPayCvc] = useState("");
-  const [payZip, setPayZip] = useState("");
+  // Generate T-prefix application ID for quotes
+  const [appIdSeed] = useState(() => Math.floor(1000 + Math.random() * 9000));
+  const quoteAppId = useMemo(() => {
+    const nameParts = name.trim().split(/\s+/);
+    const f = (nameParts[0]?.[0] || "X").toUpperCase();
+    const l = (nameParts[nameParts.length - 1]?.[0] || "X").toUpperCase();
+    return `T${f}${l}${String(appIdSeed).padStart(4, "0")}`;
+  }, [name, appIdSeed]);
 
   const [fileAnalyses, setFileAnalyses] = useState<FileAnalysis[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -174,9 +173,10 @@ const TranslationQuote = () => {
       await supabase.functions.invoke("send-application-email", {
         body: {
           to: "translations@ifcsevals.com",
-          subject: `Translation Quote Request — ${name}`,
+          subject: `Translation Quote Request — ${name} (${quoteAppId})`,
           html: `
             <h2>Translation Quote Request</h2>
+            <p><strong>Application ID:</strong> ${quoteAppId}</p>
             <p><strong>Name:</strong> ${name}</p>
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Phone:</strong> ${phone || "N/A"}</p>
@@ -187,6 +187,20 @@ const TranslationQuote = () => {
           `,
         },
       });
+
+      // Save quote to client_orders
+      try {
+        await supabase.from("client_orders").insert({
+          reference_id: quoteAppId,
+          client_email: email,
+          service: `Translation Quote: ${transFrom} → ${transTo}`,
+          status: "requested",
+          application_id: quoteAppId,
+          dob: "",
+        });
+      } catch (err) {
+        console.error("Failed to save quote order:", err);
+      }
 
       setSubmitted(true);
     } catch {
@@ -223,10 +237,16 @@ const TranslationQuote = () => {
           <div className="max-w-xl mx-auto rounded-3xl border border-accent/40 bg-accent/5 p-12">
             <CheckCircle size={56} className="text-accent mx-auto mb-4" />
             <h2 className="text-3xl font-bold text-foreground mb-3">{translate("Quote Request Submitted!")}</h2>
+            <p className="text-lg font-semibold text-accent mb-2">Application ID: {quoteAppId}</p>
             <p className="text-muted-foreground font-light mb-8">{translate("Our team will review your documents and send a detailed quote to your email shortly.")}</p>
-            <Link to="/translations" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl bg-accent text-accent-foreground font-bold shadow-xl shadow-accent/40 hover:scale-105 transition-all duration-300">
-              {translate("Back to Translations")}
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link to="/dashboard" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl bg-accent text-accent-foreground font-bold shadow-xl shadow-accent/40 hover:scale-105 transition-all duration-300">
+                My Dashboard
+              </Link>
+              <Link to="/translations" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl border border-border text-foreground font-bold hover:bg-muted/50 transition-all duration-300">
+                {translate("Back to Translations")}
+              </Link>
+            </div>
           </div>
         </section>
       ) : (
@@ -356,6 +376,15 @@ const TranslationQuote = () => {
                 </button>
               </div>
 
+              {/* Application ID Display */}
+              {name.trim() && (
+                <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4 text-center">
+                  <p className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground mb-1">Your Application ID</p>
+                  <p className="text-xl font-bold text-accent">{quoteAppId}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Save this ID for tracking your quote</p>
+                </div>
+              )}
+
               {/* Submit */}
               <div className="flex justify-center pt-2 pb-6">
                 <button
@@ -402,57 +431,6 @@ const TranslationQuote = () => {
                 )}
               </div>
 
-              {/* Make a Payment (if already received a quote) */}
-              <div className="rounded-3xl border border-border bg-white shadow-lg p-8 space-y-4">
-                <SectionHeading>{translateDual("Make a Payment")}</SectionHeading>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                  {translate("Already received a quote? Enter your details below to make a payment.")}
-                </p>
-
-                {!showPayment ? (
-                  <button
-                    type="button"
-                    onClick={() => setShowPayment(true)}
-                    className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-foreground text-background font-bold text-base shadow-lg hover:scale-105 transition-all duration-300"
-                  >
-                    <CreditCard size={18} />
-                    <span>{translate("Make Payment")}</span>
-                  </button>
-                ) : (
-                  <div className="space-y-4 pt-2">
-                    <FieldGroup label={translateDual("Full Name")} required>
-                      <GlassInput value={payName} onChange={e => setPayName(e.target.value)} placeholder="Name on card" required />
-                    </FieldGroup>
-                    <FieldGroup label={translateDual("Email")} required>
-                      <GlassInput value={payEmail} onChange={e => setPayEmail(e.target.value)} placeholder="you@email.com" type="email" required />
-                    </FieldGroup>
-                    <FieldGroup label={translateDual("Amount ($)")} required>
-                      <GlassInput value={payAmount} onChange={e => setPayAmount(e.target.value)} placeholder="e.g. 150.00" type="number" required />
-                    </FieldGroup>
-                    <FieldGroup label={translateDual("Card Number")} required>
-                      <GlassInput value={payCardNumber} onChange={e => setPayCardNumber(e.target.value)} placeholder="1234 5678 9012 3456" required />
-                    </FieldGroup>
-                    <div className="grid grid-cols-3 gap-3">
-                      <FieldGroup label={translateDual("Expiry")} required>
-                        <GlassInput value={payExpiry} onChange={e => setPayExpiry(e.target.value)} placeholder="MM/YY" required />
-                      </FieldGroup>
-                      <FieldGroup label={translateDual("CVC")} required>
-                        <GlassInput value={payCvc} onChange={e => setPayCvc(e.target.value)} placeholder="123" required />
-                      </FieldGroup>
-                      <FieldGroup label={translateDual("Zip")} required>
-                        <GlassInput value={payZip} onChange={e => setPayZip(e.target.value)} placeholder="10001" required />
-                      </FieldGroup>
-                    </div>
-                    <button
-                      type="button"
-                      className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-accent text-accent-foreground font-bold text-base shadow-xl shadow-accent/30 hover:shadow-accent/50 hover:scale-105 transition-all duration-300"
-                    >
-                      <CreditCard size={18} />
-                      <span>Pay ${payAmount || "0.00"}</span>
-                    </button>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </form>

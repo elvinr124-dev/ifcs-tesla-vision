@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, Upload, X, CheckCircle, Send, CreditCard, Loader2, AlertTriangle, FileText } from "lucide-react";
 import Navbar from "@/components/Navbar";
@@ -7,6 +7,7 @@ import BackToHome from "@/components/BackToHome";
 import { useLocale } from "@/context/LocaleContext";
 import translationsBg from "@/assets/translations-bg.jpg";
 import { toast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import * as pdfjsLib from "pdfjs-dist";
 
 // Set the worker source
@@ -145,6 +146,15 @@ const TranslationOrder = () => {
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  // Generate T-prefix application ID
+  const [appIdSeed] = useState(() => Math.floor(1000 + Math.random() * 9000));
+  const translationAppId = useMemo(() => {
+    const nameParts = fullName.trim().split(/\s+/);
+    const f = (nameParts[0]?.[0] || "X").toUpperCase();
+    const l = (nameParts[nameParts.length - 1]?.[0] || "X").toUpperCase();
+    return `T${f}${l}${String(appIdSeed).padStart(4, "0")}`;
+  }, [fullName, appIdSeed]);
 
   const [fileAnalyses, setFileAnalyses] = useState<FileAnalysis[]>([]);
   const [dragging, setDragging] = useState(false);
@@ -372,7 +382,7 @@ const TranslationOrder = () => {
   const hasBlurryFiles = fileAnalyses.some(fa => fa.analysis?.isBlurry);
   const isAnalyzing = fileAnalyses.some(fa => fa.analyzing);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!fullName.trim() || !emailVal.trim() || !transFrom.trim() || !transTo.trim()) {
       setError("Please fill in all required fields before submitting.");
@@ -391,6 +401,21 @@ const TranslationOrder = () => {
       return;
     }
     setError("");
+    
+    // Save translation order to database
+    try {
+      await supabase.from("client_orders").insert({
+        reference_id: translationAppId,
+        client_email: emailVal,
+        service: `Translation: ${transFrom} → ${transTo}`,
+        status: "requested",
+        application_id: translationAppId,
+        dob: "",
+      });
+    } catch (err) {
+      console.error("Failed to save translation order:", err);
+    }
+    
     setSubmitted(true);
   };
 
@@ -421,10 +446,16 @@ const TranslationOrder = () => {
           <div className="max-w-xl mx-auto rounded-3xl border border-accent/40 bg-accent/5 p-12">
             <CheckCircle size={56} className="text-accent mx-auto mb-4" />
             <h2 className="text-3xl font-bold text-foreground mb-3">Order Placed!</h2>
+            <p className="text-lg font-semibold text-accent mb-2">Application ID: {translationAppId}</p>
             <p className="text-muted-foreground font-light mb-8">Thank you! We'll begin translating your documents and deliver within the selected timeframe.</p>
-            <Link to="/translations" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl bg-accent text-accent-foreground font-bold shadow-xl shadow-accent/40 hover:scale-105 transition-all duration-300">
-              Back to Translations
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link to="/dashboard" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl bg-accent text-accent-foreground font-bold shadow-xl shadow-accent/40 hover:scale-105 transition-all duration-300">
+                My Dashboard
+              </Link>
+              <Link to="/translations" className="inline-flex items-center gap-3 px-8 py-4 rounded-3xl border border-border text-foreground font-bold hover:bg-muted/50 transition-all duration-300">
+                Back to Translations
+              </Link>
+            </div>
           </div>
         </section>
       ) : (
@@ -661,6 +692,15 @@ const TranslationOrder = () => {
                   </FieldGroup>
                 </div>
               </div>
+
+              {/* Application ID Display */}
+              {fullName.trim() && (
+                <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4 text-center">
+                  <p className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground mb-1">Your Application ID</p>
+                  <p className="text-xl font-bold text-accent">{translationAppId}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Save this ID for tracking your order</p>
+                </div>
+              )}
 
               {/* Submit */}
               <div className="flex justify-center pt-2 pb-6">
