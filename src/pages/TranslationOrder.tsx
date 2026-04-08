@@ -693,6 +693,15 @@ const TranslationOrder = () => {
                 </div>
               </div>
 
+              {/* Application ID Display */}
+              {fullName.trim() && (
+                <div className="rounded-2xl border border-accent/30 bg-accent/5 p-4 text-center">
+                  <p className="text-xs font-bold tracking-[0.15em] uppercase text-muted-foreground mb-1">Your Application ID</p>
+                  <p className="text-xl font-bold text-accent">{translationAppId}</p>
+                  <p className="text-xs text-muted-foreground mt-1">Save this ID for tracking your order</p>
+                </div>
+              )}
+
               {/* Submit */}
               <div className="flex justify-center pt-2 pb-6">
                 <button
