@@ -401,57 +401,6 @@ const TranslationQuote = () => {
                 )}
               </div>
 
-              {/* Make a Payment (if already received a quote) */}
-              <div className="rounded-3xl border border-border bg-white shadow-lg p-8 space-y-4">
-                <SectionHeading>{translateDual("Make a Payment")}</SectionHeading>
-                <p className="text-sm text-muted-foreground font-light leading-relaxed">
-                  {translate("Already received a quote? Enter your details below to make a payment.")}
-                </p>
-
-                {!showPayment ? (
-                  <button
-                    type="button"
-                    onClick={() => setShowPayment(true)}
-                    className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-foreground text-background font-bold text-base shadow-lg hover:scale-105 transition-all duration-300"
-                  >
-                    <CreditCard size={18} />
-                    <span>{translate("Make Payment")}</span>
-                  </button>
-                ) : (
-                  <div className="space-y-4 pt-2">
-                    <FieldGroup label={translateDual("Full Name")} required>
-                      <GlassInput value={payName} onChange={e => setPayName(e.target.value)} placeholder="Name on card" required />
-                    </FieldGroup>
-                    <FieldGroup label={translateDual("Email")} required>
-                      <GlassInput value={payEmail} onChange={e => setPayEmail(e.target.value)} placeholder="you@email.com" type="email" required />
-                    </FieldGroup>
-                    <FieldGroup label={translateDual("Amount ($)")} required>
-                      <GlassInput value={payAmount} onChange={e => setPayAmount(e.target.value)} placeholder="e.g. 150.00" type="number" required />
-                    </FieldGroup>
-                    <FieldGroup label={translateDual("Card Number")} required>
-                      <GlassInput value={payCardNumber} onChange={e => setPayCardNumber(e.target.value)} placeholder="1234 5678 9012 3456" required />
-                    </FieldGroup>
-                    <div className="grid grid-cols-3 gap-3">
-                      <FieldGroup label={translateDual("Expiry")} required>
-                        <GlassInput value={payExpiry} onChange={e => setPayExpiry(e.target.value)} placeholder="MM/YY" required />
-                      </FieldGroup>
-                      <FieldGroup label={translateDual("CVC")} required>
-                        <GlassInput value={payCvc} onChange={e => setPayCvc(e.target.value)} placeholder="123" required />
-                      </FieldGroup>
-                      <FieldGroup label={translateDual("Zip")} required>
-                        <GlassInput value={payZip} onChange={e => setPayZip(e.target.value)} placeholder="10001" required />
-                      </FieldGroup>
-                    </div>
-                    <button
-                      type="button"
-                      className="w-full group inline-flex items-center justify-center gap-3 px-6 py-4 rounded-3xl bg-accent text-accent-foreground font-bold text-base shadow-xl shadow-accent/30 hover:shadow-accent/50 hover:scale-105 transition-all duration-300"
-                    >
-                      <CreditCard size={18} />
-                      <span>Pay ${payAmount || "0.00"}</span>
-                    </button>
-                  </div>
-                )}
-              </div>
             </div>
           </div>
         </form>
