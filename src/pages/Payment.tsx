@@ -18,12 +18,16 @@ const years = Array.from({ length: 14 }, (_, i) => currentYear + i);
 const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0"));
 
 const Payment = () => {
+  const [searchParams] = useSearchParams();
+  const presetAmount = searchParams.get("amount") || "";
+  const isLockedAmount = !!presetAmount;
+
   const [form, setForm] = useState({
     docName: "",
     email: "",
     phone: "",
     ifcsId: "",
-    amount: "",
+    amount: presetAmount,
     cardHolder: "",
     cardNumber: "",
     expMonth: "",
