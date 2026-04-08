@@ -146,6 +146,15 @@ const TranslationOrder = () => {
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
+  // Generate T-prefix application ID
+  const [appIdSeed] = useState(() => Math.floor(1000 + Math.random() * 9000));
+  const translationAppId = useMemo(() => {
+    const nameParts = fullName.trim().split(/\s+/);
+    const f = (nameParts[0]?.[0] || "X").toUpperCase();
+    const l = (nameParts[nameParts.length - 1]?.[0] || "X").toUpperCase();
+    return `T${f}${l}${String(appIdSeed).padStart(4, "0")}`;
+  }, [fullName, appIdSeed]);
+
   const [fileAnalyses, setFileAnalyses] = useState<FileAnalysis[]>([]);
   const [dragging, setDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
