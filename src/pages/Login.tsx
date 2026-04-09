@@ -3,8 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import BackToHome from "@/components/BackToHome";
-import { User, Shield, ArrowRight, Mail } from "lucide-react";
-import { Label } from "@/components/ui/label";
+import { User, ArrowRight, Mail } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useLocale } from "@/context/LocaleContext";
 import brooklynBridge from "@/assets/brooklyn-bridge-night.jpg";
@@ -37,7 +36,6 @@ const Login = () => {
   const [guestEmail, setGuestEmail] = useState("");
   const [guestError, setGuestError] = useState("");
 
-  // Check if we were redirected here with a specific destination
   const locationState = location.state as {
     redirectTo?: string;
     serviceData?: any;
@@ -76,16 +74,16 @@ const Login = () => {
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-4xl mx-auto px-6 md:px-12">
           <p className="text-sm font-medium tracking-[0.2em] uppercase mb-3 text-white">{translate("Welcome Back")}</p>
-          <h1 className="tesla-hero-title text-white">{translate("Sign In to TFCS")}</h1>
+          <h1 className="tesla-hero-title text-white">{translate("Sign In to IFCS")}</h1>
           <p className="tesla-hero-subtitle text-white/80 max-w-lg">
             {translate("Select your account type to continue.")}
           </p>
         </div>
       </section>
 
-      {/* Login type cards */}
+      {/* Login type cards — only Client and Guest */}
       <section className="py-20 px-6 md:px-12 content-bg">
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
 
           {/* Client Login */}
           <div className="group relative rounded-3xl overflow-hidden border border-border bg-card shadow-xl hover:shadow-accent/20 hover:shadow-2xl transition-all duration-500 hover:scale-[1.02]">
@@ -146,29 +144,6 @@ const Login = () => {
                   {translate("Continue as Guest")} <ArrowRight size={16} />
                 </button>
               </div>
-            </div>
-          </div>
-
-          {/* Staff Login */}
-          <div className="group relative rounded-3xl overflow-hidden border border-border bg-card shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-[1.02]">
-            <div className="h-1 bg-gradient-to-r from-foreground/40 via-foreground/20 to-transparent" />
-            <div className="p-10 flex flex-col items-center text-center gap-6">
-              <div className="w-20 h-20 rounded-3xl bg-muted border border-border flex items-center justify-center shadow-lg">
-                <Shield size={36} className="text-foreground/60" />
-              </div>
-              <div>
-                <h2 className="text-2xl font-bold tracking-tight text-foreground">{translate("Staff Login")}</h2>
-                <p className="text-sm text-muted-foreground mt-2 leading-relaxed">
-                  {translate("TFCS staff members can view client carts, orders, and manage applications.")}
-                </p>
-              </div>
-              <Link
-                to="/login/staff"
-                className="w-full inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-2xl border border-border bg-muted/50 text-foreground text-sm font-semibold hover:bg-muted transition-all duration-200 hover:scale-105"
-              >
-                {translate("Staff Login")} <ArrowRight size={16} />
-              </Link>
-              <p className="text-xs text-muted-foreground/60">TFCS internal access only</p>
             </div>
           </div>
 
