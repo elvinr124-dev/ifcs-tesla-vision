@@ -89,6 +89,16 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
   </select>
 );
 
+type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "track_order";
+
+const sectionOptions: { value: DashSection; label: string; icon: React.ReactNode }[] = [
+  { value: "eval_orders", label: "Evaluation Orders", icon: <Package size={16} /> },
+  { value: "trans_orders", label: "Translation Orders", icon: <Languages size={16} /> },
+  { value: "eval_reports", label: "Shared Evaluation Reports", icon: <ShieldCheck size={16} /> },
+  { value: "trans_reports", label: "Shared Translation Reports", icon: <Languages size={16} /> },
+  { value: "track_order", label: "Track Order", icon: <Search size={16} /> },
+];
+
 const ClientDashboard = () => {
   const { user } = useAuth();
   const { translate } = useLocale();
@@ -96,8 +106,10 @@ const ClientDashboard = () => {
   const [orders, setOrders] = useState<ClientOrder[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [dbReports, setDbReports] = useState<DBReport[]>([]);
+  const [activeSection, setActiveSection] = useState<DashSection | null>(null);
 
   // Track order inputs
+  const [trackType, setTrackType] = useState<"evaluation" | "translation">("evaluation");
   const [trackId, setTrackId] = useState("");
   const [trackDobMonth, setTrackDobMonth] = useState("");
   const [trackDobDay, setTrackDobDay] = useState("");
