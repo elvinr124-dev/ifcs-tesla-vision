@@ -83,6 +83,7 @@ const App = () => (
                 <Route path="/login" element={<Login />} />
                 <Route path="/login/client" element={<ClientLogin />} />
                 <Route path="/login/staff" element={<StaffLogin />} />
+                <Route path="/staff" element={<StaffLogin />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/cart" element={<Cart />} />
                 <Route path="/staff/cart" element={<StaffCartView />} />

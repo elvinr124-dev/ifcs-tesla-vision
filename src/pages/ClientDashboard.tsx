@@ -89,6 +89,16 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
   </select>
 );
 
+type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "track_order";
+
+const sectionOptions: { value: DashSection; label: string; icon: React.ReactNode }[] = [
+  { value: "eval_orders", label: "Evaluation Orders", icon: <Package size={16} /> },
+  { value: "trans_orders", label: "Translation Orders", icon: <Languages size={16} /> },
+  { value: "eval_reports", label: "Shared Evaluation Reports", icon: <ShieldCheck size={16} /> },
+  { value: "trans_reports", label: "Shared Translation Reports", icon: <Languages size={16} /> },
+  { value: "track_order", label: "Track Order", icon: <Search size={16} /> },
+];
+
 const ClientDashboard = () => {
   const { user } = useAuth();
   const { translate } = useLocale();
@@ -96,8 +106,10 @@ const ClientDashboard = () => {
   const [orders, setOrders] = useState<ClientOrder[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [dbReports, setDbReports] = useState<DBReport[]>([]);
+  const [activeSection, setActiveSection] = useState<DashSection | null>(null);
 
   // Track order inputs
+  const [trackType, setTrackType] = useState<"evaluation" | "translation">("evaluation");
   const [trackId, setTrackId] = useState("");
   const [trackDobMonth, setTrackDobMonth] = useState("");
   const [trackDobDay, setTrackDobDay] = useState("");
@@ -399,49 +411,115 @@ const ClientDashboard = () => {
       <div className="content-bg">
         <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-8">
 
-          {/* ── Track Order ── */}
-          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
-            <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
-                <Search size={20} className="text-accent" />
-              </div>
-              <h2 className="text-xl font-bold text-foreground">{translate("Track Order")}</h2>
-            </div>
-            <p className="text-sm text-muted-foreground mb-5">
-              {translate("Enter your IFCS Reference Number or Application ID along with your date of birth to track your order.")}
-            </p>
-            <div className="space-y-4">
-              <Input
-                value={trackId}
-                onChange={(e) => setTrackId(e.target.value)}
-                placeholder="IFCS ID (e.g. 44507) or App ID (e.g. EE0098)"
-                className="max-w-sm rounded-2xl h-12"
-              />
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
-                <div className="grid grid-cols-3 gap-3 max-w-sm">
-                  <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
-                    <option value="">Month</option>
-                    {months.map(m => <option key={m} value={m}>{m}</option>)}
-                  </GlassSelect>
-                  <GlassSelect value={trackDobDay} onChange={(e) => setTrackDobDay(e.target.value)}>
-                    <option value="">Day</option>
-                    {days.map(d => <option key={d} value={d}>{d}</option>)}
-                  </GlassSelect>
-                  <GlassSelect value={trackDobYear} onChange={(e) => setTrackDobYear(e.target.value)}>
-                    <option value="">Year</option>
-                    {years.map(y => <option key={y} value={y}>{y}</option>)}
-                  </GlassSelect>
+          {/* ── Section Selector ── */}
+          {!activeSection && (
+            <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                  <Search size={20} className="text-accent" />
                 </div>
+                <h2 className="text-xl font-bold text-foreground">{translate("What are you looking for?")}</h2>
               </div>
-              <button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()}
-                className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
-                <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
-              </button>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                {sectionOptions.map((opt) => (
+                  <button
+                    key={opt.value}
+                    onClick={() => setActiveSection(opt.value)}
+                    className="flex items-center gap-3 p-4 rounded-2xl border border-border bg-muted/20 hover:bg-accent/10 hover:border-accent/40 text-left transition-all duration-200 group"
+                  >
+                    <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                      {opt.icon}
+                    </div>
+                    <span className="text-sm font-semibold text-foreground">{translate(opt.label)}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Back to sections button */}
+          {activeSection && (
+            <button
+              onClick={() => setActiveSection(null)}
+              className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors mb-2"
+            >
+              ← {translate("Back to Dashboard")}
+            </button>
+          )}
+
+          {/* ── Track Order ── */}
+          {activeSection === "track_order" && (
+            <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                  <Search size={20} className="text-accent" />
+                </div>
+                <h2 className="text-xl font-bold text-foreground">{translate("Track Order")}</h2>
+              </div>
+
+              {/* Track type toggle */}
+              <div className="flex gap-2 mb-5">
+                <button
+                  onClick={() => setTrackType("evaluation")}
+                  className={`px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all ${
+                    trackType === "evaluation"
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {translate("Evaluation")}
+                </button>
+                <button
+                  onClick={() => setTrackType("translation")}
+                  className={`px-5 py-2.5 rounded-2xl text-sm font-semibold transition-all ${
+                    trackType === "translation"
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-muted/50 text-muted-foreground hover:bg-muted"
+                  }`}
+                >
+                  {translate("Translation")}
+                </button>
+              </div>
+
+              <p className="text-sm text-muted-foreground mb-5">
+                {trackType === "evaluation"
+                  ? translate("Enter your IFCS ID or Application ID and date of birth to track your evaluation order.")
+                  : translate("Enter your IFCS ID or Application ID to track your translation order.")}
+              </p>
+              <div className="space-y-4">
+                <Input
+                  value={trackId}
+                  onChange={(e) => setTrackId(e.target.value)}
+                  placeholder={trackType === "evaluation" ? "IFCS ID (e.g. 44507) or App ID (e.g. EE0098)" : "IFCS ID or App ID (e.g. TEV1234)"}
+                  className="max-w-sm rounded-2xl h-12"
+                />
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
+                  <div className="grid grid-cols-3 gap-3 max-w-sm">
+                    <GlassSelect value={trackDobMonth} onChange={(e) => setTrackDobMonth(e.target.value)}>
+                      <option value="">Month</option>
+                      {months.map(m => <option key={m} value={m}>{m}</option>)}
+                    </GlassSelect>
+                    <GlassSelect value={trackDobDay} onChange={(e) => setTrackDobDay(e.target.value)}>
+                      <option value="">Day</option>
+                      {days.map(d => <option key={d} value={d}>{d}</option>)}
+                    </GlassSelect>
+                    <GlassSelect value={trackDobYear} onChange={(e) => setTrackDobYear(e.target.value)}>
+                      <option value="">Year</option>
+                      {years.map(y => <option key={y} value={y}>{y}</option>)}
+                    </GlassSelect>
+                  </div>
+                </div>
+                <button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()}
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+                  <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
+                </button>
+              </div>
+            </div>
+          )}
 
           {/* ── Evaluation Orders ── */}
+          {activeSection === "eval_orders" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
@@ -613,8 +691,10 @@ const ClientDashboard = () => {
               })}
             </div>
           </div>
+          )}
 
           {/* ── Shared Evaluation Reports ── */}
+          {activeSection === "eval_reports" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
@@ -666,8 +746,10 @@ const ClientDashboard = () => {
               })}
             </div>
           </div>
+          )}
 
           {/* ── Translation Orders ── */}
+          {activeSection === "trans_orders" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
@@ -759,8 +841,10 @@ const ClientDashboard = () => {
               })}
             </div>
           </div>
+          )}
 
           {/* ── Shared Translation Reports ── */}
+          {activeSection === "trans_reports" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
@@ -772,6 +856,7 @@ const ClientDashboard = () => {
               {translate("Translation reports shared by IFCS staff will appear here.")}
             </p>
           </div>
+          )}
 
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-4">
