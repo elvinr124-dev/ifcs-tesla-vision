@@ -4,6 +4,7 @@ import ifcsOrigLogo from "@/assets/ifcs-orig-logo.png";
 import { Menu, GraduationCap, Languages, ShoppingCart, LogIn, LayoutDashboard, Shield, Briefcase, Users, HelpCircle, Mail, Copy, User, ChevronDown, DollarSign, Headphones, CreditCard, UserCheck } from "lucide-react";
 import NavSearchBar from "@/components/NavSearchBar";
 import LanguageSelector from "@/components/LanguageSelector";
+import SidebarMenu from "@/components/SidebarMenu";
 import { useCart } from "@/context/CartContext";
 import { useAuth } from "@/context/AuthContext";
 import { useLocale } from "@/context/LocaleContext";
@@ -327,62 +328,7 @@ const Navbar = () => {
                 <span className="text-xl font-bold tracking-widest text-foreground">IFCS</span>
               </SheetTitle>
             </SheetHeader>
-            <div className="flex flex-col py-4">
-              {allLinks.map((link) => {
-                const Icon = link.icon;
-                const isActive = location.pathname === link.href;
-                if (link.href === "/login" && user) return null;
-                return (
-                  <Link
-                    key={link.label}
-                    to={link.href}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                      isActive
-                        ? "bg-accent/10 text-accent border-r-4 border-accent"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <Icon size={20} className={isActive ? "text-accent" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold tracking-wide">{translate(link.label)}</span>
-                    {link.href === "/cart" && totalItems > 0 && (
-                      <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
-                        {totalItems}
-                      </span>
-                    )}
-                  </Link>
-                );
-              })}
-
-              {user && (
-                <>
-                  <Link
-                    to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"}
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                      location.pathname.startsWith("/dashboard")
-                        ? "bg-accent/10 text-accent border-r-4 border-accent"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold tracking-wide">{translate("My Dashboard")}</span>
-                  </Link>
-                  <Link
-                    to="/account"
-                    onClick={() => setSidebarOpen(false)}
-                    className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                      location.pathname === "/account"
-                        ? "bg-accent/10 text-accent border-r-4 border-accent"
-                        : "text-foreground hover:bg-muted"
-                    }`}
-                  >
-                    <User size={20} className={location.pathname === "/account" ? "text-accent" : "text-muted-foreground"} />
-                    <span className="text-sm font-semibold tracking-wide">{translate("My Account")}</span>
-                  </Link>
-                </>
-              )}
-            </div>
+            <SidebarMenu onClose={() => setSidebarOpen(false)} />
           </SheetContent>
         </Sheet>
       </div>
@@ -401,59 +347,7 @@ const Navbar = () => {
               <span className="text-xl font-bold tracking-widest text-foreground">IFCS</span>
             </SheetTitle>
           </SheetHeader>
-          <div className="flex flex-col py-4">
-            {allLinks.map((link) => {
-              const Icon = link.icon;
-              const isActive = location.pathname === link.href;
-              if (link.href === "/login" && user) return null;
-              return (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                    isActive
-                      ? "bg-accent/10 text-accent border-r-4 border-accent"
-                      : "text-foreground hover:bg-muted"
-                  }`}
-                >
-                  <Icon size={20} className={isActive ? "text-accent" : "text-muted-foreground"} />
-                  <span className="text-sm font-semibold tracking-wide">{translate(link.label)}</span>
-                  {link.href === "/cart" && totalItems > 0 && (
-                    <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
-                      {totalItems}
-                    </span>
-                  )}
-                </Link>
-              );
-            })}
-
-            {user && (
-              <>
-                <Link
-                  to={user.role === "staff" ? "/dashboard/staff" : "/dashboard/client"}
-                  className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                    location.pathname.startsWith("/dashboard")
-                      ? "bg-accent/10 text-accent border-r-4 border-accent"
-                      : "text-foreground hover:bg-muted"
-                  }`}
-                >
-                  <LayoutDashboard size={20} className={location.pathname.startsWith("/dashboard") ? "text-accent" : "text-muted-foreground"} />
-                  <span className="text-sm font-semibold tracking-wide">{translate("My Dashboard")}</span>
-                </Link>
-                <Link
-                  to="/account"
-                  className={`flex items-center gap-4 px-6 py-4 transition-all duration-200 ${
-                    location.pathname === "/account"
-                      ? "bg-accent/10 text-accent border-r-4 border-accent"
-                      : "text-foreground hover:bg-muted"
-                  }`}
-                >
-                  <User size={20} className={location.pathname === "/account" ? "text-accent" : "text-muted-foreground"} />
-                  <span className="text-sm font-semibold tracking-wide">{translate("My Account")}</span>
-                </Link>
-              </>
-            )}
-          </div>
+          <SidebarMenu onClose={() => {}} />
         </SheetContent>
       </Sheet>
     </nav>
