@@ -68,56 +68,63 @@ const SidebarMenu = ({ onClose }: SidebarMenuProps) => {
 
   return (
     <div className="flex flex-col py-4 px-6">
-      {menuGroups.map((group) => (
-        <div key={group.label} className="mb-1">
-          <button
-            onClick={() => toggleGroup(group.label)}
-            className="w-full flex items-center justify-between py-3 text-sm font-bold text-foreground hover:text-accent transition-colors"
-          >
-            <span>{translate(group.label)}</span>
-            <ChevronDown
-              size={16}
-              className={`text-muted-foreground transition-transform duration-200 ${
-                openGroups[group.label] ? "rotate-180" : ""
+      {menuGroups.map((group) => {
+        const isOpen = openGroups[group.label];
+        return (
+          <div key={group.label} className="mb-2">
+            <button
+              onClick={() => toggleGroup(group.label)}
+              className={`w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-200 border ${
+                isOpen
+                  ? "bg-accent/10 border-accent/40 text-accent"
+                  : "bg-card border-border text-foreground hover:border-accent/30 hover:text-accent"
               }`}
-            />
-          </button>
+            >
+              <span>{translate(group.label)}</span>
+              <ChevronDown
+                size={16}
+                className={`transition-transform duration-200 ${
+                  isOpen ? "rotate-180 text-accent" : "text-muted-foreground"
+                }`}
+              />
+            </button>
 
-          {openGroups[group.label] && (
-            <ul className="space-y-0.5 pl-4 pb-3 animate-in slide-in-from-top-1 duration-200">
-              {group.children.map((child) => {
-                const href =
-                  child.href === "/dashboard" ? getDashboardHref() : child.href;
-                const isActive =
-                  child.href === "/dashboard"
-                    ? location.pathname.startsWith("/dashboard")
-                    : location.pathname === child.href;
+            {isOpen && (
+              <ul className="space-y-0.5 pl-4 pt-2 pb-3 animate-in slide-in-from-top-1 duration-200">
+                {group.children.map((child) => {
+                  const href =
+                    child.href === "/dashboard" ? getDashboardHref() : child.href;
+                  const isActive =
+                    child.href === "/dashboard"
+                      ? location.pathname.startsWith("/dashboard")
+                      : location.pathname === child.href;
 
-                return (
-                  <li key={child.label}>
-                    <Link
-                      to={href}
-                      onClick={onClose}
-                      className={`flex items-center gap-2 text-sm py-2 px-3 rounded-xl transition-colors ${
-                        isActive
-                          ? "text-accent font-semibold bg-accent/10"
-                          : "text-muted-foreground hover:text-foreground hover:bg-muted/40"
-                      }`}
-                    >
-                      <span>{translate(child.label)}</span>
-                      {child.href === "/cart" && totalItems > 0 && (
-                        <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
-                          {totalItems}
-                        </span>
-                      )}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </div>
-      ))}
+                  return (
+                    <li key={child.label}>
+                      <Link
+                        to={href}
+                        onClick={onClose}
+                        className={`flex items-center gap-2 text-sm py-2 px-3 rounded-xl transition-colors ${
+                          isActive
+                            ? "text-accent font-semibold bg-accent/10"
+                            : "text-muted-foreground hover:text-accent hover:bg-accent/5"
+                        }`}
+                      >
+                        <span>{translate(child.label)}</span>
+                        {child.href === "/cart" && totalItems > 0 && (
+                          <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
+                            {totalItems}
+                          </span>
+                        )}
+                      </Link>
+                    </li>
+                  );
+                })}
+              </ul>
+            )}
+          </div>
+        );
+      })}
 
       {/* Login / Sign Out */}
       <div className="border-t border-border pt-4 mt-2">

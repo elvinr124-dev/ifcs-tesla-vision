@@ -92,11 +92,11 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
 type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "track_order";
 
 const sectionOptions: { value: DashSection; label: string; icon: React.ReactNode }[] = [
-  { value: "eval_orders", label: "Evaluation Orders", icon: <Package size={16} /> },
-  { value: "trans_orders", label: "Translation Orders", icon: <Languages size={16} /> },
-  { value: "eval_reports", label: "Shared Evaluation Reports", icon: <ShieldCheck size={16} /> },
-  { value: "trans_reports", label: "Shared Translation Reports", icon: <Languages size={16} /> },
-  { value: "track_order", label: "Track Order", icon: <Search size={16} /> },
+  { value: "eval_orders", label: "Evaluation Orders", icon: <Package size={18} /> },
+  { value: "trans_orders", label: "Translation Orders", icon: <Languages size={18} /> },
+  { value: "eval_reports", label: "Shared Evaluation Reports", icon: <ShieldCheck size={18} /> },
+  { value: "trans_reports", label: "Shared Translation Reports", icon: <Languages size={18} /> },
+  { value: "track_order", label: "Track Order", icon: <Search size={18} /> },
 ];
 
 const ClientDashboard = () => {
@@ -106,7 +106,7 @@ const ClientDashboard = () => {
   const [orders, setOrders] = useState<ClientOrder[]>([]);
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [dbReports, setDbReports] = useState<DBReport[]>([]);
-  const [activeSection, setActiveSection] = useState<DashSection | null>(null);
+  const [activeSection, setActiveSection] = useState<DashSection>("eval_orders");
 
   // Track order inputs
   const [trackType, setTrackType] = useState<"evaluation" | "translation">("evaluation");
@@ -409,43 +409,56 @@ const ClientDashboard = () => {
       </section>
 
       <div className="content-bg">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-8">
-
-          {/* ── Section Selector ── */}
-          {!activeSection && (
-            <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
-              <div className="flex items-center gap-3 mb-5">
-                <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
-                  <Search size={20} className="text-accent" />
-                </div>
-                <h2 className="text-xl font-bold text-foreground">{translate("What are you looking for?")}</h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                {sectionOptions.map((opt) => (
+        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24">
+          <div className="flex gap-8">
+            {/* ── Left Sidebar Navigation ── */}
+            <aside className="hidden md:flex flex-col w-64 shrink-0 sticky top-28 self-start space-y-2">
+              {sectionOptions.map((opt) => {
+                const isActive = activeSection === opt.value;
+                return (
                   <button
                     key={opt.value}
                     onClick={() => setActiveSection(opt.value)}
-                    className="flex items-center gap-3 p-4 rounded-2xl border border-border bg-muted/20 hover:bg-accent/10 hover:border-accent/40 text-left transition-all duration-200 group"
+                    className={`flex items-center gap-3 w-full px-5 py-4 rounded-2xl text-left transition-all duration-200 ${
+                      isActive
+                        ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+                        : "bg-card border border-border text-foreground hover:bg-accent/10 hover:border-accent/40"
+                    }`}
                   >
-                    <div className="w-9 h-9 rounded-xl bg-accent/10 flex items-center justify-center group-hover:bg-accent/20 transition-colors">
+                    <div className={`${isActive ? "text-accent-foreground" : "text-accent"}`}>
                       {opt.icon}
                     </div>
-                    <span className="text-sm font-semibold text-foreground">{translate(opt.label)}</span>
+                    <span className="text-sm font-semibold">{translate(opt.label)}</span>
                   </button>
-                ))}
+                );
+              })}
+            </aside>
+
+            {/* Mobile section selector */}
+            <div className="md:hidden w-full mb-6">
+              <div className="flex overflow-x-auto gap-2 pb-2">
+                {sectionOptions.map((opt) => {
+                  const isActive = activeSection === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => setActiveSection(opt.value)}
+                      className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all ${
+                        isActive
+                          ? "bg-accent text-accent-foreground shadow-md"
+                          : "bg-card border border-border text-foreground"
+                      }`}
+                    >
+                      {opt.icon}
+                      {translate(opt.label)}
+                    </button>
+                  );
+                })}
               </div>
             </div>
-          )}
 
-          {/* Back to sections button */}
-          {activeSection && (
-            <button
-              onClick={() => setActiveSection(null)}
-              className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors mb-2"
-            >
-              ← {translate("Back to Dashboard")}
-            </button>
-          )}
+            {/* ── Main Content Area ── */}
+            <div className="flex-1 min-w-0 space-y-8">
 
           {/* ── Track Order ── */}
           {activeSection === "track_order" && (
@@ -868,6 +881,8 @@ const ClientDashboard = () => {
             <p className="text-sm text-muted-foreground">
               Need help? Click the <span className="font-semibold text-emerald-500">Contact Agent</span> button in the bottom-right corner to start a live chat with an IFCS representative. You can also reach us at <a href="mailto:info@ifcsevals.com" className="text-accent underline">info@ifcsevals.com</a>.
             </p>
+          </div>
+            </div>
           </div>
         </div>
       </div>
