@@ -696,7 +696,61 @@ const StaffDashboard = () => {
       </section>
 
       <div className="content-bg">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-10">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24">
+          <div className="flex gap-8">
+            {/* ── Left Sidebar Navigation ── */}
+            <aside className="hidden md:flex flex-col w-64 shrink-0 sticky top-28 self-start space-y-2">
+              {staffSectionOptions.map((opt) => {
+                const isActive = staffSection === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => setStaffSection(opt.value)}
+                    className={`flex items-center gap-3 w-full px-5 py-4 rounded-2xl text-left transition-all duration-200 ${
+                      isActive
+                        ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+                        : "bg-card border border-border text-foreground hover:bg-accent/10 hover:border-accent/40"
+                    }`}
+                  >
+                    <div className={`${isActive ? "text-accent-foreground" : "text-accent"}`}>
+                      {opt.icon}
+                    </div>
+                    <span className="text-sm font-semibold">{opt.label}</span>
+                    {opt.value === "chat" && pendingChats.length > 0 && (
+                      <span className="ml-auto w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
+                        {pendingChats.length}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </aside>
+
+            {/* Mobile section selector */}
+            <div className="md:hidden w-full mb-6">
+              <div className="flex overflow-x-auto gap-2 pb-2">
+                {staffSectionOptions.map((opt) => {
+                  const isActive = staffSection === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => setStaffSection(opt.value)}
+                      className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all ${
+                        isActive
+                          ? "bg-accent text-accent-foreground shadow-md"
+                          : "bg-card border border-border text-foreground"
+                      }`}
+                    >
+                      {opt.icon}
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ── Main Content Area ── */}
+            <div className="flex-1 min-w-0 space-y-10">
 
           {/* ── Incoming Chat Requests ── */}
           {pendingChats.length > 0 && (
