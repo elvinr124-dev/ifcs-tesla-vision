@@ -753,7 +753,7 @@ const StaffDashboard = () => {
             <div className="flex-1 min-w-0 space-y-10">
 
           {/* ── Incoming Chat Requests ── */}
-          {pendingChats.length > 0 && (
+          {staffSection === "chat" && pendingChats.length > 0 && (
             <Card className="border-border bg-card border-emerald-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
@@ -778,7 +778,7 @@ const StaffDashboard = () => {
           )}
 
           {/* ── Active Chat ── */}
-          {activeConvId && (
+          {staffSection === "chat" && activeConvId && (
             <Card className="border-border bg-card border-emerald-500/30">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-xl"><MessageCircle size={22} className="text-emerald-500" /> Live Chat</CardTitle>
@@ -790,7 +790,17 @@ const StaffDashboard = () => {
             </Card>
           )}
 
+          {/* ── No pending chats message ── */}
+          {staffSection === "chat" && pendingChats.length === 0 && !activeConvId && (
+            <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm text-center py-12">
+              <Headphones size={40} className="text-muted-foreground mx-auto mb-4" />
+              <p className="text-lg font-semibold text-foreground mb-1">No pending chat requests</p>
+              <p className="text-sm text-muted-foreground">When clients request live chat support, they'll appear here.</p>
+            </div>
+          )}
+
           {/* ── Application Queue ── */}
+          {staffSection === "queue" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex flex-col gap-4 mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
