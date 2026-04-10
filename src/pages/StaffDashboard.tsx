@@ -1102,6 +1102,8 @@ const StaffDashboard = () => {
               </div>
             )}
           </div>
+            </div>
+          </div>
         </div>
       </div>
 
