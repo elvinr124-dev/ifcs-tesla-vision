@@ -1054,7 +1054,6 @@ const StaffDashboard = () => {
               </div>
             </form>
           </div>
-          </div>
           )}
 
           {/* ── Career / Job Listings Management ── */}
