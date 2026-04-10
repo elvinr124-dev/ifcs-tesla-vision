@@ -1006,8 +1006,10 @@ const StaffDashboard = () => {
               })}
             </div>
           </div>
+          )}
 
           {/* ── Share Evaluation Report ── */}
+          {staffSection === "share_report" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
@@ -1052,8 +1054,11 @@ const StaffDashboard = () => {
               </div>
             </form>
           </div>
+          </div>
+          )}
 
           {/* ── Career / Job Listings Management ── */}
+          {staffSection === "careers" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
@@ -1112,6 +1117,7 @@ const StaffDashboard = () => {
               </div>
             )}
           </div>
+          )}
             </div>
           </div>
         </div>
