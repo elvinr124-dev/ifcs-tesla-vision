@@ -106,8 +106,18 @@ const verificationSources = [
   "Original Documents Required to be mailed to IFCS",
 ];
 
+type StaffSection = "chat" | "queue" | "share_report" | "careers";
+
+const staffSectionOptions: { value: StaffSection; label: string; icon: React.ReactNode }[] = [
+  { value: "chat", label: "Live Chat", icon: <Headphones size={18} /> },
+  { value: "queue", label: "Application Queue", icon: <Package size={18} /> },
+  { value: "share_report", label: "Share Report", icon: <FileText size={18} /> },
+  { value: "careers", label: "Career Listings", icon: <Users size={18} /> },
+];
+
 const StaffDashboard = () => {
   const { toast } = useToast();
+  const [staffSection, setStaffSection] = useState<StaffSection>("queue");
   const [filter, setFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -686,10 +696,64 @@ const StaffDashboard = () => {
       </section>
 
       <div className="content-bg">
-        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24 space-y-10">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 pb-24">
+          <div className="flex gap-8">
+            {/* ── Left Sidebar Navigation ── */}
+            <aside className="hidden md:flex flex-col w-64 shrink-0 sticky top-28 self-start space-y-2">
+              {staffSectionOptions.map((opt) => {
+                const isActive = staffSection === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => setStaffSection(opt.value)}
+                    className={`flex items-center gap-3 w-full px-5 py-4 rounded-2xl text-left transition-all duration-200 ${
+                      isActive
+                        ? "bg-accent text-accent-foreground shadow-lg shadow-accent/20"
+                        : "bg-card border border-border text-foreground hover:bg-accent/10 hover:border-accent/40"
+                    }`}
+                  >
+                    <div className={`${isActive ? "text-accent-foreground" : "text-accent"}`}>
+                      {opt.icon}
+                    </div>
+                    <span className="text-sm font-semibold">{opt.label}</span>
+                    {opt.value === "chat" && pendingChats.length > 0 && (
+                      <span className="ml-auto w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center">
+                        {pendingChats.length}
+                      </span>
+                    )}
+                  </button>
+                );
+              })}
+            </aside>
+
+            {/* Mobile section selector */}
+            <div className="md:hidden w-full mb-6">
+              <div className="flex overflow-x-auto gap-2 pb-2">
+                {staffSectionOptions.map((opt) => {
+                  const isActive = staffSection === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      onClick={() => setStaffSection(opt.value)}
+                      className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all ${
+                        isActive
+                          ? "bg-accent text-accent-foreground shadow-md"
+                          : "bg-card border border-border text-foreground"
+                      }`}
+                    >
+                      {opt.icon}
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ── Main Content Area ── */}
+            <div className="flex-1 min-w-0 space-y-10">
 
           {/* ── Incoming Chat Requests ── */}
-          {pendingChats.length > 0 && (
+          {staffSection === "chat" && pendingChats.length > 0 && (
             <Card className="border-border bg-card border-emerald-500/30">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-xl">
@@ -714,7 +778,7 @@ const StaffDashboard = () => {
           )}
 
           {/* ── Active Chat ── */}
-          {activeConvId && (
+          {staffSection === "chat" && activeConvId && (
             <Card className="border-border bg-card border-emerald-500/30">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="flex items-center gap-2 text-xl"><MessageCircle size={22} className="text-emerald-500" /> Live Chat</CardTitle>
@@ -726,7 +790,17 @@ const StaffDashboard = () => {
             </Card>
           )}
 
+          {/* ── No pending chats message ── */}
+          {staffSection === "chat" && pendingChats.length === 0 && !activeConvId && (
+            <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm text-center py-12">
+              <Headphones size={40} className="text-muted-foreground mx-auto mb-4" />
+              <p className="text-lg font-semibold text-foreground mb-1">No pending chat requests</p>
+              <p className="text-sm text-muted-foreground">When clients request live chat support, they'll appear here.</p>
+            </div>
+          )}
+
           {/* ── Application Queue ── */}
+          {staffSection === "queue" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex flex-col gap-4 mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -932,8 +1006,10 @@ const StaffDashboard = () => {
               })}
             </div>
           </div>
+          )}
 
           {/* ── Share Evaluation Report ── */}
+          {staffSection === "share_report" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
@@ -978,8 +1054,10 @@ const StaffDashboard = () => {
               </div>
             </form>
           </div>
+          )}
 
           {/* ── Career / Job Listings Management ── */}
+          {staffSection === "careers" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center gap-3">
@@ -1037,6 +1115,9 @@ const StaffDashboard = () => {
                 ))}
               </div>
             )}
+          </div>
+          )}
+            </div>
           </div>
         </div>
       </div>

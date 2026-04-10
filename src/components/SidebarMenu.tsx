@@ -67,30 +67,30 @@ const SidebarMenu = ({ onClose }: SidebarMenuProps) => {
   };
 
   return (
-    <div className="flex flex-col py-4 px-6">
+    <div className="flex flex-col py-4 px-5 space-y-1.5">
       {menuGroups.map((group) => {
         const isOpen = openGroups[group.label];
         return (
-          <div key={group.label} className="mb-2">
+          <div key={group.label}>
             <button
               onClick={() => toggleGroup(group.label)}
-              className={`w-full flex items-center justify-between px-5 py-3.5 rounded-2xl text-sm font-semibold transition-all duration-200 border ${
+              className={`w-full flex items-center justify-between px-5 py-3 rounded-full text-sm font-semibold transition-all duration-200 border ${
                 isOpen
-                  ? "bg-accent/10 border-accent/40 text-accent"
-                  : "bg-card border-border text-foreground hover:border-accent/30 hover:text-accent"
+                  ? "bg-accent text-accent-foreground border-accent shadow-md shadow-accent/15"
+                  : "bg-card border-border text-foreground hover:border-accent/40 hover:bg-accent/5 hover:text-accent"
               }`}
             >
               <span>{translate(group.label)}</span>
               <ChevronDown
-                size={16}
+                size={15}
                 className={`transition-transform duration-200 ${
-                  isOpen ? "rotate-180 text-accent" : "text-muted-foreground"
+                  isOpen ? "rotate-180" : ""
                 }`}
               />
             </button>
 
             {isOpen && (
-              <ul className="space-y-0.5 pl-4 pt-2 pb-3 animate-in slide-in-from-top-1 duration-200">
+              <ul className="space-y-0.5 pl-3 pt-1.5 pb-2 animate-in slide-in-from-top-1 duration-200">
                 {group.children.map((child) => {
                   const href =
                     child.href === "/dashboard" ? getDashboardHref() : child.href;
@@ -104,12 +104,13 @@ const SidebarMenu = ({ onClose }: SidebarMenuProps) => {
                       <Link
                         to={href}
                         onClick={onClose}
-                        className={`flex items-center gap-2 text-sm py-2 px-3 rounded-xl transition-colors ${
+                        className={`flex items-center gap-2.5 text-sm py-2.5 px-4 rounded-full transition-all duration-150 ${
                           isActive
-                            ? "text-accent font-semibold bg-accent/10"
+                            ? "text-accent font-semibold bg-accent/10 border border-accent/20"
                             : "text-muted-foreground hover:text-accent hover:bg-accent/5"
                         }`}
                       >
+                        <span className={`w-1.5 h-1.5 rounded-full ${isActive ? "bg-accent" : "bg-muted-foreground/40"}`} />
                         <span>{translate(child.label)}</span>
                         {child.href === "/cart" && totalItems > 0 && (
                           <span className="ml-auto w-5 h-5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold flex items-center justify-center">
@@ -127,14 +128,14 @@ const SidebarMenu = ({ onClose }: SidebarMenuProps) => {
       })}
 
       {/* Login / Sign Out */}
-      <div className="border-t border-border pt-4 mt-2">
+      <div className="border-t border-border pt-3 mt-2">
         {user ? (
           <button
             onClick={() => {
               logout();
               onClose();
             }}
-            className="flex items-center gap-3 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors w-full py-2 px-3 rounded-xl hover:bg-muted/40"
+            className="flex items-center gap-3 text-sm font-semibold text-muted-foreground hover:text-accent transition-colors w-full py-3 px-5 rounded-full hover:bg-accent/5"
           >
             <LogOut size={18} />
             {translate("Sign Out")}
@@ -143,7 +144,7 @@ const SidebarMenu = ({ onClose }: SidebarMenuProps) => {
           <Link
             to="/login"
             onClick={onClose}
-            className="flex items-center gap-3 text-sm font-semibold text-muted-foreground hover:text-foreground transition-colors w-full py-2 px-3 rounded-xl hover:bg-muted/40"
+            className="flex items-center gap-3 text-sm font-semibold text-muted-foreground hover:text-accent transition-colors w-full py-3 px-5 rounded-full hover:bg-accent/5"
           >
             <LogIn size={18} />
             {translate("Login")}
