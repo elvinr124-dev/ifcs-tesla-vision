@@ -309,7 +309,7 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
       {isOpen && !isMinimized && (
         <div className="fixed bottom-24 right-6 z-[60] w-[380px] max-w-[calc(100vw-2rem)] h-[500px] max-h-[70vh] rounded-2xl border border-border bg-card shadow-2xl flex flex-col overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-4 py-3 bg-emerald-600 text-white">
+          <div className="flex items-center justify-between px-4 py-3 bg-accent text-accent-foreground">
             <div className="flex items-center gap-2">
               <Headphones size={18} />
               <div>
