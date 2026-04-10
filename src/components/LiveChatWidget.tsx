@@ -284,7 +284,8 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
       {!isOpen && !isMinimized && (
         <button
           onClick={handleStartChat}
-          className="fixed bottom-24 right-6 z-[60] flex items-center gap-2 px-4 py-3 rounded-full bg-emerald-600 text-white shadow-lg hover:bg-emerald-700 transition-all hover:scale-105"
+          data-live-chat-trigger
+          className="fixed bottom-24 right-6 z-[60] flex items-center gap-2 px-4 py-3 rounded-full bg-white text-accent border border-accent/30 shadow-lg hover:bg-accent/5 transition-all hover:scale-105"
           title="Chat with an IFCS agent"
         >
           <Headphones size={20} />
@@ -296,11 +297,11 @@ const LiveChatWidget = ({ conversationId: propConvId, onClose, isStaff = false }
       {isMinimized && (
         <button
           onClick={() => setIsMinimized(false)}
-          className="fixed bottom-24 right-6 z-[60] flex items-center gap-2 px-4 py-3 rounded-full bg-emerald-600 text-white shadow-lg hover:bg-emerald-700 transition-all"
+          className="fixed bottom-24 right-6 z-[60] flex items-center gap-2 px-4 py-3 rounded-full bg-white text-accent border border-accent/30 shadow-lg hover:bg-accent/5 transition-all"
         >
           <Headphones size={20} />
           <span className="text-sm font-medium">Live Chat</span>
-          <span className="w-2 h-2 rounded-full bg-emerald-300 animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
         </button>
       )}
 
