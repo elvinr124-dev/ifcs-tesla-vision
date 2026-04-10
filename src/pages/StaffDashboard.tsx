@@ -106,8 +106,18 @@ const verificationSources = [
   "Original Documents Required to be mailed to IFCS",
 ];
 
+type StaffSection = "chat" | "queue" | "share_report" | "careers";
+
+const staffSectionOptions: { value: StaffSection; label: string; icon: React.ReactNode }[] = [
+  { value: "chat", label: "Live Chat", icon: <Headphones size={18} /> },
+  { value: "queue", label: "Application Queue", icon: <Package size={18} /> },
+  { value: "share_report", label: "Share Report", icon: <FileText size={18} /> },
+  { value: "careers", label: "Career Listings", icon: <Users size={18} /> },
+];
+
 const StaffDashboard = () => {
   const { toast } = useToast();
+  const [staffSection, setStaffSection] = useState<StaffSection>("queue");
   const [filter, setFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
