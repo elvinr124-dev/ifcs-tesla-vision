@@ -532,7 +532,32 @@ const ClientDashboard = () => {
             </div>
           )}
 
-          {/* ── Evaluation Orders ── */}
+          {/* ── Live Chat / Contact Agent ── */}
+          {activeSection === "live_chat" && (
+            <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                  <Headphones size={20} className="text-accent" />
+                </div>
+                <h2 className="text-xl font-bold text-foreground">{translate("Contact an IFCS Agent")}</h2>
+              </div>
+              <p className="text-sm text-muted-foreground mb-6">
+                {translate("Start a live chat with an IFCS agent for real-time support. You can also reach us at")} 📞 <span className="font-semibold text-foreground">(914) 693-2840</span>
+              </p>
+              <button
+                onClick={() => {
+                  // Programmatically click the floating Contact Agent button
+                  const btn = document.querySelector('[data-live-chat-trigger]') as HTMLButtonElement;
+                  if (btn) btn.click();
+                }}
+                className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all shadow-lg shadow-accent/20"
+              >
+                <Headphones size={18} /> {translate("Start Live Chat")}
+              </button>
+            </div>
+          )}
+
+
           {activeSection === "eval_orders" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-5">
