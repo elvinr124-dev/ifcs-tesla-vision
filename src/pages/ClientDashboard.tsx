@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useLocale } from "@/context/LocaleContext";
@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   FileText, Download, RefreshCw, Clock, CheckCircle2, AlertCircle, Package,
   MessageSquare, ShieldCheck, Plus, Languages, Upload, ChevronDown, ChevronUp, Eye,
-  Search,
+  Search, Headphones,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -89,7 +89,7 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
   </select>
 );
 
-type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "track_order";
+type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "track_order" | "live_chat";
 
 const sectionOptions: { value: DashSection; label: string; icon: React.ReactNode }[] = [
   { value: "eval_orders", label: "Evaluation Orders", icon: <Package size={18} /> },
@@ -97,6 +97,7 @@ const sectionOptions: { value: DashSection; label: string; icon: React.ReactNode
   { value: "eval_reports", label: "Shared Evaluation Reports", icon: <ShieldCheck size={18} /> },
   { value: "trans_reports", label: "Shared Translation Reports", icon: <Languages size={18} /> },
   { value: "track_order", label: "Track Order", icon: <Search size={18} /> },
+  { value: "live_chat", label: "Contact Agent", icon: <Headphones size={18} /> },
 ];
 
 const ClientDashboard = () => {
