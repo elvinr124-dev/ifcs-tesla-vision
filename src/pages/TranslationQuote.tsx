@@ -186,6 +186,12 @@ const TranslationQuote = () => {
             <p><strong>Name:</strong> ${name}</p>
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Phone:</strong> ${phone || "N/A"}</p>
+            <p><strong>Address Line One:</strong> ${addressLine1}</p>
+            <p><strong>Address Line Two:</strong> ${addressLine2 || ""}</p>
+            <p><strong>City:</strong> ${city}</p>
+            <p><strong>State:</strong> ${addrState}</p>
+            <p><strong>Zip:</strong> ${zip}</p>
+            <p><strong>Country:</strong> ${addrCountry}</p>
             <p><strong>From:</strong> ${transFrom} → <strong>To:</strong> ${transTo}</p>
             ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ""}
             <h3>Documents (${fileAnalyses.length}):</h3>
