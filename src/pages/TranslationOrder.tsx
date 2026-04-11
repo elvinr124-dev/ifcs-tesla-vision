@@ -410,6 +410,30 @@ const TranslationOrder = () => {
     
     // Save translation order to database
     try {
+      // Save to applications table so clients can view it
+      const nameParts = fullName.trim().split(/\s+/);
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      await (supabase as any).from("applications").insert({
+        application_id: translationAppId,
+        first_name: firstName,
+        last_name: lastName,
+        client_email: emailVal,
+        dob: "",
+        service_title: `Translation: ${transFrom} → ${transTo}`,
+        processing_label: "Standard",
+        country: addrCountry,
+        cell_phone: phone,
+        status: "requested",
+        application_data: {
+          fullName, email: emailVal, phone, addressLine1, addressLine2, city, state: addrState, zip, country: addrCountry,
+          transFrom, transTo, notes,
+          documents: fileAnalyses.map(fa => ({ name: fa.file.name, wordCount: fa.analysis?.wordCount, documentType: fa.analysis?.documentType })),
+          total, addExpedited, addHardCopy,
+        },
+      });
+
       await supabase.from("client_orders").insert({
         reference_id: translationAppId,
         client_email: emailVal,
@@ -418,6 +442,32 @@ const TranslationOrder = () => {
         application_id: translationAppId,
         dob: "",
       });
+
+      // Send email notification
+      try {
+        await supabase.functions.invoke("send-application-email", {
+          body: {
+            to: "translations@ifcsevals.com",
+            subject: `Translation Order — ${fullName} (${translationAppId})`,
+            html: `<h2>Translation Order Submission</h2>
+              <p><strong>Application ID:</strong> ${translationAppId}</p>
+              <p><strong>Last Name:</strong> ${lastName}</p>
+              <p><strong>First Name:</strong> ${firstName}</p>
+              <p><strong>Phone:</strong> ${phone || "N/A"}</p>
+              <p><strong>Email:</strong> ${emailVal}</p>
+              <p><strong>Address Line One:</strong> ${addressLine1}</p>
+              <p><strong>Address Line Two:</strong> ${addressLine2 || ""}</p>
+              <p><strong>City:</strong> ${city}</p>
+              <p><strong>State:</strong> ${addrState}</p>
+              <p><strong>Zip:</strong> ${zip}</p>
+              <p><strong>Country:</strong> ${addrCountry}</p>
+              <p><strong>Translating From:</strong> ${transFrom}</p>
+              <p><strong>Translating Into:</strong> ${transTo}</p>
+              ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ""}
+              <p><strong>Total:</strong> $${total.toFixed(2)}</p>`,
+          },
+        });
+      } catch {}
     } catch (err) {
       console.error("Failed to save translation order:", err);
     }
