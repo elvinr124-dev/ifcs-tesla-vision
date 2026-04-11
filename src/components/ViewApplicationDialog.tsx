@@ -42,6 +42,70 @@ const ViewApplicationDialog = ({ open, onOpenChange, data, applicationId }: View
 
   const d = data;
 
+  // Detect if this is a translation application
+  const isTranslation = !!(d.transFrom || d.transTo || applicationId?.startsWith("T"));
+
+  if (isTranslation) {
+    return (
+      <Dialog open={open} onOpenChange={onOpenChange}>
+        <DialogContent className="max-w-2xl max-h-[85vh]">
+          <DialogHeader>
+            <DialogTitle>Translation Application — {applicationId}</DialogTitle>
+          </DialogHeader>
+          <ScrollArea className="max-h-[70vh] pr-4">
+            <div className="space-y-6 text-sm">
+              <div className="space-y-1">
+                <p className="font-bold text-foreground">INSTITUTE OF FOREIGN CREDENTIAL SERVICES</p>
+                <p className="text-muted-foreground text-xs">6 CEDAR ST, DOBBS FERRY, NY 10522 WWW.IFCSEVALS.COM</p>
+                <p className="text-muted-foreground text-xs">PHONE: (914) 693-2840 FAX: (914) 231-7782 EMAIL: TRANSLATIONS@IFCSEVALS.COM</p>
+              </div>
+
+              <Section title="Contact Information">
+                <Field label="Full Name" value={d.fullName} />
+                <Field label="Email" value={d.email} />
+                <Field label="Phone" value={d.phone} />
+              </Section>
+
+              <Section title="Address">
+                <Field label="Address Line 1" value={d.addressLine1} />
+                {d.addressLine2 && <Field label="Address Line 2" value={d.addressLine2} />}
+                <Field label="City" value={d.city} />
+                <Field label="State" value={d.state} />
+                <Field label="Zip" value={d.zip} />
+                <Field label="Country" value={d.country} />
+              </Section>
+
+              <Section title="Translation Details">
+                <Field label="Translating From" value={d.transFrom} />
+                <Field label="Translating Into" value={d.transTo} />
+                {d.notes && <Field label="Notes" value={d.notes} />}
+              </Section>
+
+              {d.documents && d.documents.length > 0 && (
+                <Section title="Documents">
+                  {d.documents.map((doc: any, i: number) => (
+                    <p key={i} className="text-sm text-foreground/90">
+                      {doc.name} — {doc.wordCount ?? "?"} words {doc.documentType ? `(${doc.documentType})` : ""}
+                    </p>
+                  ))}
+                </Section>
+              )}
+
+              {d.total !== undefined && (
+                <Section title="Pricing">
+                  <p className="text-sm font-bold italic text-foreground">Total: ${Number(d.total).toFixed(2)}</p>
+                  {d.addExpedited && <p className="text-xs text-muted-foreground">+ Expedited processing</p>}
+                  {d.addHardCopy && <p className="text-xs text-muted-foreground">+ Hard copy delivery</p>}
+                </Section>
+              )}
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  // Original evaluation view
   const translationText = d.translationOption === "english"
     ? "All my documents are in English and I do not need translation of my documents"
     : d.translationOption === "own-translation"

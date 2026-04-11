@@ -144,6 +144,12 @@ const TranslationOrder = () => {
   const [transFrom, setTransFrom] = useState("");
   const [transTo, setTransTo] = useState("");
   const [notes, setNotes] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
+  const [city, setCity] = useState("");
+  const [addrState, setAddrState] = useState("");
+  const [zip, setZip] = useState("");
+  const [addrCountry, setAddrCountry] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
@@ -384,7 +390,7 @@ const TranslationOrder = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!fullName.trim() || !emailVal.trim() || !transFrom.trim() || !transTo.trim()) {
+    if (!fullName.trim() || !emailVal.trim() || !transFrom.trim() || !transTo.trim() || !addressLine1.trim() || !city.trim() || !addrState.trim() || !zip.trim() || !addrCountry.trim()) {
       setError("Please fill in all required fields before submitting.");
       return;
     }
@@ -404,6 +410,30 @@ const TranslationOrder = () => {
     
     // Save translation order to database
     try {
+      // Save to applications table so clients can view it
+      const nameParts = fullName.trim().split(/\s+/);
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      await (supabase as any).from("applications").insert({
+        application_id: translationAppId,
+        first_name: firstName,
+        last_name: lastName,
+        client_email: emailVal,
+        dob: "",
+        service_title: `Translation: ${transFrom} → ${transTo}`,
+        processing_label: "Standard",
+        country: addrCountry,
+        cell_phone: phone,
+        status: "requested",
+        application_data: {
+          fullName, email: emailVal, phone, addressLine1, addressLine2, city, state: addrState, zip, country: addrCountry,
+          transFrom, transTo, notes,
+          documents: fileAnalyses.map(fa => ({ name: fa.file.name, wordCount: fa.analysis?.wordCount, documentType: fa.analysis?.documentType })),
+          total, addExpedited, addHardCopy,
+        },
+      });
+
       await supabase.from("client_orders").insert({
         reference_id: translationAppId,
         client_email: emailVal,
@@ -412,6 +442,32 @@ const TranslationOrder = () => {
         application_id: translationAppId,
         dob: "",
       });
+
+      // Send email notification
+      try {
+        await supabase.functions.invoke("send-application-email", {
+          body: {
+            to: "translations@ifcsevals.com",
+            subject: `Translation Order — ${fullName} (${translationAppId})`,
+            html: `<h2>Translation Order Submission</h2>
+              <p><strong>Application ID:</strong> ${translationAppId}</p>
+              <p><strong>Last Name:</strong> ${lastName}</p>
+              <p><strong>First Name:</strong> ${firstName}</p>
+              <p><strong>Phone:</strong> ${phone || "N/A"}</p>
+              <p><strong>Email:</strong> ${emailVal}</p>
+              <p><strong>Address Line One:</strong> ${addressLine1}</p>
+              <p><strong>Address Line Two:</strong> ${addressLine2 || ""}</p>
+              <p><strong>City:</strong> ${city}</p>
+              <p><strong>State:</strong> ${addrState}</p>
+              <p><strong>Zip:</strong> ${zip}</p>
+              <p><strong>Country:</strong> ${addrCountry}</p>
+              <p><strong>Translating From:</strong> ${transFrom}</p>
+              <p><strong>Translating Into:</strong> ${transTo}</p>
+              ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ""}
+              <p><strong>Total:</strong> $${total.toFixed(2)}</p>`,
+          },
+        });
+      } catch {}
     } catch (err) {
       console.error("Failed to save translation order:", err);
     }
@@ -485,6 +541,29 @@ const TranslationOrder = () => {
                 <FieldGroup label={translateDual("Phone")}>
                   <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
                 </FieldGroup>
+
+                {/* Address fields */}
+                <FieldGroup label={translateDual("Address Line 1")} required>
+                  <GlassInput value={addressLine1} onChange={e => setAddressLine1(e.target.value)} placeholder="Street address" required />
+                </FieldGroup>
+                <FieldGroup label={translateDual("Address Line 2")}>
+                  <GlassInput value={addressLine2} onChange={e => setAddressLine2(e.target.value)} placeholder="Apt, Suite, Unit (optional)" />
+                </FieldGroup>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <FieldGroup label={translateDual("City")} required>
+                    <GlassInput value={city} onChange={e => setCity(e.target.value)} placeholder="City" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("State")} required>
+                    <GlassInput value={addrState} onChange={e => setAddrState(e.target.value)} placeholder="State" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("Zip")} required>
+                    <GlassInput value={zip} onChange={e => setZip(e.target.value)} placeholder="Zip" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("Country")} required>
+                    <GlassInput value={addrCountry} onChange={e => setAddrCountry(e.target.value)} placeholder="Country" required />
+                  </FieldGroup>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FieldGroup label={translateDual("Translating From")} required>
                     <GlassInput value={transFrom} onChange={e => setTransFrom(e.target.value)} placeholder="e.g. Spanish" required />

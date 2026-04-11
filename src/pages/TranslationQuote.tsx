@@ -60,6 +60,12 @@ const TranslationQuote = () => {
   const [transFrom, setTransFrom] = useState("");
   const [transTo, setTransTo] = useState("");
   const [notes, setNotes] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
+  const [city, setCity] = useState("");
+  const [addrState, setAddrState] = useState("");
+  const [zip, setZip] = useState("");
+  const [addrCountry, setAddrCountry] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -144,7 +150,7 @@ const TranslationQuote = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !transFrom.trim() || !transTo.trim()) {
+    if (!name.trim() || !email.trim() || !transFrom.trim() || !transTo.trim() || !addressLine1.trim() || !city.trim() || !addrState.trim() || !zip.trim() || !addrCountry.trim()) {
       setError("Please fill in all required fields.");
       return;
     }
@@ -180,6 +186,12 @@ const TranslationQuote = () => {
             <p><strong>Name:</strong> ${name}</p>
             <p><strong>Email:</strong> ${email}</p>
             <p><strong>Phone:</strong> ${phone || "N/A"}</p>
+            <p><strong>Address Line One:</strong> ${addressLine1}</p>
+            <p><strong>Address Line Two:</strong> ${addressLine2 || ""}</p>
+            <p><strong>City:</strong> ${city}</p>
+            <p><strong>State:</strong> ${addrState}</p>
+            <p><strong>Zip:</strong> ${zip}</p>
+            <p><strong>Country:</strong> ${addrCountry}</p>
             <p><strong>From:</strong> ${transFrom} → <strong>To:</strong> ${transTo}</p>
             ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ""}
             <h3>Documents (${fileAnalyses.length}):</h3>
@@ -187,6 +199,31 @@ const TranslationQuote = () => {
           `,
         },
       });
+
+      // Save to applications table
+      const nameParts = name.trim().split(/\s+/);
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      try {
+        await (supabase as any).from("applications").insert({
+          application_id: quoteAppId,
+          first_name: firstName,
+          last_name: lastName,
+          client_email: email,
+          dob: "",
+          service_title: `Translation Quote: ${transFrom} → ${transTo}`,
+          processing_label: "Quote",
+          country: addrCountry,
+          cell_phone: phone,
+          status: "requested",
+          application_data: {
+            fullName: name, email, phone, addressLine1, addressLine2, city, state: addrState, zip, country: addrCountry,
+            transFrom, transTo, notes,
+            documents: fileAnalyses.map(fa => ({ name: fa.file.name, wordCount: fa.analysis?.wordCount, documentType: fa.analysis?.documentType })),
+          },
+        });
+      } catch {}
 
       // Save quote to client_orders
       try {
@@ -276,6 +313,29 @@ const TranslationQuote = () => {
                 <FieldGroup label={translateDual("Phone")}>
                   <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
                 </FieldGroup>
+
+                {/* Address fields */}
+                <FieldGroup label={translateDual("Address Line 1")} required>
+                  <GlassInput value={addressLine1} onChange={e => setAddressLine1(e.target.value)} placeholder="Street address" required />
+                </FieldGroup>
+                <FieldGroup label={translateDual("Address Line 2")}>
+                  <GlassInput value={addressLine2} onChange={e => setAddressLine2(e.target.value)} placeholder="Apt, Suite, Unit (optional)" />
+                </FieldGroup>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <FieldGroup label={translateDual("City")} required>
+                    <GlassInput value={city} onChange={e => setCity(e.target.value)} placeholder="City" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("State")} required>
+                    <GlassInput value={addrState} onChange={e => setAddrState(e.target.value)} placeholder="State" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("Zip")} required>
+                    <GlassInput value={zip} onChange={e => setZip(e.target.value)} placeholder="Zip" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("Country")} required>
+                    <GlassInput value={addrCountry} onChange={e => setAddrCountry(e.target.value)} placeholder="Country" required />
+                  </FieldGroup>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FieldGroup label={translateDual("Translating From")} required>
                     <GlassInput value={transFrom} onChange={e => setTransFrom(e.target.value)} placeholder="e.g. Spanish" required />

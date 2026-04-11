@@ -106,18 +106,20 @@ const verificationSources = [
   "Original Documents Required to be mailed to IFCS",
 ];
 
-type StaffSection = "chat" | "queue" | "share_report" | "careers";
+type StaffSection = "chat" | "eval_queue" | "trans_queue" | "share_eval_report" | "share_trans_report" | "careers";
 
 const staffSectionOptions: { value: StaffSection; label: string; icon: React.ReactNode }[] = [
   { value: "chat", label: "Live Chat", icon: <Headphones size={18} /> },
-  { value: "queue", label: "Application Queue", icon: <Package size={18} /> },
-  { value: "share_report", label: "Share Report", icon: <FileText size={18} /> },
+  { value: "eval_queue", label: "Evaluation Queue", icon: <Package size={18} /> },
+  { value: "trans_queue", label: "Translation Queue", icon: <Languages size={18} /> },
+  { value: "share_eval_report", label: "Share Evaluation Report", icon: <FileText size={18} /> },
+  { value: "share_trans_report", label: "Share Translation Report", icon: <Languages size={18} /> },
   { value: "careers", label: "Career Listings", icon: <Users size={18} /> },
 ];
 
 const StaffDashboard = () => {
   const { toast } = useToast();
-  const [staffSection, setStaffSection] = useState<StaffSection>("queue");
+  const [staffSection, setStaffSection] = useState<StaffSection>("eval_queue");
   const [filter, setFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -800,7 +802,7 @@ const StaffDashboard = () => {
           )}
 
           {/* ── Application Queue ── */}
-          {staffSection === "queue" && (
+          {(staffSection === "eval_queue" || staffSection === "trans_queue") && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex flex-col gap-4 mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -808,8 +810,12 @@ const StaffDashboard = () => {
                   <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
                     <Package size={20} className="text-accent" />
                   </div>
-                  <h2 className="text-xl font-bold text-foreground">Application Queue</h2>
-                  <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold">{orders.length}</span>
+                  <h2 className="text-xl font-bold text-foreground">
+                    {staffSection === "trans_queue" ? "Translation Queue" : "Evaluation Queue"}
+                  </h2>
+                  <span className="inline-flex items-center justify-center px-2.5 py-0.5 rounded-full bg-muted text-muted-foreground text-xs font-semibold">
+                    {filtered.filter(o => staffSection === "trans_queue" ? o.service.toLowerCase().includes("translation") : !o.service.toLowerCase().includes("translation")).length}
+                  </span>
                 </div>
                 <div className="flex gap-2">
                   <Select value={filter} onValueChange={setFilter}>
@@ -838,7 +844,7 @@ const StaffDashboard = () => {
                   <p className="text-muted-foreground">{searchQuery ? `No applications found for "${searchQuery}"` : "No orders in the queue yet."}</p>
                 </div>
               )}
-              {filtered.map((o) => {
+              {filtered.filter(o => staffSection === "trans_queue" ? o.service.toLowerCase().includes("translation") : !o.service.toLowerCase().includes("translation")).map((o) => {
                 const meta = statusMeta[o.status] ?? statusMeta.requested;
                 const isSelected = selectedOrder === o.id;
                 const client = clients.find(c => c.email === o.client_email);
@@ -1009,7 +1015,7 @@ const StaffDashboard = () => {
           )}
 
           {/* ── Share Evaluation Report ── */}
-          {staffSection === "share_report" && (
+          {staffSection === "share_eval_report" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
@@ -1050,6 +1056,77 @@ const StaffDashboard = () => {
               <div className="md:col-span-2">
                 <button type="submit" className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all">
                   <Upload size={16} /> Upload & Share Report
+                </button>
+              </div>
+            </form>
+          </div>
+          )}
+
+          {/* ── Share Translation Report ── */}
+          {staffSection === "share_trans_report" && (
+          <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <Languages size={20} className="text-accent" />
+              </div>
+              <h2 className="text-xl font-bold text-foreground">Share Translation Report</h2>
+            </div>
+            <form onSubmit={async (e) => {
+              e.preventDefault();
+              if (!shareEmail || !shareRef || !shareFile) {
+                toast({ title: "Missing Fields", description: "Please fill in all required fields.", variant: "destructive" });
+                return;
+              }
+              const order = orders.find(o => o.reference_id === shareRef);
+              const applicantEmail = order?.client_email || shareEmail;
+              const client = clients.find(c => c.email === applicantEmail);
+              const applicantName = client ? `${client.first_name} ${client.last_name}` : "Applicant";
+
+              let reportFileUrl: string | null = null;
+              if (shareFile) {
+                const filePath = `reports/trans-${shareRef}-${Date.now()}.pdf`;
+                const { error: uploadErr } = await supabase.storage.from("evaluation-reports").upload(filePath, shareFile, { contentType: "application/pdf" });
+                if (uploadErr) { toast({ title: "Upload Failed", variant: "destructive" }); return; }
+                const { data: urlData } = supabase.storage.from("evaluation-reports").getPublicUrl(filePath);
+                reportFileUrl = urlData.publicUrl;
+              }
+
+              const { data: report, error: insertErr } = await (supabase as any)
+                .from("evaluation_reports")
+                .insert({
+                  reference_id: shareRef, applicant_name: applicantName, applicant_email: applicantEmail,
+                  evaluation_type: "Translation Report", shared_to_email: shareEmail,
+                  shared_to_edu: shareEmail.trim().toLowerCase().endsWith(".edu"),
+                  status: "active", report_file_url: reportFileUrl,
+                })
+                .select().single();
+
+              if (insertErr || !report) { toast({ title: "Error", variant: "destructive" }); return; }
+
+              try {
+                await supabase.functions.invoke("send-transcript-email", {
+                  body: { recipientEmail: shareEmail, applicantName, referenceId: shareRef, evaluationType: "Translation Report", accessToken: (report as any).access_token, isEdu: shareEmail.trim().toLowerCase().endsWith(".edu") },
+                });
+              } catch {}
+
+              toast({ title: "Translation Report Shared", description: `Report sent to ${shareEmail}.` });
+              setShareEmail(""); setShareRef(""); setShareFile(null);
+            }} className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Recipient Email *</label>
+                <Input type="email" placeholder="applicant@email.com" value={shareEmail} onChange={(e) => setShareEmail(e.target.value)} required className="rounded-2xl h-12" />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium text-foreground">Reference # *</label>
+                <Input placeholder="e.g. TJD4032" value={shareRef} onChange={(e) => setShareRef(e.target.value)} required className="rounded-2xl h-12" />
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <label className="text-sm font-medium text-foreground">Upload Translation Report (PDF Only) *</label>
+                <Input type="file" accept=".pdf" onChange={(e) => setShareFile(e.target.files?.[0] || null)} className="rounded-2xl" />
+              </div>
+              <div className="md:col-span-2">
+                <button type="submit" className="inline-flex items-center gap-2 px-8 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all">
+                  <Upload size={16} /> Upload & Share Translation Report
                 </button>
               </div>
             </form>
