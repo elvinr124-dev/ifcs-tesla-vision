@@ -802,7 +802,7 @@ const StaffDashboard = () => {
           )}
 
           {/* ── Application Queue ── */}
-          {staffSection === "queue" && (
+          {(staffSection === "eval_queue" || staffSection === "trans_queue") && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex flex-col gap-4 mb-6">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -1011,7 +1011,7 @@ const StaffDashboard = () => {
           )}
 
           {/* ── Share Evaluation Report ── */}
-          {staffSection === "share_report" && (
+          {staffSection === "share_eval_report" && (
           <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
