@@ -844,7 +844,7 @@ const StaffDashboard = () => {
                   <p className="text-muted-foreground">{searchQuery ? `No applications found for "${searchQuery}"` : "No orders in the queue yet."}</p>
                 </div>
               )}
-              {filtered.map((o) => {
+              {filtered.filter(o => staffSection === "trans_queue" ? o.service.toLowerCase().includes("translation") : !o.service.toLowerCase().includes("translation")).map((o) => {
                 const meta = statusMeta[o.status] ?? statusMeta.requested;
                 const isSelected = selectedOrder === o.id;
                 const client = clients.find(c => c.email === o.client_email);
