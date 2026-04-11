@@ -60,6 +60,12 @@ const TranslationQuote = () => {
   const [transFrom, setTransFrom] = useState("");
   const [transTo, setTransTo] = useState("");
   const [notes, setNotes] = useState("");
+  const [addressLine1, setAddressLine1] = useState("");
+  const [addressLine2, setAddressLine2] = useState("");
+  const [city, setCity] = useState("");
+  const [addrState, setAddrState] = useState("");
+  const [zip, setZip] = useState("");
+  const [addrCountry, setAddrCountry] = useState("");
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -144,7 +150,7 @@ const TranslationQuote = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !transFrom.trim() || !transTo.trim()) {
+    if (!name.trim() || !email.trim() || !transFrom.trim() || !transTo.trim() || !addressLine1.trim() || !city.trim() || !addrState.trim() || !zip.trim() || !addrCountry.trim()) {
       setError("Please fill in all required fields.");
       return;
     }
