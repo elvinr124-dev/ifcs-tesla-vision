@@ -119,7 +119,7 @@ const staffSectionOptions: { value: StaffSection; label: string; icon: React.Rea
 
 const StaffDashboard = () => {
   const { toast } = useToast();
-  const [staffSection, setStaffSection] = useState<StaffSection>("queue");
+  const [staffSection, setStaffSection] = useState<StaffSection>("eval_queue");
   const [filter, setFilter] = useState("all");
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
