@@ -200,6 +200,31 @@ const TranslationQuote = () => {
         },
       });
 
+      // Save to applications table
+      const nameParts = name.trim().split(/\s+/);
+      const firstName = nameParts[0] || "";
+      const lastName = nameParts.slice(1).join(" ") || "";
+
+      try {
+        await (supabase as any).from("applications").insert({
+          application_id: quoteAppId,
+          first_name: firstName,
+          last_name: lastName,
+          client_email: email,
+          dob: "",
+          service_title: `Translation Quote: ${transFrom} → ${transTo}`,
+          processing_label: "Quote",
+          country: addrCountry,
+          cell_phone: phone,
+          status: "requested",
+          application_data: {
+            fullName: name, email, phone, addressLine1, addressLine2, city, state: addrState, zip, country: addrCountry,
+            transFrom, transTo, notes,
+            documents: fileAnalyses.map(fa => ({ name: fa.file.name, wordCount: fa.analysis?.wordCount, documentType: fa.analysis?.documentType })),
+          },
+        });
+      } catch {}
+
       // Save quote to client_orders
       try {
         await supabase.from("client_orders").insert({
@@ -288,6 +313,29 @@ const TranslationQuote = () => {
                 <FieldGroup label={translateDual("Phone")}>
                   <GlassInput value={phone} onChange={e => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" type="tel" />
                 </FieldGroup>
+
+                {/* Address fields */}
+                <FieldGroup label={translateDual("Address Line 1")} required>
+                  <GlassInput value={addressLine1} onChange={e => setAddressLine1(e.target.value)} placeholder="Street address" required />
+                </FieldGroup>
+                <FieldGroup label={translateDual("Address Line 2")}>
+                  <GlassInput value={addressLine2} onChange={e => setAddressLine2(e.target.value)} placeholder="Apt, Suite, Unit (optional)" />
+                </FieldGroup>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <FieldGroup label={translateDual("City")} required>
+                    <GlassInput value={city} onChange={e => setCity(e.target.value)} placeholder="City" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("State")} required>
+                    <GlassInput value={addrState} onChange={e => setAddrState(e.target.value)} placeholder="State" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("Zip")} required>
+                    <GlassInput value={zip} onChange={e => setZip(e.target.value)} placeholder="Zip" required />
+                  </FieldGroup>
+                  <FieldGroup label={translateDual("Country")} required>
+                    <GlassInput value={addrCountry} onChange={e => setAddrCountry(e.target.value)} placeholder="Country" required />
+                  </FieldGroup>
+                </div>
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FieldGroup label={translateDual("Translating From")} required>
                     <GlassInput value={transFrom} onChange={e => setTransFrom(e.target.value)} placeholder="e.g. Spanish" required />
