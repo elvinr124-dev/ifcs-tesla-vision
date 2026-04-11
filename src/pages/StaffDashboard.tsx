@@ -106,12 +106,14 @@ const verificationSources = [
   "Original Documents Required to be mailed to IFCS",
 ];
 
-type StaffSection = "chat" | "queue" | "share_report" | "careers";
+type StaffSection = "chat" | "eval_queue" | "trans_queue" | "share_eval_report" | "share_trans_report" | "careers";
 
 const staffSectionOptions: { value: StaffSection; label: string; icon: React.ReactNode }[] = [
   { value: "chat", label: "Live Chat", icon: <Headphones size={18} /> },
-  { value: "queue", label: "Application Queue", icon: <Package size={18} /> },
-  { value: "share_report", label: "Share Report", icon: <FileText size={18} /> },
+  { value: "eval_queue", label: "Evaluation Queue", icon: <Package size={18} /> },
+  { value: "trans_queue", label: "Translation Queue", icon: <Languages size={18} /> },
+  { value: "share_eval_report", label: "Share Evaluation Report", icon: <FileText size={18} /> },
+  { value: "share_trans_report", label: "Share Translation Report", icon: <Languages size={18} /> },
   { value: "careers", label: "Career Listings", icon: <Users size={18} /> },
 ];
 
