@@ -1026,9 +1026,41 @@ const ClientDashboard = () => {
               </div>
               <h2 className="text-xl font-bold text-foreground">{translate("Shared Translation Reports")}</h2>
             </div>
-            <p className="text-sm text-muted-foreground text-center py-4">
-              {translate("Translation reports shared by IFCS staff will appear here.")}
-            </p>
+            <div className="space-y-3">
+              {dbReports.filter(r => r.evaluation_type?.toLowerCase().includes("translation")).length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No translation reports shared yet.</p>
+              )}
+              {dbReports.filter(r => r.evaluation_type?.toLowerCase().includes("translation")).map((r) => {
+                const isExpired = r.expiry_date ? new Date(r.expiry_date) < new Date() : false;
+                const statusLabel = isExpired ? "expired" : r.status;
+                return (
+                  <div key={r.id} className="rounded-2xl border border-border p-5 flex flex-wrap items-center justify-between gap-4 hover:shadow-sm transition-shadow">
+                    <div>
+                      <p className="font-semibold text-foreground">#{r.reference_id}</p>
+                      <p className="text-sm text-muted-foreground">{r.evaluation_type}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Shared {new Date(r.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-sm font-semibold capitalize ${reportStatusColor[statusLabel] || "text-muted-foreground"}`}>{statusLabel}</span>
+                      {!isExpired && (
+                        <>
+                          <Link to={`/transcript?token=${r.access_token}`}>
+                            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border text-xs font-semibold text-foreground hover:bg-muted transition-all">
+                              <Eye size={14} /> View
+                            </button>
+                          </Link>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border text-xs font-semibold text-foreground hover:bg-muted transition-all" onClick={() => r.report_file_url && window.open(r.report_file_url, "_blank")} disabled={!r.report_file_url}>
+                            <Download size={14} /> Download
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
           )}
 
