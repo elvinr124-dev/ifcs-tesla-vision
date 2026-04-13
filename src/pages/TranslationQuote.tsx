@@ -176,27 +176,17 @@ const TranslationQuote = () => {
         return `- ${fa.file.name}: ${a ? `${a.wordCount} words, ${a.documentType}${a.isDoublePage ? ' (Double Page)' : ''}${a.hasFormattedBoxes ? ' (5+ boxes)' : ''}${a.isBirthCertificate ? ' (Birth Certificate)' : ''}` : 'Analysis pending'}`;
       }).join("\n");
 
+      const nameParts2 = name.trim().split(/\s+/);
+      const fn = nameParts2[0] || "";
+      const ln = nameParts2.slice(1).join(" ") || "";
+      const emailBody = `Translations Form Submission\n\nLast Name: ${ln}\nFirst Name: ${fn}\n${phone ? `Phone: ${phone}\n` : ""}Email: ${email}\nAddress Line One: ${addressLine1}\nAddress Line Two: ${addressLine2 || ""}\nCity: ${city}\nState: ${addrState}\nZip: ${zip}\nCountry: ${addrCountry}\n\nTranslating From: ${transFrom}\nTranslating Into: ${transTo}\n${notes ? `Notes: ${notes}\n` : ""}\nDocuments (${fileAnalyses.length}):\n${docSummary}`;
+
       await supabase.functions.invoke("send-application-email", {
         body: {
-          to: "translations@ifcsevals.com",
-          subject: `Translation Quote Request — ${name} (${quoteAppId})`,
-          html: `
-            <h2>Translation Quote Request</h2>
-            <p><strong>Application ID:</strong> ${quoteAppId}</p>
-            <p><strong>Name:</strong> ${name}</p>
-            <p><strong>Email:</strong> ${email}</p>
-            <p><strong>Phone:</strong> ${phone || "N/A"}</p>
-            <p><strong>Address Line One:</strong> ${addressLine1}</p>
-            <p><strong>Address Line Two:</strong> ${addressLine2 || ""}</p>
-            <p><strong>City:</strong> ${city}</p>
-            <p><strong>State:</strong> ${addrState}</p>
-            <p><strong>Zip:</strong> ${zip}</p>
-            <p><strong>Country:</strong> ${addrCountry}</p>
-            <p><strong>From:</strong> ${transFrom} → <strong>To:</strong> ${transTo}</p>
-            ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ""}
-            <h3>Documents (${fileAnalyses.length}):</h3>
-            <pre>${docSummary}</pre>
-          `,
+          subject: `Translations Form Submission`,
+          body: emailBody,
+          recipientEmail: "translations@ifcsevals.com",
+          applicantEmail: email,
         },
       });
 
