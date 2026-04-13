@@ -599,15 +599,16 @@ const ClientDashboard = () => {
               <p className="text-sm text-muted-foreground mb-5">
                 {trackType === "evaluation"
                   ? translate("Enter your IFCS ID or Application ID and date of birth to track your evaluation order.")
-                  : translate("Enter your IFCS ID or Application ID to track your translation order.")}
+                  : translate("Enter your IFCS ID (e.g. 4407) or App ID (e.g. TEV1234) and the zip code from your translation order.")}
               </p>
               <div className="space-y-4">
                 <Input
                   value={trackId}
                   onChange={(e) => setTrackId(e.target.value)}
-                  placeholder={trackType === "evaluation" ? "IFCS ID (e.g. 44507) or App ID (e.g. EE0098)" : "IFCS ID or App ID (e.g. TEV1234)"}
+                  placeholder={trackType === "evaluation" ? "IFCS ID (e.g. 44507) or App ID (e.g. EE0098)" : "IFCS ID (e.g. 4407) or App ID (e.g. TEV1234)"}
                   className="max-w-sm rounded-2xl h-12"
                 />
+                {trackType === "evaluation" ? (
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
                   <div className="grid grid-cols-3 gap-3 max-w-sm">
@@ -625,6 +626,17 @@ const ClientDashboard = () => {
                     </GlassSelect>
                   </div>
                 </div>
+                ) : (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Zip Code")}</p>
+                  <Input
+                    value={trackZip}
+                    onChange={(e) => setTrackZip(e.target.value)}
+                    placeholder="e.g. 33026"
+                    className="max-w-sm rounded-2xl h-12"
+                  />
+                </div>
+                )}
                 <button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                   <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
