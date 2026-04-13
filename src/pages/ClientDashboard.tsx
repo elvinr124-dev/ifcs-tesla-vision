@@ -115,6 +115,7 @@ const ClientDashboard = () => {
   const [trackDobMonth, setTrackDobMonth] = useState("");
   const [trackDobDay, setTrackDobDay] = useState("");
   const [trackDobYear, setTrackDobYear] = useState("");
+  const [trackZip, setTrackZip] = useState("");
   const [tracking, setTracking] = useState(false);
 
   // View application dialog
@@ -381,13 +382,53 @@ const ClientDashboard = () => {
     setTracking(false);
   };
 
-  // View application
-  const handleViewApplication = (appId: string) => {
-    const appData = appDataMap[appId];
-    if (appData) {
-      setViewAppData(appData.application_data);
+  // View application — merge staff edits into application_data for latest view
+  const handleViewApplication = async (appId: string) => {
+    // Always fetch latest from DB to ensure we have staff edits
+    const { data: app } = await (supabase as any)
+      .from("applications")
+      .select("*")
+      .eq("application_id", appId)
+      .maybeSingle();
+    if (app) {
+      // Merge top-level columns into application_data so ViewApplicationDialog shows latest
+      const merged = {
+        ...(app.application_data || {}),
+        firstName: app.first_name,
+        lastName: app.last_name,
+        middleName: app.middle_name,
+        dob: app.dob,
+        gender: app.gender,
+        cellPhone: app.cell_phone,
+        homePhone: app.home_phone,
+        email: app.client_email,
+        country: app.country,
+        institutionName: app.institution_name,
+        attendance: app.attendance,
+        degrees: app.degrees,
+        purpose: app.purpose,
+        serviceTitle: app.service_title,
+        processingTime: app.processing_time || app.processing_label,
+        translationOption: app.translation_option,
+        authOption: app.auth_option,
+        deliveryOptions: app.delivery_options,
+        totalPrice: app.total_price,
+        paymentMethod: app.payment_method,
+        cardLastFour: app.card_last_four,
+        ifcsId: app.ifcs_id,
+        staffNotes: app.staff_notes,
+        // For translations
+        fullName: app.first_name ? `${app.first_name} ${app.last_name}` : (app.application_data?.fullName || ""),
+        phone: app.cell_phone || app.application_data?.phone,
+      };
+      setViewAppData(merged);
       setViewAppId(appId);
       setViewAppOpen(true);
+      // Update cache
+      setAppDataMap(prev => ({
+        ...prev,
+        [appId]: { ...prev[appId], ...app, application_data: merged },
+      }));
     }
   };
 
