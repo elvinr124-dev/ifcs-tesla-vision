@@ -115,6 +115,7 @@ const ClientDashboard = () => {
   const [trackDobMonth, setTrackDobMonth] = useState("");
   const [trackDobDay, setTrackDobDay] = useState("");
   const [trackDobYear, setTrackDobYear] = useState("");
+  const [trackZip, setTrackZip] = useState("");
   const [tracking, setTracking] = useState(false);
 
   // View application dialog
@@ -240,17 +241,76 @@ const ClientDashboard = () => {
   // Track order handler
   const handleTrackOrder = async () => {
     if (!trackId.trim()) return;
-    if (!trackDobMonth || !trackDobDay || !trackDobYear) {
-      toast({ title: "Date of Birth Required", description: "Please enter your date of birth to verify your identity.", variant: "destructive" });
-      return;
+
+    const isTranslation = trackType === "translation";
+
+    if (isTranslation) {
+      if (!trackZip.trim()) {
+        toast({ title: "Zip Code Required", description: "Please enter the zip code used in your translation order.", variant: "destructive" });
+        return;
+      }
+    } else {
+      if (!trackDobMonth || !trackDobDay || !trackDobYear) {
+        toast({ title: "Date of Birth Required", description: "Please enter your date of birth to verify your identity.", variant: "destructive" });
+        return;
+      }
     }
     setTracking(true);
 
+    const searchVal = trackId.trim();
+
+    if (isTranslation) {
+      // For translations, search by app ID and verify zip from application_data
+      const { data: app } = await (supabase as any)
+        .from("applications")
+        .select("*")
+        .or(`application_id.eq.${searchVal},ifcs_id.eq.${searchVal}`)
+        .maybeSingle();
+
+      if (app) {
+        const appZip = app.application_data?.zip || "";
+        if (appZip.trim() !== trackZip.trim()) {
+          toast({ title: "Verification Failed", description: "The zip code doesn't match. Please try again.", variant: "destructive" });
+          setTracking(false);
+          return;
+        }
+        const existing = orders.find(o => o.application_id === app.application_id);
+        if (existing) {
+          toast({ title: "Already Tracked", description: "This order is already in your dashboard.", variant: "destructive" });
+          setTracking(false);
+          return;
+        }
+        const { data: newOrder } = await (supabase as any)
+          .from("client_orders")
+          .insert({
+            reference_id: app.application_id,
+            client_email: clientEmail,
+            service: `${app.service_title || ""} — ${app.processing_label || ""}`,
+            status: app.status || "requested",
+            application_id: app.application_id,
+            dob: "",
+            ifcs_id: app.ifcs_id || null,
+          })
+          .select()
+          .single();
+        if (newOrder) {
+          setOrders(prev => [newOrder, ...prev]);
+          setAppDataMap(prev => ({
+            ...prev,
+            [app.application_id]: { id: app.id, application_id: app.application_id, application_data: app.application_data, staff_notes: app.staff_notes, receipt_url: app.receipt_url, ifcs_id: app.ifcs_id },
+          }));
+          toast({ title: "Order Found", description: `Order #${searchVal} has been added to your dashboard.` });
+        }
+      } else {
+        toast({ title: "Order Not Found", description: "No translation order matches the provided ID and zip code.", variant: "destructive" });
+      }
+      setTrackId(""); setTrackZip(""); setTracking(false);
+      return;
+    }
+
+    // Evaluation tracking (DOB-based)
     const monthIdx = months.indexOf(trackDobMonth) + 1;
     const dobFormatted = `${String(monthIdx).padStart(2, "0")}/${String(trackDobDay).padStart(2, "0")}/${String(trackDobYear).slice(-2)}`;
-
-    // Search by either application_id or reference_id
-    const searchVal = trackId.trim();
 
     // First try client_orders by reference_id
     let { data: found } = await (supabase as any)
@@ -378,16 +438,57 @@ const ClientDashboard = () => {
     setTrackDobMonth("");
     setTrackDobDay("");
     setTrackDobYear("");
+    setTrackZip("");
     setTracking(false);
   };
 
-  // View application
-  const handleViewApplication = (appId: string) => {
-    const appData = appDataMap[appId];
-    if (appData) {
-      setViewAppData(appData.application_data);
+  // View application — merge staff edits into application_data for latest view
+  const handleViewApplication = async (appId: string) => {
+    // Always fetch latest from DB to ensure we have staff edits
+    const { data: app } = await (supabase as any)
+      .from("applications")
+      .select("*")
+      .eq("application_id", appId)
+      .maybeSingle();
+    if (app) {
+      // Merge top-level columns into application_data so ViewApplicationDialog shows latest
+      const merged = {
+        ...(app.application_data || {}),
+        firstName: app.first_name,
+        lastName: app.last_name,
+        middleName: app.middle_name,
+        dob: app.dob,
+        gender: app.gender,
+        cellPhone: app.cell_phone,
+        homePhone: app.home_phone,
+        email: app.client_email,
+        country: app.country,
+        institutionName: app.institution_name,
+        attendance: app.attendance,
+        degrees: app.degrees,
+        purpose: app.purpose,
+        serviceTitle: app.service_title,
+        processingTime: app.processing_time || app.processing_label,
+        translationOption: app.translation_option,
+        authOption: app.auth_option,
+        deliveryOptions: app.delivery_options,
+        totalPrice: app.total_price,
+        paymentMethod: app.payment_method,
+        cardLastFour: app.card_last_four,
+        ifcsId: app.ifcs_id,
+        staffNotes: app.staff_notes,
+        // For translations
+        fullName: app.first_name ? `${app.first_name} ${app.last_name}` : (app.application_data?.fullName || ""),
+        phone: app.cell_phone || app.application_data?.phone,
+      };
+      setViewAppData(merged);
       setViewAppId(appId);
       setViewAppOpen(true);
+      // Update cache
+      setAppDataMap(prev => ({
+        ...prev,
+        [appId]: { ...prev[appId], ...app, application_data: merged },
+      }));
     }
   };
 
@@ -498,15 +599,16 @@ const ClientDashboard = () => {
               <p className="text-sm text-muted-foreground mb-5">
                 {trackType === "evaluation"
                   ? translate("Enter your IFCS ID or Application ID and date of birth to track your evaluation order.")
-                  : translate("Enter your IFCS ID or Application ID to track your translation order.")}
+                  : translate("Enter your IFCS ID (e.g. 4407) or App ID (e.g. TEV1234) and the zip code from your translation order.")}
               </p>
               <div className="space-y-4">
                 <Input
                   value={trackId}
                   onChange={(e) => setTrackId(e.target.value)}
-                  placeholder={trackType === "evaluation" ? "IFCS ID (e.g. 44507) or App ID (e.g. EE0098)" : "IFCS ID or App ID (e.g. TEV1234)"}
+                  placeholder={trackType === "evaluation" ? "IFCS ID (e.g. 44507) or App ID (e.g. EE0098)" : "IFCS ID (e.g. 4407) or App ID (e.g. TEV1234)"}
                   className="max-w-sm rounded-2xl h-12"
                 />
+                {trackType === "evaluation" ? (
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Date of Birth")}</p>
                   <div className="grid grid-cols-3 gap-3 max-w-sm">
@@ -524,6 +626,17 @@ const ClientDashboard = () => {
                     </GlassSelect>
                   </div>
                 </div>
+                ) : (
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-2">{translate("Zip Code")}</p>
+                  <Input
+                    value={trackZip}
+                    onChange={(e) => setTrackZip(e.target.value)}
+                    placeholder="e.g. 33026"
+                    className="max-w-sm rounded-2xl h-12"
+                  />
+                </div>
+                )}
                 <button onClick={handleTrackOrder} disabled={tracking || !trackId.trim()}
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-semibold hover:bg-accent/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
                   <Search size={16} /> {tracking ? translate("Searching...") : translate("Track Order")}
@@ -742,10 +855,10 @@ const ClientDashboard = () => {
               <h2 className="text-xl font-bold text-foreground">{translate("Shared Evaluation Reports")}</h2>
             </div>
             <div className="space-y-3">
-              {dbReports.length === 0 && (
+              {dbReports.filter(r => !r.evaluation_type?.toLowerCase().includes("translation")).length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">No reports shared yet.</p>
               )}
-              {dbReports.map((r) => {
+              {dbReports.filter(r => !r.evaluation_type?.toLowerCase().includes("translation")).map((r) => {
                 const isExpired = r.expiry_date ? new Date(r.expiry_date) < new Date() : false;
                 const statusLabel = isExpired ? "expired" : r.status;
                 return (
@@ -806,6 +919,9 @@ const ClientDashboard = () => {
                 const meta = statusMeta[order.status] ?? statusMeta.requested;
                 const isExpanded = expandedOrder === order.id;
                 const currentIdx = statusSteps.indexOf(order.status);
+                const hasAppData = order.application_id ? appDataMap[order.application_id] : null;
+                const staffNotes = order.application_id ? appDataMap[order.application_id]?.staff_notes : null;
+                const receiptUrl = order.application_id ? appDataMap[order.application_id]?.receipt_url : null;
 
                 return (
                   <div key={order.id} className="rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -816,8 +932,8 @@ const ClientDashboard = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 flex-wrap">
                           <p className="font-bold text-foreground">App ID {order.application_id || order.reference_id}</p>
-                          {(order.ifcs_id) && (
-                            <p className="font-bold text-accent">— IFCS ID {order.ifcs_id}</p>
+                          {(order.ifcs_id || hasAppData?.ifcs_id) && (
+                            <p className="font-bold text-accent">— IFCS ID {order.ifcs_id || hasAppData?.ifcs_id}</p>
                           )}
                           <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${meta.color}`}>
                             {meta.icon} {meta.label}
@@ -833,6 +949,25 @@ const ClientDashboard = () => {
 
                     {isExpanded && (
                       <div className="border-t border-border p-5 space-y-6">
+                        <div className="flex flex-wrap gap-2">
+                          {hasAppData && (
+                            <button
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-all"
+                              onClick={() => handleViewApplication(order.application_id!)}
+                            >
+                              <Eye size={14} /> {translate("View Application")}
+                            </button>
+                          )}
+                          {receiptUrl && (
+                            <button
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-border bg-muted/50 text-foreground text-xs font-semibold hover:bg-muted transition-all"
+                              onClick={() => window.open(receiptUrl, "_blank")}
+                            >
+                              <FileText size={14} /> {translate("View Receipt")}
+                            </button>
+                          )}
+                        </div>
+
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3">{translate("Track Order")}</p>
                           <div className="flex items-center gap-2">
@@ -849,13 +984,13 @@ const ClientDashboard = () => {
                           </div>
                         </div>
 
-                        {order.staff_note && (
+                        {(order.staff_note || staffNotes) && (
                           <div className="rounded-xl border border-border p-5 bg-muted/20">
                             <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                               <MessageSquare size={16} className="text-accent" /> {translate("Staff Notes")}
                             </p>
                             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                              {order.staff_note}
+                              {staffNotes || order.staff_note}
                             </p>
                           </div>
                         )}
@@ -891,9 +1026,41 @@ const ClientDashboard = () => {
               </div>
               <h2 className="text-xl font-bold text-foreground">{translate("Shared Translation Reports")}</h2>
             </div>
-            <p className="text-sm text-muted-foreground text-center py-4">
-              {translate("Translation reports shared by IFCS staff will appear here.")}
-            </p>
+            <div className="space-y-3">
+              {dbReports.filter(r => r.evaluation_type?.toLowerCase().includes("translation")).length === 0 && (
+                <p className="text-sm text-muted-foreground text-center py-4">No translation reports shared yet.</p>
+              )}
+              {dbReports.filter(r => r.evaluation_type?.toLowerCase().includes("translation")).map((r) => {
+                const isExpired = r.expiry_date ? new Date(r.expiry_date) < new Date() : false;
+                const statusLabel = isExpired ? "expired" : r.status;
+                return (
+                  <div key={r.id} className="rounded-2xl border border-border p-5 flex flex-wrap items-center justify-between gap-4 hover:shadow-sm transition-shadow">
+                    <div>
+                      <p className="font-semibold text-foreground">#{r.reference_id}</p>
+                      <p className="text-sm text-muted-foreground">{r.evaluation_type}</p>
+                      <p className="text-xs text-muted-foreground">
+                        Shared {new Date(r.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <span className={`text-sm font-semibold capitalize ${reportStatusColor[statusLabel] || "text-muted-foreground"}`}>{statusLabel}</span>
+                      {!isExpired && (
+                        <>
+                          <Link to={`/transcript?token=${r.access_token}`}>
+                            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border text-xs font-semibold text-foreground hover:bg-muted transition-all">
+                              <Eye size={14} /> View
+                            </button>
+                          </Link>
+                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border text-xs font-semibold text-foreground hover:bg-muted transition-all" onClick={() => r.report_file_url && window.open(r.report_file_url, "_blank")} disabled={!r.report_file_url}>
+                            <Download size={14} /> Download
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
           )}
 

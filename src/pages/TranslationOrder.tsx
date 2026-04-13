@@ -443,28 +443,16 @@ const TranslationOrder = () => {
         dob: "",
       });
 
-      // Send email notification
+      // Send email notification to translations@ifcsevals.com and to the client
+      const emailBody = `Translations Form Submission\n\nLast Name: ${lastName}\nFirst Name: ${firstName}\n${phone ? `Phone: ${phone}\n` : ""}Email: ${emailVal}\nAddress Line One: ${addressLine1}\nAddress Line Two: ${addressLine2 || ""}\nCity: ${city}\nState: ${addrState}\nZip: ${zip}\nCountry: ${addrCountry}\n\nTranslating From: ${transFrom}\nTranslating Into: ${transTo}\n${notes ? `Notes: ${notes}\n` : ""}\nTotal: $${total.toFixed(2)}${addExpedited ? "\n+ Expedited processing" : ""}${addHardCopy ? "\n+ Hard copy delivery" : ""}`;
+
       try {
         await supabase.functions.invoke("send-application-email", {
           body: {
-            to: "translations@ifcsevals.com",
-            subject: `Translation Order — ${fullName} (${translationAppId})`,
-            html: `<h2>Translation Order Submission</h2>
-              <p><strong>Application ID:</strong> ${translationAppId}</p>
-              <p><strong>Last Name:</strong> ${lastName}</p>
-              <p><strong>First Name:</strong> ${firstName}</p>
-              <p><strong>Phone:</strong> ${phone || "N/A"}</p>
-              <p><strong>Email:</strong> ${emailVal}</p>
-              <p><strong>Address Line One:</strong> ${addressLine1}</p>
-              <p><strong>Address Line Two:</strong> ${addressLine2 || ""}</p>
-              <p><strong>City:</strong> ${city}</p>
-              <p><strong>State:</strong> ${addrState}</p>
-              <p><strong>Zip:</strong> ${zip}</p>
-              <p><strong>Country:</strong> ${addrCountry}</p>
-              <p><strong>Translating From:</strong> ${transFrom}</p>
-              <p><strong>Translating Into:</strong> ${transTo}</p>
-              ${notes ? `<p><strong>Notes:</strong> ${notes}</p>` : ""}
-              <p><strong>Total:</strong> $${total.toFixed(2)}</p>`,
+            subject: `Translations Form Submission`,
+            body: emailBody,
+            recipientEmail: "translations@ifcsevals.com",
+            applicantEmail: emailVal,
           },
         });
       } catch {}

@@ -557,6 +557,26 @@ const StaffDashboard = () => {
     if (!editAppData) return;
     setSaveConfirmOpen(false);
 
+    // Build updated application_data by merging edits into existing data
+    const existingAppData = editAppData.application_data || {};
+    const updatedAppData = {
+      ...existingAppData,
+      firstName: editFields.first_name,
+      lastName: editFields.last_name,
+      middleName: editFields.middle_name,
+      dob: editFields.dob,
+      gender: editFields.gender,
+      cellPhone: editFields.cell_phone,
+      homePhone: editFields.home_phone,
+      country: editFields.country,
+      institutionName: editFields.institution_name,
+      serviceTitle: editFields.service_title,
+      processingTime: editFields.processing_label,
+      ifcsId: editFields.ifcs_id,
+      fullName: `${editFields.first_name} ${editFields.last_name}`.trim(),
+      phone: editFields.cell_phone,
+    };
+
     await (supabase as any).from("applications").update({
       first_name: editFields.first_name, last_name: editFields.last_name, middle_name: editFields.middle_name,
       dob: editFields.dob, ifcs_id: editFields.ifcs_id, status: editFields.status,
@@ -565,6 +585,7 @@ const StaffDashboard = () => {
       verification_source: editFields.verification_source, country: editFields.country,
       institution_name: editFields.institution_name, cell_phone: editFields.cell_phone,
       home_phone: editFields.home_phone, gender: editFields.gender,
+      application_data: updatedAppData,
     }).eq("application_id", editAppData.application_id);
 
     // Update client_orders too
