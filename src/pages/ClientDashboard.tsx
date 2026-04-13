@@ -438,6 +438,7 @@ const ClientDashboard = () => {
     setTrackDobMonth("");
     setTrackDobDay("");
     setTrackDobYear("");
+    setTrackZip("");
     setTracking(false);
   };
 
