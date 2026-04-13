@@ -241,17 +241,76 @@ const ClientDashboard = () => {
   // Track order handler
   const handleTrackOrder = async () => {
     if (!trackId.trim()) return;
-    if (!trackDobMonth || !trackDobDay || !trackDobYear) {
-      toast({ title: "Date of Birth Required", description: "Please enter your date of birth to verify your identity.", variant: "destructive" });
-      return;
+
+    const isTranslation = trackType === "translation";
+
+    if (isTranslation) {
+      if (!trackZip.trim()) {
+        toast({ title: "Zip Code Required", description: "Please enter the zip code used in your translation order.", variant: "destructive" });
+        return;
+      }
+    } else {
+      if (!trackDobMonth || !trackDobDay || !trackDobYear) {
+        toast({ title: "Date of Birth Required", description: "Please enter your date of birth to verify your identity.", variant: "destructive" });
+        return;
+      }
     }
     setTracking(true);
 
+    const searchVal = trackId.trim();
+
+    if (isTranslation) {
+      // For translations, search by app ID and verify zip from application_data
+      const { data: app } = await (supabase as any)
+        .from("applications")
+        .select("*")
+        .or(`application_id.eq.${searchVal},ifcs_id.eq.${searchVal}`)
+        .maybeSingle();
+
+      if (app) {
+        const appZip = app.application_data?.zip || "";
+        if (appZip.trim() !== trackZip.trim()) {
+          toast({ title: "Verification Failed", description: "The zip code doesn't match. Please try again.", variant: "destructive" });
+          setTracking(false);
+          return;
+        }
+        const existing = orders.find(o => o.application_id === app.application_id);
+        if (existing) {
+          toast({ title: "Already Tracked", description: "This order is already in your dashboard.", variant: "destructive" });
+          setTracking(false);
+          return;
+        }
+        const { data: newOrder } = await (supabase as any)
+          .from("client_orders")
+          .insert({
+            reference_id: app.application_id,
+            client_email: clientEmail,
+            service: `${app.service_title || ""} — ${app.processing_label || ""}`,
+            status: app.status || "requested",
+            application_id: app.application_id,
+            dob: "",
+            ifcs_id: app.ifcs_id || null,
+          })
+          .select()
+          .single();
+        if (newOrder) {
+          setOrders(prev => [newOrder, ...prev]);
+          setAppDataMap(prev => ({
+            ...prev,
+            [app.application_id]: { id: app.id, application_id: app.application_id, application_data: app.application_data, staff_notes: app.staff_notes, receipt_url: app.receipt_url, ifcs_id: app.ifcs_id },
+          }));
+          toast({ title: "Order Found", description: `Order #${searchVal} has been added to your dashboard.` });
+        }
+      } else {
+        toast({ title: "Order Not Found", description: "No translation order matches the provided ID and zip code.", variant: "destructive" });
+      }
+      setTrackId(""); setTrackZip(""); setTracking(false);
+      return;
+    }
+
+    // Evaluation tracking (DOB-based)
     const monthIdx = months.indexOf(trackDobMonth) + 1;
     const dobFormatted = `${String(monthIdx).padStart(2, "0")}/${String(trackDobDay).padStart(2, "0")}/${String(trackDobYear).slice(-2)}`;
-
-    // Search by either application_id or reference_id
-    const searchVal = trackId.trim();
 
     // First try client_orders by reference_id
     let { data: found } = await (supabase as any)
