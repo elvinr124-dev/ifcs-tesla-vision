@@ -855,10 +855,10 @@ const ClientDashboard = () => {
               <h2 className="text-xl font-bold text-foreground">{translate("Shared Evaluation Reports")}</h2>
             </div>
             <div className="space-y-3">
-              {dbReports.length === 0 && (
+              {dbReports.filter(r => !r.evaluation_type?.toLowerCase().includes("translation")).length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-4">No reports shared yet.</p>
               )}
-              {dbReports.map((r) => {
+              {dbReports.filter(r => !r.evaluation_type?.toLowerCase().includes("translation")).map((r) => {
                 const isExpired = r.expiry_date ? new Date(r.expiry_date) < new Date() : false;
                 const statusLabel = isExpired ? "expired" : r.status;
                 return (
