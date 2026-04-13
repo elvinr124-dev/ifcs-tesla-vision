@@ -919,6 +919,9 @@ const ClientDashboard = () => {
                 const meta = statusMeta[order.status] ?? statusMeta.requested;
                 const isExpanded = expandedOrder === order.id;
                 const currentIdx = statusSteps.indexOf(order.status);
+                const hasAppData = order.application_id ? appDataMap[order.application_id] : null;
+                const staffNotes = order.application_id ? appDataMap[order.application_id]?.staff_notes : null;
+                const receiptUrl = order.application_id ? appDataMap[order.application_id]?.receipt_url : null;
 
                 return (
                   <div key={order.id} className="rounded-2xl border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
@@ -929,8 +932,8 @@ const ClientDashboard = () => {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-3 flex-wrap">
                           <p className="font-bold text-foreground">App ID {order.application_id || order.reference_id}</p>
-                          {(order.ifcs_id) && (
-                            <p className="font-bold text-accent">— IFCS ID {order.ifcs_id}</p>
+                          {(order.ifcs_id || hasAppData?.ifcs_id) && (
+                            <p className="font-bold text-accent">— IFCS ID {order.ifcs_id || hasAppData?.ifcs_id}</p>
                           )}
                           <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${meta.color}`}>
                             {meta.icon} {meta.label}
@@ -946,6 +949,25 @@ const ClientDashboard = () => {
 
                     {isExpanded && (
                       <div className="border-t border-border p-5 space-y-6">
+                        <div className="flex flex-wrap gap-2">
+                          {hasAppData && (
+                            <button
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl bg-accent text-accent-foreground text-xs font-semibold hover:bg-accent/90 transition-all"
+                              onClick={() => handleViewApplication(order.application_id!)}
+                            >
+                              <Eye size={14} /> {translate("View Application")}
+                            </button>
+                          )}
+                          {receiptUrl && (
+                            <button
+                              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-2xl border border-border bg-muted/50 text-foreground text-xs font-semibold hover:bg-muted transition-all"
+                              onClick={() => window.open(receiptUrl, "_blank")}
+                            >
+                              <FileText size={14} /> {translate("View Receipt")}
+                            </button>
+                          )}
+                        </div>
+
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3">{translate("Track Order")}</p>
                           <div className="flex items-center gap-2">
@@ -962,13 +984,13 @@ const ClientDashboard = () => {
                           </div>
                         </div>
 
-                        {order.staff_note && (
+                        {(order.staff_note || staffNotes) && (
                           <div className="rounded-xl border border-border p-5 bg-muted/20">
                             <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                               <MessageSquare size={16} className="text-accent" /> {translate("Staff Notes")}
                             </p>
                             <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                              {order.staff_note}
+                              {staffNotes || order.staff_note}
                             </p>
                           </div>
                         )}
