@@ -193,6 +193,20 @@ serve(async (req) => {
       });
     }
 
+    // ═══════════════════════════════════════
+    // RULE-BASED FAST PATH (zero AI cost)
+    // ═══════════════════════════════════════
+    const lastUserMsg = [...messages].reverse().find((m: any) => m.role === "user")?.content || "";
+    const ruleAnswer = matchRule(String(lastUserMsg).toLowerCase());
+    if (ruleAnswer) {
+      let content = ruleAnswer.content;
+      const navButtons = ruleAnswer.navButtons || [];
+      content = content.replace(/\?\?+/g, "?").replace(/!!+/g, "!").replace(/#{1,4}\s/g, "");
+      return new Response(JSON.stringify({ content, navButtons, source: "rules" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const kbContext = (knowledgeBase || []).map((entry: any, i: number) =>
       `[Entry ${i + 1}]\nKeywords: ${entry.keywords.join(", ")}\nResponse: ${entry.response}\nNav Buttons: ${JSON.stringify(entry.navButtons || [])}`
     ).join("\n\n");
