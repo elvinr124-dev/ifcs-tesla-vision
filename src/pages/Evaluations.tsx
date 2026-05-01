@@ -354,10 +354,10 @@ const Evaluations = () => {
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-auto pt-2">
-                      <p className="text-sm text-black/50">
-                        {translate("Selected")}: <span className="text-black font-semibold">${getSelectedPrice(service, idx)}</span>
+                      <p className="text-sm text-white/60">
+                        {translate("Selected")}: <span className="text-white font-semibold">${getSelectedPrice(service, idx)}</span>
                       </p>
-                      <div className="flex gap-3">
+                      <div className="flex gap-3 flex-wrap justify-end">
                         <button
                           onClick={() => {
                             if (service.sampleUrl) {
@@ -366,12 +366,12 @@ const Evaluations = () => {
                               alert("Sample report coming soon!");
                             }
                           }}
-                          className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
+                          className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-white/20 text-slate-900 font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-white transition-all duration-200">
                           <Eye size={16} /> {translate("View Sample")}
                         </button>
                         <Link
                           to="/learn-more-evaluations"
-                          className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200">
+                          className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-white/20 text-slate-900 font-semibold text-sm px-5 py-3 rounded-2xl hover:bg-white transition-all duration-200">
                           <BookOpen size={16} /> {translate("Learn More")}
                         </Link>
                         <button
@@ -397,7 +397,7 @@ const Evaluations = () => {
                             });
                             showToast(`"${service.title} ${processingLabels[key]}" added to cart!`);
                           }}
-                          className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-md border border-black/15 text-black font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-black/20 transition-all duration-200 shadow-lg hover:scale-105">
+                          className="inline-flex items-center gap-2 bg-white/95 backdrop-blur-md border border-white/20 text-slate-900 font-semibold text-sm px-6 py-3 rounded-2xl hover:bg-white transition-all duration-200 shadow-lg hover:scale-105">
                           🛒 {translate("Add to Cart")}
                         </button>
                         <button
