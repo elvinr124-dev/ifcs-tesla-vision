@@ -6,6 +6,241 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ═══════════════════════════════════════════════════════════════
+// IFCS RULE-BASED KNOWLEDGE (no AI calls — zero credit usage)
+// Captures every recurring fact already prompted into the AI so
+// common questions are answered instantly and for free.
+// ═══════════════════════════════════════════════════════════════
+type RuleAnswer = { content: string; navButtons?: Array<{ label: string; path: string; state?: any }> };
+type Rule = { keywords: string[][]; answer: RuleAnswer };
+
+const RULES: Rule[] = [
+  // CONTACT
+  {
+    keywords: [["phone"], ["call"], ["number"], ["contact"], ["reach"], ["email"], ["address"], ["location"], ["hours"], ["where"]],
+    answer: {
+      content: `**Contact IFCS — Institute of Foreign Credential Services**\n\n• **Phone:** (914) 693-2840\n• **Fax:** (914) 231-7782\n• **Email:** info@ifcsevals.com · apps@ifcsevals.com\n• **Address:** 6 Cedar Street, Dobbs Ferry, NY 10522\n• **Hours:** Monday–Friday, 9:00 AM – 5:00 PM EST`,
+      navButtons: [{ label: "Contact Page", path: "/contact" }],
+    },
+  },
+  // PRICING — full table
+  {
+    keywords: [["price"], ["pricing"], ["cost"], ["fee"], ["how much"], ["rates"]],
+    answer: {
+      content: `**IFCS Pricing — Standard / 3-Day Rush / 24-Hour Priority**\n\n• General Analysis — **$100 / $150 / $195**\n• General Analysis + GPA — **$150 / $205 / $295**\n• Cosmetology CxC — **$170 / $275 / $375**\n• Course-by-Course — **$190 / $290 / $425**\n• Health Professions CxC — **$230 / $355 / $490**\n• Comprehensive CxC — **$290 / $390 / $490**\n• HS & University CxC — **$295 / $395 / $495**\n• Professional Licensure CxC — **$400 / $550 / $650**\n\n**Add-ons:** Translations $50/page · Duplicate Reports $25 · Document Authentication $140 · Notarization $19.95 · Report Renewal $100\n**Consulting:** Evaluation = FREE · Academic Advising = $60/hr`,
+      navButtons: [{ label: "View Pricing", path: "/pricing" }, { label: "All Evaluations", path: "/evaluations" }],
+    },
+  },
+  // TURNAROUND
+  {
+    keywords: [["turnaround"], ["how long"], ["how many days"], ["processing time"], ["delivery time"], ["business days"], ["how fast"], ["rush"]],
+    answer: {
+      content: `**Processing Times**\n\n• **Standard:** 8–10 business days\n• **3-Day Rush:** 3 business days\n• **24-Hour Priority:** 24 hours\n\nRush services are available on most evaluations. Pricing varies — see the pricing page for details.`,
+      navButtons: [{ label: "View Pricing", path: "/pricing" }],
+    },
+  },
+  // EVALUATION TYPES (general)
+  {
+    keywords: [["what evaluations"], ["types of evaluation"], ["which evaluation"], ["kinds of evaluation"], ["evaluation services"], ["all evaluations"]],
+    answer: {
+      content: `**IFCS offers 8 evaluation types:**\n\n• **General Analysis** — $100 (employment, USCIS, military)\n• **General Analysis + GPA** — $150\n• **Course-by-Course** — $190 (university admission, transfer credits)\n• **Comprehensive CxC** — $290 (multiple degrees)\n• **HS & University CxC** — $295\n• **Health Professions CxC** — $230 (nursing, CGFNS, ECFMG)\n• **Cosmetology CxC** — $170\n• **Professional Licensure CxC** — $400 (CPA, PE, Bar)`,
+      navButtons: [{ label: "Browse Evaluations", path: "/evaluations" }],
+    },
+  },
+  // INTENT-BASED RECOMMENDATIONS
+  {
+    keywords: [["uscis"], ["green card"], ["work visa"], ["h-1b"], ["h1b"], ["immigration"], ["employment"]],
+    answer: {
+      content: `For **employment, immigration, USCIS, work visas, or green cards**, you'll want a **General Evaluation ($100)**.\n\nIt provides degree equivalency to U.S. standards, which is what USCIS, employers, and government agencies require.`,
+      navButtons: [{ label: "Start General Analysis", path: "/application", state: { serviceTitle: "General Analysis", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 100 } }],
+    },
+  },
+  {
+    keywords: [["military"], ["veteran"], ["gi bill"], ["armed forces"]],
+    answer: {
+      content: `For **U.S. Military, veterans, or GI Bill** purposes, the **General Evaluation ($100)** is the right fit. IFCS evaluations are accepted by all branches of the U.S. Military.`,
+      navButtons: [{ label: "Start General Analysis", path: "/application", state: { serviceTitle: "General Analysis", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 100 } }],
+    },
+  },
+  {
+    keywords: [["cpa"], ["bar exam"], ["bar admission"], ["professional engineer"], ["pe license"], ["professional licensure"], ["lawyer"], ["attorney licensure"]],
+    answer: {
+      content: `For **CPA, Professional Engineer (PE), or Bar admission**, you need the **Professional Licensure Course-by-Course ($400 standard)** evaluation.\n\nIt includes credit-hour analysis, grading-scale conversion, course-level comparability, and professional credential validation.`,
+      navButtons: [{ label: "Start Professional Licensure CxC", path: "/application", state: { serviceTitle: "Professional Licensure Course-by-Course", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 400 } }],
+    },
+  },
+  {
+    keywords: [["nursing"], ["nurse"], ["cgfns"], ["ecfmg"], ["medical license"], ["healthcare"], ["health profession"]],
+    answer: {
+      content: `For **nursing, medical, or healthcare licensing (CGFNS, ECFMG)**, you need the **Health Professions Course-by-Course ($230)** evaluation.`,
+      navButtons: [{ label: "Start Health Professions CxC", path: "/application", state: { serviceTitle: "Health Professions Course-by-Course", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 230 } }],
+    },
+  },
+  {
+    keywords: [["transfer credit"], ["university admission"], ["college admission"], ["continuing education"], ["graduate school"]],
+    answer: {
+      content: `For **university admission, transfer credits, or graduate school**, the **Course-by-Course ($190)** evaluation is what you need.`,
+      navButtons: [{ label: "Start Course-by-Course", path: "/application", state: { serviceTitle: "Course-by-Course", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 190 } }],
+    },
+  },
+  {
+    keywords: [["cosmetology"], ["barber"], ["esthetics"], ["beauty license"]],
+    answer: {
+      content: `For **cosmetology, barbering, or esthetics licensing**, the **Cosmetology Course-by-Course ($170)** evaluation is what state boards require.`,
+      navButtons: [{ label: "Start Cosmetology CxC", path: "/application", state: { serviceTitle: "Cosmetology Course-by-Course", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 170 } }],
+    },
+  },
+  {
+    keywords: [["multiple degree"], ["two degree"], ["2 degree"], ["several degree"]],
+    answer: {
+      content: `For applicants with **multiple degrees**, the **Comprehensive Course-by-Course ($290)** covers all of them in one evaluation.`,
+      navButtons: [{ label: "Start Comprehensive CxC", path: "/application", state: { serviceTitle: "Comprehensive Course-by-Course", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 290 } }],
+    },
+  },
+  // TRANSLATIONS
+  {
+    keywords: [["translation"], ["translate"], ["certified translation"]],
+    answer: {
+      content: `**Certified Translations** — $50/page\n\nIFCS provides certified translations for any official document required for evaluation, immigration, or academic use. You can start an order or request a quote first.`,
+      navButtons: [{ label: "Start Translation Order", path: "/translations/order" }, { label: "Get a Quote", path: "/translations/quote" }],
+    },
+  },
+  // TRACK ORDER / STATUS
+  {
+    keywords: [["track"], ["status"], ["where is my"], ["my order"], ["my application"], ["my evaluation"]],
+    answer: {
+      content: `You can **track your order** from your dashboard using either your **App ID** (e.g., EE0788 for evaluations or TEV1234 for translations) or your **IFCS ID** (5-digit number). Evaluations verify with **Date of Birth**; translations verify with **Zip Code**.\n\nFor urgent inquiries: **(914) 693-2840** or **apps@ifcsevals.com**.`,
+      navButtons: [{ label: "My Dashboard", path: "/dashboard/client" }],
+    },
+  },
+  // REFUND / DISPUTE — human handoff
+  {
+    keywords: [["refund"], ["dispute"], ["complaint"], ["cancel"]],
+    answer: {
+      content: `For **refunds, disputes, or complaints**, please contact our team directly so we can resolve it for you:\n\n• **Phone:** (914) 693-2840\n• **Email:** apps@ifcsevals.com`,
+      navButtons: [{ label: "Contact Page", path: "/contact" }],
+    },
+  },
+  // GRADE CONVERSION — zero-guess policy
+  {
+    keywords: [["convert grade"], ["gpa equivalent"], ["grade equivalent"], ["what is my gpa"], ["calculate gpa"], ["my gpa"]],
+    answer: {
+      content: `To ensure accuracy, our evaluators must review your specific transcripts. Every university's grading scale is unique — this is why a professional evaluation is essential.\n\nWe recommend a **Course-by-Course evaluation ($190)** for GPA-related needs.`,
+      navButtons: [{ label: "Start Course-by-Course", path: "/application", state: { serviceTitle: "Course-by-Course", processingKey: "standard", processingLabel: "Standard", processingTime: "8–10 Business Days", price: 190 } }],
+    },
+  },
+  // NACES / ACCEPTANCE
+  {
+    keywords: [["naces"], ["accepted by"], ["who accepts"], ["recognized"], ["accreditation"]],
+    answer: {
+      content: `IFCS is a **NACES member** — the gold standard for credential evaluation in the U.S.\n\nOur evaluations are accepted by **universities, colleges, employers, federal and state government agencies, USCIS, all branches of the U.S. Military, and professional licensing boards** nationwide.`,
+      navButtons: [{ label: "About IFCS", path: "/about" }],
+    },
+  },
+  // DISCOUNT CODES
+  {
+    keywords: [["discount"], ["promo code"], ["coupon"], ["promo"]],
+    answer: {
+      content: `**Discount codes** can be entered in your cart at checkout:\n\n• **IFCS10** — 10% off\n• **WELCOME15** — 15% off\n• **IFCS20** — 20% off`,
+      navButtons: [{ label: "Cart", path: "/cart" }],
+    },
+  },
+  // OFFICIAL DOCUMENTS
+  {
+    keywords: [["send transcript"], ["mail document"], ["send document"], ["official transcript"], ["where to send"]],
+    answer: {
+      content: `Once your application is submitted and you receive your **IFCS ID** (a 5-digit reference number), you can have your issuing institution send official documents directly to IFCS. Mailing instructions and the appropriate address are provided after submission. In some cases, originals must be mailed directly to our office for verification.`,
+      navButtons: [{ label: "Start an Application", path: "/application" }],
+    },
+  },
+  // CONSULTING
+  {
+    keywords: [["consultation"], ["consulting"], ["advisor"], ["advising"], ["book consult"]],
+    answer: {
+      content: `**Consulting Services**\n\n• **Evaluation Consultation** — FREE (helps you choose the right evaluation)\n• **Academic Advising** — $60/hour\n\nYou can book directly online.`,
+      navButtons: [{ label: "Book Consultation", path: "/consulting/book" }, { label: "Consulting Info", path: "/consulting" }],
+    },
+  },
+  // GREETINGS
+  {
+    keywords: [["hello"], ["hi"], ["hey"], ["good morning"], ["good afternoon"], ["good evening"]],
+    answer: {
+      content: `Hi there! I'm the **IFCS AI assistant**. I can help with:\n\n• Choosing the right evaluation\n• Pricing and turnaround times\n• Translations\n• Tracking your order\n• Document requirements by country\n\nWhat can I help you with today?`,
+    },
+  },
+  // THANKS
+  {
+    keywords: [["thank"], ["thanks"], ["appreciate"]],
+    answer: {
+      content: `You're very welcome! If you need anything else, just ask — or call us at **(914) 693-2840**.`,
+    },
+  },
+  // COUNTRY-SPECIFIC
+  {
+    keywords: [["jamaica"], ["trinidad"], ["barbados"], ["caribbean"], ["cxc"], ["csec"], ["cape"]],
+    answer: {
+      content: `**Caribbean credentials (Jamaica, Trinidad, Barbados, etc.):**\n\n• **CXC/CSEC** results required for secondary education\n• **CAPE** results for advanced/post-secondary\n• Official transcripts from any post-secondary institutions attended\n\nWe recommend a **Course-by-Course evaluation** for academic use or **General Analysis** for employment/immigration.`,
+    },
+  },
+  {
+    keywords: [["nigeria"], ["ghana"], ["west africa"], ["waec"], ["neco"]],
+    answer: {
+      content: `**West African credentials (Nigeria, Ghana, etc.):**\n\n• **WAEC** results required\n• **NECO** for Nigeria\n• Official university transcripts and degree certificates\n\nA **Course-by-Course** evaluation is typically needed for academic use.`,
+    },
+  },
+  {
+    keywords: [["india"], ["indian degree"], ["cbse"], ["icse"], ["mark sheet"]],
+    answer: {
+      content: `**Indian credentials:**\n\n• **Year-wise Mark Sheets** for all years of post-secondary\n• **CBSE / ICSE / State Board** certificates for secondary\n• Provisional + Final Degree certificates\n\nUse **Course-by-Course** for academic purposes; **General Analysis** for employment/USCIS.`,
+    },
+  },
+  {
+    keywords: [["philippines"], ["filipino degree"], ["ched"], ["cav"]],
+    answer: {
+      content: `**Philippines credentials:**\n\n• **TOR** (Transcript of Records) from your university\n• **CAV** from CHED or DFA when required by the receiving institution\n• Diploma / degree certificate`,
+    },
+  },
+  {
+    keywords: [["china"], ["chinese degree"], ["chesicc"], ["cdgdc"]],
+    answer: {
+      content: `**Chinese credentials:**\n\n• **CDGDC / CHESICC** verification report\n• Official transcripts in Chinese with **certified English translations**\n• Degree and graduation certificates`,
+    },
+  },
+  {
+    keywords: [["pakistan"], ["pakistani degree"], ["hec"], ["dmc"]],
+    answer: {
+      content: `**Pakistani credentials:**\n\n• **DMC** (Detailed Marks Certificate) for each year\n• **HEC** attestation strongly recommended\n• Degree certificate and official transcripts`,
+    },
+  },
+  {
+    keywords: [["bologna"], ["european degree"], ["ects"], ["diploma supplement"]],
+    answer: {
+      content: `**European (Bologna Process) credentials:**\n\n• **Diploma Supplement** in English\n• Official transcripts with **ECTS** credits\n• Degree certificate\n\nWe handle the ECTS-to-U.S. credit-hour conversion.`,
+    },
+  },
+  // OWNER / DIRECTOR — confidential
+  {
+    keywords: [["who owns"], ["owner of ifcs"], ["ceo"], ["director"], ["founder"]],
+    answer: {
+      content: `For inquiries about our leadership team, please contact us directly at **info@ifcsevals.com** or call **(914) 693-2840**.`,
+    },
+  },
+];
+
+function matchRule(text: string): RuleAnswer | null {
+  if (!text || text.length < 2) return null;
+  let best: { rule: Rule; score: number } | null = null;
+  for (const rule of RULES) {
+    let score = 0;
+    for (const group of rule.keywords) {
+      // Each group is a list of phrases; any phrase in the group matching counts as 1 point.
+      if (group.some(phrase => text.includes(phrase))) score++;
+    }
+    if (score > 0 && (!best || score > best.score)) best = { rule, score };
+  }
+  return best ? best.rule.answer : null;
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -189,6 +424,20 @@ serve(async (req) => {
     if (!messages || !Array.isArray(messages)) {
       return new Response(JSON.stringify({ error: "Missing messages" }), {
         status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // ═══════════════════════════════════════
+    // RULE-BASED FAST PATH (zero AI cost)
+    // ═══════════════════════════════════════
+    const lastUserMsg = [...messages].reverse().find((m: any) => m.role === "user")?.content || "";
+    const ruleAnswer = matchRule(String(lastUserMsg).toLowerCase());
+    if (ruleAnswer) {
+      let content = ruleAnswer.content;
+      const navButtons = ruleAnswer.navButtons || [];
+      content = content.replace(/\?\?+/g, "?").replace(/!!+/g, "!").replace(/#{1,4}\s/g, "");
+      return new Response(JSON.stringify({ content, navButtons, source: "rules" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
