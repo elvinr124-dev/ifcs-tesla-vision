@@ -244,18 +244,18 @@ const Evaluations = () => {
                     className="absolute inset-0 bg-cover bg-center"
                     style={{ backgroundImage: `url(${service.bgImage})` }} />
                   
-                  {/* Dark navy overlay to match screenshot theme */}
-                  <div className="absolute inset-0 bg-gradient-to-br from-[#0a1530]/95 via-[#0d1b3d]/90 to-[#101f44]/85" />
+                  {/* Navy tint overlay — keeps the background photo visible */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#0a1530]/75 via-[#0d1b3d]/65 to-[#101f44]/55" />
 
                   <div className="relative z-10 p-8 md:p-10 h-full flex flex-col gap-6">
 
                     {/* Header */}
                     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
                       <div>
-                        <p className="text-xs font-semibold tracking-[0.25em] uppercase text-amber-200/80 mb-2">
+                        <p className="text-xs font-semibold tracking-[0.25em] uppercase text-amber-200/90 mb-2">
                           {translate("Academic Evaluation")}
                         </p>
-                        <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-white">
+                        <h3 className="text-2xl md:text-4xl font-bold tracking-tight text-white drop-shadow-lg">
                           {translate(service.title)}
                         </h3>
                       </div>
@@ -269,7 +269,7 @@ const Evaluations = () => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-6 space-y-2 shadow-lg">
                         <p className="text-xs font-bold tracking-[0.2em] uppercase text-slate-700 flex items-center gap-2">
-                          <FileText size={14} className="text-slate-600" /> {translate("Program Description")}
+                          <span className="text-base">📋</span> {translate("Program Description")}
                         </p>
                         <p className="text-[14px] leading-relaxed text-slate-800">
                           {translate(service.description)}
@@ -278,13 +278,13 @@ const Evaluations = () => {
                       <div className="space-y-4">
                         <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 space-y-2 shadow-lg">
                           <p className="text-xs font-bold tracking-[0.2em] uppercase text-slate-700 flex items-center gap-2">
-                            <Award size={14} className="text-slate-600" /> {translate("Recommended For")}
+                            <span className="text-base">🎓</span> {translate("Recommended For")}
                           </p>
                           <p className="text-[14px] leading-relaxed text-slate-800">{translate(service.recommendedFor)}</p>
                         </div>
                         <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-5 space-y-2 shadow-lg">
                           <p className="text-xs font-bold tracking-[0.2em] uppercase text-slate-700 flex items-center gap-2">
-                            <FileText size={14} className="text-slate-600" /> {translate("Required Documents")}
+                            <span className="text-base">📁</span> {translate("Required Documents")}
                           </p>
                           <p className="text-[14px] leading-relaxed text-slate-800">{translate(service.documents)}</p>
                         </div>
@@ -293,7 +293,7 @@ const Evaluations = () => {
 
                     {/* Processing speed selector */}
                     <div>
-                      <p className="text-xs font-bold tracking-[0.2em] uppercase text-white/70 flex items-center gap-2 mb-3">
+                      <p className="text-xs font-bold tracking-[0.2em] uppercase text-white/80 flex items-center gap-2 mb-3">
                         <Clock size={12} /> {translate("Select Processing Speed")}
                       </p>
                       <div className="grid grid-cols-3 gap-3">
@@ -321,30 +321,37 @@ const Evaluations = () => {
                                   navigate("/application", { state: serviceData });
                                 }
                               }}
-                              className={`relative overflow-hidden rounded-2xl p-5 text-center transition-all duration-300 border-2 group ${
+                              className={`relative overflow-hidden rounded-2xl p-5 text-center transition-all duration-300 border-2 group hover:bg-accent hover:border-accent hover:shadow-lg hover:shadow-accent/40 hover:scale-[1.03] ${
                                 isActive
                                   ? "bg-white border-accent shadow-xl shadow-accent/30"
-                                  : "bg-white/95 border-white/20 hover:bg-accent hover:border-accent hover:shadow-lg hover:shadow-accent/40 hover:scale-[1.03]"
+                                  : "bg-white/95 border-white/20"
                               }`}
                             >
                               {isActive && (
-                                <div className="absolute top-0 left-0 w-0 h-0 border-t-[28px] border-l-[28px] border-t-accent border-l-transparent">
-                                  <CheckCircle2 size={12} className="absolute -top-[24px] -left-[20px] text-white" strokeWidth={3} />
-                                </div>
+                                <>
+                                  <div
+                                    className="absolute top-0 left-0 pointer-events-none"
+                                    style={{
+                                      width: 0,
+                                      height: 0,
+                                      borderTop: "32px solid hsl(var(--accent))",
+                                      borderRight: "32px solid transparent",
+                                    }}
+                                  />
+                                  <CheckCircle2
+                                    size={14}
+                                    className="absolute top-[3px] left-[3px] text-white pointer-events-none"
+                                    strokeWidth={3}
+                                  />
+                                </>
                               )}
-                              <p className={`text-[10px] font-bold uppercase tracking-widest mb-1 ${
-                                isActive ? "text-slate-700" : "text-slate-700 group-hover:text-white"
-                              }`}>
+                              <p className="text-[10px] font-bold uppercase tracking-widest mb-1 text-slate-700 group-hover:text-white">
                                 {opt.label}
                               </p>
-                              <p className={`text-2xl font-bold ${
-                                isActive ? "text-slate-900" : "text-slate-900 group-hover:text-white"
-                              }`}>
+                              <p className="text-2xl font-bold text-slate-900 group-hover:text-white">
                                 ${opt.price}
                               </p>
-                              <p className={`text-xs font-semibold mt-0.5 ${
-                                isActive ? "text-slate-600" : "text-slate-600 group-hover:text-white/90"
-                              }`}>
+                              <p className="text-xs font-semibold mt-0.5 text-slate-600 group-hover:text-white/90">
                                 {opt.sub}
                               </p>
                             </button>
