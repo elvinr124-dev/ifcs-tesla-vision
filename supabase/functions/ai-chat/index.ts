@@ -442,8 +442,10 @@ serve(async (req) => {
       });
     }
 
+    // Build KB context WITHOUT exposing the literal "Nav Buttons:" line to the model
+    // (the model was echoing it into responses). Nav buttons stay on server only.
     const kbContext = (knowledgeBase || []).map((entry: any, i: number) =>
-      `[Entry ${i + 1}]\nKeywords: ${entry.keywords.join(", ")}\nResponse: ${entry.response}\nNav Buttons: ${JSON.stringify(entry.navButtons || [])}`
+      `[Entry ${i + 1}]\nKeywords: ${entry.keywords.join(", ")}\nResponse: ${entry.response}`
     ).join("\n\n");
 
     const systemPrompt = `You are the official AI assistant for **IFCS — Institute of Foreign Credential Services**, a proud member of **NACES (National Association of Credential Evaluation Services)**. IFCS is located at 6 Cedar Street, Dobbs Ferry, NY 10522.
