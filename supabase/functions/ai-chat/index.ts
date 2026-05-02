@@ -676,6 +676,14 @@ Remember: DEFAULT is English. Only switch when user writes in another language. 
       } catch { /* ignore parse errors */ }
     }
 
+    // Strip any leaked "Nav Buttons: [...]" the model may have echoed from the KB
+    const leakedNavRx = /\n?\s*Nav Buttons?:\s*\[[\s\S]*?\]\s*$/i;
+    const leakedMatch = content.match(/Nav Buttons?:\s*(\[[\s\S]*?\])/i);
+    if (leakedMatch && navButtons.length === 0) {
+      try { navButtons = JSON.parse(leakedMatch[1]); } catch { /* ignore */ }
+    }
+    content = content.replace(leakedNavRx, "").replace(/\n?\s*Nav Buttons?:\s*\[[\s\S]*?\]/gi, "").trim();
+
     // Clean up any remaining formatting issues
     content = content.replace(/\?\?+/g, "?").replace(/!!+/g, "!").replace(/#{1,4}\s/g, "");
 
