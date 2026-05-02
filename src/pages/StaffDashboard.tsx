@@ -888,52 +888,74 @@ const StaffDashboard = () => {
                     </button>
 
                     {isSelected && (
-                      <div className="border-t border-border p-5 space-y-6">
-                        {/* Status changer */}
-                        <div>
-                          <p className="text-sm font-medium text-foreground mb-2">Update Status</p>
-                          <div className="flex flex-wrap gap-2">
-                            {Object.entries(statusMeta).map(([key, val]) => (
-                              <button key={key}
-                                className={`inline-flex items-center gap-1 px-4 py-2 rounded-2xl text-xs font-semibold transition-all ${o.status === key ? "bg-accent text-accent-foreground" : "border border-border bg-muted/50 text-foreground hover:bg-muted"}`}
-                                onClick={() => handleStatusChange(o.id, key)}>
-                                {val.icon} {val.label}
-                              </button>
-                            ))}
+                      <div className="border-t border-border bg-muted/20 p-5 space-y-5">
+                        {/* ── ROW 1: Status + Verification (2-col) ── */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                          <div className="rounded-2xl border border-border bg-card p-4">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Status</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {Object.entries(statusMeta).map(([key, val]) => (
+                                <button key={key}
+                                  className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${o.status === key ? "bg-accent text-accent-foreground shadow-sm" : "bg-muted/60 text-foreground hover:bg-muted"}`}
+                                  onClick={() => handleStatusChange(o.id, key)}>
+                                  {val.icon} {val.label}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="rounded-2xl border border-border bg-card p-4">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Verification Source</p>
+                            <Select
+                              value={(orders.find(ord => ord.id === o.id) as any)?.verification_source || ""}
+                              onValueChange={async (val) => {
+                                await (supabase as any).from("client_orders").update({ verification_source: val }).eq("id", o.id);
+                                if (o.application_id) {
+                                  await (supabase as any).from("applications").update({ verification_source: val }).eq("application_id", o.application_id);
+                                }
+                                setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, verification_source: val } as any : ord));
+                                toast({ title: "Verification Source Updated" });
+                              }}
+                            >
+                              <SelectTrigger className="w-full rounded-xl"><SelectValue placeholder="Select source..." /></SelectTrigger>
+                              <SelectContent>
+                                {verificationSources.map((v) => (
+                                  <SelectItem key={v} value={v}>{v}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
                         </div>
 
-                        {/* Verification Source */}
-                        <div>
-                          <p className="text-sm font-medium text-foreground mb-2">Verification Source</p>
-                          <Select
-                            value={(orders.find(ord => ord.id === o.id) as any)?.verification_source || ""}
-                            onValueChange={async (val) => {
-                              await (supabase as any).from("client_orders").update({ verification_source: val }).eq("id", o.id);
-                              if (o.application_id) {
-                                await (supabase as any).from("applications").update({ verification_source: val }).eq("application_id", o.application_id);
-                              }
-                              setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, verification_source: val } as any : ord));
-                              toast({ title: "Verification Source Updated" });
-                            }}
-                          >
-                            <SelectTrigger className="w-full max-w-md rounded-2xl"><SelectValue placeholder="Select verification source..." /></SelectTrigger>
-                            <SelectContent>
-                              {verificationSources.map((v) => (
-                                <SelectItem key={v} value={v}>{v}</SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </div>
+                        {/* ── ROW 2: Notes ── */}
+                        <div className="rounded-2xl border border-border bg-card p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notes</p>
+                            <div className="flex gap-1.5">
+                              <label className="cursor-pointer">
+                                <input type="file" className="hidden" onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleNoteAttachment(o.id, file, "attachment");
+                                }} />
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
+                                  <Paperclip size={12} /> Attach
+                                </span>
+                              </label>
+                              <label className="cursor-pointer">
+                                <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => {
+                                  const file = e.target.files?.[0];
+                                  if (file) handleNoteAttachment(o.id, file, "receipt");
+                                }} />
+                                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
+                                  <Receipt size={12} /> Receipt
+                                </span>
+                              </label>
+                            </div>
+                          </div>
 
-                        {/* Notes section - no dropdown, always sends to applicant */}
-                        <div>
-                          <p className="text-sm font-medium text-foreground mb-2">Notes</p>
-
-                          {/* Quick note tags */}
-                          <div className="flex flex-wrap gap-2 mb-3">
+                          <div className="flex flex-wrap gap-1.5 mb-3">
                             {quickNotes.map((qn) => (
-                              <button key={qn} className="inline-flex items-center gap-1 px-3 py-1.5 rounded-2xl text-xs font-semibold border border-accent/30 text-accent bg-accent/5 hover:bg-accent/10 transition-all"
+                              <button key={qn} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs text-accent border border-accent/20 bg-accent/5 hover:bg-accent/10 transition-all"
                                 onClick={() => {
                                   const currentNote = o.staff_note || "";
                                   const newNote = currentNote ? `${currentNote}\n${qn}` : qn;
@@ -945,86 +967,75 @@ const StaffDashboard = () => {
                           </div>
 
                           <Textarea defaultValue={o.staff_note} placeholder="Add any notes about this application..."
+                            className="rounded-xl"
                             onBlur={(e) => { if (e.target.value !== o.staff_note) handleUpdateNote(o.id, e.target.value); }}
                           />
-
-                          {/* Attachment buttons */}
-                          <div className="flex gap-2 mt-2">
-                            <label className="cursor-pointer">
-                              <input type="file" className="hidden" onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleNoteAttachment(o.id, file, "attachment");
-                              }} />
-                              <Button type="button" size="sm" variant="outline" className="gap-1 rounded-full pointer-events-none">
-                                <Paperclip size={14} /> Attach File
-                              </Button>
-                            </label>
-                            <label className="cursor-pointer">
-                              <input type="file" className="hidden" accept=".pdf,.jpg,.jpeg,.png" onChange={(e) => {
-                                const file = e.target.files?.[0];
-                                if (file) handleNoteAttachment(o.id, file, "receipt");
-                              }} />
-                              <Button type="button" size="sm" variant="outline" className="gap-1 rounded-full pointer-events-none">
-                                <Receipt size={14} /> Upload Receipt
-                              </Button>
-                            </label>
-                          </div>
                         </div>
 
-                        {/* Edit, Email, Chat & Delete */}
-                        <div className="flex gap-2 flex-wrap">
-                          {o.application_id && (
-                            <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
-                              onClick={() => openEditApp(o)}>
-                              <Edit3 size={14} /> Edit Application
+                        {/* ── ROW 3: Actions (primary) ── */}
+                        <div className="rounded-2xl border border-border bg-card p-4">
+                          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Actions</p>
+                          <div className="flex flex-wrap gap-1.5">
+                            {o.application_id && (
+                              <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-accent bg-accent/10 hover:bg-accent/15 transition-all"
+                                onClick={() => openEditApp(o)}>
+                                <Edit3 size={13} /> Edit Application
+                              </button>
+                            )}
+                            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-foreground bg-muted/60 hover:bg-muted transition-all"
+                              onClick={() => {
+                                setNewAppSendTo("applicant");
+                                setNewAppEmail(o.client_email);
+                                setInstAppNumber(o.application_id || o.reference_id);
+                                setNewAppOpen(true);
+                              }}>
+                              <Mail size={13} /> Email Client
                             </button>
-                          )}
-                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
-                            onClick={() => {
-                              setNewAppSendTo("applicant");
-                              setNewAppEmail(o.client_email);
-                              setInstAppNumber(o.application_id || o.reference_id);
-                              setNewAppOpen(true);
-                            }}>
-                            <Mail size={14} /> Email Client
-                          </button>
-                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
-                            onClick={() => {
-                              setNewAppSendTo("institution");
-                              setInstApplicantEmail(o.client_email);
-                              setInstAppNumber(o.application_id || o.reference_id);
-                              setInstNotes(institutionQuickNote);
-                              setNewAppOpen(true);
-                            }}>
-                            <Send size={14} /> Email Institution
-                          </button>
-                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-accent/30 text-xs font-semibold text-accent bg-accent/5 hover:bg-accent/10 transition-all"
-                            onClick={() => {
-                              const amount = prompt("Enter payment amount for the client (e.g. 150.00):");
-                              if (amount && !isNaN(Number(amount))) {
-                                const paymentUrl = `${window.location.origin}/payment?amount=${amount}`;
-                                navigator.clipboard.writeText(paymentUrl);
-                                toast({ title: "Payment Link Copied", description: `Link with $${amount} amount copied to clipboard. You can paste it in an email to the client.` });
-                              }
-                            }}>
-                            <CreditCard size={14} /> Send Payment Link
-                          </button>
-                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-border bg-muted/50 text-xs font-semibold text-foreground hover:bg-muted transition-all"
-                            onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
-                            <MessageCircle size={14} /> Chat with {applicantName}
-                          </button>
-                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-destructive/30 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-all"
-                            onClick={() => setDeleteDialog({ open: true, deleteType: "client", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
-                            <UserX size={14} /> Delete Client
-                          </button>
-                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl border border-destructive/30 text-xs font-semibold text-destructive hover:bg-destructive/10 transition-all"
-                            onClick={() => setDeleteDialog({ open: true, deleteType: "application", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
-                            <Trash2 size={14} /> Delete Application
-                          </button>
-                          <button className="inline-flex items-center gap-1.5 px-4 py-2 rounded-2xl bg-destructive text-destructive-foreground text-xs font-semibold hover:bg-destructive/90 transition-all"
-                            onClick={() => setDeleteDialog({ open: true, deleteType: "both", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
-                            <Trash2 size={14} /> Delete Client & Application
-                          </button>
+                            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-foreground bg-muted/60 hover:bg-muted transition-all"
+                              onClick={() => {
+                                setNewAppSendTo("institution");
+                                setInstApplicantEmail(o.client_email);
+                                setInstAppNumber(o.application_id || o.reference_id);
+                                setInstNotes(institutionQuickNote);
+                                setNewAppOpen(true);
+                              }}>
+                              <Send size={13} /> Email Institution
+                            </button>
+                            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-foreground bg-muted/60 hover:bg-muted transition-all"
+                              onClick={() => {
+                                const amount = prompt("Enter payment amount for the client (e.g. 150.00):");
+                                if (amount && !isNaN(Number(amount))) {
+                                  const paymentUrl = `${window.location.origin}/payment?amount=${amount}`;
+                                  navigator.clipboard.writeText(paymentUrl);
+                                  toast({ title: "Payment Link Copied", description: `Link with $${amount} amount copied to clipboard.` });
+                                }
+                              }}>
+                              <CreditCard size={13} /> Send Payment Link
+                            </button>
+                            <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-foreground bg-muted/60 hover:bg-muted transition-all"
+                              onClick={() => handleStartChatWithApplicant(applicantName, o.client_email)}>
+                              <MessageCircle size={13} /> Chat
+                            </button>
+                          </div>
+
+                          {/* Danger zone — visually separated */}
+                          <div className="mt-4 pt-3 border-t border-dashed border-destructive/20">
+                            <p className="text-[10px] font-semibold uppercase tracking-wider text-destructive/70 mb-2">Danger Zone</p>
+                            <div className="flex flex-wrap gap-1.5">
+                              <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-destructive hover:bg-destructive/10 transition-all"
+                                onClick={() => setDeleteDialog({ open: true, deleteType: "client", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                                <UserX size={13} /> Delete Client
+                              </button>
+                              <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-destructive hover:bg-destructive/10 transition-all"
+                                onClick={() => setDeleteDialog({ open: true, deleteType: "application", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                                <Trash2 size={13} /> Delete Application
+                              </button>
+                              <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-all"
+                                onClick={() => setDeleteDialog({ open: true, deleteType: "both", orderId: o.id, label: `${o.application_id || o.reference_id}`, email: o.client_email })}>
+                                <Trash2 size={13} /> Delete Both
+                              </button>
+                            </div>
+                          </div>
                         </div>
                       </div>
                     )}
