@@ -949,10 +949,54 @@ const AIChatWidget = () => {
     sendToAI([...messages, userMsg]);
   };
 
+  // Local KB matcher — zero AI cost. Returns the best matching entry or null.
+  const matchLocalKB = (query: string): KBEntry | null => {
+    const q = query.toLowerCase().trim();
+    if (!q) return null;
+    const allKB = [...customEntries, ...KNOWLEDGE_BASE];
+    let best: { entry: KBEntry; score: number } | null = null;
+    for (const entry of allKB) {
+      for (const kw of entry.keywords) {
+        const k = kw.toLowerCase();
+        if (q.includes(k)) {
+          const score = k.length; // longer keyword = better match
+          if (!best || score > best.score) best = { entry, score };
+        }
+      }
+    }
+    // Quick navigation intents
+    const navIntents: Array<{ rx: RegExp; entry: KBEntry }> = [
+      { rx: /\b(go to|open|take me to|show me|view)\s+(my\s+)?dashboard\b/, entry: { keywords: [], response: `Your **Dashboard** lets you:\n• Track application status in real-time\n• View staff notes and updates\n• Access receipts and order history\n• Check your IFCS ID\n\nLog in to access your dashboard!`, navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }, { label: "Log In", path: "/login" }] } },
+      { rx: /\b(go to|open|view)\s+(the\s+)?(cart|my cart)\b/, entry: { keywords: [], response: `Your cart holds your selected services. You can apply discount codes (IFCS10, IFCS20, WELCOME15) before checkout.`, navButtons: [{ label: "View Cart", path: "/cart" }] } },
+      { rx: /\b(go to|open|view)\s+(the\s+)?pricing\b/, entry: { keywords: [], response: `View our complete pricing for all services.`, navButtons: [{ label: "View Pricing", path: "/pricing" }] } },
+      { rx: /\b(start|begin|new)\s+(an?\s+)?application\b/, entry: { keywords: [], response: `Ready to start your application? Our 5-step wizard takes about 10 minutes.`, navButtons: [{ label: "Start Application", path: "/application" }] } },
+      { rx: /\bcontact (us|ifcs|agent|support)\b/, entry: { keywords: [], response: `**Contact IFCS**\n• Phone: (914) 693-2840\n• Email: info@ifcsevals.com\n• Hours: Mon–Fri, 9 AM–5 PM EST`, navButtons: [{ label: "Contact Page", path: "/contact" }] } },
+    ];
+    for (const intent of navIntents) {
+      if (intent.rx.test(q)) return intent.entry;
+    }
+    if (best && best.score >= 3) return best.entry;
+    return null;
+  };
+
   const sendToAI = async (conversationMessages: Message[]) => {
     try {
       // Check if user is providing an app ID + DOB for status lookup
       const lastMsg = conversationMessages[conversationMessages.length - 1];
+
+      // ⚡ LOCAL KB FAST PATH — zero AI cost
+      const localHit = matchLocalKB(lastMsg.content);
+      if (localHit) {
+        setMessages(prev => [...prev, {
+          role: "assistant",
+          content: localHit.response,
+          navButtons: localHit.navButtons || [],
+        }]);
+        setPendingScroll("assistant");
+        setIsLoading(false);
+        return;
+      }
+
       const prevMsgs = conversationMessages.slice(-6);
       
       // Detect if this looks like a DOB response after an app ID was given
