@@ -24,6 +24,7 @@ const TranscriptViewer = () => {
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) {
@@ -40,12 +41,46 @@ const TranscriptViewer = () => {
 
       if (fetchErr || !data) {
         setError("Report not found or link has expired.");
-      } else {
-        setReport(data as ReportData);
+        setLoading(false);
+        return;
+      }
+
+      setReport(data as ReportData);
+
+      // Download the PDF as a blob to bypass ad-blockers that block supabase.co iframes
+      if (data.report_file_url) {
+        try {
+          // Extract storage path from public URL: .../object/public/evaluation-reports/<path>
+          const match = String(data.report_file_url).match(/\/evaluation-reports\/(.+)$/);
+          const storagePath = match ? decodeURIComponent(match[1]) : null;
+          if (storagePath) {
+            const { data: fileData, error: dlErr } = await supabase.storage
+              .from("evaluation-reports")
+              .download(storagePath);
+            if (!dlErr && fileData) {
+              const url = URL.createObjectURL(fileData);
+              setBlobUrl(url);
+            } else {
+              // Fallback: fetch the public URL ourselves and blob it
+              const res = await fetch(data.report_file_url);
+              if (res.ok) {
+                const b = await res.blob();
+                setBlobUrl(URL.createObjectURL(b));
+              }
+            }
+          }
+        } catch (e) {
+          console.error("Blob load failed", e);
+        }
       }
       setLoading(false);
     };
     fetchReport();
+
+    return () => {
+      if (blobUrl) URL.revokeObjectURL(blobUrl);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
   if (loading) {
