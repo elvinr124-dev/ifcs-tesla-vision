@@ -119,7 +119,16 @@ const TranscriptViewer = () => {
           <span className="text-white font-medium">Transcript</span>
         </div>
         <Button
-          onClick={() => report.report_file_url && window.open(report.report_file_url, "_blank")}
+          onClick={() => {
+            const url = blobUrl || report.report_file_url;
+            if (!url) return;
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `${report.reference_id}.pdf`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+          }}
           className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2 rounded-lg"
         >
           <Download size={16} /> Download
@@ -131,7 +140,7 @@ const TranscriptViewer = () => {
         <div className="flex-1 p-8 flex items-start justify-center min-h-[80vh]">
           {report.report_file_url ? (
             <iframe
-              src={report.report_file_url}
+              src={blobUrl || report.report_file_url}
               className="w-full max-w-[700px] min-h-[900px] rounded shadow-2xl bg-white"
               title="Evaluation Report PDF"
             />
