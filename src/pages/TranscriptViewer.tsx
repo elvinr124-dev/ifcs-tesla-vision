@@ -214,7 +214,16 @@ const TranscriptViewer = () => {
               </div>
             </div>
             <Button
-              onClick={() => report.report_file_url && window.open(report.report_file_url, "_blank")}
+              onClick={() => {
+                const url = blobUrl || report.report_file_url;
+                if (!url) return;
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `${report.reference_id}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+              }}
               className="bg-emerald-600 hover:bg-emerald-700 text-white gap-2"
             >
               <Download size={16} /> Download
