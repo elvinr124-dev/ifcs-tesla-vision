@@ -454,8 +454,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["institution", "university", "college", "employer", "organization"],
-    response: `For **institutions**, IFCS offers tailored evaluations, **15% discount**, direct access to senior evaluators, electronic reports, and reduced turnaround times.`,
+    keywords: ["institution partner", "university partner", "for institutions", "for universities", "institutional account", "employer account", "organization account", "school admissions office"],
+    response: `For **institutions, universities, employers, and organizations**, IFCS offers:\n\n• **Tailored evaluations** built around your admissions or HR workflow\n• **Direct access** to senior evaluators for complex cases\n• **Electronic delivery** of secure, parchment-style reports\n• **Reduced turnaround times** for partner accounts\n• **Bulk and recurring** evaluation arrangements\n\nWe work with admissions offices, registrars, HR departments, and licensing boards across the U.S.`,
     navButtons: [
       { label: "For Institutions", path: "/for-institutions" },
       { label: "Contact Us", path: "/contact" },
