@@ -43,9 +43,14 @@ const ServiceSection = ({
 
   return (
     <section id={id} className="tesla-section">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${backgroundImage})` }} />
+      <img
+        src={backgroundImage}
+        alt=""
+        loading="eager"
+        decoding="async"
+        // @ts-ignore — fetchpriority is a valid HTML attribute
+        fetchpriority="high"
+        className="absolute inset-0 w-full h-full object-cover" />
 
       {dark && <div className="video-overlay" />}
       {!dark &&
