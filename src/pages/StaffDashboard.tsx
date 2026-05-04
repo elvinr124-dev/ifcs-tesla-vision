@@ -960,17 +960,25 @@ const StaffDashboard = () => {
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap gap-1.5 mb-3">
-                            {quickNotes.map((qn) => (
-                              <button key={qn} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs text-accent border border-accent/20 bg-accent/5 hover:bg-accent/10 transition-all"
-                                onClick={() => {
-                                  const currentNote = o.staff_note || "";
-                                  const newNote = currentNote ? `${currentNote}\n${qn}` : qn;
-                                  handleUpdateNote(o.id, newNote);
-                                }}>
-                                <Plus size={10} /> {qn}
-                              </button>
-                            ))}
+                          <div className="mb-3">
+                            <Select
+                              value=""
+                              onValueChange={(qn) => {
+                                if (!qn) return;
+                                const currentNote = o.staff_note || "";
+                                const newNote = currentNote ? `${currentNote}\n${qn}` : qn;
+                                handleUpdateNote(o.id, newNote);
+                              }}
+                            >
+                              <SelectTrigger className="w-full sm:w-[260px] rounded-xl h-9 text-xs">
+                                <SelectValue placeholder="+ Insert quick note…" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {quickNotes.map((qn) => (
+                                  <SelectItem key={qn} value={qn} className="text-xs">{qn}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
 
                           {/* Attachment chips parsed from note */}
