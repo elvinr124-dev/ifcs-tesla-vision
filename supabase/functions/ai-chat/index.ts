@@ -137,12 +137,12 @@ const RULES: Rule[] = [
       navButtons: [{ label: "About IFCS", path: "/about" }],
     },
   },
-  // DISCOUNT CODES
+  // PRICING / PROMO INQUIRY
   {
     keywords: [["discount"], ["promo code"], ["coupon"], ["promo"]],
     answer: {
-      content: `**Discount codes** can be entered in your cart at checkout:\n\n• **IFCS10** — 10% off\n• **WELCOME15** — 15% off\n• **IFCS20** — 20% off`,
-      navButtons: [{ label: "Cart", path: "/cart" }],
+      content: `For pricing inquiries or special arrangements, please contact IFCS directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n\nOur team will be happy to discuss your evaluation needs.`,
+      navButtons: [{ label: "Contact", path: "/contact" }, { label: "Pricing", path: "/pricing" }],
     },
   },
   // OFFICIAL DOCUMENTS
