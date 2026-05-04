@@ -1027,7 +1027,7 @@ const AIChatWidget = () => {
     // Quick navigation intents
     const navIntents: Array<{ rx: RegExp; entry: KBEntry }> = [
       { rx: /\b(go to|open|take me to|show me|view)\s+(my\s+)?dashboard\b/, entry: { keywords: [], response: `Your **Dashboard** lets you:\n• Track application status in real-time\n• View staff notes and updates\n• Access receipts and order history\n• Check your IFCS ID\n\nLog in to access your dashboard!`, navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }, { label: "Log In", path: "/login" }] } },
-      { rx: /\b(go to|open|view)\s+(the\s+)?(cart|my cart)\b/, entry: { keywords: [], response: `Your cart holds your selected services. You can apply discount codes (IFCS10, IFCS20, WELCOME15) before checkout.`, navButtons: [{ label: "View Cart", path: "/cart" }] } },
+      { rx: /\b(go to|open|view)\s+(the\s+)?(cart|my cart)\b/, entry: { keywords: [], response: `Your cart holds your selected services. Review your items and proceed to checkout when ready.`, navButtons: [{ label: "View Cart", path: "/cart" }] } },
       { rx: /\b(go to|open|view)\s+(the\s+)?pricing\b/, entry: { keywords: [], response: `View our complete pricing for all services.`, navButtons: [{ label: "View Pricing", path: "/pricing" }] } },
       { rx: /\b(start|begin|new)\s+(an?\s+)?application\b/, entry: { keywords: [], response: `Ready to start your application? Our 5-step wizard takes about 10 minutes.`, navButtons: [{ label: "Start Application", path: "/application" }] } },
       { rx: /\bcontact (us|ifcs|agent|support)\b/, entry: { keywords: [], response: `**Contact IFCS**\n• Phone: (914) 693-2840\n• Email: info@ifcsevals.com\n• Hours: Mon–Fri, 9 AM–5 PM EST`, navButtons: [{ label: "Contact Page", path: "/contact" }] } },
