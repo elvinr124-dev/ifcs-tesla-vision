@@ -966,6 +966,23 @@ const StaffDashboard = () => {
                             ))}
                           </div>
 
+                          {/* Attachment chips parsed from note */}
+                          {(() => {
+                            const note = o.staff_note || "";
+                            const matches = Array.from(note.matchAll(/📎\s*(?:Attachment:\s*)?([^\n]+?)\s*-\s*(https?:\/\/\S+)/g));
+                            if (matches.length === 0) return null;
+                            return (
+                              <div className="flex flex-wrap gap-1.5 mb-3">
+                                {matches.map((m, idx) => (
+                                  <a key={idx} href={m[2]} target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs text-accent border border-accent/30 bg-accent/5 hover:bg-accent/10 transition-all">
+                                    <Paperclip size={10} /> {m[1].length > 28 ? m[1].slice(0, 28) + "…" : m[1]}
+                                  </a>
+                                ))}
+                              </div>
+                            );
+                          })()}
+
                           <Textarea defaultValue={o.staff_note} placeholder="Add any notes about this application..."
                             className="rounded-xl"
                             onBlur={(e) => { if (e.target.value !== o.staff_note) handleUpdateNote(o.id, e.target.value); }}
