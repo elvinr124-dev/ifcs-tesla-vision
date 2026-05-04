@@ -506,7 +506,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   // Cart
   {
     keywords: ["cart", "shopping cart", "add to cart", "my cart", "whats in my cart"],
-    response: `You can add multiple services to your **cart** before checking out! The cart is accessible from the navigation bar.\n\nYou can also apply **discount codes** at checkout for savings.`,
+    response: `You can add multiple services to your **cart** before checking out. The cart is accessible from the navigation bar at any time.`,
     navButtons: [{ label: "View Cart", path: "/cart" }],
   },
   {
