@@ -1176,13 +1176,28 @@ const AIChatWidget = () => {
   };
 
   const renderMarkdown = (text: string) => {
-    // Clean up problematic characters before rendering
-    const cleanedText = text.replace(/\?\?+/g, "?").replace(/!!+/g, "!").replace(/#{1,4}\s/g, "");
+    // Normalize: strip stray emoji that may render as "?" on some systems
+    // and convert any emoji-prefixed bullet lines into simple "•" bullets.
+    const EMOJI_RX = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE0F}]/gu;
+    const cleanedText = text
+      .replace(/\?\?+/g, "?")
+      .replace(/!!+/g, "!")
+      .replace(/#{1,4}\s/g, "")
+      // Collapse leading emoji+space at start of a line into a bullet
+      .split("\n")
+      .map((ln) => {
+        const m = ln.match(/^(\s*)([\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE0F}]+)\s*(.*)$/u);
+        if (m) return `${m[1]}• ${m[3]}`;
+        return ln;
+      })
+      .join("\n")
+      // Remove any remaining stray emoji inside lines (prevents "?" boxes)
+      .replace(EMOJI_RX, "");
+
     const lines = cleanedText.split("\n");
     return lines.map((line, i) => {
       const trimmed = line.trim();
 
-      // Strip markdown headers (###, ##, #) and render as bold text
       const headerMatch = trimmed.match(/^#{1,4}\s+(.+)$/);
       if (headerMatch) {
         return (
@@ -1192,8 +1207,7 @@ const AIChatWidget = () => {
         );
       }
 
-      // Handle bullet points
-      const isBullet = /^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/.test(trimmed) || trimmed.startsWith("- ");
+      const isBullet = /^[•\-]\s?/.test(trimmed);
       const isNumbered = /^\d+[\.\)]\s/.test(trimmed);
 
       const formatInline = (text: string) => {
@@ -1211,8 +1225,8 @@ const AIChatWidget = () => {
       if (isBullet || isNumbered) {
         return (
           <div key={i} className="flex gap-2 py-0.5">
-            <span className="flex-shrink-0 mt-0.5">{isBullet ? trimmed.match(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]/)?.[0] || "•" : ""}</span>
-            <span className="flex-1">{formatInline(isBullet ? trimmed.replace(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/, "") : trimmed)}</span>
+            <span className="flex-shrink-0 mt-0.5">{isBullet ? "•" : ""}</span>
+            <span className="flex-1">{formatInline(isBullet ? trimmed.replace(/^[•\-]\s?/, "") : trimmed)}</span>
           </div>
         );
       }
