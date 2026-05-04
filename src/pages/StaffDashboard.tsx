@@ -889,23 +889,30 @@ const StaffDashboard = () => {
 
                     {isSelected && (
                       <div className="border-t border-border bg-muted/20 p-5 space-y-5">
-                        {/* ── ROW 1: Status + Verification (2-col) ── */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+                        {/* ── ROW 1: Status + Verification (compact 2-col dropdowns) ── */}
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                           <div className="rounded-2xl border border-border bg-card p-4">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Status</p>
-                            <div className="flex flex-wrap gap-1.5">
-                              {Object.entries(statusMeta).map(([key, val]) => (
-                                <button key={key}
-                                  className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${o.status === key ? "bg-accent text-accent-foreground shadow-sm" : "bg-muted/60 text-foreground hover:bg-muted"}`}
-                                  onClick={() => handleStatusChange(o.id, key)}>
-                                  {val.icon} {val.label}
-                                </button>
-                              ))}
-                            </div>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Status</p>
+                            <Select value={o.status} onValueChange={(val) => handleStatusChange(o.id, val)}>
+                              <SelectTrigger className="w-full rounded-xl h-10">
+                                <SelectValue>
+                                  <span className="inline-flex items-center gap-2 text-sm">
+                                    {statusMeta[o.status]?.icon} {statusMeta[o.status]?.label || o.status}
+                                  </span>
+                                </SelectValue>
+                              </SelectTrigger>
+                              <SelectContent>
+                                {Object.entries(statusMeta).map(([key, val]) => (
+                                  <SelectItem key={key} value={key}>
+                                    <span className="inline-flex items-center gap-2">{val.icon} {val.label}</span>
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
 
                           <div className="rounded-2xl border border-border bg-card p-4">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Verification Source</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Verification Source</p>
                             <Select
                               value={(orders.find(ord => ord.id === o.id) as any)?.verification_source || ""}
                               onValueChange={async (val) => {
@@ -917,7 +924,7 @@ const StaffDashboard = () => {
                                 toast({ title: "Verification Source Updated" });
                               }}
                             >
-                              <SelectTrigger className="w-full rounded-xl"><SelectValue placeholder="Select source..." /></SelectTrigger>
+                              <SelectTrigger className="w-full rounded-xl h-10"><SelectValue placeholder="Select source..." /></SelectTrigger>
                               <SelectContent>
                                 {verificationSources.map((v) => (
                                   <SelectItem key={v} value={v}>{v}</SelectItem>
@@ -953,18 +960,43 @@ const StaffDashboard = () => {
                             </div>
                           </div>
 
-                          <div className="flex flex-wrap gap-1.5 mb-3">
-                            {quickNotes.map((qn) => (
-                              <button key={qn} className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs text-accent border border-accent/20 bg-accent/5 hover:bg-accent/10 transition-all"
-                                onClick={() => {
-                                  const currentNote = o.staff_note || "";
-                                  const newNote = currentNote ? `${currentNote}\n${qn}` : qn;
-                                  handleUpdateNote(o.id, newNote);
-                                }}>
-                                <Plus size={10} /> {qn}
-                              </button>
-                            ))}
+                          <div className="mb-3">
+                            <Select
+                              value=""
+                              onValueChange={(qn) => {
+                                if (!qn) return;
+                                const currentNote = o.staff_note || "";
+                                const newNote = currentNote ? `${currentNote}\n${qn}` : qn;
+                                handleUpdateNote(o.id, newNote);
+                              }}
+                            >
+                              <SelectTrigger className="w-full sm:w-[260px] rounded-xl h-9 text-xs">
+                                <SelectValue placeholder="+ Insert quick note…" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {quickNotes.map((qn) => (
+                                  <SelectItem key={qn} value={qn} className="text-xs">{qn}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                           </div>
+
+                          {/* Attachment chips parsed from note */}
+                          {(() => {
+                            const note = o.staff_note || "";
+                            const matches = Array.from(note.matchAll(/📎\s*(?:Attachment:\s*)?([^\n]+?)\s*-\s*(https?:\/\/\S+)/g));
+                            if (matches.length === 0) return null;
+                            return (
+                              <div className="flex flex-wrap gap-1.5 mb-3">
+                                {matches.map((m, idx) => (
+                                  <a key={idx} href={m[2]} target="_blank" rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs text-accent border border-accent/30 bg-accent/5 hover:bg-accent/10 transition-all">
+                                    <Paperclip size={10} /> {m[1].length > 28 ? m[1].slice(0, 28) + "…" : m[1]}
+                                  </a>
+                                ))}
+                              </div>
+                            );
+                          })()}
 
                           <Textarea defaultValue={o.staff_note} placeholder="Add any notes about this application..."
                             className="rounded-xl"

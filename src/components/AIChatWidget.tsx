@@ -454,8 +454,8 @@ const KNOWLEDGE_BASE: KBEntry[] = [
     ],
   },
   {
-    keywords: ["institution", "university", "college", "employer", "organization"],
-    response: `For **institutions**, IFCS offers tailored evaluations, **15% discount**, direct access to senior evaluators, electronic reports, and reduced turnaround times.`,
+    keywords: ["institution partner", "university partner", "for institutions", "for universities", "institutional account", "employer account", "organization account", "school admissions office"],
+    response: `For **institutions, universities, employers, and organizations**, IFCS offers:\n\n• **Tailored evaluations** built around your admissions or HR workflow\n• **Direct access** to senior evaluators for complex cases\n• **Electronic delivery** of secure, parchment-style reports\n• **Reduced turnaround times** for partner accounts\n• **Bulk and recurring** evaluation arrangements\n\nWe work with admissions offices, registrars, HR departments, and licensing boards across the U.S.`,
     navButtons: [
       { label: "For Institutions", path: "/for-institutions" },
       { label: "Contact Us", path: "/contact" },
@@ -506,7 +506,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   // Cart
   {
     keywords: ["cart", "shopping cart", "add to cart", "my cart", "whats in my cart"],
-    response: `You can add multiple services to your **cart** before checking out! The cart is accessible from the navigation bar.\n\nYou can also apply **discount codes** at checkout for savings.`,
+    response: `You can add multiple services to your **cart** before checking out. The cart is accessible from the navigation bar at any time.`,
     navButtons: [{ label: "View Cart", path: "/cart" }],
   },
   {
@@ -520,7 +520,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["discount", "coupon", "promo", "promo code", "discount code", "save money", "deal"],
-    response: `IFCS does offer **discount codes** from time to time. To inquire about current promotions or obtain a discount code, please contact us directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n\nOnce you have a code, simply add your services to the cart and enter it at checkout!`,
+    response: `For pricing inquiries or special arrangements, please contact IFCS directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n\nOur team will be happy to discuss your evaluation needs.`,
     navButtons: [{ label: "Contact Us", path: "/contact" }, { label: "View Pricing", path: "/pricing" }],
   },
   {
@@ -1027,7 +1027,7 @@ const AIChatWidget = () => {
     // Quick navigation intents
     const navIntents: Array<{ rx: RegExp; entry: KBEntry }> = [
       { rx: /\b(go to|open|take me to|show me|view)\s+(my\s+)?dashboard\b/, entry: { keywords: [], response: `Your **Dashboard** lets you:\n• Track application status in real-time\n• View staff notes and updates\n• Access receipts and order history\n• Check your IFCS ID\n\nLog in to access your dashboard!`, navButtons: [{ label: "Go to Dashboard", path: "/dashboard/client" }, { label: "Log In", path: "/login" }] } },
-      { rx: /\b(go to|open|view)\s+(the\s+)?(cart|my cart)\b/, entry: { keywords: [], response: `Your cart holds your selected services. You can apply discount codes (IFCS10, IFCS20, WELCOME15) before checkout.`, navButtons: [{ label: "View Cart", path: "/cart" }] } },
+      { rx: /\b(go to|open|view)\s+(the\s+)?(cart|my cart)\b/, entry: { keywords: [], response: `Your cart holds your selected services. Review your items and proceed to checkout when ready.`, navButtons: [{ label: "View Cart", path: "/cart" }] } },
       { rx: /\b(go to|open|view)\s+(the\s+)?pricing\b/, entry: { keywords: [], response: `View our complete pricing for all services.`, navButtons: [{ label: "View Pricing", path: "/pricing" }] } },
       { rx: /\b(start|begin|new)\s+(an?\s+)?application\b/, entry: { keywords: [], response: `Ready to start your application? Our 5-step wizard takes about 10 minutes.`, navButtons: [{ label: "Start Application", path: "/application" }] } },
       { rx: /\bcontact (us|ifcs|agent|support)\b/, entry: { keywords: [], response: `**Contact IFCS**\n• Phone: (914) 693-2840\n• Email: info@ifcsevals.com\n• Hours: Mon–Fri, 9 AM–5 PM EST`, navButtons: [{ label: "Contact Page", path: "/contact" }] } },
@@ -1176,13 +1176,28 @@ const AIChatWidget = () => {
   };
 
   const renderMarkdown = (text: string) => {
-    // Clean up problematic characters before rendering
-    const cleanedText = text.replace(/\?\?+/g, "?").replace(/!!+/g, "!").replace(/#{1,4}\s/g, "");
+    // Normalize: strip stray emoji that may render as "?" on some systems
+    // and convert any emoji-prefixed bullet lines into simple "•" bullets.
+    const EMOJI_RX = /[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE0F}]/gu;
+    const cleanedText = text
+      .replace(/\?\?+/g, "?")
+      .replace(/!!+/g, "!")
+      .replace(/#{1,4}\s/g, "")
+      // Collapse leading emoji+space at start of a line into a bullet
+      .split("\n")
+      .map((ln) => {
+        const m = ln.match(/^(\s*)([\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{2300}-\u{23FF}\u{2B00}-\u{2BFF}\u{FE0F}]+)\s*(.*)$/u);
+        if (m) return `${m[1]}• ${m[3]}`;
+        return ln;
+      })
+      .join("\n")
+      // Remove any remaining stray emoji inside lines (prevents "?" boxes)
+      .replace(EMOJI_RX, "");
+
     const lines = cleanedText.split("\n");
     return lines.map((line, i) => {
       const trimmed = line.trim();
 
-      // Strip markdown headers (###, ##, #) and render as bold text
       const headerMatch = trimmed.match(/^#{1,4}\s+(.+)$/);
       if (headerMatch) {
         return (
@@ -1192,8 +1207,7 @@ const AIChatWidget = () => {
         );
       }
 
-      // Handle bullet points
-      const isBullet = /^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/.test(trimmed) || trimmed.startsWith("- ");
+      const isBullet = /^[•\-]\s?/.test(trimmed);
       const isNumbered = /^\d+[\.\)]\s/.test(trimmed);
 
       const formatInline = (text: string) => {
@@ -1211,8 +1225,8 @@ const AIChatWidget = () => {
       if (isBullet || isNumbered) {
         return (
           <div key={i} className="flex gap-2 py-0.5">
-            <span className="flex-shrink-0 mt-0.5">{isBullet ? trimmed.match(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]/)?.[0] || "•" : ""}</span>
-            <span className="flex-1">{formatInline(isBullet ? trimmed.replace(/^[•\-✅📄📞📧📍🕐📠⏱️⚡🚀🆓💼📦✈️]\s?/, "") : trimmed)}</span>
+            <span className="flex-shrink-0 mt-0.5">{isBullet ? "•" : ""}</span>
+            <span className="flex-1">{formatInline(isBullet ? trimmed.replace(/^[•\-]\s?/, "") : trimmed)}</span>
           </div>
         );
       }
