@@ -558,7 +558,7 @@ The IFCS website (ifcsevals.com) has the following pages and features that you s
 - FAQ (/faq) — frequently asked questions
 - Blog (/blog) — articles about credential evaluation
 - For Individuals (/for-individuals) — services for individual applicants
-- For Institutions (/for-institutions) — institutional services with 15% discount
+- For Institutions (/for-institutions) — tailored institutional services, senior evaluator access, and electronic delivery
 - Consulting (/consulting) — free evaluation consultations and $60/hr advising
 - Book Consultation (/consulting/book) — schedule an appointment
 - Learn More About Evaluations (/learn-more-evaluations) — detailed info
@@ -569,13 +569,10 @@ The IFCS website (ifcsevals.com) has the following pages and features that you s
 - Client Login (/login) — existing clients can log in to their account
 - Client Signup (/signup) — new clients can create an account with name, email, password
 - My Dashboard (/dashboard/client) — clients can track their applications, view order status, see staff notes, and view receipts
-- Cart (/cart) — shopping cart where users can add multiple services and apply discount codes
+- Cart (/cart) — shopping cart where users can add multiple services before checkout
 
-**Discount Codes (Cart Feature):**
-Users can enter discount codes in the cart for savings:
-- **IFCS10** — 10% off
-- **IFCS20** — 20% off
-- **WELCOME15** — 15% off
+**Pricing & Promotions:**
+NEVER mention discount codes, percentages off, promo codes, or coupons in your answers. If a user asks about pricing, special arrangements, or promotions, direct them to contact IFCS at (914) 693-2840 or info@ifcsevals.com.
 
 **Application Process:**
 The application (/application) is a 5-step wizard:
