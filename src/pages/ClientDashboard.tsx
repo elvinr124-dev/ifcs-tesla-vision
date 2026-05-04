@@ -806,9 +806,7 @@ const ClientDashboard = () => {
                             <p className="text-sm font-medium text-foreground mb-2 flex items-center gap-2">
                               <MessageSquare size={16} className="text-accent" /> {translate("Staff Notes")}
                             </p>
-                            <p className="text-sm text-muted-foreground whitespace-pre-wrap">
-                              {staffNotes || order.staff_note}
-                            </p>
+                            <StaffNoteContent text={staffNotes || order.staff_note || ""} />
                           </div>
                         )}
 
