@@ -186,9 +186,14 @@ const Evaluations = () => {
 
       {/* Hero with Brooklyn Bridge */}
       <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${brooklynBridge})` }} />
+        <img
+          src={brooklynBridge}
+          alt=""
+          loading="eager"
+          decoding="async"
+          // @ts-ignore
+          fetchpriority="high"
+          className="absolute inset-0 w-full h-full object-cover" />
         
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
@@ -240,9 +245,12 @@ const Evaluations = () => {
                   className="relative rounded-3xl overflow-hidden shadow-2xl transition-all duration-500 hover:shadow-accent/20"
                   style={{ minHeight: 480 }}>
                   
-                  <div
-                    className="absolute inset-0 bg-cover bg-center"
-                    style={{ backgroundImage: `url(${service.bgImage})` }} />
+                  <img
+                    src={service.bgImage}
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                    className="absolute inset-0 w-full h-full object-cover" />
                   
                   {/* Navy tint overlay — keeps the background photo visible */}
                   <div className="absolute inset-0 bg-gradient-to-br from-[#0a1530]/75 via-[#0d1b3d]/65 to-[#101f44]/55" />

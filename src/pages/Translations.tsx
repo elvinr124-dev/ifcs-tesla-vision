@@ -91,9 +91,14 @@ const Translations = () => {
 
       {/* Hero Section */}
       <section className="relative h-[80vh] min-h-[600px] w-full flex items-center overflow-hidden">
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${translationsBg})` }} />
+        <img
+          src={translationsBg}
+          alt=""
+          loading="eager"
+          decoding="async"
+          // @ts-ignore
+          fetchpriority="high"
+          className="absolute inset-0 w-full h-full object-cover" />
         <div className="video-overlay" />
         <div className="relative z-10 w-full max-w-6xl mx-auto px-6 md:px-12 hero-text-shadow">
           <Link

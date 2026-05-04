@@ -548,6 +548,66 @@ const KNOWLEDGE_BASE: KBEntry[] = [
       { label: "Start Application", path: "/application" },
     ],
   },
+  // ===== Credential-specific evaluation recommendations =====
+  {
+    keywords: ["best for waec", "evaluation for waec", "which evaluation waec", "what evaluation waec", "waec certificate", "waec result", "ssce", "wassce"],
+    response: `For a **WAEC / WASSCE / SSCE** certificate (secondary school) the best fit depends on your goal:\n\n• **General Analysis ($100)** — confirms your WAEC = U.S. high school diploma equivalent. Ideal for **immigration, USCIS, employment, military, or junior-college admission**.\n• **General Analysis + GPA ($150)** — adds an overall GPA from your WAEC grades. Ideal when a school requires a GPA.\n• **Course-by-Course ($190)** — only needed if you also completed **post-secondary / university** coursework you want credit for.\n\nWAEC alone is a **secondary credential**, so most clients choose **General Analysis** or **General + GPA**.`,
+    navButtons: [
+      { label: "View General Analysis", path: "/evaluations#general-analysis" },
+      { label: "View General + GPA", path: "/evaluations#general-analysis-plus-gpa" },
+      appButton("General Analysis", 100, "8–10 Business Days", "Standard", "standard"),
+    ],
+  },
+  {
+    keywords: ["best for cxc", "evaluation for cxc", "which evaluation cxc", "cxc certificate", "cxc result", "csec certificate", "best for csec", "evaluation for csec", "cape certificate", "best for cape", "evaluation for cape"],
+    response: `For **CXC / CSEC / CAPE** results (Caribbean secondary credentials):\n\n• **General Analysis ($100)** — confirms your CXC/CSEC = U.S. high school diploma. Best for **immigration, employment, military, junior college**.\n• **General Analysis + GPA ($150)** — adds GPA derived from your CXC subject grades. Required by some U.S. colleges.\n• **Course-by-Course ($190)** — only if you also did **university / post-secondary** studies and want credit transfer.\n\nIf you only have CXC/CSEC (no college), **General Analysis** or **General + GPA** is the right choice.`,
+    navButtons: [
+      { label: "View General Analysis", path: "/evaluations#general-analysis" },
+      { label: "View General + GPA", path: "/evaluations#general-analysis-plus-gpa" },
+      appButton("General Analysis plus GPA", 150, "8–10 Business Days", "Standard", "standard"),
+    ],
+  },
+  {
+    keywords: ["a-level", "a level", "gce a-level", "o-level", "o level", "gcse", "igcse"],
+    response: `For **A-Levels / O-Levels / GCSE / IGCSE** (UK-pattern secondary credentials):\n\n• **General Analysis ($100)** — confirms U.S. high school equivalency for immigration, work, or junior college.\n• **General Analysis + GPA ($150)** — adds a GPA based on your A-level / O-level grades.\n• **Course-by-Course ($190)** — only needed if you completed **university** coursework and want credit transfer.`,
+    navButtons: [
+      { label: "View General Analysis", path: "/evaluations#general-analysis" },
+      { label: "View General + GPA", path: "/evaluations#general-analysis-plus-gpa" },
+      appButton("General Analysis plus GPA", 150, "8–10 Business Days", "Standard", "standard"),
+    ],
+  },
+  {
+    keywords: ["ib diploma", "international baccalaureate", "ib certificate", "best for ib"],
+    response: `For an **IB (International Baccalaureate) Diploma**:\n\n• **General Analysis ($100)** — confirms IB = U.S. high school diploma.\n• **General Analysis + GPA ($150)** — adds a GPA from your IB results.\n• **Course-by-Course ($190)** — for transferring IB Higher-Level subjects to a U.S. college as credit.`,
+    navButtons: [
+      { label: "View General + GPA", path: "/evaluations#general-analysis-plus-gpa" },
+      { label: "View Course-by-Course", path: "/evaluations#course-by-course" },
+    ],
+  },
+  {
+    keywords: ["nursing license", "nursing board", "rn license", "ncsbn", "ncsbn cgfns", "cgfns", "best for nursing", "evaluation for nursing", "nclex"],
+    response: `For **U.S. nursing licensure (RN, LPN, BSN)** the correct choice is the **Health Professions Course-by-Course ($230)**.\n\nIt provides:\n• Course-by-course breakdown of your nursing curriculum\n• Credit hours and U.S. equivalency for each clinical/theory course\n• GPA + degree equivalency\n\nAccepted by **state nursing boards**, CGFNS, and NCSBN-affiliated programs.`,
+    navButtons: [
+      { label: "View Health Professions CxC", path: "/evaluations#health-professions-course-by-course" },
+      appButton("Health Professions Course-by-Course", 230, "8–10 Business Days", "Standard", "standard"),
+    ],
+  },
+  {
+    keywords: ["cpa", "cpa license", "accounting board", "150 credit", "best for cpa", "evaluation for cpa", "engineering license", "pe license", "bar exam", "law license", "teacher license", "teaching credential"],
+    response: `For **U.S. professional licensure** (CPA, Engineering PE, Teaching, Bar, etc.) the right report is the **Professional Licensure Course-by-Course ($400)**.\n\nIt provides everything state boards require:\n• Course-by-course list with U.S. semester credit hours\n• Letter grades + GPA + degree equivalency\n• Categorized credits (e.g., upper-division accounting hours for the 150-hour CPA rule)\n\nAccepted by **state boards of accountancy, engineering boards, bar examiners, and teacher certification offices**.`,
+    navButtons: [
+      { label: "View Professional Licensure CxC", path: "/evaluations#professional-licensure-course-by-course" },
+      appButton("Professional Licensure Course-by-Course", 400, "8–10 Business Days", "Standard", "standard"),
+    ],
+  },
+  {
+    keywords: ["which evaluation", "what evaluation do i need", "what evaluation should i", "recommend an evaluation", "help me choose", "not sure which evaluation", "best evaluation for me"],
+    response: `Here's a quick guide:\n\n• **Immigration / USCIS / military / employment** → **General Analysis ($100)**\n• **College admission needing a GPA** → **General Analysis + GPA ($150)**\n• **University credit transfer / graduate school** → **Course-by-Course ($190)**\n• **U.S. nursing or medical board** → **Health Professions CxC ($230)**\n• **CPA / Engineering / Teaching / Bar** → **Professional Licensure CxC ($400)**\n• **Cosmetology / barbering board** → **Cosmetology CxC ($170)**\n\nTell me your **goal** (e.g., "I need it for the CPA exam" or "for nursing licensure") and I'll point you to the exact one.`,
+    navButtons: [
+      { label: "View All Evaluations", path: "/evaluations" },
+      { label: "View Pricing", path: "/pricing" },
+    ],
+  },
 ];
 
 // ============ CHAT STATE KEY ============
