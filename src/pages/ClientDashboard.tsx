@@ -100,6 +100,51 @@ const sectionOptions: { value: DashSection; label: string; icon: React.ReactNode
   { value: "live_chat", label: "Contact Agent", icon: <Headphones size={18} /> },
 ];
 
+// Render staff notes — turns 📎 Attachment URLs into clickable buttons
+const StaffNoteContent = ({ text }: { text: string }) => {
+  if (!text) return null;
+  const lines = text.split("\n");
+  return (
+    <div className="space-y-2">
+      {lines.map((line, i) => {
+        const m = line.match(/^📎\s*(?:Attachment:\s*)?(.+?)\s*-\s*(https?:\/\/\S+)\s*$/);
+        if (m) {
+          const [, name, url] = m;
+          return (
+            <a
+              key={i}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-accent/30 bg-accent/5 text-accent text-sm font-medium hover:bg-accent/10 transition-all"
+            >
+              <FileText size={14} /> {name}
+              <Download size={12} />
+            </a>
+          );
+        }
+        // Inline URL → clickable link
+        const urlRx = /(https?:\/\/\S+)/g;
+        if (urlRx.test(line)) {
+          const parts = line.split(urlRx);
+          return (
+            <p key={i} className="text-sm text-muted-foreground whitespace-pre-wrap">
+              {parts.map((p, j) =>
+                /^https?:\/\//.test(p) ? (
+                  <a key={j} href={p} target="_blank" rel="noopener noreferrer" className="text-accent underline break-all">{p}</a>
+                ) : (
+                  <span key={j}>{p}</span>
+                )
+              )}
+            </p>
+          );
+        }
+        return <p key={i} className="text-sm text-muted-foreground whitespace-pre-wrap">{line}</p>;
+      })}
+    </div>
+  );
+};
+
 const ClientDashboard = () => {
   const { user } = useAuth();
   const { translate } = useLocale();
