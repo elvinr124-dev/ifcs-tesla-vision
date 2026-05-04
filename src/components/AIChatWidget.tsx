@@ -520,7 +520,7 @@ const KNOWLEDGE_BASE: KBEntry[] = [
   },
   {
     keywords: ["discount", "coupon", "promo", "promo code", "discount code", "save money", "deal"],
-    response: `IFCS does offer **discount codes** from time to time. To inquire about current promotions or obtain a discount code, please contact us directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n\nOnce you have a code, simply add your services to the cart and enter it at checkout!`,
+    response: `For pricing inquiries or special arrangements, please contact IFCS directly:\n\n📞 **(914) 693-2840**\n📧 **info@ifcsevals.com**\n\nOur team will be happy to discuss your evaluation needs.`,
     navButtons: [{ label: "Contact Us", path: "/contact" }, { label: "View Pricing", path: "/pricing" }],
   },
   {
