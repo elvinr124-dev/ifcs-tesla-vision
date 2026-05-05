@@ -231,6 +231,14 @@ const Payment = () => {
             <p className="text-5xl font-extrabold text-foreground tabular-nums">
               ${total.toFixed(2)}
             </p>
+            {prMeta && (
+              <div className="mt-4 inline-flex flex-col items-center gap-1 px-5 py-3 rounded-2xl bg-accent/10 border border-accent/20">
+                <p className="text-sm font-semibold text-accent">{prMeta.label}</p>
+                {prMeta.application_ref && <p className="text-xs text-muted-foreground">Reference: {prMeta.application_ref}</p>}
+                {prMeta.status === "paid" && <p className="text-xs text-emerald-600 font-semibold">✓ Already Paid</p>}
+                {prMeta.status === "cancelled" && <p className="text-xs text-destructive font-semibold">This request was cancelled.</p>}
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-10">
