@@ -14,7 +14,7 @@ import {
 import {
   Upload, Send, Users, Clock, AlertCircle, CheckCircle2, Package, FileText, Star,
   Plus, X, Languages, FileUp, Info, Search, MessageCircle, Headphones, Trash2, UserX,
-  Paperclip, Receipt, Edit3, Mail, CreditCard,
+  Paperclip, Receipt, Edit3, Mail, CreditCard, Sparkles, SpellCheck,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -1018,7 +1018,8 @@ const StaffDashboard = () => {
                               onClick={() => {
                                 setNewAppSendTo("applicant");
                                 setNewAppEmail(o.client_email);
-                                setInstAppNumber(o.application_id || o.reference_id);
+                                // For client emails: prefer the 5-digit IFCS reference (after receipt upload).
+                                setInstAppNumber(o.ifcs_id || o.application_id || o.reference_id);
                                 setNewAppOpen(true);
                               }}>
                               <Mail size={13} /> Email Client
@@ -1027,7 +1028,8 @@ const StaffDashboard = () => {
                               onClick={() => {
                                 setNewAppSendTo("institution");
                                 setInstApplicantEmail(o.client_email);
-                                setInstAppNumber(o.application_id || o.reference_id);
+                                // For institution emails: use IFCS ref if available, else fall back to application letter code.
+                                setInstAppNumber(o.ifcs_id || o.application_id || o.reference_id);
                                 setInstNotes(institutionQuickNote);
                                 setNewAppOpen(true);
                               }}>
@@ -1265,7 +1267,7 @@ const StaffDashboard = () => {
 
       {/* ── Email Client / Email Institution Dialog ── */}
       <Dialog open={newAppOpen} onOpenChange={setNewAppOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[92vw] w-[92vw] max-h-[92vh] h-[92vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">
               {newAppSendTo === "applicant" ? "Email Client" : "Email Institution"}
@@ -1346,7 +1348,27 @@ const StaffDashboard = () => {
                     </Button>
                   ))}
                 </div>
-                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Type your message to the client..." rows={8} />
+                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Type your message to the client..." rows={14} className="min-h-[320px] text-base" />
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button type="button" size="sm" variant="outline" className="gap-1.5 rounded-full border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100"
+                    onClick={async () => {
+                      if (!newAppNotes.trim()) { toast({ title: "Write a message first." }); return; }
+                      const { smartRewrite } = await import("@/lib/textTools");
+                      setNewAppNotes(smartRewrite(newAppNotes));
+                      toast({ title: "Smart Rewrite applied" });
+                    }}>
+                    <Sparkles size={14} /> Smart Rewrite
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" className="gap-1.5 rounded-full border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
+                    onClick={async () => {
+                      if (!newAppNotes.trim()) { toast({ title: "Write a message first." }); return; }
+                      const { grammarCheck } = await import("@/lib/textTools");
+                      setNewAppNotes(grammarCheck(newAppNotes));
+                      toast({ title: "Grammar checked" });
+                    }}>
+                    <SpellCheck size={14} /> Grammar Check
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-1.5">
@@ -1469,7 +1491,27 @@ const StaffDashboard = () => {
                     <Plus size={10} /> IFCS Report Template
                   </Button>
                 </div>
-                <Textarea value={instNotes} onChange={(e) => setInstNotes(e.target.value)} placeholder="Add email body..." rows={8} />
+                <Textarea value={instNotes} onChange={(e) => setInstNotes(e.target.value)} placeholder="Add email body..." rows={14} className="min-h-[320px] text-base" />
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button type="button" size="sm" variant="outline" className="gap-1.5 rounded-full border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100"
+                    onClick={async () => {
+                      if (!instNotes.trim()) { toast({ title: "Write a message first." }); return; }
+                      const { smartRewrite } = await import("@/lib/textTools");
+                      setInstNotes(smartRewrite(instNotes));
+                      toast({ title: "Smart Rewrite applied" });
+                    }}>
+                    <Sparkles size={14} /> Smart Rewrite
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" className="gap-1.5 rounded-full border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
+                    onClick={async () => {
+                      if (!instNotes.trim()) { toast({ title: "Write a message first." }); return; }
+                      const { grammarCheck } = await import("@/lib/textTools");
+                      setInstNotes(grammarCheck(instNotes));
+                      toast({ title: "Grammar checked" });
+                    }}>
+                    <SpellCheck size={14} /> Grammar Check
+                  </Button>
+                </div>
               </div>
 
               {/* Multiple attachments */}

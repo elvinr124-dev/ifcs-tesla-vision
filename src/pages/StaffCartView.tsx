@@ -178,16 +178,12 @@ const StaffCartView = () => {
     }
     setAiProcessing(true);
     try {
-      const { data, error } = await supabase.functions.invoke("rewrite-email", {
-        body: { content: emailContent, mode },
-      });
-      if (error) throw error;
-      if (data?.result) {
-        setEmailContent(data.result);
-        toast.success(mode === "grammar" ? "Grammar checked!" : "Email rewritten!");
-      }
+      const { smartRewrite, grammarCheck } = await import("@/lib/textTools");
+      const result = mode === "grammar" ? grammarCheck(emailContent) : smartRewrite(emailContent);
+      setEmailContent(result);
+      toast.success(mode === "grammar" ? "Grammar checked!" : "Email rewritten!");
     } catch {
-      toast.error("AI processing failed.");
+      toast.error("Processing failed.");
     }
     setAiProcessing(false);
   };
