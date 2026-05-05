@@ -253,6 +253,25 @@ const ClientDashboard = () => {
     };
   }, [clientEmail]);
 
+  // Payment requests for this client
+  useEffect(() => {
+    if (!clientEmail) return;
+    const load = async () => {
+      const { data } = await (supabase as any)
+        .from("payment_requests")
+        .select("*")
+        .eq("client_email", clientEmail.toLowerCase())
+        .order("created_at", { ascending: false });
+      if (data) setPaymentRequests(data);
+    };
+    load();
+    const ch = supabase
+      .channel("client-payments-rt")
+      .on("postgres_changes", { event: "*", schema: "public", table: "payment_requests" }, () => load())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, [clientEmail]);
+
   // Load reports from database
   useEffect(() => {
     if (!clientEmail) return;
