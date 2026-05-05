@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Camera, CheckCircle2, CreditCard } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import paymentBg from "@/assets/payment-bg.jpg";
 
 const currentYear = new Date().getFullYear();
