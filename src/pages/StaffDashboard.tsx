@@ -202,12 +202,13 @@ const StaffDashboard = () => {
   // Load all data
   useEffect(() => {
     const loadAll = async () => {
-      const [ordersRes, clientsRes, chatsRes, jobsRes, jobAppsRes] = await Promise.all([
+      const [ordersRes, clientsRes, chatsRes, jobsRes, jobAppsRes, payRes] = await Promise.all([
         (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false }),
         (supabase as any).from("client_accounts").select("*").order("created_at", { ascending: false }),
         supabase.from("chat_conversations").select("*").eq("status", "pending").order("created_at", { ascending: false }),
         (supabase as any).from("job_listings").select("*").order("created_at", { ascending: false }),
         (supabase as any).from("job_applications").select("*").order("created_at", { ascending: false }),
+        (supabase as any).from("payment_requests").select("*").order("created_at", { ascending: false }),
       ]);
       if (ordersRes.data) setOrders(ordersRes.data);
       if (clientsRes.data) setClients(clientsRes.data);
@@ -223,6 +224,7 @@ const StaffDashboard = () => {
       }
       if (jobsRes.data) setCareerListings(jobsRes.data);
       if (jobAppsRes.data) setCareerApps(jobAppsRes.data);
+      if (payRes.data) setPayRequests(payRes.data);
     };
     loadAll();
 
