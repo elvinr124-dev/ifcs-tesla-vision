@@ -21,7 +21,25 @@ const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0
 const Payment = () => {
   const [searchParams] = useSearchParams();
   const presetAmount = searchParams.get("amount") || "";
+  const prId = searchParams.get("pr") || "";
+  const prToken = searchParams.get("token") || "";
   const isLockedAmount = !!presetAmount;
+  const [prMeta, setPrMeta] = useState<any>(null);
+
+  useEffect(() => {
+    if (!prId) return;
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("payment_requests")
+        .select("*")
+        .eq("id", prId)
+        .maybeSingle();
+      if (data && (!prToken || data.token === prToken)) {
+        setPrMeta(data);
+        setForm(p => ({ ...p, amount: String(data.amount), email: data.client_email || p.email }));
+      }
+    })();
+  }, [prId, prToken]);
 
   const [form, setForm] = useState({
     docName: "",
