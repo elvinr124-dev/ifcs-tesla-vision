@@ -1066,6 +1066,38 @@ const StaffDashboard = () => {
                           />
                         </div>
 
+                        {/* Payment Requests for this client */}
+                        {(() => {
+                          const myReqs = payRequests.filter(p => (p.client_email || "").toLowerCase() === (o.client_email || "").toLowerCase());
+                          if (myReqs.length === 0) return null;
+                          return (
+                            <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
+                              <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-3 flex items-center gap-1.5"><CreditCard size={12}/> Payment Requests</p>
+                              <div className="space-y-2">
+                                {myReqs.map(pr => (
+                                  <div key={pr.id} className="flex items-center justify-between gap-2 bg-background rounded-xl p-3 border border-border">
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-sm font-semibold text-foreground truncate">${Number(pr.amount).toFixed(2)} — {pr.label}</p>
+                                      <p className="text-[11px] text-muted-foreground truncate">{pr.application_ref ? `Ref: ${pr.application_ref} · ` : ""}{new Date(pr.created_at).toLocaleString()}</p>
+                                    </div>
+                                    <Badge className={
+                                      pr.status === "paid" ? "bg-emerald-500/20 text-emerald-700 border-0" :
+                                      pr.status === "cancelled" ? "bg-muted text-muted-foreground border-0" :
+                                      "bg-amber-500/20 text-amber-700 border-0"
+                                    }>{pr.status === "paid" ? `Paid${pr.card_last_four ? ` ••${pr.card_last_four}` : ""}` : pr.status === "cancelled" ? "Cancelled" : "Pending"}</Badge>
+                                    {pr.status === "pending" && (
+                                      <>
+                                        <button onClick={() => handleCopyPaymentLink(pr)} className="text-xs px-2 py-1 rounded-full bg-muted hover:bg-muted/70 text-foreground">Copy Link</button>
+                                        <button onClick={() => handleCancelPaymentRequest(pr.id)} className="text-xs px-2 py-1 rounded-full text-destructive hover:bg-destructive/10">Cancel</button>
+                                      </>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
                         {/* ── ROW 3: Actions (primary) ── */}
                         <div className="rounded-2xl border border-border bg-card p-4">
                           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Actions</p>
