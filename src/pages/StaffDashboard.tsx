@@ -177,6 +177,14 @@ const StaffDashboard = () => {
   const [instNotes, setInstNotes] = useState("");
   const [instAttachments, setInstAttachments] = useState<File[]>([]);
 
+  // Payment Request dialog
+  const [payDialogOpen, setPayDialogOpen] = useState(false);
+  const [payAmount, setPayAmount] = useState("");
+  const [payLabel, setPayLabel] = useState("");
+  const [payClientEmail, setPayClientEmail] = useState("");
+  const [payAppRef, setPayAppRef] = useState("");
+  const [payRequests, setPayRequests] = useState<any[]>([]);
+
   // Career management
   const [careerListings, setCareerListings] = useState<any[]>([]);
   const [careerApps, setCareerApps] = useState<any[]>([]);
