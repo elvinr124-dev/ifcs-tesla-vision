@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   FileText, Download, RefreshCw, Clock, CheckCircle2, AlertCircle, Package,
   MessageSquare, ShieldCheck, Plus, Languages, Upload, ChevronDown, ChevronUp, Eye,
-  Search, Headphones,
+  Search, Headphones, CreditCard,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
