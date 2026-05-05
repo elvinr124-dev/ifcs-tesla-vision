@@ -518,6 +518,48 @@ export type Database = {
         }
         Relationships: []
       }
+      payment_requests: {
+        Row: {
+          amount: number
+          application_ref: string
+          card_last_four: string
+          client_email: string
+          created_at: string
+          id: string
+          label: string
+          paid_at: string | null
+          status: string
+          token: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          application_ref?: string
+          card_last_four?: string
+          client_email: string
+          created_at?: string
+          id?: string
+          label?: string
+          paid_at?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          application_ref?: string
+          card_last_four?: string
+          client_email?: string
+          created_at?: string
+          id?: string
+          label?: string
+          paid_at?: string | null
+          status?: string
+          token?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
