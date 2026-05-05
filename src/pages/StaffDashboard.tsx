@@ -1267,7 +1267,7 @@ const StaffDashboard = () => {
 
       {/* ── Email Client / Email Institution Dialog ── */}
       <Dialog open={newAppOpen} onOpenChange={setNewAppOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-[92vw] w-[92vw] max-h-[92vh] h-[92vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">
               {newAppSendTo === "applicant" ? "Email Client" : "Email Institution"}
