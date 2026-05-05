@@ -154,6 +154,7 @@ const ClientDashboard = () => {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [dbReports, setDbReports] = useState<DBReport[]>([]);
   const [activeSection, setActiveSection] = useState<DashSection>("eval_orders");
+  const [paymentRequests, setPaymentRequests] = useState<any[]>([]);
 
   // Track order inputs
   const [trackType, setTrackType] = useState<"evaluation" | "translation">("evaluation");
