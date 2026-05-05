@@ -177,6 +177,14 @@ const StaffDashboard = () => {
   const [instNotes, setInstNotes] = useState("");
   const [instAttachments, setInstAttachments] = useState<File[]>([]);
 
+  // Payment Request dialog
+  const [payDialogOpen, setPayDialogOpen] = useState(false);
+  const [payAmount, setPayAmount] = useState("");
+  const [payLabel, setPayLabel] = useState("");
+  const [payClientEmail, setPayClientEmail] = useState("");
+  const [payAppRef, setPayAppRef] = useState("");
+  const [payRequests, setPayRequests] = useState<any[]>([]);
+
   // Career management
   const [careerListings, setCareerListings] = useState<any[]>([]);
   const [careerApps, setCareerApps] = useState<any[]>([]);
@@ -194,12 +202,13 @@ const StaffDashboard = () => {
   // Load all data
   useEffect(() => {
     const loadAll = async () => {
-      const [ordersRes, clientsRes, chatsRes, jobsRes, jobAppsRes] = await Promise.all([
+      const [ordersRes, clientsRes, chatsRes, jobsRes, jobAppsRes, payRes] = await Promise.all([
         (supabase as any).from("client_orders").select("*").order("created_at", { ascending: false }),
         (supabase as any).from("client_accounts").select("*").order("created_at", { ascending: false }),
         supabase.from("chat_conversations").select("*").eq("status", "pending").order("created_at", { ascending: false }),
         (supabase as any).from("job_listings").select("*").order("created_at", { ascending: false }),
         (supabase as any).from("job_applications").select("*").order("created_at", { ascending: false }),
+        (supabase as any).from("payment_requests").select("*").order("created_at", { ascending: false }),
       ]);
       if (ordersRes.data) setOrders(ordersRes.data);
       if (clientsRes.data) setClients(clientsRes.data);
@@ -215,6 +224,7 @@ const StaffDashboard = () => {
       }
       if (jobsRes.data) setCareerListings(jobsRes.data);
       if (jobAppsRes.data) setCareerApps(jobAppsRes.data);
+      if (payRes.data) setPayRequests(payRes.data);
     };
     loadAll();
 
@@ -239,10 +249,62 @@ const StaffDashboard = () => {
           }
         });
       })
+      .on("postgres_changes", { event: "*", schema: "public", table: "payment_requests" }, () => {
+        (supabase as any).from("payment_requests").select("*").order("created_at", { ascending: false }).then((r: any) => { if (r.data) setPayRequests(r.data); });
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
   }, []);
+
+  // Create payment request + email link
+  const handleCreatePaymentRequest = async () => {
+    const amt = parseFloat(payAmount);
+    if (!payClientEmail.trim() || !payAmount || isNaN(amt) || amt <= 0) {
+      toast({ title: "Missing info", description: "Enter client email and a valid amount.", variant: "destructive" });
+      return;
+    }
+    const { data, error } = await (supabase as any).from("payment_requests").insert({
+      client_email: payClientEmail.trim().toLowerCase(),
+      amount: amt,
+      label: payLabel.trim() || "IFCS Payment",
+      application_ref: payAppRef.trim(),
+      status: "pending",
+    }).select().single();
+    if (error || !data) {
+      toast({ title: "Error", description: "Could not create payment request.", variant: "destructive" });
+      return;
+    }
+    const url = `${window.location.origin}/payment?amount=${amt}&pr=${data.id}&token=${data.token}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {}
+    try {
+      await supabase.functions.invoke("send-application-email", {
+        body: {
+          recipientEmail: payClientEmail.trim(),
+          applicantEmail: payClientEmail.trim(),
+          subject: `Payment Awaiting — ${payLabel.trim() || "IFCS"} ($${amt.toFixed(2)})`,
+          body: `Hi,\n\nA payment of $${amt.toFixed(2)} is waiting for you${payLabel.trim() ? ` for: ${payLabel.trim()}` : ""}${payAppRef ? ` (Ref: ${payAppRef})` : ""}.\n\nClick the secure link below to pay, or sign in to your dashboard and click the "Payment Awaiting" button.\n\n${url}\n\nThank you,\nIFCS Team`,
+        },
+      });
+    } catch {}
+    toast({ title: "Payment Request Sent", description: `Email sent to ${payClientEmail}. Link copied to clipboard.` });
+    setPayDialogOpen(false);
+  };
+
+  const handleCancelPaymentRequest = async (id: string) => {
+    await (supabase as any).from("payment_requests").update({ status: "cancelled", updated_at: new Date().toISOString() }).eq("id", id);
+    setPayRequests(prev => prev.map(p => p.id === id ? { ...p, status: "cancelled" } : p));
+    toast({ title: "Payment Request Cancelled" });
+  };
+
+  const handleCopyPaymentLink = async (pr: any) => {
+    const url = `${window.location.origin}/payment?amount=${pr.amount}&pr=${pr.id}&token=${pr.token}`;
+    try { await navigator.clipboard.writeText(url); } catch {}
+    toast({ title: "Link Copied", description: url });
+  };
+
 
   const handleConnectChat = async (chatId: string) => {
     await supabase.from("chat_conversations").update({ status: "active", staff_identifier: "IFCSstaff" }).eq("id", chatId);
@@ -1004,6 +1066,38 @@ const StaffDashboard = () => {
                           />
                         </div>
 
+                        {/* Payment Requests for this client */}
+                        {(() => {
+                          const myReqs = payRequests.filter(p => (p.client_email || "").toLowerCase() === (o.client_email || "").toLowerCase());
+                          if (myReqs.length === 0) return null;
+                          return (
+                            <div className="rounded-2xl border border-accent/20 bg-accent/5 p-4">
+                              <p className="text-xs font-semibold uppercase tracking-wider text-accent mb-3 flex items-center gap-1.5"><CreditCard size={12}/> Payment Requests</p>
+                              <div className="space-y-2">
+                                {myReqs.map(pr => (
+                                  <div key={pr.id} className="flex items-center justify-between gap-2 bg-background rounded-xl p-3 border border-border">
+                                    <div className="min-w-0 flex-1">
+                                      <p className="text-sm font-semibold text-foreground truncate">${Number(pr.amount).toFixed(2)} — {pr.label}</p>
+                                      <p className="text-[11px] text-muted-foreground truncate">{pr.application_ref ? `Ref: ${pr.application_ref} · ` : ""}{new Date(pr.created_at).toLocaleString()}</p>
+                                    </div>
+                                    <Badge className={
+                                      pr.status === "paid" ? "bg-emerald-500/20 text-emerald-700 border-0" :
+                                      pr.status === "cancelled" ? "bg-muted text-muted-foreground border-0" :
+                                      "bg-amber-500/20 text-amber-700 border-0"
+                                    }>{pr.status === "paid" ? `Paid${pr.card_last_four ? ` ••${pr.card_last_four}` : ""}` : pr.status === "cancelled" ? "Cancelled" : "Pending"}</Badge>
+                                    {pr.status === "pending" && (
+                                      <>
+                                        <button onClick={() => handleCopyPaymentLink(pr)} className="text-xs px-2 py-1 rounded-full bg-muted hover:bg-muted/70 text-foreground">Copy Link</button>
+                                        <button onClick={() => handleCancelPaymentRequest(pr.id)} className="text-xs px-2 py-1 rounded-full text-destructive hover:bg-destructive/10">Cancel</button>
+                                      </>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
                         {/* ── ROW 3: Actions (primary) ── */}
                         <div className="rounded-2xl border border-border bg-card p-4">
                           <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Actions</p>
@@ -1037,12 +1131,11 @@ const StaffDashboard = () => {
                             </button>
                             <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-foreground bg-muted/60 hover:bg-muted transition-all"
                               onClick={() => {
-                                const amount = prompt("Enter payment amount for the client (e.g. 150.00):");
-                                if (amount && !isNaN(Number(amount))) {
-                                  const paymentUrl = `${window.location.origin}/payment?amount=${amount}`;
-                                  navigator.clipboard.writeText(paymentUrl);
-                                  toast({ title: "Payment Link Copied", description: `Link with $${amount} amount copied to clipboard.` });
-                                }
+                                setPayClientEmail(o.client_email);
+                                setPayAppRef(o.ifcs_id || o.application_id || o.reference_id || "");
+                                setPayAmount("");
+                                setPayLabel("");
+                                setPayDialogOpen(true);
                               }}>
                               <CreditCard size={13} /> Send Payment Link
                             </button>
@@ -1729,6 +1822,53 @@ const StaffDashboard = () => {
         </DialogContent>
       </Dialog>
 
+
+      {/* ── Payment Request Dialog ── */}
+      <Dialog open={payDialogOpen} onOpenChange={setPayDialogOpen}>
+        <DialogContent className="max-w-lg rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <CreditCard size={20} className="text-accent" />
+              </div>
+              Send Payment Request
+            </DialogTitle>
+            <DialogDescription>
+              The client will receive an email with a secure payment link and see a "Payment Awaiting" button on their dashboard.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-5 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
+              <Input value={payClientEmail} onChange={(e) => setPayClientEmail(e.target.value)} placeholder="client@email.com" className="rounded-xl h-12" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Amount *</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">$</span>
+                  <Input type="number" min="0" step="0.01" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} placeholder="0.00" className="rounded-xl h-12 pl-8 text-lg font-semibold tabular-nums" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Reference</label>
+                <Input value={payAppRef} onChange={(e) => setPayAppRef(e.target.value)} placeholder="App / IFCS ID" className="rounded-xl h-12" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Payment Name / Reason</label>
+              <Input value={payLabel} onChange={(e) => setPayLabel(e.target.value)} placeholder="e.g. Rush Service Fee, Translation Add-on" className="rounded-xl h-12" />
+              <p className="text-[11px] text-muted-foreground">Visible to the client so they know what they are paying for.</p>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 pt-4">
+            <Button variant="outline" onClick={() => setPayDialogOpen(false)} className="rounded-full">Cancel</Button>
+            <Button onClick={handleCreatePaymentRequest} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+              <Send size={14} /> Send & Copy Link
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* ── Career Add/Edit Dialog ── */}
       <Dialog open={careerDialogOpen} onOpenChange={setCareerDialogOpen}>

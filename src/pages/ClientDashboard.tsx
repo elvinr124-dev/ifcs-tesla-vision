@@ -15,7 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   FileText, Download, RefreshCw, Clock, CheckCircle2, AlertCircle, Package,
   MessageSquare, ShieldCheck, Plus, Languages, Upload, ChevronDown, ChevronUp, Eye,
-  Search, Headphones,
+  Search, Headphones, CreditCard,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -89,13 +89,14 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
   </select>
 );
 
-type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "track_order" | "live_chat";
+type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "payments" | "track_order" | "live_chat";
 
 const sectionOptions: { value: DashSection; label: string; icon: React.ReactNode }[] = [
   { value: "eval_orders", label: "Evaluation Orders", icon: <Package size={18} /> },
   { value: "trans_orders", label: "Translation Orders", icon: <Languages size={18} /> },
   { value: "eval_reports", label: "Shared Evaluation Reports", icon: <ShieldCheck size={18} /> },
   { value: "trans_reports", label: "Shared Translation Reports", icon: <Languages size={18} /> },
+  { value: "payments", label: "Payments", icon: <CreditCard size={18} /> },
   { value: "track_order", label: "Track Order", icon: <Search size={18} /> },
   { value: "live_chat", label: "Contact Agent", icon: <Headphones size={18} /> },
 ];
@@ -153,6 +154,7 @@ const ClientDashboard = () => {
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [dbReports, setDbReports] = useState<DBReport[]>([]);
   const [activeSection, setActiveSection] = useState<DashSection>("eval_orders");
+  const [paymentRequests, setPaymentRequests] = useState<any[]>([]);
 
   // Track order inputs
   const [trackType, setTrackType] = useState<"evaluation" | "translation">("evaluation");
@@ -249,6 +251,25 @@ const ClientDashboard = () => {
       supabase.removeChannel(channel);
       supabase.removeChannel(appChannel);
     };
+  }, [clientEmail]);
+
+  // Payment requests for this client
+  useEffect(() => {
+    if (!clientEmail) return;
+    const load = async () => {
+      const { data } = await (supabase as any)
+        .from("payment_requests")
+        .select("*")
+        .eq("client_email", clientEmail.toLowerCase())
+        .order("created_at", { ascending: false });
+      if (data) setPaymentRequests(data);
+    };
+    load();
+    const ch = supabase
+      .channel("client-payments-rt")
+      .on("postgres_changes", { event: "*", schema: "public", table: "payment_requests" }, () => load())
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
   }, [clientEmail]);
 
   // Load reports from database
@@ -691,6 +712,42 @@ const ClientDashboard = () => {
           )}
 
           {/* ── Live Chat / Contact Agent ── */}
+          {activeSection === "payments" && (
+            <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
+              <div className="flex items-center gap-3 mb-5">
+                <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                  <CreditCard size={20} className="text-accent" />
+                </div>
+                <h2 className="text-xl font-bold text-foreground">{translate("Payments")}</h2>
+              </div>
+              {paymentRequests.length === 0 ? (
+                <p className="text-muted-foreground text-sm">{translate("No payment requests yet.")}</p>
+              ) : (
+                <div className="space-y-3">
+                  {paymentRequests.map(pr => (
+                    <div key={pr.id} className="flex items-center justify-between gap-3 p-4 rounded-2xl border border-border bg-muted/30">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-bold text-foreground text-lg tabular-nums">${Number(pr.amount).toFixed(2)}</p>
+                        <p className="text-sm text-foreground">{pr.label}</p>
+                        <p className="text-xs text-muted-foreground">{pr.application_ref ? `Ref: ${pr.application_ref} · ` : ""}{new Date(pr.created_at).toLocaleString()}</p>
+                      </div>
+                      {pr.status === "pending" ? (
+                        <Link to={`/payment?amount=${pr.amount}&pr=${pr.id}&token=${pr.token}`}
+                          className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-accent text-accent-foreground text-sm font-bold hover:bg-accent/90 transition-all shadow-md shadow-accent/20 animate-pulse">
+                          <CreditCard size={16} /> {translate("Payment Awaiting")}
+                        </Link>
+                      ) : pr.status === "paid" ? (
+                        <Badge className="bg-emerald-500/20 text-emerald-700 border-0 px-3 py-1.5">✓ Paid{pr.card_last_four ? ` ••${pr.card_last_four}` : ""}</Badge>
+                      ) : (
+                        <Badge className="bg-muted text-muted-foreground border-0 px-3 py-1.5">Cancelled</Badge>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {activeSection === "live_chat" && (
             <div className="rounded-3xl border border-border bg-card p-6 md:p-8 shadow-sm">
               <div className="flex items-center gap-3 mb-5">

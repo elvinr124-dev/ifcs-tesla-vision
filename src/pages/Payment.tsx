@@ -11,6 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Camera, CheckCircle2, CreditCard } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import paymentBg from "@/assets/payment-bg.jpg";
 
 const currentYear = new Date().getFullYear();
@@ -20,7 +21,25 @@ const months = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, "0
 const Payment = () => {
   const [searchParams] = useSearchParams();
   const presetAmount = searchParams.get("amount") || "";
+  const prId = searchParams.get("pr") || "";
+  const prToken = searchParams.get("token") || "";
   const isLockedAmount = !!presetAmount;
+  const [prMeta, setPrMeta] = useState<any>(null);
+
+  useEffect(() => {
+    if (!prId) return;
+    (async () => {
+      const { data } = await (supabase as any)
+        .from("payment_requests")
+        .select("*")
+        .eq("id", prId)
+        .maybeSingle();
+      if (data && (!prToken || data.token === prToken)) {
+        setPrMeta(data);
+        setForm(p => ({ ...p, amount: String(data.amount), email: data.client_email || p.email }));
+      }
+    })();
+  }, [prId, prToken]);
 
   const [form, setForm] = useState({
     docName: "",
@@ -150,7 +169,7 @@ const Payment = () => {
     if (file) scanCard(file, "back");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeTerms || !agreePrivacy) {
       toast.error("Please agree to both the terms and conditions and privacy policy.");
@@ -161,10 +180,18 @@ const Payment = () => {
       return;
     }
     setSubmitting(true);
+    try {
+      if (prId) {
+        const last4 = form.cardNumber.replace(/\D/g, "").slice(-4);
+        await (supabase as any).from("payment_requests")
+          .update({ status: "paid", card_last_four: last4, paid_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          .eq("id", prId);
+      }
+    } catch {}
     setTimeout(() => {
       setSubmitting(false);
       toast.success("Payment submitted successfully!");
-    }, 1500);
+    }, 1200);
   };
 
   return (
@@ -204,6 +231,14 @@ const Payment = () => {
             <p className="text-5xl font-extrabold text-foreground tabular-nums">
               ${total.toFixed(2)}
             </p>
+            {prMeta && (
+              <div className="mt-4 inline-flex flex-col items-center gap-1 px-5 py-3 rounded-2xl bg-accent/10 border border-accent/20">
+                <p className="text-sm font-semibold text-accent">{prMeta.label}</p>
+                {prMeta.application_ref && <p className="text-xs text-muted-foreground">Reference: {prMeta.application_ref}</p>}
+                {prMeta.status === "paid" && <p className="text-xs text-emerald-600 font-semibold">✓ Already Paid</p>}
+                {prMeta.status === "cancelled" && <p className="text-xs text-destructive font-semibold">This request was cancelled.</p>}
+              </div>
+            )}
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-10">
