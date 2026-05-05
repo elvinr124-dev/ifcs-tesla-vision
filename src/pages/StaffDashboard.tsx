@@ -1823,6 +1823,53 @@ const StaffDashboard = () => {
       </Dialog>
 
 
+      {/* ── Payment Request Dialog ── */}
+      <Dialog open={payDialogOpen} onOpenChange={setPayDialogOpen}>
+        <DialogContent className="max-w-lg rounded-3xl">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold flex items-center gap-2">
+              <div className="w-10 h-10 rounded-2xl bg-accent/10 flex items-center justify-center">
+                <CreditCard size={20} className="text-accent" />
+              </div>
+              Send Payment Request
+            </DialogTitle>
+            <DialogDescription>
+              The client will receive an email with a secure payment link and see a "Payment Awaiting" button on their dashboard.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-5 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Client Email *</label>
+              <Input value={payClientEmail} onChange={(e) => setPayClientEmail(e.target.value)} placeholder="client@email.com" className="rounded-xl h-12" />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Amount *</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-semibold">$</span>
+                  <Input type="number" min="0" step="0.01" value={payAmount} onChange={(e) => setPayAmount(e.target.value)} placeholder="0.00" className="rounded-xl h-12 pl-8 text-lg font-semibold tabular-nums" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold uppercase tracking-widest text-accent">Reference</label>
+                <Input value={payAppRef} onChange={(e) => setPayAppRef(e.target.value)} placeholder="App / IFCS ID" className="rounded-xl h-12" />
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold uppercase tracking-widest text-accent">Payment Name / Reason</label>
+              <Input value={payLabel} onChange={(e) => setPayLabel(e.target.value)} placeholder="e.g. Rush Service Fee, Translation Add-on" className="rounded-xl h-12" />
+              <p className="text-[11px] text-muted-foreground">Visible to the client so they know what they are paying for.</p>
+            </div>
+          </div>
+          <DialogFooter className="gap-2 pt-4">
+            <Button variant="outline" onClick={() => setPayDialogOpen(false)} className="rounded-full">Cancel</Button>
+            <Button onClick={handleCreatePaymentRequest} className="rounded-full bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
+              <Send size={14} /> Send & Copy Link
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* ── Career Add/Edit Dialog ── */}
       <Dialog open={careerDialogOpen} onOpenChange={setCareerDialogOpen}>
         <DialogContent className="max-w-lg">
