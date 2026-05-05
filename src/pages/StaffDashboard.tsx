@@ -1050,12 +1050,11 @@ const StaffDashboard = () => {
                             </button>
                             <button className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-foreground bg-muted/60 hover:bg-muted transition-all"
                               onClick={() => {
-                                const amount = prompt("Enter payment amount for the client (e.g. 150.00):");
-                                if (amount && !isNaN(Number(amount))) {
-                                  const paymentUrl = `${window.location.origin}/payment?amount=${amount}`;
-                                  navigator.clipboard.writeText(paymentUrl);
-                                  toast({ title: "Payment Link Copied", description: `Link with $${amount} amount copied to clipboard.` });
-                                }
+                                setPayClientEmail(o.client_email);
+                                setPayAppRef(o.ifcs_id || o.application_id || o.reference_id || "");
+                                setPayAmount("");
+                                setPayLabel("");
+                                setPayDialogOpen(true);
                               }}>
                               <CreditCard size={13} /> Send Payment Link
                             </button>
