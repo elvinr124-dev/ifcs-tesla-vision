@@ -249,6 +249,9 @@ const StaffDashboard = () => {
           }
         });
       })
+      .on("postgres_changes", { event: "*", schema: "public", table: "payment_requests" }, () => {
+        (supabase as any).from("payment_requests").select("*").order("created_at", { ascending: false }).then((r: any) => { if (r.data) setPayRequests(r.data); });
+      })
       .subscribe();
 
     return () => { supabase.removeChannel(channel); };
