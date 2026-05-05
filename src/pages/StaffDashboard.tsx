@@ -1348,7 +1348,27 @@ const StaffDashboard = () => {
                     </Button>
                   ))}
                 </div>
-                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Type your message to the client..." rows={8} />
+                <Textarea value={newAppNotes} onChange={(e) => setNewAppNotes(e.target.value)} placeholder="Type your message to the client..." rows={14} className="min-h-[320px] text-base" />
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <Button type="button" size="sm" variant="outline" className="gap-1.5 rounded-full border-purple-300 bg-purple-50 text-purple-700 hover:bg-purple-100"
+                    onClick={async () => {
+                      if (!newAppNotes.trim()) { toast({ title: "Write a message first." }); return; }
+                      const { smartRewrite } = await import("@/lib/textTools");
+                      setNewAppNotes(smartRewrite(newAppNotes));
+                      toast({ title: "Smart Rewrite applied" });
+                    }}>
+                    <Sparkles size={14} /> Smart Rewrite
+                  </Button>
+                  <Button type="button" size="sm" variant="outline" className="gap-1.5 rounded-full border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
+                    onClick={async () => {
+                      if (!newAppNotes.trim()) { toast({ title: "Write a message first." }); return; }
+                      const { grammarCheck } = await import("@/lib/textTools");
+                      setNewAppNotes(grammarCheck(newAppNotes));
+                      toast({ title: "Grammar checked" });
+                    }}>
+                    <SpellCheck size={14} /> Grammar Check
+                  </Button>
+                </div>
               </div>
 
               <div className="space-y-1.5">
