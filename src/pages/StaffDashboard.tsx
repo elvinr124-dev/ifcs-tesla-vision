@@ -1018,7 +1018,8 @@ const StaffDashboard = () => {
                               onClick={() => {
                                 setNewAppSendTo("applicant");
                                 setNewAppEmail(o.client_email);
-                                setInstAppNumber(o.application_id || o.reference_id);
+                                // For client emails: prefer the 5-digit IFCS reference (after receipt upload).
+                                setInstAppNumber(o.ifcs_id || o.application_id || o.reference_id);
                                 setNewAppOpen(true);
                               }}>
                               <Mail size={13} /> Email Client
@@ -1027,7 +1028,8 @@ const StaffDashboard = () => {
                               onClick={() => {
                                 setNewAppSendTo("institution");
                                 setInstApplicantEmail(o.client_email);
-                                setInstAppNumber(o.application_id || o.reference_id);
+                                // For institution emails: use IFCS ref if available, else fall back to application letter code.
+                                setInstAppNumber(o.ifcs_id || o.application_id || o.reference_id);
                                 setInstNotes(institutionQuickNote);
                                 setNewAppOpen(true);
                               }}>
