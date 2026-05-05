@@ -89,13 +89,14 @@ const GlassSelect = ({ value, onChange, children }: { value: string; onChange: (
   </select>
 );
 
-type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "track_order" | "live_chat";
+type DashSection = "eval_orders" | "trans_orders" | "eval_reports" | "trans_reports" | "payments" | "track_order" | "live_chat";
 
 const sectionOptions: { value: DashSection; label: string; icon: React.ReactNode }[] = [
   { value: "eval_orders", label: "Evaluation Orders", icon: <Package size={18} /> },
   { value: "trans_orders", label: "Translation Orders", icon: <Languages size={18} /> },
   { value: "eval_reports", label: "Shared Evaluation Reports", icon: <ShieldCheck size={18} /> },
   { value: "trans_reports", label: "Shared Translation Reports", icon: <Languages size={18} /> },
+  { value: "payments", label: "Payments", icon: <CreditCard size={18} /> },
   { value: "track_order", label: "Track Order", icon: <Search size={18} /> },
   { value: "live_chat", label: "Contact Agent", icon: <Headphones size={18} /> },
 ];
