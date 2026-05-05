@@ -257,6 +257,55 @@ const StaffDashboard = () => {
     return () => { supabase.removeChannel(channel); };
   }, []);
 
+  // Create payment request + email link
+  const handleCreatePaymentRequest = async () => {
+    const amt = parseFloat(payAmount);
+    if (!payClientEmail.trim() || !payAmount || isNaN(amt) || amt <= 0) {
+      toast({ title: "Missing info", description: "Enter client email and a valid amount.", variant: "destructive" });
+      return;
+    }
+    const { data, error } = await (supabase as any).from("payment_requests").insert({
+      client_email: payClientEmail.trim().toLowerCase(),
+      amount: amt,
+      label: payLabel.trim() || "IFCS Payment",
+      application_ref: payAppRef.trim(),
+      status: "pending",
+    }).select().single();
+    if (error || !data) {
+      toast({ title: "Error", description: "Could not create payment request.", variant: "destructive" });
+      return;
+    }
+    const url = `${window.location.origin}/payment?amount=${amt}&pr=${data.id}&token=${data.token}`;
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch {}
+    try {
+      await supabase.functions.invoke("send-application-email", {
+        body: {
+          recipientEmail: payClientEmail.trim(),
+          applicantEmail: payClientEmail.trim(),
+          subject: `Payment Awaiting — ${payLabel.trim() || "IFCS"} ($${amt.toFixed(2)})`,
+          body: `Hi,\n\nA payment of $${amt.toFixed(2)} is waiting for you${payLabel.trim() ? ` for: ${payLabel.trim()}` : ""}${payAppRef ? ` (Ref: ${payAppRef})` : ""}.\n\nClick the secure link below to pay, or sign in to your dashboard and click the "Payment Awaiting" button.\n\n${url}\n\nThank you,\nIFCS Team`,
+        },
+      });
+    } catch {}
+    toast({ title: "Payment Request Sent", description: `Email sent to ${payClientEmail}. Link copied to clipboard.` });
+    setPayDialogOpen(false);
+  };
+
+  const handleCancelPaymentRequest = async (id: string) => {
+    await (supabase as any).from("payment_requests").update({ status: "cancelled", updated_at: new Date().toISOString() }).eq("id", id);
+    setPayRequests(prev => prev.map(p => p.id === id ? { ...p, status: "cancelled" } : p));
+    toast({ title: "Payment Request Cancelled" });
+  };
+
+  const handleCopyPaymentLink = async (pr: any) => {
+    const url = `${window.location.origin}/payment?amount=${pr.amount}&pr=${pr.id}&token=${pr.token}`;
+    try { await navigator.clipboard.writeText(url); } catch {}
+    toast({ title: "Link Copied", description: url });
+  };
+
+
   const handleConnectChat = async (chatId: string) => {
     await supabase.from("chat_conversations").update({ status: "active", staff_identifier: "IFCSstaff" }).eq("id", chatId);
     setActiveConvId(chatId);
