@@ -169,7 +169,7 @@ const Payment = () => {
     if (file) scanCard(file, "back");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!agreeTerms || !agreePrivacy) {
       toast.error("Please agree to both the terms and conditions and privacy policy.");
@@ -180,10 +180,18 @@ const Payment = () => {
       return;
     }
     setSubmitting(true);
+    try {
+      if (prId) {
+        const last4 = form.cardNumber.replace(/\D/g, "").slice(-4);
+        await (supabase as any).from("payment_requests")
+          .update({ status: "paid", card_last_four: last4, paid_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          .eq("id", prId);
+      }
+    } catch {}
     setTimeout(() => {
       setSubmitting(false);
       toast.success("Payment submitted successfully!");
-    }, 1500);
+    }, 1200);
   };
 
   return (
