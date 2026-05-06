@@ -1112,6 +1112,30 @@ const StaffDashboard = () => {
                           />
                         </div>
 
+                        {/* Private Staff Notes (not visible to client) */}
+                        <div className="rounded-2xl border border-amber-300/40 bg-amber-50/40 dark:bg-amber-950/10 p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">Staff Notes (Private — Not Visible to Client)</p>
+                          </div>
+                          <Textarea
+                            key={`priv-${o.id}`}
+                            defaultValue={(o as any).private_note || ""}
+                            placeholder="Internal staff notes only — clients will never see this."
+                            className="rounded-xl min-h-[120px] bg-background"
+                            rows={5}
+                            onBlur={async (e) => {
+                              const val = e.target.value;
+                              if (val === ((o as any).private_note || "")) return;
+                              await (supabase as any).from("client_orders").update({ private_note: val }).eq("id", o.id);
+                              if (o.application_id) {
+                                await (supabase as any).from("applications").update({ private_note: val }).eq("application_id", o.application_id);
+                              }
+                              setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, private_note: val } as any : ord));
+                              toast({ title: "Private notes saved" });
+                            }}
+                          />
+                        </div>
+
                         {/* Payment Requests for this client */}
                         {(() => {
                           const myReqs = payRequests.filter(p => (p.client_email || "").toLowerCase() === (o.client_email || "").toLowerCase());
