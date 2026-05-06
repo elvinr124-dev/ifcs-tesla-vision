@@ -44,6 +44,8 @@ interface DBOrder {
   updated_at: string;
   application_id?: string;
   ifcs_id?: string;
+  processing_status?: string;
+  private_note?: string;
 }
 
 interface ClientAccount {
@@ -121,6 +123,7 @@ const StaffDashboard = () => {
   const { toast } = useToast();
   const [staffSection, setStaffSection] = useState<StaffSection>("eval_queue");
   const [filter, setFilter] = useState("all");
+  const [processFilter, setProcessFilter] = useState<"all" | "processed" | "unprocessed">("all");
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -324,10 +327,17 @@ const StaffDashboard = () => {
   // Search & filter
   const filtered = orders.filter((o) => {
     const matchesFilter = filter === "all" || o.status === filter;
-    if (!searchQuery.trim()) return matchesFilter;
+    const proc = (o as any).processing_status || "unprocessed";
+    const matchesProc = processFilter === "all" || proc === processFilter;
+    if (!searchQuery.trim()) return matchesFilter && matchesProc;
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch = o.reference_id.toLowerCase().includes(q) || o.client_email.toLowerCase().includes(q) || (o.ifcs_id || "").toLowerCase().includes(q) || (o.application_id || "").toLowerCase().includes(q);
-    return matchesFilter && matchesSearch;
+    return matchesFilter && matchesProc && matchesSearch;
+  }).sort((a, b) => {
+    if (processFilter === "unprocessed") {
+      return new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime();
+    }
+    return 0;
   });
 
   // Status change
@@ -900,7 +910,15 @@ const StaffDashboard = () => {
                     {filtered.filter(o => staffSection === "trans_queue" ? o.service.toLowerCase().includes("translation") : !o.service.toLowerCase().includes("translation")).length}
                   </span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
+                  <Select value={processFilter} onValueChange={(v: any) => setProcessFilter(v)}>
+                    <SelectTrigger className="w-48 rounded-2xl"><SelectValue placeholder="Processing" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Orders</SelectItem>
+                      <SelectItem value="unprocessed">Not Processed (oldest first)</SelectItem>
+                      <SelectItem value="processed">Processed</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Select value={filter} onValueChange={setFilter}>
                     <SelectTrigger className="w-48 rounded-2xl"><SelectValue placeholder="Filter by status" /></SelectTrigger>
                     <SelectContent>
@@ -932,9 +950,11 @@ const StaffDashboard = () => {
                 const isSelected = selectedOrder === o.id;
                 const client = clients.find(c => c.email === o.client_email);
                 const applicantName = client ? `${client.first_name} ${client.last_name}` : o.client_email;
+                const procStatus = (o as any).processing_status || "unprocessed";
+                const isProcessed = procStatus === "processed";
 
                 return (
-                  <div key={o.id} className="rounded-2xl border border-border overflow-hidden hover:shadow-md transition-shadow">
+                  <div key={o.id} className={`rounded-2xl border-2 overflow-hidden hover:shadow-md transition-shadow ${isProcessed ? "border-border" : "border-orange-400/60 bg-orange-50/30 dark:bg-orange-950/10"}`}>
                     <button onClick={() => setSelectedOrder(isSelected ? null : o.id)}
                       className="w-full flex items-center justify-between p-5 hover:bg-muted/20 transition-colors text-left">
                       <div className="flex-1">
@@ -943,6 +963,11 @@ const StaffDashboard = () => {
                           {o.ifcs_id && <p className="font-semibold text-accent">IFCS ID {o.ifcs_id}</p>}
                           {!o.application_id && !o.ifcs_id && <p className="font-semibold text-foreground">#{o.reference_id}</p>}
                           <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold ${meta.color}`}>{meta.icon} {meta.label}</span>
+                          {isProcessed ? (
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-950/40 dark:text-blue-300">✓ Processed</span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700 dark:bg-orange-950/40 dark:text-orange-300">⚠ Needs to be Processed</span>
+                          )}
                         </div>
                         <p className="text-sm text-foreground mt-1">{applicantName} <span className="text-muted-foreground">— {o.client_email}</span></p>
                         <p className="text-xs text-muted-foreground">{o.service || "No service specified"} · Added {new Date(o.submitted_at).toLocaleDateString()}</p>
@@ -952,7 +977,7 @@ const StaffDashboard = () => {
                     {isSelected && (
                       <div className="border-t border-border bg-muted/20 p-5 space-y-5">
                         {/* ── ROW 1: Status + Verification (compact 2-col dropdowns) ── */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                           <div className="rounded-2xl border border-border bg-card p-4">
                             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Status</p>
                             <Select value={o.status} onValueChange={(val) => handleStatusChange(o.id, val)}>
@@ -994,12 +1019,33 @@ const StaffDashboard = () => {
                               </SelectContent>
                             </Select>
                           </div>
+
+                          <div className="rounded-2xl border border-border bg-card p-4">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Processed</p>
+                            <Select
+                              value={(o as any).processing_status || "unprocessed"}
+                              onValueChange={async (val) => {
+                                await (supabase as any).from("client_orders").update({ processing_status: val }).eq("id", o.id);
+                                if (o.application_id) {
+                                  await (supabase as any).from("applications").update({ processing_status: val }).eq("application_id", o.application_id);
+                                }
+                                setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, processing_status: val } as any : ord));
+                                toast({ title: val === "processed" ? "Marked as Processed" : "Marked as Not Processed" });
+                              }}
+                            >
+                              <SelectTrigger className="w-full rounded-xl h-10"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="unprocessed">⚠ Needs to be Processed</SelectItem>
+                                <SelectItem value="processed">✓ Processed</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
 
                         {/* ── ROW 2: Notes ── */}
                         <div className="rounded-2xl border border-border bg-card p-4">
                           <div className="flex items-center justify-between mb-3">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notes</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Client-Visible Notes</p>
                             <div className="flex gap-1.5">
                               <label className="cursor-pointer">
                                 <input type="file" className="hidden" onChange={(e) => {
@@ -1063,6 +1109,30 @@ const StaffDashboard = () => {
                           <Textarea defaultValue={o.staff_note} placeholder="Add any notes about this application..."
                             className="rounded-xl"
                             onBlur={(e) => { if (e.target.value !== o.staff_note) handleUpdateNote(o.id, e.target.value); }}
+                          />
+                        </div>
+
+                        {/* Private Staff Notes (not visible to client) */}
+                        <div className="rounded-2xl border border-amber-300/40 bg-amber-50/40 dark:bg-amber-950/10 p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-amber-700 dark:text-amber-400">Staff Notes (Private — Not Visible to Client)</p>
+                          </div>
+                          <Textarea
+                            key={`priv-${o.id}`}
+                            defaultValue={(o as any).private_note || ""}
+                            placeholder="Internal staff notes only — clients will never see this."
+                            className="rounded-xl min-h-[120px] bg-background"
+                            rows={5}
+                            onBlur={async (e) => {
+                              const val = e.target.value;
+                              if (val === ((o as any).private_note || "")) return;
+                              await (supabase as any).from("client_orders").update({ private_note: val }).eq("id", o.id);
+                              if (o.application_id) {
+                                await (supabase as any).from("applications").update({ private_note: val }).eq("application_id", o.application_id);
+                              }
+                              setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, private_note: val } as any : ord));
+                              toast({ title: "Private notes saved" });
+                            }}
                           />
                         </div>
 

@@ -583,6 +583,7 @@ const ClientDashboard = () => {
             <aside className="hidden md:flex flex-col w-64 shrink-0 sticky top-28 self-start space-y-2">
               {sectionOptions.map((opt) => {
                 const isActive = activeSection === opt.value;
+                const pendingPay = opt.value === "payments" ? paymentRequests.filter(p => p.status === "pending").length : 0;
                 return (
                   <button
                     key={opt.value}
@@ -596,7 +597,12 @@ const ClientDashboard = () => {
                     <div className={`${isActive ? "text-accent-foreground" : "text-accent"}`}>
                       {opt.icon}
                     </div>
-                    <span className="text-sm font-semibold">{translate(opt.label)}</span>
+                    <span className="text-sm font-semibold flex-1">{translate(opt.label)}</span>
+                    {pendingPay > 0 && (
+                      <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-red-500 text-white text-[11px] font-bold animate-pulse">
+                        {pendingPay}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -607,11 +613,12 @@ const ClientDashboard = () => {
               <div className="flex overflow-x-auto gap-2 pb-2">
                 {sectionOptions.map((opt) => {
                   const isActive = activeSection === opt.value;
+                  const pendingPay = opt.value === "payments" ? paymentRequests.filter(p => p.status === "pending").length : 0;
                   return (
                     <button
                       key={opt.value}
                       onClick={() => setActiveSection(opt.value)}
-                      className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all ${
+                      className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all relative ${
                         isActive
                           ? "bg-accent text-accent-foreground shadow-md"
                           : "bg-card border border-border text-foreground"
@@ -619,6 +626,11 @@ const ClientDashboard = () => {
                     >
                       {opt.icon}
                       {translate(opt.label)}
+                      {pendingPay > 0 && (
+                        <span className="inline-flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold animate-pulse">
+                          {pendingPay}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
@@ -720,11 +732,11 @@ const ClientDashboard = () => {
                 </div>
                 <h2 className="text-xl font-bold text-foreground">{translate("Payments")}</h2>
               </div>
-              {paymentRequests.length === 0 ? (
+              {paymentRequests.filter(p => p.status !== "cancelled").length === 0 ? (
                 <p className="text-muted-foreground text-sm">{translate("No payment requests yet.")}</p>
               ) : (
                 <div className="space-y-3">
-                  {paymentRequests.map(pr => (
+                  {paymentRequests.filter(p => p.status !== "cancelled").map(pr => (
                     <div key={pr.id} className="flex items-center justify-between gap-3 p-4 rounded-2xl border border-border bg-muted/30">
                       <div className="min-w-0 flex-1">
                         <p className="font-bold text-foreground text-lg tabular-nums">${Number(pr.amount).toFixed(2)}</p>
@@ -738,9 +750,7 @@ const ClientDashboard = () => {
                         </Link>
                       ) : pr.status === "paid" ? (
                         <Badge className="bg-emerald-500/20 text-emerald-700 border-0 px-3 py-1.5">✓ Paid{pr.card_last_four ? ` ••${pr.card_last_four}` : ""}</Badge>
-                      ) : (
-                        <Badge className="bg-muted text-muted-foreground border-0 px-3 py-1.5">Cancelled</Badge>
-                      )}
+                      ) : null}
                     </div>
                   ))}
                 </div>

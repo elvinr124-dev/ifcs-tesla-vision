@@ -1,0 +1,2 @@
+ALTER TABLE public.applications ADD COLUMN IF NOT EXISTS processing_status text NOT NULL DEFAULT 'unprocessed';
+ALTER TABLE public.client_orders ADD COLUMN IF NOT EXISTS processing_status text NOT NULL DEFAULT 'unprocessed';
