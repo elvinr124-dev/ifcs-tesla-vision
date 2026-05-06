@@ -124,16 +124,22 @@ const LearnMoreEvaluations = () => {
                 <p className="text-sm leading-relaxed text-muted-foreground mb-5 flex-1">
                   {translate(ev.explanation)}
                 </p>
-                <Link
-                  to={`/evaluations#${ev.slug}`}
-                  className="inline-flex items-center gap-2 self-start text-sm font-semibold text-accent hover:text-accent/80 transition-colors group"
-                >
-                  {translate("View Service")}
-                  <ArrowRight
-                    size={14}
-                    className="group-hover:translate-x-1 transition-transform"
-                  />
-                </Link>
+                <div className="flex items-center gap-5 self-start">
+                  <Link
+                    to={`/evaluations#${ev.slug}`}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-accent/80 transition-colors group"
+                  >
+                    {translate("View Service")}
+                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                  <Link
+                    to={`/pricing#${ev.slug}`}
+                    className="inline-flex items-center gap-2 text-sm font-semibold text-accent hover:text-accent/80 transition-colors group"
+                  >
+                    {translate("View Pricing")}
+                    <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </div>
               </div>
             ))}
           </div>
