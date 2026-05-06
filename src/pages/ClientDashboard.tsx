@@ -720,11 +720,11 @@ const ClientDashboard = () => {
                 </div>
                 <h2 className="text-xl font-bold text-foreground">{translate("Payments")}</h2>
               </div>
-              {paymentRequests.length === 0 ? (
+              {paymentRequests.filter(p => p.status !== "cancelled").length === 0 ? (
                 <p className="text-muted-foreground text-sm">{translate("No payment requests yet.")}</p>
               ) : (
                 <div className="space-y-3">
-                  {paymentRequests.map(pr => (
+                  {paymentRequests.filter(p => p.status !== "cancelled").map(pr => (
                     <div key={pr.id} className="flex items-center justify-between gap-3 p-4 rounded-2xl border border-border bg-muted/30">
                       <div className="min-w-0 flex-1">
                         <p className="font-bold text-foreground text-lg tabular-nums">${Number(pr.amount).toFixed(2)}</p>
@@ -738,9 +738,7 @@ const ClientDashboard = () => {
                         </Link>
                       ) : pr.status === "paid" ? (
                         <Badge className="bg-emerald-500/20 text-emerald-700 border-0 px-3 py-1.5">✓ Paid{pr.card_last_four ? ` ••${pr.card_last_four}` : ""}</Badge>
-                      ) : (
-                        <Badge className="bg-muted text-muted-foreground border-0 px-3 py-1.5">Cancelled</Badge>
-                      )}
+                      ) : null}
                     </div>
                   ))}
                 </div>
