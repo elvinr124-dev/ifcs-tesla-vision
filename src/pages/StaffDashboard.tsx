@@ -977,7 +977,7 @@ const StaffDashboard = () => {
                     {isSelected && (
                       <div className="border-t border-border bg-muted/20 p-5 space-y-5">
                         {/* ── ROW 1: Status + Verification (compact 2-col dropdowns) ── */}
-                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                           <div className="rounded-2xl border border-border bg-card p-4">
                             <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Status</p>
                             <Select value={o.status} onValueChange={(val) => handleStatusChange(o.id, val)}>
