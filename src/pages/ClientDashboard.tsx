@@ -583,6 +583,7 @@ const ClientDashboard = () => {
             <aside className="hidden md:flex flex-col w-64 shrink-0 sticky top-28 self-start space-y-2">
               {sectionOptions.map((opt) => {
                 const isActive = activeSection === opt.value;
+                const pendingPay = opt.value === "payments" ? paymentRequests.filter(p => p.status === "pending").length : 0;
                 return (
                   <button
                     key={opt.value}
@@ -596,7 +597,12 @@ const ClientDashboard = () => {
                     <div className={`${isActive ? "text-accent-foreground" : "text-accent"}`}>
                       {opt.icon}
                     </div>
-                    <span className="text-sm font-semibold">{translate(opt.label)}</span>
+                    <span className="text-sm font-semibold flex-1">{translate(opt.label)}</span>
+                    {pendingPay > 0 && (
+                      <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-red-500 text-white text-[11px] font-bold animate-pulse">
+                        {pendingPay}
+                      </span>
+                    )}
                   </button>
                 );
               })}
@@ -607,11 +613,12 @@ const ClientDashboard = () => {
               <div className="flex overflow-x-auto gap-2 pb-2">
                 {sectionOptions.map((opt) => {
                   const isActive = activeSection === opt.value;
+                  const pendingPay = opt.value === "payments" ? paymentRequests.filter(p => p.status === "pending").length : 0;
                   return (
                     <button
                       key={opt.value}
                       onClick={() => setActiveSection(opt.value)}
-                      className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all ${
+                      className={`flex items-center gap-2 px-4 py-3 rounded-2xl text-sm font-semibold whitespace-nowrap transition-all relative ${
                         isActive
                           ? "bg-accent text-accent-foreground shadow-md"
                           : "bg-card border border-border text-foreground"
@@ -619,6 +626,11 @@ const ClientDashboard = () => {
                     >
                       {opt.icon}
                       {translate(opt.label)}
+                      {pendingPay > 0 && (
+                        <span className="inline-flex items-center justify-center min-w-[20px] h-[20px] px-1.5 rounded-full bg-red-500 text-white text-[10px] font-bold animate-pulse">
+                          {pendingPay}
+                        </span>
+                      )}
                     </button>
                   );
                 })}
