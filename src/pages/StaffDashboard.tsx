@@ -910,7 +910,15 @@ const StaffDashboard = () => {
                     {filtered.filter(o => staffSection === "trans_queue" ? o.service.toLowerCase().includes("translation") : !o.service.toLowerCase().includes("translation")).length}
                   </span>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 flex-wrap">
+                  <Select value={processFilter} onValueChange={(v: any) => setProcessFilter(v)}>
+                    <SelectTrigger className="w-48 rounded-2xl"><SelectValue placeholder="Processing" /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Orders</SelectItem>
+                      <SelectItem value="unprocessed">Not Processed (oldest first)</SelectItem>
+                      <SelectItem value="processed">Processed</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <Select value={filter} onValueChange={setFilter}>
                     <SelectTrigger className="w-48 rounded-2xl"><SelectValue placeholder="Filter by status" /></SelectTrigger>
                     <SelectContent>
