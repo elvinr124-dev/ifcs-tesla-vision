@@ -121,6 +121,7 @@ const StaffDashboard = () => {
   const { toast } = useToast();
   const [staffSection, setStaffSection] = useState<StaffSection>("eval_queue");
   const [filter, setFilter] = useState("all");
+  const [processFilter, setProcessFilter] = useState<"all" | "processed" | "unprocessed">("all");
   const [selectedOrder, setSelectedOrder] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
