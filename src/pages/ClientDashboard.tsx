@@ -916,6 +916,35 @@ const ClientDashboard = () => {
                           </div>
                         )}
 
+                        {(() => {
+                          const appRefs = [order.application_id, order.ifcs_id, hasAppData?.ifcs_id].filter(Boolean) as string[];
+                          const pending = paymentRequests.filter(pr =>
+                            pr.status === "pending" && pr.application_ref && appRefs.some(r => String(pr.application_ref).toLowerCase() === String(r).toLowerCase())
+                          );
+                          if (pending.length === 0) return null;
+                          return (
+                            <div>
+                              <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
+                                <CreditCard size={16} className="text-accent" /> {translate("Payment Awaiting")}
+                              </p>
+                              <div className="space-y-2">
+                                {pending.map(pr => (
+                                  <Link key={pr.id} to={`/payment?amount=${pr.amount}&pr=${pr.id}&token=${pr.token}`}
+                                    className="flex items-center justify-between rounded-2xl border border-accent/40 bg-accent/5 hover:bg-accent/10 transition-colors p-4">
+                                    <div>
+                                      <p className="text-sm font-semibold text-foreground">{pr.label || "IFCS Payment"}</p>
+                                      <p className="text-xs text-muted-foreground">${Number(pr.amount).toFixed(2)} · Ref {pr.application_ref}</p>
+                                    </div>
+                                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent text-accent-foreground text-xs font-semibold animate-pulse">
+                                      <CreditCard size={14} /> {translate("Pay Now")}
+                                    </span>
+                                  </Link>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })()}
+
                         <div>
                           <p className="text-sm font-medium text-foreground mb-3 flex items-center gap-2">
                             <Plus size={16} className="text-accent" /> {translate("Add-Ons")}

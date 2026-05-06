@@ -33,7 +33,7 @@ interface AuthContextType {
   user: AuthUser | null;
   loginClient: (username: string, password: string) => Promise<boolean>;
   loginStaff: (username: string, password: string) => boolean;
-  loginGuest: (email: string) => void;
+  loginGuest: (email: string) => Promise<{ success: boolean; error?: string }>;
   signupClient: (data: SignupData) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
 }
@@ -86,8 +86,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     return false;
   };
 
-  const loginGuest = (email: string) => {
-    setUser({ username: email, role: "guest", email });
+  const loginGuest = async (email: string): Promise<{ success: boolean; error?: string }> => {
+    const normalized = email.trim().toLowerCase();
+    // Block guest sign-in if a registered client account already exists with this email
+    const { data: existing } = await (supabase as any)
+      .from("client_accounts")
+      .select("id")
+      .eq("email", normalized)
+      .maybeSingle();
+    if (existing) {
+      return {
+        success: false,
+        error: "An account already exists with this email. Please sign in to your account instead of continuing as a guest.",
+      };
+    }
+    setUser({ username: normalized, role: "guest", email: normalized });
+    return { success: true };
   };
 
   const signupClient = async (data: SignupData): Promise<{ success: boolean; error?: string }> => {

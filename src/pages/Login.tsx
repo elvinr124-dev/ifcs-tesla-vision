@@ -49,7 +49,7 @@ const Login = () => {
     return { path: "/", state: undefined };
   };
 
-  const handleGuestContinue = () => {
+  const handleGuestContinue = async () => {
     setGuestError("");
     if (!guestEmail.trim()) {
       setGuestError("Please enter your email address.");
@@ -59,7 +59,11 @@ const Login = () => {
       setGuestError("Please enter a valid email address.");
       return;
     }
-    loginGuest(guestEmail);
+    const result = await loginGuest(guestEmail);
+    if (!result.success) {
+      setGuestError(result.error || "Could not continue as guest.");
+      return;
+    }
     const target = getRedirectTarget();
     navigate(target.path, { state: target.state });
   };
