@@ -327,10 +327,17 @@ const StaffDashboard = () => {
   // Search & filter
   const filtered = orders.filter((o) => {
     const matchesFilter = filter === "all" || o.status === filter;
-    if (!searchQuery.trim()) return matchesFilter;
+    const proc = (o as any).processing_status || "unprocessed";
+    const matchesProc = processFilter === "all" || proc === processFilter;
+    if (!searchQuery.trim()) return matchesFilter && matchesProc;
     const q = searchQuery.toLowerCase().trim();
     const matchesSearch = o.reference_id.toLowerCase().includes(q) || o.client_email.toLowerCase().includes(q) || (o.ifcs_id || "").toLowerCase().includes(q) || (o.application_id || "").toLowerCase().includes(q);
-    return matchesFilter && matchesSearch;
+    return matchesFilter && matchesProc && matchesSearch;
+  }).sort((a, b) => {
+    if (processFilter === "unprocessed") {
+      return new Date(a.submitted_at).getTime() - new Date(b.submitted_at).getTime();
+    }
+    return 0;
   });
 
   // Status change
