@@ -33,7 +33,7 @@ interface AuthContextType {
   user: AuthUser | null;
   loginClient: (username: string, password: string) => Promise<boolean>;
   loginStaff: (username: string, password: string) => boolean;
-  loginGuest: (email: string) => void;
+  loginGuest: (email: string) => Promise<{ success: boolean; error?: string }>;
   signupClient: (data: SignupData) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
 }
