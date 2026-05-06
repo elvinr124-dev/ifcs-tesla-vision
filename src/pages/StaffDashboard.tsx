@@ -1019,6 +1019,27 @@ const StaffDashboard = () => {
                               </SelectContent>
                             </Select>
                           </div>
+
+                          <div className="rounded-2xl border border-border bg-card p-4">
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">Processed</p>
+                            <Select
+                              value={(o as any).processing_status || "unprocessed"}
+                              onValueChange={async (val) => {
+                                await (supabase as any).from("client_orders").update({ processing_status: val }).eq("id", o.id);
+                                if (o.application_id) {
+                                  await (supabase as any).from("applications").update({ processing_status: val }).eq("application_id", o.application_id);
+                                }
+                                setOrders(prev => prev.map(ord => ord.id === o.id ? { ...ord, processing_status: val } as any : ord));
+                                toast({ title: val === "processed" ? "Marked as Processed" : "Marked as Not Processed" });
+                              }}
+                            >
+                              <SelectTrigger className="w-full rounded-xl h-10"><SelectValue /></SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="unprocessed">⚠ Needs to be Processed</SelectItem>
+                                <SelectItem value="processed">✓ Processed</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
                         </div>
 
                         {/* ── ROW 2: Notes ── */}
