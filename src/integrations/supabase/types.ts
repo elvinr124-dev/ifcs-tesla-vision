@@ -77,6 +77,7 @@ export type Database = {
           payment_method: string | null
           price: number | null
           processing_label: string | null
+          processing_status: string
           processing_time: string | null
           purpose: string | null
           receipt_url: string | null
@@ -113,6 +114,7 @@ export type Database = {
           payment_method?: string | null
           price?: number | null
           processing_label?: string | null
+          processing_status?: string
           processing_time?: string | null
           purpose?: string | null
           receipt_url?: string | null
@@ -149,6 +151,7 @@ export type Database = {
           payment_method?: string | null
           price?: number | null
           processing_label?: string | null
+          processing_status?: string
           processing_time?: string | null
           purpose?: string | null
           receipt_url?: string | null
@@ -273,6 +276,7 @@ export type Database = {
           dob: string | null
           id: string
           ifcs_id: string | null
+          processing_status: string
           reference_id: string
           requirements: Json | null
           service: string
@@ -289,6 +293,7 @@ export type Database = {
           dob?: string | null
           id?: string
           ifcs_id?: string | null
+          processing_status?: string
           reference_id: string
           requirements?: Json | null
           service?: string
@@ -305,6 +310,7 @@ export type Database = {
           dob?: string | null
           id?: string
           ifcs_id?: string | null
+          processing_status?: string
           reference_id?: string
           requirements?: Json | null
           service?: string
