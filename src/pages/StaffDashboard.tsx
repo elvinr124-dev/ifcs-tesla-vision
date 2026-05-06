@@ -1045,7 +1045,7 @@ const StaffDashboard = () => {
                         {/* ── ROW 2: Notes ── */}
                         <div className="rounded-2xl border border-border bg-card p-4">
                           <div className="flex items-center justify-between mb-3">
-                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Notes</p>
+                            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Client-Visible Notes</p>
                             <div className="flex gap-1.5">
                               <label className="cursor-pointer">
                                 <input type="file" className="hidden" onChange={(e) => {
