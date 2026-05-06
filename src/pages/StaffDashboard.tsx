@@ -44,6 +44,8 @@ interface DBOrder {
   updated_at: string;
   application_id?: string;
   ifcs_id?: string;
+  processing_status?: string;
+  private_note?: string;
 }
 
 interface ClientAccount {
